@@ -1,0 +1,166 @@
+##############################################################################
+#
+# Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gmonnerat@iff.edu.br>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
+
+from os import environ, remove
+from os.path import exists, join
+from subprocess import Popen, PIPE
+from threading import Lock
+from cloudooo.ooolib import setUpUnoEnvironment
+from zope.interface import implements
+from application import Application
+from cloudooo.interfaces.lockable import ILockable
+from cloudooo.utils import logger, waitStartDaemon, removeDirectory, waitStopDaemon
+
+class OpenOffice(Application):
+  """Object to control one OOo Instance and all features instance."""
+  
+  implements(ILockable)
+
+  name = "openoffice"
+
+  def __init__(self):
+    """Creates the variable to save the pid, port and hostname of the object.
+    The lock is a simple lock python that is used when one requisition is
+    using the openoffice.
+    """
+    self._bin_soffice = 'soffice.bin'
+    self._lock = Lock()
+    self._cleanRequest()
+
+  def _testOpenOffice(self, host, port):
+    """Test if OpenOffice was started correctly"""
+    logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
+    command = [self.python_path
+              , self.unoconverter_bin
+              , "--test"
+              , "--hostname=%s" % host
+              , "--port=%s" % port
+              , "--document_url=%s" % self.document_url
+              , "--unomimemapper_bin=%s" % self.unomimemapper_bin
+              , "--python_path=%s" % self.python_path
+              , "--uno_path=%s" % self.uno_path
+              , "--office_bin_path=%s" % self.office_bin_path]
+    logger.debug("Testing Openoffice Instance %s" % port)
+    stdout, stderr = Popen(" ".join(command), shell=True, stdout=PIPE,
+        stderr=PIPE).communicate()
+    if not stdout and stderr != "":
+      logger.debug(stderr)
+      return False
+    else:
+      url = stdout.replace("\n", "")
+      logger.debug("Instance %s works" % port)
+      remove(url)
+      return True
+
+  def _cleanRequest(self):
+    """Define request attribute as 0"""
+    self.request = 0
+
+  def loadSettings(self, hostname, port, path_run_dir, display_id,
+      office_bin_path, uno_path, **kw):
+    """Method to load the configuratio to control one OpenOffice Instance
+    
+    Keyword arguments:
+    office_path -- Full Path of the OOo executable.
+      e.g office_bin_path='/opt/openoffice.org3/program'
+    uno_path -- Full path of the Uno Library
+    """
+    Application.loadSettings(self, hostname, port, path_run_dir, display_id)
+    setUpUnoEnvironment(uno_path, office_bin_path)
+    self.office_bin_path = office_bin_path
+    self.uno_path = uno_path
+    self.process_name = "soffice.bin"
+    self.document_url = kw.get('document_url', '')
+    self.unoconverter_bin = kw.get("unoconverter_bin", "unoconverter")
+    self.python_path = kw.get('python_path', 'python')
+    self.unomimemapper_bin = kw.get("unomimemapper_bin")
+
+  def _start_process(self, command, env):
+    """Start OpenOffice.org process"""
+    self.process = Popen(' '.join(command),
+                      stdout=PIPE,
+                      shell=True,
+                      close_fds=True,
+                      env=env)
+    waitStartDaemon(self, self.timeout)
+    if exists(self.document_url):
+      return self._testOpenOffice(self.hostname, self.port)
+
+    return True
+
+  def start(self):
+    """Start Instance."""
+    self.path_user_installation = join(self.path_run_dir, \
+        "cloudooo_instance_%s" % self.port)
+    if exists(self.path_user_installation):
+      removeDirectory(self.path_user_installation)
+    # Create command with all parameters to start the instance
+    self.command = [join(self.office_bin_path, self._bin_soffice)
+              , '-invisible'
+              , '-nologo'
+              , '-nodefault'
+              , '-norestore'
+              , '-nofirststartwizard'              
+              , '"-accept=socket,host=%s,port=%d;urp;StarOffice.ComponentContext"' % \
+              (self.hostname, self.port)
+              , '-env:UserInstallation=file://%s' % self.path_user_installation]
+    # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
+    # is passed to env and the environment customized is passed to the process
+    env = environ.copy()
+    env["DISPLAY"] = ":%s" % self.display_id
+    process_started = self._start_process(self.command, env)
+    if not process_started:
+      self.stop()
+      waitStopDaemon(self, self.timeout)
+      self._start_process(self.command, env)
+    self._cleanRequest()
+    Application.start(self)
+
+  def stop(self):
+    """Stop the instance by pid. By the default
+    the signal is 15."""
+    Application.stop(self)
+    if exists(self.path_user_installation):
+      removeDirectory(self.path_user_installation)
+    self._cleanRequest()
+
+  def isLocked(self):
+    """Verify if OOo instance is being used."""
+    return self._lock.locked()
+
+  def acquire(self):
+    """Lock Instance to use."""
+    self.request += 1
+    self._lock.acquire()
+
+  def release(self):
+    """Unlock Instance."""
+    logger.debug("OpenOffice %s, %s unlocked" % self.getAddress())
+    self._lock.release()
+
+openoffice = OpenOffice()

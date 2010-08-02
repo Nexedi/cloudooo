@@ -1,0 +1,213 @@
+##############################################################################
+#
+# Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gmonnerat@iff.edu.br>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
+
+from mimetypes import guess_all_extensions
+from base64 import encodestring, decodestring
+from zope.interface import implements
+from interfaces.manager import IManager, IERP5Compatibility
+from handler.oohandler import OOHandler
+from mimemapper import mimemapper
+from utils import logger
+
+class Manager(object):
+  """Manipulates requisitons of client and temporary files in file system."""
+  implements(IManager, IERP5Compatibility)
+
+  def __init__(self, path_tmp_dir, **kw):
+    """Need pass the path where the temporary document will be created."""
+    self._path_tmp_dir = path_tmp_dir
+    self.kw = kw
+  
+  def convertFile(self, file, source_format, destination_format, zip=False):
+    """Returns the converted file in the given format.
+    
+    Keywords arguments:
+      file -- File as string in base64
+      source_format -- Format of original file as string
+      destination_format -- Target format as string
+      zip -- Boolean Attribute. If true, returns the file in the form of a
+      zip archive
+    """
+    if not mimemapper.getFilterList(destination_format):
+      raise ValueError, "This format is not supported or is invalid"
+    self.kw['zip'] = zip
+    document = OOHandler(self._path_tmp_dir,
+                        decodestring(file),
+                        source_format,
+                        **self.kw)
+    decode_data = document.convert(destination_format)
+    return encodestring(decode_data)
+
+  def updateFileMetadata(self, file, source_format, metadata_dict):
+    """Receives the string of document and a dict with metadatas. The metadata
+    is added in document.
+    e.g
+    self.updateFileMetadata(data = encodestring(data), metadata = \
+      {"title":"abc","description":...})
+    return encodestring(document_with_metadata)
+    """
+    document = OOHandler(self._path_tmp_dir,
+                        decodestring(file),
+                        source_format,
+                        **self.kw)
+    metadata_dict = dict([(key.capitalize(), value) \
+                        for key, value in metadata_dict.iteritems()])
+    decode_data = document.setMetadata(metadata_dict)
+    return encodestring(decode_data)
+
+  def getFileMetadataItemList(self, file, source_format, base_document=False):
+    """Receives the string of document as encodestring and returns a dict with
+    metadatas.
+    e.g. 
+    self.getFileMetadataItemList(data = encodestring(data))
+    return {'Title': 'abc','Description': 'comments', 'Data': None}
+
+    If converted_data is True, the ODF of data is added in dictionary.
+    e.g
+    self.getFileMetadataItemList(data = encodestring(data), True)
+    return {'Title': 'abc','Description': 'comments', 'Data': string_ODF}
+
+    Note that all keys of the dictionary have the first word in uppercase.
+    """
+    document = OOHandler(self._path_tmp_dir,
+                        decodestring(file),
+                        source_format,
+                        **self.kw)
+    metadata_dict = document.getMetadata(base_document)
+    metadata_dict['Data'] = encodestring(metadata_dict['Data'])
+    return metadata_dict
+  
+  def getAllowedExtensionList(self, request_dict={}):
+    """List types which can be generated from given type
+    Type can be given as:
+      - filename extension
+      - document type ('text', 'spreadsheet', 'presentation' or 'drawing')
+    e.g
+    self.getAllowedMimetypeList(dict(document_type="text"))
+    return extension_list
+    """
+    mimetype = request_dict.get('mimetype')
+    extension = request_dict.get('extension')
+    document_type = request_dict.get('document_type')
+    if mimetype:
+      allowed_extension_list = []
+      for ext in guess_all_extensions(mimetype):
+        ext = ext.replace('.', '')
+        extension_list = mimemapper.getAllowedExtensionList(extension=ext,
+                                                 document_type=document_type)
+        for extension in extension_list:
+          if extension not in allowed_extension_list:
+            allowed_extension_list.append(extension)
+      return allowed_extension_list
+    elif extension:
+      extension = extension.replace('.', '')
+      return mimemapper.getAllowedExtensionList(extension=extension,
+                                                 document_type=document_type)
+    elif document_type:
+      return mimemapper.getAllowedExtensionList(document_type=document_type)
+    else:
+      return [('','')]
+
+  def run_convert(self, filename, file):
+    """Method to support the old API. Wrapper getFileMetadataItemList but 
+    returns a dict.
+    This is a Backwards compatibility provided for ERP5 Project, in order to
+    keep compatibility with OpenOffice.org Daemon. 
+    """
+    orig_format = filename.split('.')[-1]
+    try:
+      response_dict = {}
+      response_dict['meta'] = self.getFileMetadataItemList(file, orig_format, True)
+      response_dict['data'] = response_dict['meta']['Data'] 
+      del response_dict['meta']['Data']
+      return (200, response_dict, "")
+    except Exception, e:
+      logger.error(e)
+      return (402, {}, e.args[0])
+
+  def run_setmetadata(self, filename, file, meta):
+    """Wrapper updateFileMetadata but returns a dict.
+    This is a Backwards compatibility provided for ERP5 Project, in order to
+    keep compatibility with OpenOffice.org Daemon.
+    """
+    orig_format = filename.split('.')[-1]
+    response_dict = {}
+    try:
+      response_dict['data'] = self.updateFileMetadata(file, orig_format, meta)
+      return (200, response_dict, '')
+    except Exception, e:
+      logger.error(e)
+      return (402, {}, e.args[0])
+
+  def run_getmetadata(self, filename, file):
+    """Wrapper for getFileMetadataItemList.
+    This is a Backwards compatibility provided for ERP5 Project, in order to
+    keep compatibility with OpenOffice.org Daemon.
+    """
+    orig_format = filename.split('.')[-1]
+    response_dict = {}
+    try:
+      response_dict['meta'] = self.getFileMetadataItemList(file, orig_format)
+      return (200, response_dict, '')
+    except Exception, e:
+      logger.error(e)
+      return (402, {}, e.args[0])
+
+  def run_generate(self, filename, file, something, format, orig_format):
+    """Wrapper convertFile but returns a dict which includes mimetype. 
+    This is a Backwards compatibility provided for ERP5 Project, in order to keep
+    compatibility with OpenOffice.org Daemon.
+    """
+    orig_format = orig_format.split('.')[-1]
+    if "htm" in format:
+      zip = True
+    else:
+      zip = False
+    try:
+      response_dict = {}
+      response_dict['data'] = self.convertFile(file, orig_format, format, zip)
+      response_dict['mime'] = self.getFileMetadataItemList(response_dict['data'], 
+                                                            format)['MIMEType']
+      return (200, response_dict, "")
+    except Exception, e:
+      logger.error(e)
+      return (402, {}, e.args[0])
+
+  def getAllowedTargetItemList(self, content_type):
+    """Wrapper getAllowedExtensionList but returns a dict.
+    This is a Backwards compatibility provided for ERP5 Project, in order to
+    keep compatibility with OpenOffice.org Daemon.
+    """
+    response_dict = {}
+    try:
+      extension_list = self.getAllowedExtensionList({"mimetype": content_type})
+      response_dict['response_data'] = extension_list
+      return (200, response_dict, '')
+    except Exception, e:
+      logger.error(e)
+      return (402, {}, e.args[0])

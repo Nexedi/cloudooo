@@ -1,0 +1,37 @@
+#!/bin/sh
+
+lsb_functions="/etc/rc.d/init.d/functions"
+if test -f $lsb_functions ; then
+. $lsb_functions
+else
+  log_success_msg()
+  {
+    echo " SUCCESS! $@"
+  }
+  log_failure_msg()
+  {
+		echo " ERROR! $@"
+  }
+fi
+# complete path of the cloudooo folder
+FOLDER=$(cd $(dirname $0); pwd -P)/
+# get the pid of the cloudooo
+CLOUDOOO_PID=$FOLDER/paster.pid
+# complete path of this script
+SELF=$FOLDER$(basename $0)
+
+case "$1" in
+
+start)
+  paster serve ./samples/cloudooo.conf --daemon;;
+stop)
+  kill -1 `cat $CLOUDOOO_PID`;
+  paster serve ./samples/cloudooo.conf --stop-daemon;;
+restart)
+  $SELF stop;
+  $SELF start;;
+*)
+  echo "Usage: ./cloudooo {start|stop|restart}";
+  exit 1;;
+esac
+exit 0

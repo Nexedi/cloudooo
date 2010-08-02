@@ -1,0 +1,72 @@
+##############################################################################
+#
+# Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gmonnerat@iff.edu.br>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
+
+import unittest
+from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudooo.application.xvfb import Xvfb
+from cloudooo.utils import waitStopDaemon
+
+class TestXvfb(cloudoooTestCase):
+
+  def afterSetUp(self):
+    """Instanciate a xvfb object"""
+    self.xvfb = Xvfb()
+    self.xvfb.loadSettings(self.hostname,
+                          int(self.virtual_display_port_int),
+                          self.path_dir_run_cloudooo,
+                          self.virtual_display_id,
+                          virtual_screen='1')
+
+  def testPid(self):
+    """Test pid function to validate if the return is correctly"""
+    self.assertEquals(self.xvfb.pid(), None)
+    try:
+      self.xvfb.start()
+      self.assertNotEquals(self.xvfb.pid(), None)
+    finally:
+      self.xvfb.stop()
+      waitStopDaemon(self.xvfb)
+    self.assertEquals(self.xvfb.pid(), None)
+
+  def testStatus(self):
+    """Test if xvfb is started and stopped correctly"""
+    self.assertEquals(self.xvfb.status(), False)
+    try:
+      self.xvfb.start()
+      self.assertEquals(self.xvfb.status(), True)
+    finally:
+      self.xvfb.stop()
+      waitStopDaemon(self.xvfb)
+    self.assertEquals(self.xvfb.status(), False)
+
+def test_suite():
+  return make_suite(TestXvfb)
+
+if "__main__" == __name__:
+  suite = unittest.TestLoader().loadTestsFromTestCase(TestXvfb)
+  unittest.TextTestRunner(verbosity=2).run(suite)
