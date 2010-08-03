@@ -90,6 +90,9 @@ def application(global_config, **local_config):
   document_url = path.join(path.dirname(__file__),                                                                                     
                               "tests/data/%s" % document_name)
 
+  cloudooo_path = path.abspath(path.dirname(__file__))
+  unoconverter_bin_path = path.join(cloudooo_path, "bin", "unoconverter.py")
+  unomimemapper_bin_path = path.join(cloudooo_path, "bin", "unomimemapper.py")
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname, 
                           openoffice_port,
@@ -98,9 +101,9 @@ def application(global_config, **local_config):
                           local_config.get('office_bin_path'), 
                           local_config.get('uno_path'),
                           document_url=document_url,
-                          unoconverter_bin=local_config.get('unoconverter_bin'),
+                          unoconverter_bin=unoconverter_bin_path,
                           python_path=local_config.get('python_path'),
-                          unomimemapper_bin=local_config.get('unomimemapper_bin'))
+                          unomimemapper_bin=unomimemapper_bin_path)
   openoffice.start()
 
   monitor.load(local_config)
@@ -112,14 +115,14 @@ def application(global_config, **local_config):
   openoffice.acquire()
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port,
-                            unomimemapper_bin=local_config.get('unomimemapper_bin'),
+                            unomimemapper_bin=unomimemapper_bin_path,
                             python_path=local_config.get('python_path'))
   openoffice.release()
 
   from manager import Manager
   timeout_response = int(local_config.get('timeout_response'))
   kw = dict(timeout=timeout_response,
-        unoconverter_bin=local_config.get('unoconverter_bin'),
+        unoconverter_bin=unoconverter_bin_path,
         python_path=local_config.get('python_path'))
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

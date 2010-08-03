@@ -45,13 +45,13 @@ def make_suite(test_case):
   suite.addTest(unittest.makeSuite(test_case))
   return suite
 
-def loadConfig(path):
-  config.read(path)
+def loadConfig(path=None):
+  conf_path = path or join(testcase_path, "..", "samples/cloudooo.conf")
+  config.read()
 
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
-  server_conf_path = conf_path or join(testcase_path, "..", "samples/cloudooo.conf")
-  loadConfig(server_conf_path)
+  loadConfig(conf_path)
   uno_path = config.get("app:main", "uno_path")
   path_dir_run_cloudooo = config.get("app:main", "path_dir_run_cloudooo")
   virtual_display_id = int(config.get("app:main", "virtual_display_id"))
@@ -115,6 +115,7 @@ class cloudoooTestCase(unittest.TestCase):
   def setUp(self):
     """Creates a environment to run the tests. Is called always before the
     tests."""
+    loadConfig()
     self.hostname = config.get("server:main", "host")
     self.cloudooo_port = config.get("server:main", "port")
     self.openoffice_port = config.get("app:main", "openoffice_port")
