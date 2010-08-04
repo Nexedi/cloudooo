@@ -4,7 +4,7 @@ from os.path import realpath, exists, join, dirname
 from os import symlink, unlink
 from shutil import copyfile
 
-version = '0.6'
+version = '1.0'
 
 setup(name='cloudooo',
       version=version,
@@ -32,6 +32,7 @@ setup(name='cloudooo',
           'PasteScript',
           'WSGIUtils',
           'jsonpickle',
+          'psutil',
       ],
       entry_points="""
       # -*- Entry points: -*-
