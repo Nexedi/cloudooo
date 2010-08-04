@@ -93,6 +93,10 @@ class UnoConverter(object):
       property_list.append(property)
       property = ooolib.createProperty("FilterName", filter_name)
       property_list.append(property)
+      if destination_format == "html":
+        # XXX - condition to obtain a property that returns all images in png
+        # format
+        property_list.append(ooolib.createHTMLProperty())
       return property_list
     else:
       return ()
@@ -109,11 +113,13 @@ class UnoConverter(object):
     self.document_type = module_manager.identify(uno_document)
     self.document_loaded = uno_document
  
-  def convert(self, destination_format=None):
-    """ """
+  def convert(self, output_format=None):
+    """it converts a document to specific format"""
+    destination_format = "impr.html" if output_format == "html" else output_format
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.document_dir_path)
-    property_list = self._getPropertyToExport(destination_format)
+
+    property_list = self._getPropertyToExport(output_format)
     try:
       self.document_loaded.storeToURL(ooolib.systemPathToFileUrl(output_url),
          tuple(property_list))

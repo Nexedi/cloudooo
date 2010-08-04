@@ -60,6 +60,19 @@ def createProperty(name, value):
   property.Value = value
   return property
 
+# XXX - method duplicated
+def createHTMLProperty():
+  """Returns a property to create all images in png format"""
+  setUpUnoEnvironment()
+  import uno
+  from com.sun.star.beans import PropertyValue
+
+  property = PropertyValue('FilterData', 0, 
+      uno.Any('[]com.sun.star.beans.PropertyValue',
+        (PropertyValue('IsExportNotes', 0, True, 0),
+          PropertyValue('Format', 0, 2, 0),),), 0) # PNG format
+  return property
+
 def getServiceManager(host, port):
   """Get the ServiceManager from the running OpenOffice.org."""
   setUpUnoEnvironment()

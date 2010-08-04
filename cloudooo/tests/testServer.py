@@ -32,6 +32,7 @@ from subprocess import Popen, PIPE
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
 from cloudoooTestCase import cloudoooTestCase, make_suite
+from zipfile import ZipFile, is_zipfile
 from types import DictType
 
 class TestServer(cloudoooTestCase):
@@ -421,6 +422,15 @@ at least v2.0 to extract\n'
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
     self.assertEquals(response_dict['mime'], 'text/html')
+    output_url = "./output/zip.zip"
+    open(output_url, 'w').write(decodestring(response_dict['data']))
+    self.assertTrue(is_zipfile(output_url))
+    filename_list = [file.filename for file in ZipFile(output_url).filelist]
+    for filename in filename_list:
+      if filename.endswith("impr.html"):
+        break
+    else:
+      self.fail("Not exists one file with 'impr.html' format")
 
   def testRunGenerateMethodConvertOdpToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
