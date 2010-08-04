@@ -143,7 +143,12 @@ class Manager(object):
     try:
       response_dict = {}
       response_dict['meta'] = self.getFileMetadataItemList(file, orig_format, True)
+      response_dict['meta']['MIMEType'] = self.getFileMetadataItemList(response_dict['meta']['Data'], 
+                                                                        orig_format)['MIMEType']
+      # XXX - Backward compatibility: Previous API expects 'mime' now we use 'MIMEType'"
+      response_dict['meta']['mime'] = response_dict['meta']['MIMEType']
       response_dict['data'] = response_dict['meta']['Data'] 
+      response_dict['mime'] = response_dict['meta']['MIMEType']
       del response_dict['meta']['Data']
       return (200, response_dict, "")
     except Exception, e:
@@ -173,6 +178,8 @@ class Manager(object):
     response_dict = {}
     try:
       response_dict['meta'] = self.getFileMetadataItemList(file, orig_format)
+      # XXX - Backward compatibility: Previous API expects 'title' now we use 'Title'"
+      response_dict['meta']['title'] = response_dict['meta']['Title']
       return (200, response_dict, '')
     except Exception, e:
       logger.error(e)
@@ -191,7 +198,13 @@ class Manager(object):
     try:
       response_dict = {}
       response_dict['data'] = self.convertFile(file, orig_format, format, zip)
-      response_dict['mime'] = self.getFileMetadataItemList(response_dict['data'], 
+      # FIXME: Fast solution to obtain the html or pdf mimetypes
+      if format == "html":
+        response_dict['mime'] = "text/html"
+      elif format == "pdf":
+        response_dict['mime'] = "application/pdf"
+      else:
+        response_dict['mime'] = self.getFileMetadataItemList(response_dict['data'], 
                                                             format)['MIMEType']
       return (200, response_dict, "")
     except Exception, e:

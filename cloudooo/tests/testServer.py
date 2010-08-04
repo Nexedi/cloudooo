@@ -382,9 +382,10 @@ at least v2.0 to extract\n'
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
     self.assertEquals(sorted(response_dict.keys()),
-                    ['data', 'meta'])
+                              ['data', 'meta', 'mime'])
     self.assertEquals(response_message, '')
-    self.assertEquals(response_dict['meta']['MIMEType'], 'application/msword')
+    self.assertEquals(response_dict['meta']['MIMEType'],
+                              'application/vnd.oasis.opendocument.text')
 
   def testRunConvertFailResponse(self):
     """Test run_convert method with invalid file"""
@@ -401,13 +402,38 @@ at least v2.0 to extract\n'
     data = open(join('data','test.odt'),'r').read()
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
-                                      None, 'odt', 'pdf')
+                                      None, 'pdf', 'odt')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
-    self.assertEquals(response_dict['mime'], 
-                    'application/vnd.oasis.opendocument.text')
+    self.assertEquals(response_dict['mime'], 'application/pdf')
+
+  def testRunGenerateMethodConvertOdsToHTML(self):
+    """Test run_generate method. This test is to validate a bug convertions to
+    html"""
+    data = open(join('data','test.ods'),'r').read()
+    generate_result = self.proxy.run_generate('test.ods',
+                                      encodestring(data),
+                                      None, 'html', 'ods')
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertNotEquals(response_dict['data'], '')
+    self.assertEquals(response_dict['mime'], 'text/html')
+
+  def testRunGenerateMethodConvertOdpToHTML(self):
+    """Test run_generate method. This test is to validate a bug convertions to
+    html"""
+    data = open(join('data','test.odp'),'r').read()
+    generate_result = self.proxy.run_generate('test.odp',
+                                      encodestring(data),
+                                      None, 'html', 'odp')
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertNotEquals(response_dict['data'], '')
+    self.assertEquals(response_dict['mime'], 'text/html')
 
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
