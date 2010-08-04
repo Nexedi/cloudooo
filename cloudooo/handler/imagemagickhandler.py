@@ -1,7 +1,7 @@
 ##############################################################################
 #
 # Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
-#                    Gabriel M. Monnerat <gmonnerat@iff.edu.br>
+#                    Gabriel M. Monnerat <gabriel@tiolive.com>
 #                    Rafael Monnerat <rafael@nexedi.com>
 #
 # WARNING: This program as such is intended to be used by professional
