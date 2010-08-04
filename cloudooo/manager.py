@@ -199,7 +199,9 @@ class Manager(object):
       response_dict = {}
       response_dict['data'] = self.convertFile(file, orig_format, format, zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
-      if format == "html":
+      if zip:
+        response_dict['mime'] = "application/zip"
+      elif format == "html":
         response_dict['mime'] = "text/html"
       elif format == "pdf":
         response_dict['mime'] = "application/pdf"
