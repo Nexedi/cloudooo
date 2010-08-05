@@ -115,7 +115,10 @@ class UnoConverter(object):
  
   def convert(self, output_format=None):
     """it converts a document to specific format"""
-    destination_format = "impr.html" if output_format == "html" else output_format
+    if output_format in ("html", "htm", "xhtml"):
+      destination_format = "impr.html"
+    else:
+      destination_format = output_format
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.document_dir_path)
 
