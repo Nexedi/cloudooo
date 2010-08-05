@@ -190,13 +190,18 @@ class Manager(object):
     This is a Backwards compatibility provided for ERP5 Project, in order to keep
     compatibility with OpenOffice.org Daemon.
     """
+    # XXX - ugly way to remove "/" and "."
     orig_format = orig_format.split('.')[-1]
+    orig_format = orig_format.split('/')[-1]
     if "htm" in format:
       zip = True
     else:
       zip = False
     try:
       response_dict = {}
+      # XXX - use html format instead of xhtml
+      if orig_format == "presentation" and format == "xhtml":
+        format = 'html'
       response_dict['data'] = self.convertFile(file, orig_format, format, zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
       if zip:
@@ -222,6 +227,10 @@ class Manager(object):
     try:
       extension_list = self.getAllowedExtensionList({"mimetype": content_type})
       response_dict['response_data'] = extension_list
+      # XXX - procedure to remove duplicate filters
+      for data in response_dict['response_data']:
+        if data[0] == "html":
+          response_dict['response_data'].remove(data)
       return (200, response_dict, '')
     except Exception, e:
       logger.error(e)
