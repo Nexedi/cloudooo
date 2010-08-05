@@ -421,7 +421,7 @@ at least v2.0 to extract\n'
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
-    self.assertEquals(response_dict['mime'], 'text/html')
+    self.assertEquals(response_dict['mime'], 'application/zip')
     output_url = "./output/zip.zip"
     open(output_url, 'w').write(decodestring(response_dict['data']))
     self.assertTrue(is_zipfile(output_url))
@@ -443,7 +443,17 @@ at least v2.0 to extract\n'
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
-    self.assertEquals(response_dict['mime'], 'text/html')
+    self.assertEquals(response_dict['mime'], 'application/zip')
+    output_url = "./output/zip.zip"
+    open(output_url, 'w').write(decodestring(response_dict['data']))
+    self.assertTrue(is_zipfile(output_url))
+    filename_list = [file.filename for file in ZipFile(output_url).filelist]
+    for filename in filename_list:
+      if filename.endswith("impr.html"):
+        break
+    else:
+      self.fail("Not exists one file with 'impr.html' format")
+
 
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""

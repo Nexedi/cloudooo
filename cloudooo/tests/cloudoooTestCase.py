@@ -47,7 +47,7 @@ def make_suite(test_case):
 
 def loadConfig(path=None):
   conf_path = path or join(testcase_path, "..", "samples/cloudooo.conf")
-  config.read()
+  config.read(conf_path)
 
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
