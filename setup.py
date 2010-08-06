@@ -35,8 +35,10 @@ setup(name='cloudooo',
           'psutil',
       ],
       entry_points="""
-      # -*- Entry points: -*-
       [paste.app_factory]
       main = cloudooo.cloudooo:application
+      [console_scripts]
+      unoconverter.py = cloudooo.bin.unoconverter:main
+      unomimemapper.py = cloudooo.bin.unomimemapper:main
       """,
       )
