@@ -93,10 +93,7 @@ class UnoConverter(object):
       property_list.append(property)
       property = ooolib.createProperty("FilterName", filter_name)
       property_list.append(property)
-      if "htm" in destination_format:
-        # XXX - condition to obtain a property that returns all images in png
-        # format
-        property_list.append(ooolib.createHTMLProperty())
+      property_list.extend(ooolib.createSpecificProperty(filter_name))
       return property_list
     else:
       return ()

@@ -61,17 +61,30 @@ def createProperty(name, value):
   return property
 
 # XXX - method duplicated
-def createHTMLProperty():
-  """Returns a property to create all images in png format"""
+def createSpecificProperty(filter_name):
+  """Creates a property according to the filter"""
   setUpUnoEnvironment()
   import uno
   from com.sun.star.beans import PropertyValue
+  if filter_name == "impress_html_Export":
+    property = PropertyValue('FilterData', 0, 
+                        uno.Any('[]com.sun.star.beans.PropertyValue',
+                        (PropertyValue('IsExportNotes', 0, True, 0),
+                        PropertyValue('Format', 0, 2, 0),),), 0)
+  elif filter_name == "impress_pdf_Export":
+    property = PropertyValue('FilterData', 0,
+                       uno.Any('[]com.sun.star.beans.PropertyValue',
+                       (PropertyValue('ExportNotesPages', 0, True, 0),),), 0)
+  elif filter_name == "draw_html_Export":
+    property = PropertyValue('FilterData', 0,
+                        uno.Any('[]com.sun.star.beans.PropertyValue',
+                                (PropertyValue('Format', 0, 2, 0),),), 0)
+  elif filter_name == "Text (encoded)":
+    property = PropertyValue('FilterFlags', 0, 'UTF8,LF', 0)
+  else:
+    return []
 
-  property = PropertyValue('FilterData', 0, 
-      uno.Any('[]com.sun.star.beans.PropertyValue',
-        (PropertyValue('IsExportNotes', 0, True, 0),
-          PropertyValue('Format', 0, 2, 0),),), 0) # PNG format
-  return property
+  return [property,]
 
 def getServiceManager(host, port):
   """Get the ServiceManager from the running OpenOffice.org."""
