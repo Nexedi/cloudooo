@@ -9,6 +9,7 @@ Python Dependencies
  - WSGIUtils 
  - PasteDeploy
  - PasteScript
+ - psutil
  
 Instalation in Mandriva:
  - urpmi xvfb

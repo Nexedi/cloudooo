@@ -34,7 +34,7 @@ from os import listdir, remove
 from shutil import rmtree
 import logging
 
-logger = logging.getLogger('Oood')
+logger = logging.getLogger('Cloudooo')
 
 def removeDirectory(path):
   """Remove directory"""

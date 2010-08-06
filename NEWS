@@ -1,6 +1,9 @@
+1.0
+===
+  - Fix basic compatibilities with the ERP5
 0.6
 ===
-  - removed the configurationmanager.py.
+  - Removed the configurationmanager.py.
 0.5
 ===
   - Removed the possibility of infinite loop in getAvailableOO. 
