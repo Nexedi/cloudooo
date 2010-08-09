@@ -40,16 +40,22 @@ Create Configuration File
   The configuration file is used to start the application using paster.
   $ cp ./cloudooo/samples/cloudooo.conf . # Copy to current folder
   
-  Next steps is:
+  The next step is define some attributes in cloudooo.conf:
  
-    - Replace the paths of UNO and soffice to OpenOffice.org path in your machine;
-    - Define the python path in python_path;
-    - Define the path to unoconverter.py and unomimemapper.py # This files are created when setup.py is executed
+    - uno and soffice path;
+    - python path;
+    - unomimemapper.py and unoconverter.py paths;# This files are created when setup.py is executed;
+    - user and group; 
+    - paster path in first line;
+
+  After setting all configuration, give executable permission to this file.
+
+    $ chmod +x cloudooo.conf
 
 Run Application
 ===============
 
-  $ paster serve ./cloudooo.conf
+  $ ./cloudooo.conf
   
 
 Description of Daemon
