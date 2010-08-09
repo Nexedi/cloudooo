@@ -1,13 +1,14 @@
 Install Cloudooo
 ================
-
+  
   $ python2.6 setup.py install
+  
+  Warning: you must have installed setuptools>=0.6c11 in this python.
 
- 
 Install Dependencies in Mandriva
 ================================
- $ urpmi xvfb python-setuptools # System Dependencies
- $ easy_install-2.6 zope.interface PasteDeploy PasteScript WSGIUtils psutil # Python Dependencies
+  
+  $ urpmi xvfb # System Dependencies
 
 Install OpenOffice.org
 ======================
@@ -33,13 +34,23 @@ Install OpenOffice.org
     
     The instalation is in /opt
 
+Create Configuration File
+=========================
+  
+  The configuration file is used to start the application using paster.
+  $ cp ./cloudooo/samples/cloudooo.conf . # Copy to current folder
+  
+  Next steps is:
+ 
+    - Replace the paths of UNO and soffice to OpenOffice.org path in your machine;
+    - Define the python path in python_path;
+    - Define the path to unoconverter.py and unomimemapper.py # This files are created when setup.py is executed
 
-How to use
-----------
+Run Application
+===============
 
-- Start the Daemon
-
-   ./cloudooo start
+  $ paster serve ./cloudooo.conf
+  
 
 Description of Daemon
 ---------------------
