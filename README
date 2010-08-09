@@ -55,7 +55,7 @@ Create Configuration File
 Run Application
 ===============
 
-  $ ./cloudooo.conf
+  $ ./cloudooo.conf start
   
 
 Description of Daemon
