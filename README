@@ -1,28 +1,38 @@
-Install Dependencies
---------------------
+Install Cloudooo
+================
 
-System Dependencies
- - Xvfb
+  $ python2.6 setup.py install
 
-Python Dependencies
- - zope.interface
- - WSGIUtils 
- - PasteDeploy
- - PasteScript
- - psutil
  
-Instalation in Mandriva:
- - urpmi xvfb
- - urpmi python-setuptools
- - easy_install-2.6 zope.interface PasteDeploy PasteScript WSGIUtils
+Install Dependencies in Mandriva
+================================
+ $ urpmi xvfb python-setuptools # System Dependencies
+ $ easy_install-2.6 zope.interface PasteDeploy PasteScript WSGIUtils psutil # Python Dependencies
 
-Instalation of Openoffice
+Install OpenOffice.org
+======================
 
-  Was used for testing the package's official openoffice.Follow these steps to install:
-    - Download the package from the official site;
-    - unpack the tar.gz and Install;
+  Was used for testing the package's official openoffice.org. Follow these steps to install:
+  
+  Download Package from the official site
+  ---------------------------------------
+  
+  x86_32
+  ----
+    $ wget http://download.services.openoffice.org/files/stable/3.2.0/OOo_3.2.0_LinuxIntel_install_wJRE_en-US.tar.gz
+  
+  x86_64
+  ------
+    $ wget http://download.services.openoffice.org/files/stable/3.2.0/OOo_3.2.0_LinuxX86-64_install_wJRE_en-US.tar.gz
 
-  The instalation is in /opt
+  Unpack the tar.gz and Install
+  -----------------------------
+    $ tar zxvf OOo_3.2.0_LinuxX86-64_install_wJRE_en-US.tar.gz
+    $ cd OOO320_m12_native_packed-1_en-US.9483/RPMS
+    $ rpm -i *.rpm # install all packages together
+    
+    The instalation is in /opt
+
 
 How to use
 ----------

@@ -4,13 +4,12 @@ from os.path import realpath, exists, join, dirname
 from os import symlink, unlink
 from shutil import copyfile
 
-version = '1.0'
+version = '1.0.1'
 
 setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
-      long_description="""\
-""",
+      long_description=open("README").read(),
       classifiers=["Topic :: System :: Networking",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
