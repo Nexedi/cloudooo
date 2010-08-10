@@ -39,23 +39,21 @@ Create Configuration File
   
   The configuration file is used to start the application using paster.
   $ cp ./cloudooo/samples/cloudooo.conf . # Copy to current folder
-  
+  $ cp ./cloudooo/cloudooo ./cloudooo.sh  
+
   The next step is define some attributes in cloudooo.conf:
  
     - uno and soffice path;
     - python path;
     - unomimemapper.py and unoconverter.py paths;# This files are created when setup.py is executed;
-    - user and group; 
-    - paster path in first line;
 
-  After setting all configuration, give executable permission to this file.
-
-    $ chmod +x cloudooo.conf
-
+  After setting all configuration, need pass to cloudooo script the paster and configutation file path. 
+  So, replace $CONF_PATH and $PASTER_PATH to your machine paths.
+    
 Run Application
 ===============
 
-  $ ./cloudooo.conf start
+  $ ./cloudooo.sh start
   
 
 Description of Daemon

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+$PASTER_PATH="paster"
+$CONF_PATH="./samples/cloudooo.conf"
+
 lsb_functions="/etc/rc.d/init.d/functions"
 if test -f $lsb_functions ; then
 . $lsb_functions
@@ -23,13 +26,15 @@ SELF=$FOLDER$(basename $0)
 case "$1" in
 
 start)
-  paster serve ./samples/cloudooo.conf --daemon;;
+  $PASTER_PATH serve $CONF_PATH --daemon;;
 stop)
   kill -1 `cat $CLOUDOOO_PID`;
-  paster serve ./samples/cloudooo.conf --stop-daemon;;
+  $PASTER_PATH serve $CONF_PATH --stop-daemon;;
 restart)
   $SELF stop;
   $SELF start;;
+fg)
+  $PASTER_PATH serve $CONF_PATH;;
 *)
   echo "Usage: ./cloudooo {start|stop|restart}";
   exit 1;;
