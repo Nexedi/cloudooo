@@ -42,7 +42,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.path_dir_run_cloudooo,
                                 self.virtual_display_id,
                                 self.office_bin_path,
-                                self.uno_path)
+                                self.uno_path,
+                                openoffice_tester_bin=self.openoffice_tester_bin)
     self.openoffice.start()
 
   def tearDown(self):

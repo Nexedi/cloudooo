@@ -42,6 +42,7 @@ class TestServer(cloudoooTestCase):
     """Creates a connection with cloudooo server"""
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
+
     self.text_expected_list = [['doc', 'Microsoft Word 6.0'], 
         ['doc', 'Microsoft Word 95'], 
         ['doc', 'Microsoft Word 97/2000/XP'], 
@@ -116,19 +117,24 @@ class TestServer(cloudoooTestCase):
     text_request = {'document_type':"text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     text_allowed_list.sort()
-    self.assertEquals(text_allowed_list, self.text_expected_list)
+    for arg in text_allowed_list:
+      self.assertTrue(arg in self.text_expected_list, 
+                    "%s not in %s" % (arg, self.text_expected_list))
     request_dict = {'document_type':"presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     presentation_allowed_list.sort()
-    self.assertEquals(presentation_allowed_list, 
-        self.presentation_expected_list)
+    for arg in presentation_allowed_list:
+      self.assertTrue(arg in self.presentation_expected_list, 
+                    "%s not in %s" % (arg, self.presentation_expected_list))
   
   def testGetAllowedExtensionListByExtension(self):  
     """Call getAllowedExtensionList and verify if the returns is a list with
     extension and ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension':"doc"})
     doc_allowed_list.sort()
-    self.assertEquals(doc_allowed_list, self.text_expected_list)
+    for arg in doc_allowed_list:
+      self.assertTrue(arg in self.text_expected_list, 
+                    "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedExtensionListByMimetype(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
@@ -136,7 +142,9 @@ class TestServer(cloudoooTestCase):
     request_dict = {"mimetype":"application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     msword_allowed_list.sort()
-    self.assertEquals(msword_allowed_list, self.text_expected_list)
+    for arg in msword_allowed_list:
+      self.assertTrue(arg in self.text_expected_list, 
+                    "%s not in %s" % (arg, self.text_expected_list))
 
   def testConvertDocToOdt(self):
     """Test Convert Doc -> Odt"""
@@ -469,7 +477,6 @@ at least v2.0 to extract\n'
 
   def testRunSetMetadata(self):
     """Test run_setmetadata method"""
-    document_output_url = "output/testSetMetadata.odt"
     data = open(join('data','testMetadata.odt'),'r').read()
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
                           encodestring(data),
@@ -487,7 +494,6 @@ at least v2.0 to extract\n'
   
   def testRunSetMetadataFailResponse(self):
     """Test run_setmetadata method with invalid document"""
-    document_output_url = "output/testSetMetadata.odt"
     data = open(join('data','testMetadata.odt'),'r').read()[:100]
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
                           encodestring(data),
@@ -503,12 +509,15 @@ at least v2.0 to extract\n'
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    self.assertEquals(len(response_dict['response_data']), 35)
+    self.assertEquals(len(response_dict['response_data']), 28)
     self.assertTrue(['htm', 'HTML Document'] in response_dict['response_data'])
 
 def test_suite():
   return make_suite(TestServer)
   
 if __name__ == "__main__":
+  import sys
+  from cloudoooTestCase import loadConfig
+  loadConfig(sys.argv[1])
   suite = unittest.TestLoader().loadTestsFromTestCase(TestServer)
   unittest.TextTestRunner(verbosity=2).run(suite)

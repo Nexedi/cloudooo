@@ -60,6 +60,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
   office_bin_path = config.get("app:main", "office_bin_path")
+  openoffice_tester_bin = config.get("app:main", "openoffice_tester_bin")
+
   if not environ.get('uno_path'):
     environ['uno_path'] = uno_path
   
@@ -88,7 +90,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                             path_dir_run_cloudooo,
                             virtual_display_id,
                             office_bin_path, 
-                            uno_path)
+                            uno_path,
+                            openoffice_tester_bin=openoffice_tester_bin)
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
@@ -128,6 +131,7 @@ class cloudoooTestCase(unittest.TestCase):
     self.python_path = config.get("app:main", "python_path")
     self.virtual_display_id = config.get("app:main", "virtual_display_id")
     self.virtual_display_port_int = config.get("app:main", "virtual_display_port")
+    self.openoffice_tester_bin = config.get("app:main", "openoffice_tester_bin")
     self.afterSetUp()
 
   def afterSetUp(self):

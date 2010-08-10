@@ -138,7 +138,7 @@ presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('wmf', 'WMF - Windows Metafile'),
     ('xhtml', 'XHTML'), ('xpm', 'XPM - X PixMap'))
 
-spreadsheet_expected_tuple = (('csv', 'Text CSV'), 
+spreadsheet_expected_list = (('csv', 'Text CSV'), 
     ('htm', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'XHTML'), ('ods', 'ODF Spreadsheet'),
@@ -254,32 +254,31 @@ class TestMimeMapper(cloudoooTestCase):
     """Test if function getAllowedExtensionList returns correctly a list with 
     extensions that can generate with extension passed."""
     doc_got_list = list(self.mimemapper.getAllowedExtensionList('doc'))
-    doc_got_list.sort()
-    text_expected_list = list(text_expected_tuple)
-    text_expected_list.sort()
-    self.assertEquals(doc_got_list, text_expected_list)
+    for arg in doc_got_list:
+      self.assertTrue(arg in text_expected_tuple,
+              "%s not in %s" % (arg, text_expected_tuple))
     jpeg_got_list = list(self.mimemapper.getAllowedExtensionList('jpeg'))
-    jpeg_got_list.sort()
     jpeg_expected_list = list(set(presentation_expected_tuple + 
         drawing_expected_tuple))
-    jpeg_expected_list.sort()
-    self.assertEquals(jpeg_got_list, jpeg_expected_list)
+    for arg in jpeg_got_list:
+      self.assertTrue(arg in jpeg_expected_list,
+              "%s not in %s" % (arg, jpeg_expected_list))
     pdf_got_list = list(self.mimemapper.getAllowedExtensionList('pdf'))
-    pdf_got_list.sort()
     pdf_expected_list = list(set(presentation_expected_tuple +
       drawing_expected_tuple + web_expected_tuple + global_expected_tuple + 
-      math_expected_tuple + text_expected_tuple + spreadsheet_expected_tuple))
-    pdf_expected_list.sort()
-    self.assertEquals(pdf_got_list, pdf_expected_list)
-  
+      math_expected_tuple + text_expected_tuple + spreadsheet_expected_list))
+    for arg in pdf_got_list:
+      self.assertTrue(arg in pdf_expected_list,
+              "%s not in %s" % (arg, pdf_expected_list))
+
   def testGetAllowedExtensionListForText(self):
     """Passing document_type equal to 'text', the return must be equal
     to text_expected_tuple."""
     got_list = list(self.mimemapper.getAllowedExtensionList(document_type='text'))
-    got_list.sort()
     text_expected_list = list(text_expected_tuple)
-    text_expected_list.sort()
-    self.assertEquals(got_list, text_expected_list)
+    for arg in got_list:
+      self.assertTrue(arg in text_expected_list,
+              "%s not in %s" % (arg, text_expected_list))
 
   def testGetAllowedExtensionListForGlobal(self):
     """Passing document_type equal to 'global', the return must be equal
@@ -294,10 +293,11 @@ class TestMimeMapper(cloudoooTestCase):
     """Passing document_type equal to 'drawing', the return must be equal
     to drawing_expected_tuple."""
     got_list = list(self.mimemapper.getAllowedExtensionList(document_type='drawing'))
-    got_list.sort()
     drawing_expected_list = list(drawing_expected_tuple)
     drawing_expected_list.sort()
-    self.assertEquals(got_list, drawing_expected_list)
+    for arg in got_list:
+      self.assertTrue(arg in drawing_expected_list, 
+          "%s not in %s" % (arg, drawing_expected_list))
 
   def testGetAllAllowedExtensionListForWeb(self):
     """Passing document_type equal to 'web', the return must be equal
@@ -313,16 +313,19 @@ class TestMimeMapper(cloudoooTestCase):
     to presentation_expected_tuple."""
     got_list = \
         list(self.mimemapper.getAllowedExtensionList(document_type='presentation'))
-    got_list.sort()
     presentation_expected_list = list(presentation_expected_tuple)
     presentation_expected_list.sort()
-    self.assertEquals(got_list, presentation_expected_list)
+    for arg in got_list:
+      self.assertTrue(arg in presentation_expected_list, 
+          "%s not in %s" % (arg, presentation_expected_list))
 
   def testGetAllAllowedExtensionListForSpreadsheet(self):
     """Passing document_type equal to 'spreadsheet', the return must be equal
-    to spreadsheet_expected_tuple."""
-    got_tuple = self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')
-    self.assertEquals(sorted(got_tuple), sorted(spreadsheet_expected_tuple))
+    to spreadsheet_expected_list."""
+    got_list = self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')
+    for arg in got_list:
+      self.assertTrue(arg in spreadsheet_expected_list, 
+          "%s not in %s" % (arg, spreadsheet_expected_list))
 
   def testGetAllAllowedExtensionListForChart(self):
     """Passing document_type equal to 'chart', the return must be equal

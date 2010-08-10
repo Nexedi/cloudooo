@@ -28,7 +28,6 @@
 
 import unittest
 from cloudooo.application.application import Application
-from os.path import exists
 from cloudoooTestCase import make_suite
 
 class TestApplication(unittest.TestCase):
@@ -44,7 +43,6 @@ class TestApplication(unittest.TestCase):
     self.assertEquals(self.application.port, 9999)
     self.assertEquals(self.application.path_run_dir, '/tmp/')
     self.assertEquals(self.application.display_id, '99')
-    self.assertEquals(self.application.pid_filepath, "/tmp/application.pid")
  
   def testStartTimeout(self):
     """Test if the attribute timeout is defined correctly"""
@@ -60,13 +58,6 @@ class TestApplication(unittest.TestCase):
   def testPid(self):
     """As the application do not have the pid() should return None"""
     self.assertEquals(self.application.pid(), None)
-
-  def testStart(self):
-    """ """
-    self.application.start()
-    self.assertEquals(exists(self.application.pid_filepath), True)
-    self.application.stop()
-    self.assertEquals(exists(self.application.pid_filepath), False)
 
 def test_suite():
   return make_suite(TestApplication)
