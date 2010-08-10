@@ -30,6 +30,7 @@ import jsonpickle
 from os import environ
 from subprocess import Popen, PIPE
 from cloudooo.application.openoffice import openoffice
+from cloudooo.application.xvfb import xvfb
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.mimemapper import mimemapper
@@ -111,6 +112,7 @@ class OOHandler:
   def _callUnoConverter(self, *feature_list, **kw):
     """ """
     if not openoffice.status():
+      xvfb.restart()
       openoffice.start()
     command = self._getCommand(*feature_list, **kw)
     stdout, stderr = self._subprocess(command)

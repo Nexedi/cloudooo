@@ -33,6 +33,7 @@ from threading import Lock
 from cloudooo.ooolib import setUpUnoEnvironment
 from zope.interface import implements
 from application import Application
+from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon,\
     removeDirectory, waitStopDaemon, convertStringToBool
@@ -108,6 +109,8 @@ class OpenOffice(Application):
 
   def start(self):
     """Start Instance."""
+    if not xvfb.status():
+      xvfb.restart()
     self.path_user_installation = join(self.path_run_dir, \
         "cloudooo_instance_%s" % self.port)
     if exists(self.path_user_installation):
