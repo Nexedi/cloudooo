@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-from os import environ, remove
+from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
@@ -34,7 +34,8 @@ from cloudooo.ooolib import setUpUnoEnvironment
 from zope.interface import implements
 from application import Application
 from cloudooo.interfaces.lockable import ILockable
-from cloudooo.utils import logger, waitStartDaemon, removeDirectory, waitStopDaemon
+from cloudooo.utils import logger, waitStartDaemon,\
+    removeDirectory, waitStopDaemon, convertStringToBool
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -56,25 +57,19 @@ class OpenOffice(Application):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
     command = [self.python_path
-              , self.unoconverter_bin
-              , "--test"
+              , self.openoffice_tester_bin
               , "--hostname=%s" % host
               , "--port=%s" % port
-              , "--document_url=%s" % self.document_url
-              , "--unomimemapper_bin=%s" % self.unomimemapper_bin
-              , "--python_path=%s" % self.python_path
-              , "--uno_path=%s" % self.uno_path
-              , "--office_bin_path=%s" % self.office_bin_path]
+              , "--uno_path=%s" % self.uno_path]
     logger.debug("Testing Openoffice Instance %s" % port)
     stdout, stderr = Popen(" ".join(command), shell=True, stdout=PIPE,
-        stderr=PIPE).communicate()
-    if not stdout and stderr != "":
-      logger.debug(stderr)
+        stderr=PIPE, close_fds=True).communicate()
+    stdout_bool = convertStringToBool(stdout.replace("\n",""))
+    if stdout_bool and stderr != "":
+      logger.debug("%s\n%s" % (stderr, stdout))
       return False
     else:
-      url = stdout.replace("\n", "")
       logger.debug("Instance %s works" % port)
-      remove(url)
       return True
 
   def _cleanRequest(self):
@@ -99,6 +94,7 @@ class OpenOffice(Application):
     self.unoconverter_bin = kw.get("unoconverter_bin", "unoconverter")
     self.python_path = kw.get('python_path', 'python')
     self.unomimemapper_bin = kw.get("unomimemapper_bin")
+    self.openoffice_tester_bin = kw.get("openoffice_tester_bin")
 
   def _start_process(self, command, env):
     """Start OpenOffice.org process"""
@@ -108,10 +104,7 @@ class OpenOffice(Application):
                       close_fds=True,
                       env=env)
     waitStartDaemon(self, self.timeout)
-    if exists(self.document_url):
-      return self._testOpenOffice(self.hostname, self.port)
-
-    return True
+    return self._testOpenOffice(self.hostname, self.port)
 
   def start(self):
     """Start Instance."""

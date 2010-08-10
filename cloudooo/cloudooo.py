@@ -67,10 +67,9 @@ def application(global_config, **local_config):
   gc.enable()
   debug_mode = convertStringToBool(local_config.get('debug_mode'))
   configureLogger(debug_mode=debug_mode)
-  document_name = local_config.get("document_name")
   # path of directory to run cloudooo
   path_dir_run_cloudooo = local_config.get('path_dir_run_cloudooo')
-  cleanDirectory(path_dir_run_cloudooo, ignore_list=["tmp", document_name]) 
+  cleanDirectory(path_dir_run_cloudooo, ignore_list=["tmp",]) 
   # directory to create temporary files
   cloudooo_path_tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
   cleanDirectory(cloudooo_path_tmp_dir)
@@ -86,10 +85,7 @@ def application(global_config, **local_config):
                     virtual_screen=local_config.get('virtual_screen'),
                     start_timeout=local_config.get('start_timeout'))
   xvfb.start()
-
-  document_url = path.join(path.dirname(__file__),                                                                                     
-                              "tests/data/%s" % document_name)
-
+  
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname, 
                           openoffice_port,
@@ -97,10 +93,10 @@ def application(global_config, **local_config):
                           local_config.get('virtual_display_id'),
                           local_config.get('office_bin_path'), 
                           local_config.get('uno_path'),
-                          document_url=document_url,
                           unoconverter_bin=local_config.get('unoconverter_bin'),
                           python_path=local_config.get('python_path'),
-                          unomimemapper_bin=local_config.get('unomimemapper_bin'))
+                          unomimemapper_bin=local_config.get('unomimemapper_bin'),
+                          openoffice_tester_bin=local_config.get('openoffice_tester_bin'))
   openoffice.start()
 
   monitor.load(local_config)

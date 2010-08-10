@@ -1,10 +1,6 @@
-import sys
 from setuptools import setup, find_packages
-from os.path import realpath, exists, join, dirname
-from os import symlink, unlink
-from shutil import copyfile
 
-version = '1.0.1'
+version = '1.0.2'
 
 setup(name='cloudooo',
       version=version,
@@ -39,5 +35,6 @@ setup(name='cloudooo',
       [console_scripts]
       unoconverter.py = cloudooo.bin.unoconverter:main
       unomimemapper.py = cloudooo.bin.unomimemapper:main
+      openoffice_tester.py = cloudooo.bin.openoffice_tester:main
       """,
       )
