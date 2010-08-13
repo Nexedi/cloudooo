@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
-version = '1.0.4'
+version = '1.0.5'
 
 setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
-      long_description=open("README").read(),
+      long_description=open("./cloudooo/README").read(),
       classifiers=["Topic :: System :: Networking",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: Internet :: WWW/HTTP :: WSGI",

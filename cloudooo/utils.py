@@ -43,22 +43,6 @@ def removeDirectory(path):
   except OSError, msg:
     logger.error(msg)
 
-def cleanDirectory(path, ignore_list=[]):
-  """Cleans directory.
-
-  Keyword arguments:
-  path -- folder path
-  """
-  if not exists(path):
-    return
-  folder_list = [join(path, name) for name in listdir(path)]
-  ignore_list = [join(path, name) for name in ignore_list]
-  for path in folder_list:
-    if isdir(path) and path not in ignore_list:
-      removeDirectory(path)
-    else:
-      logger.debug("%s is not a folder or was ignored" % path)
-
 def socketStatus(hostname, port):
   """Verify if the address is busy."""
   try:

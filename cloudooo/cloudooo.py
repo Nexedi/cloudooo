@@ -31,7 +31,7 @@ from application.openoffice import openoffice
 from application.xvfb import xvfb
 from wsgixmlrpcapplication import WSGIXMLRPCApplication
 from utils import convertStringToBool, configureLogger, cleanDirectory
-from os import path
+from os import path, mkdir
 from sys import executable
 from mimemapper import mimemapper
 import monitor, gc, pkg_resources
@@ -69,11 +69,13 @@ def application(global_config, **local_config):
   configureLogger(debug_mode=debug_mode)
   # path of directory to run cloudooo
   path_dir_run_cloudooo = local_config.get('path_dir_run_cloudooo')
-  cleanDirectory(path_dir_run_cloudooo, ignore_list=["tmp",]) 
+  if not path.exists(path_dir_run_cloudooo):
+    mkdir(path_dir_run_cloudooo)
   # directory to create temporary files
   cloudooo_path_tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
-  cleanDirectory(cloudooo_path_tmp_dir)
-  # it extracts the path of cloudooo scripts
+  if not path.exists(cloudooo_path_tmp_dir):
+    mkdir(cloudooo_path_tmp_dir)
+  # it extracts the path of cloudooo scripts from pkg_resources
   cloudooo_resources = pkg_resources.get_distribution('cloudooo')
   console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
   unomimemapper_bin = path.join(path.dirname(executable),
