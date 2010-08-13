@@ -32,9 +32,9 @@ from application.xvfb import xvfb
 from wsgixmlrpcapplication import WSGIXMLRPCApplication
 from utils import convertStringToBool, configureLogger, cleanDirectory
 from os import path
-import monitor
+from sys import executable
 from mimemapper import mimemapper
-import gc
+import monitor, gc, pkg_resources
 
 def stopProcesses():
   monitor.stop()
@@ -73,7 +73,16 @@ def application(global_config, **local_config):
   # directory to create temporary files
   cloudooo_path_tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
   cleanDirectory(cloudooo_path_tmp_dir)
-
+  # it extracts the path of cloudooo scripts
+  cloudooo_resources = pkg_resources.get_distribution('cloudooo')
+  console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
+  unomimemapper_bin = path.join(path.dirname(executable),
+                              console_scripts["unomimemapper.py"].name)
+  unoconverter_bin = path.join(path.dirname(executable),
+                              console_scripts["unoconverter.py"].name)
+  openoffice_tester_bin = path.join(path.dirname(executable),
+                              console_scripts["openoffice_tester.py"].name)
+  
   # The Xvfb will run in the same local of the OpenOffice
   application_hostname = local_config.get('application_hostname')
   openoffice_port = int(local_config.get('openoffice_port'))
@@ -85,7 +94,7 @@ def application(global_config, **local_config):
                     virtual_screen=local_config.get('virtual_screen'),
                     start_timeout=local_config.get('start_timeout'))
   xvfb.start()
-  
+   
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname, 
                           openoffice_port,
@@ -93,10 +102,10 @@ def application(global_config, **local_config):
                           local_config.get('virtual_display_id'),
                           local_config.get('office_bin_path'), 
                           local_config.get('uno_path'),
-                          unoconverter_bin=local_config.get('unoconverter_bin'),
+                          unoconverter_bin=unoconverter_bin,
                           python_path=local_config.get('python_path'),
-                          unomimemapper_bin=local_config.get('unomimemapper_bin'),
-                          openoffice_tester_bin=local_config.get('openoffice_tester_bin'))
+                          unomimemapper_bin=unomimemapper_bin,
+                          openoffice_tester_bin=openoffice_tester_bin)
   openoffice.start()
 
   monitor.load(local_config)
@@ -108,14 +117,12 @@ def application(global_config, **local_config):
   openoffice.acquire()
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port,
-                            unomimemapper_bin=local_config.get('unomimemapper_bin'),
+                            unomimemapper_bin=unomimemapper_bin,
                             python_path=local_config.get('python_path'))
   openoffice.release()
 
   from manager import Manager
   timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(timeout=timeout_response,
-        unoconverter_bin=local_config.get('unoconverter_bin'),
-        python_path=local_config.get('python_path'))
+  kw = dict(timeout=timeout_response, unoconverter_bin=unoconverter_bin)
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

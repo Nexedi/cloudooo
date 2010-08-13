@@ -33,6 +33,7 @@ from threading import Lock
 from cloudooo.ooolib import setUpUnoEnvironment
 from zope.interface import implements
 from application import Application
+from sys import executable as python_path
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon,\
@@ -57,7 +58,7 @@ class OpenOffice(Application):
   def _testOpenOffice(self, host, port):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
-    command = [self.python_path
+    command = [python_path
               , self.openoffice_tester_bin
               , "--hostname=%s" % host
               , "--port=%s" % port

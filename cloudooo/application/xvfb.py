@@ -54,10 +54,12 @@ class Xvfb(Application):
   def start(self):
     """Method to start Virtual Frame Buffer."""
     self.command = ["Xvfb", "-ac", ":%s" % self.display_id, \
+#        "-nolisten", "tcp",
         "-screen", self.virtual_screen, "800x600x16", \
         "-fbdir", self.path_run_dir]
-    self.process = Popen(self.command,
+    self.process = Popen(" ".join(self.command),
                         stdout=PIPE,
+                        shell=True,
                         close_fds=True)
     waitStartDaemon(self, self.timeout)
     Application.start(self)
