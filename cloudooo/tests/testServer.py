@@ -106,7 +106,7 @@ class TestServer(cloudoooTestCase):
                                         source_format,
                                         destination_format, zip)
     open(output_url, 'w').write(decodestring(output_data))
-    stdout, stderr = Popen("file %s" % output_url, shell=True,
+    stdout, stderr = Popen("file -b %s" % output_url, shell=True,
          stdout=PIPE).communicate()
     self.assertEquals(stdout, stdout_msg)
     self.assertEquals(stderr, None)
@@ -149,18 +149,18 @@ class TestServer(cloudoooTestCase):
   def testConvertDocToOdt(self):
     """Test Convert Doc -> Odt"""
     self._testConvertFile("data/test.doc",
-                          "output/document_output.odt",
+                          join(self.tmp_url, "document_output.odt"),
                           'doc',
                           'odt',
-                          'output/document_output.odt: OpenDocument Text\n')
+                          'OpenDocument Text\n')
 
   def testconvertDocToPdf(self):
     """Test Convert Doc -> Pdf"""
     self._testConvertFile("data/test.doc",
-                          "output/document_output.pdf",
+                          join(self.tmp_url, "document_output.pdf"),
                           'doc',
                           'pdf',
-                          'output/document_output.pdf: PDF document, version 1.4\n')
+                          'PDF document, version 1.4\n')
 
   def testgetFileMetadataItemListWithoutData(self):
     """Test server using method getFileMetadataItemList. Without data
@@ -178,16 +178,16 @@ class TestServer(cloudoooTestCase):
 
   def testgetFileMetadataItemListWithData(self):
     """Test server using method getFileMetadataItemList. With data converted"""
-    document_output_url = "output/testGetMetadata.odt"
+    document_output_url = join(self.tmp_url, "testGetMetadata.odt")
     data = open(join('data','testMetadata.odt'),'r').read()
     metadata_dict = self.proxy.getFileMetadataItemList(encodestring(data),
                                                        "odt",
                                                        True)
     self.assertNotEquals(metadata_dict.get("Data"), None)
     open(document_output_url, 'w').write(decodestring(metadata_dict["Data"]))
-    stdout, stderr = Popen("file %s" % document_output_url, shell=True,
+    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
         stdout=PIPE).communicate()
-    self.assertEquals(stdout,'output/testGetMetadata.odt: OpenDocument Text\n')
+    self.assertEquals(stdout, 'OpenDocument Text\n')
     self.assertEquals(metadata_dict.get("Title"), "cloudooo Test")
     self.assertEquals(metadata_dict.get("Subject"), "Subject Test")
     self.assertEquals(metadata_dict.get("Description"), "cloudooo Comments")
@@ -198,14 +198,14 @@ class TestServer(cloudoooTestCase):
 
   def testupdateFileMetadata(self):
     """Test server using method updateFileMetadata"""
-    document_output_url = "output/testSetMetadata.odt"
+    document_output_url = join(self.tmp_url, "testSetMetadata.odt")
     data = open(join('data','testMetadata.odt'),'r').read()
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
         {"Title":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = Popen("file %s" % document_output_url, shell=True,
+    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
         stdout=PIPE).communicate()
-    self.assertEquals(stdout,'output/testSetMetadata.odt: OpenDocument Text\n')
+    self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Title"), "testSetMetadata")
     self.assertEquals(metadata_dict.get("CreationDate"), "9/7/2009 17:38:25")
@@ -213,31 +213,32 @@ class TestServer(cloudoooTestCase):
 
   def testupdateFileMetadataWithUserMetadata(self):
     """Test server using method updateFileMetadata with unsual metadata"""
-    document_output_url = "output/testSetMetadata.odt"
+    document_output_url = join(self.tmp_url, "testSetMetadata.odt")
     data = open(join('data','testMetadata.odt'),'r').read()
+
     odf_data = self.proxy.updateFileMetadata(encodestring(data),
                                               'odt',
                                               {"Reference":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = Popen("file %s" % document_output_url, shell=True,
+    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
         stdout=PIPE).communicate()
-    self.assertEquals(stdout,'output/testSetMetadata.odt: OpenDocument Text\n')
+    self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "testSetMetadata")
 
   def testupdateFileMetadataUpdateSomeMetadata(self):
     """Test server using method updateFileMetadata when the same metadata is
     updated"""
-    document_output_url = "output/testSetMetadata.odt"
+    document_output_url = join(self.tmp_url, "testSetMetadata.odt")
     data = open(join('data','testMetadata.odt'),'r').read()
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
                         {"Reference":"testSetMetadata", "Something":"ABC"})
     new_odf_data = self.proxy.updateFileMetadata(odf_data, 'odt',
                         {"Reference":"new value", "Something": "ABC"})
     open(document_output_url, 'w').write(decodestring(new_odf_data))
-    stdout, stderr = Popen("file %s" % document_output_url, shell=True,
+    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
         stdout=PIPE).communicate()
-    self.assertEquals(stdout,'output/testSetMetadata.odt: OpenDocument Text\n')
+    self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "new value")
     self.assertEquals(metadata_dict.get("Something"), "ABC")
@@ -259,10 +260,9 @@ class TestServer(cloudoooTestCase):
 
   def testWithZipFile(self):
     """Test if send a zipfile returns a document correctly"""
-    output_msg = 'output/output_zipfile.zip: Zip archive data, \
-at least v2.0 to extract\n'
+    output_msg = 'Zip archive data, at least v2.0 to extract\n'
     self._testConvertFile("data/test.zip",
-                          "output/output_zipfile.zip",
+                          join(self.tmp_url, "output_zipfile.zip"),
                           'html',
                           'txt',
                           output_msg,
@@ -270,38 +270,38 @@ at least v2.0 to extract\n'
 
   def testSendZipAndReturnTxt(self):
     """Convert compressed html to txt"""
-    output_url = "output/output.txt"
+    output_url = join(self.tmp_url, "output.txt")
     self._testConvertFile("data/test.zip",
                           output_url,
                           'html',
                           'txt',
-                          'output/output.txt: ASCII text\n')
+                          'ASCII text\n')
 
     self.assertEquals(open(output_url).read().endswith('cloudooo Test\n \n'), True)
 
   def testConvertPNGToSVG(self):
     """Test export png to svg"""
     self._testConvertFile("data/test.png",
-                          "output/output.svg",
+                          join("output.svg"),
                           'png',
                           'svg',
-                          'output/output.svg: SVG Scalable Vector Graphics image\n')
+                          'SVG Scalable Vector Graphics image\n')
   
   def testConvertPPTXToODP(self):
     """Test export pptx to odp"""
     self._testConvertFile("data/test.pptx",
-                          "output/output.pptx",
+                          join(self.tmp_url, "output.pptx"),
                           'pptx',
                           'odp',
-                          'output/output.pptx: OpenDocument Presentation\n')
+                          'OpenDocument Presentation\n')
 
   def testConvertDocxToODT(self):
     """Test export docx to odt"""
     self._testConvertFile("data/test.docx",
-                          "output/output_docx.odt",
+                          join(self.tmp_url, "output_docx.odt"),
                           'docx',
                           'odt',
-                          'output/output_docx.odt: OpenDocument Text\n')
+                          'OpenDocument Text\n')
   
   def testSendInvalidFile(self):
     """Test to verify if the behavior of server is normal when a invalid file is
@@ -398,7 +398,7 @@ at least v2.0 to extract\n'
 
   def testRunConvertFailResponse(self):
     """Test run_convert method with invalid file"""
-    data = open(join('data','test.doc'),'r').read()[:30]
+    data = open(join('data', 'test.doc'),'r').read()[:30]
     response_code, response_dict, response_message = \
               self.proxy.run_convert('test.doc', encodestring(data))
     self.assertEquals(response_code, 402)
@@ -408,7 +408,7 @@ at least v2.0 to extract\n'
 
   def testRunGenerateMethod(self):
     """Test run_generate method"""
-    data = open(join('data','test.odt'),'r').read()
+    data = open(join('data', 'test.odt'),'r').read()
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
                                       None, 'pdf', 'odt')
@@ -421,7 +421,7 @@ at least v2.0 to extract\n'
   def testRunGenerateMethodConvertOdsToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
     html"""
-    data = open(join('data','test.ods'),'r').read()
+    data = open(join('data', 'test.ods'),'r').read()
     generate_result = self.proxy.run_generate('test.ods',
                                       encodestring(data),
                                       None, 'html', 'ods')
@@ -430,7 +430,7 @@ at least v2.0 to extract\n'
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
     self.assertEquals(response_dict['mime'], 'application/zip')
-    output_url = "./output/zip.zip"
+    output_url = join(self.tmp_url, "zip.zip")
     open(output_url, 'w').write(decodestring(response_dict['data']))
     self.assertTrue(is_zipfile(output_url))
     filename_list = [file.filename for file in ZipFile(output_url).filelist]
@@ -452,7 +452,7 @@ at least v2.0 to extract\n'
     self.assertEquals(type(response_dict), DictType)
     self.assertNotEquals(response_dict['data'], '')
     self.assertEquals(response_dict['mime'], 'application/zip')
-    output_url = "./output/zip.zip"
+    output_url = join(self.tmp_url, "zip.zip")
     open(output_url, 'w').write(decodestring(response_dict['data']))
     self.assertTrue(is_zipfile(output_url))
     filename_list = [file.filename for file in ZipFile(output_url).filelist]
@@ -509,7 +509,7 @@ at least v2.0 to extract\n'
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    self.assertEquals(len(response_dict['response_data']), 28)
+    self.assertEquals(len(response_dict['response_data']), 31)
     self.assertTrue(['htm', 'HTML Document'] in response_dict['response_data'])
 
 def test_suite():

@@ -73,7 +73,7 @@ class TestAllFormats(cloudoooTestCase):
       data_output = self.proxy.convertFile(encodestring(data),
                                             source_format,
                                             extension[0])
-      output_file_url = 'output/test_%s.%s' % (document_type, extension[0])
+      output_file_url = '%s/test_%s.%s' % (self.tmp_url, document_type, extension[0])
       open(output_file_url, 'w').write(decodestring(data_output))
       stdout, stderr = Popen("file %s" % output_file_url, 
                             shell=True,
