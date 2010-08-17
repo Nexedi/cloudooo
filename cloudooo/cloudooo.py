@@ -30,7 +30,7 @@ from signal import signal, SIGHUP
 from application.openoffice import openoffice
 from application.xvfb import xvfb
 from wsgixmlrpcapplication import WSGIXMLRPCApplication
-from utils import convertStringToBool, configureLogger, cleanDirectory
+from utils import convertStringToBool, configureLogger
 from os import path, mkdir
 from sys import executable
 from mimemapper import mimemapper
@@ -105,7 +105,7 @@ def application(global_config, **local_config):
                           local_config.get('office_bin_path'), 
                           local_config.get('uno_path'),
                           unoconverter_bin=unoconverter_bin,
-                          python_path=local_config.get('python_path'),
+                          python_path=executable,
                           unomimemapper_bin=unomimemapper_bin,
                           openoffice_tester_bin=openoffice_tester_bin)
   openoffice.start()
@@ -120,11 +120,13 @@ def application(global_config, **local_config):
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port,
                             unomimemapper_bin=unomimemapper_bin,
-                            python_path=local_config.get('python_path'))
+                            python_path=executable)
   openoffice.release()
 
   from manager import Manager
   timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(timeout=timeout_response, unoconverter_bin=unoconverter_bin)
+  kw = dict(timeout=timeout_response, 
+            unoconverter_bin=unoconverter_bin,
+            python_path=executable)
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

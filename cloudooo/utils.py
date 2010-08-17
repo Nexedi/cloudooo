@@ -29,8 +29,7 @@
 from socket import socket, error
 from errno import EADDRINUSE
 from time import sleep
-from os.path import join, isdir, exists
-from os import listdir, remove
+from os import remove
 from shutil import rmtree
 import logging
 

@@ -32,7 +32,7 @@ from os.path import exists
 
 def setUpUnoEnvironment(uno_path=None, office_bin_path=None):
   """Set up the environment to use the uno library and connect with the
-  openoffice by socket""" 
+  openoffice by socket"""
   if uno_path is not None:
     environ['uno_path'] = uno_path
   else:

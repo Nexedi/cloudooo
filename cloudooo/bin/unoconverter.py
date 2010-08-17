@@ -200,7 +200,7 @@ def main():
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=", 
       "mimemapper=", "metadata=",
-      "unomimemapper_bin=", "python_path="])
+      "unomimemapper_bin="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
     usage(sys.stderr, msg)
@@ -233,8 +233,6 @@ def main():
       mimemapper = jsonpickle.decode(arg)
     elif opt == '--unomimemapper_bin':
       unomimemapper_bin = arg
-    elif opt == '--python_path':
-      python_path = arg
    
   kw = {}
   
@@ -249,18 +247,14 @@ def main():
     if "unomimemapper_bin" in locals():
       kw['unomimemapper_bin'] = unomimemapper_bin
 
-    if "python_path" in locals():
-      kw['python_path'] = python_path
-
+    kw['python_path'] = executable
     mimemapper.loadFilterList(hostname=hostname, port=port, **kw)
   
   kw.clear()
   if 'source_format' in locals():
     kw['source_format'] = source_format
-
+  
   unoconverter = UnoConverter(hostname, port, document_url, **kw)
-  if "--test" in param_list:
-    output = unoconverter.convert("pdf")
   if "--convert" in param_list and not '--getmetadata' in param_list \
       and 'destination_format' not in locals():
     output = unoconverter.convert()
