@@ -27,6 +27,7 @@
 ##############################################################################
 
 import unittest
+from os import path
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import cloudoooTestCase
@@ -43,7 +44,7 @@ class TestOOHandler(cloudoooTestCase):
 
   def _assert_document_output(self, document_output_url, msg):
     """Check if the document was created correctly"""
-    stdout, stderr = Popen("file %s" % document_output_url,
+    stdout, stderr = Popen("file -b %s" % document_output_url,
                           shell=True,
                           stdout=PIPE).communicate()
     self.assertEquals(msg in stdout,
@@ -63,7 +64,7 @@ class TestOOHandler(cloudoooTestCase):
                         'odt',
                         **self.kw)
     doc_exported = handler.convert("doc")
-    document_output_url = "output/testExport.doc"
+    document_output_url = path.join(self.tmp_url, "testExport.doc")
     self._save_document(document_output_url, doc_exported)
     msg = 'Microsoft Office Document'
     self._assert_document_output(document_output_url, msg)
@@ -76,9 +77,9 @@ class TestOOHandler(cloudoooTestCase):
                         'doc',
                         **self.kw)
     doc_exported = handler.convert("odt")
-    document_output_url = "output/testConvert.odt"
+    document_output_url = path.join(self.tmp_url, "testConvert.odt")
     self._save_document(document_output_url, doc_exported)
-    msg = 'output/testConvert.odt: OpenDocument Text\n'
+    msg = 'OpenDocument Text\n'
     self._assert_document_output(document_output_url, msg)
     
   def testGetMetadata(self):
@@ -121,9 +122,9 @@ class TestOOHandler(cloudoooTestCase):
                         'doc',
                         **self.kw)
     doc_exported = handler.convert("odt")
-    document_output_url = "output/testConvert.odt"
+    document_output_url = path.join(self.tmp_url, "testConvert.odt")
     self._save_document(document_output_url, doc_exported)
-    msg = 'output/testConvert.odt: OpenDocument Text\n'
+    msg = 'OpenDocument Text\n'
     self._assert_document_output(document_output_url, msg)
   
   def testGetMetadataWithOpenOfficeStopped(self):

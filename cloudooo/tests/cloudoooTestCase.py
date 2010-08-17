@@ -27,9 +27,9 @@
 ##############################################################################
 
 import unittest
-from sys import path, argv
+import sys
 from ConfigParser import ConfigParser
-from os.path import join, exists, dirname
+from os import path, mkdir
 from os import environ, putenv
 from cloudooo.application.xvfb import xvfb
 from cloudooo.application.openoffice import openoffice
@@ -37,7 +37,31 @@ from cloudooo.utils import waitStartDaemon
 from cloudooo.mimemapper import mimemapper
 
 config = ConfigParser()
-testcase_path = dirname(__file__)
+testcase_path = path.dirname(__file__)
+
+
+def check_folder(path_dir_run_cloudooo, tmp_dir_path):
+  if not path.exists(path_dir_run_cloudooo):
+    mkdir(path_dir_run_cloudooo)
+  if not path.exists(tmp_dir_path):
+    mkdir(tmp_dir_path)
+
+def extract_cloudooo_script():
+  from sys import executable
+  import pkg_resources
+  cloudooo_resources = pkg_resources.get_distribution('cloudooo')
+  console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
+
+  openoffice_tester_bin_path = path.join(path.dirname(executable),
+                            console_scripts["openoffice_tester.py"].name)
+  unomimemapper_bin_path = path.join(path.dirname(executable),
+                          console_scripts["unomimemapper.py"].name)
+  unoconverter_bin_path = path.join(path.dirname(executable),
+                          console_scripts["unoconverter.py"].name)
+  
+  return dict(unoconverter_bin=unoconverter_bin_path,
+              unomimemapper_bin=unomimemapper_bin_path, 
+              openoffice_tester_bin=openoffice_tester_bin_path)
 
 def make_suite(test_case):
   """Function is used to run all tests together"""
@@ -50,8 +74,8 @@ def loadConfig(path):
 
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
-  if not conf_path and len(argv) >=1:
-    conf_path = argv[1]
+  if not conf_path and len(sys.argv) >=1:
+    conf_path = sys.argv[1]
   loadConfig(conf_path)
   uno_path = config.get("app:main", "uno_path")
   path_dir_run_cloudooo = config.get("app:main", "path_dir_run_cloudooo")
@@ -60,8 +84,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
   office_bin_path = config.get("app:main", "office_bin_path")
-  openoffice_tester_bin = config.get("app:main", "openoffice_tester_bin")
-
+  tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
+  check_folder(path_dir_run_cloudooo, tmp_dir)
   if not environ.get('uno_path'):
     environ['uno_path'] = uno_path
   
@@ -69,11 +93,11 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   if not environ.get('office_bin_path'):
     environ['office_bin_path'] = office_bin_path
   
-  if not uno_path in path:
-      path.append(uno_path)
+  if uno_path not in sys.path:
+    sys.path.append(uno_path)
   
   fundamentalrc_file = '%s/fundamentalrc' % office_bin_path
-  if exists(fundamentalrc_file) and \
+  if path.exists(fundamentalrc_file) and \
       not environ.has_key('URE_BOOTSTRAP'):
     putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
@@ -84,6 +108,11 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                   virtual_screen='1')
   xvfb.start()
   waitStartDaemon(xvfb, 10)
+  cloudooo_script_dict = extract_cloudooo_script()
+
+  openoffice_tester_bin = cloudooo_script_dict["openoffice_tester_bin"]
+  unomimemapper_bin = cloudooo_script_dict["unomimemapper_bin"]
+
   if start_openoffice:
     openoffice.loadSettings(hostname,
                             openoffice_port, 
@@ -95,8 +124,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
-    kw = dict(python_path=config.get("app:main", "python_path"),
-              unomimemapper_bin=config.get("app:main", "unomimemapper_bin"),
+    kw = dict(unomimemapper_bin=unomimemapper_bin,
               uno_path=config.get("app:main", "uno_path"),
               office_bin_path=config.get("app:main", "office_bin_path"))
     if not mimemapper.isLoaded():
@@ -119,19 +147,23 @@ class cloudoooTestCase(unittest.TestCase):
   def setUp(self):
     """Creates a environment to run the tests. Is called always before the
     tests."""
+    cloudooo_script_dict = extract_cloudooo_script()
+
+    self.openoffice_tester_bin = cloudooo_script_dict["openoffice_tester_bin"]
+    self.unomimemapper_bin = cloudooo_script_dict["unomimemapper_bin"]
+    self.unoconverter_bin = cloudooo_script_dict["unoconverter_bin"]
+
     self.hostname = config.get("server:main", "host")
     self.cloudooo_port = config.get("server:main", "port")
     self.openoffice_port = config.get("app:main", "openoffice_port")
     self.office_bin_path = config.get("app:main", "office_bin_path")
+    self.python_path = sys.executable
     self.path_dir_run_cloudooo = config.get("app:main", "path_dir_run_cloudooo")
-    self.tmp_url = join(self.path_dir_run_cloudooo, "tmp") 
+    self.tmp_url = path.join(self.path_dir_run_cloudooo, "tmp")
+    check_folder(self.path_dir_run_cloudooo, self.tmp_url)
     self.uno_path = config.get("app:main", "uno_path")
-    self.unomimemapper_bin = config.get("app:main", "unomimemapper_bin")
-    self.unoconverter_bin = config.get("app:main", "unoconverter_bin")
-    self.python_path = config.get("app:main", "python_path")
     self.virtual_display_id = config.get("app:main", "virtual_display_id")
     self.virtual_display_port_int = config.get("app:main", "virtual_display_port")
-    self.openoffice_tester_bin = config.get("app:main", "openoffice_tester_bin")
     self.afterSetUp()
 
   def afterSetUp(self):

@@ -93,8 +93,7 @@ class TestUnoConverter(cloudoooTestCase):
           "--document_url=%s" % self.document.getUrl(),
           "--destination_format=%s" % "doc",
           "--source_format=%s" % "odt",
-          "--unomimemapper_bin=%s" % self.unomimemapper_bin,
-          "--python_path=%s" % self.python_path]
+          "--unomimemapper_bin=%s" % self.unomimemapper_bin]
 
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
