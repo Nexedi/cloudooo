@@ -42,7 +42,8 @@ Create Configuration File
 
   The next step is define some attributes in cloudooo.conf:
  
-    - uno and soffice path;
+    - uno_path - full path to UNO library;
+    - soffice_bin_path - full path to soffice.bin;
 
 Run Application
 ===============
@@ -54,8 +55,16 @@ Run Application
   $ paster serve ./cloudoo.conf --daemon
   
 
-Description of Daemon
----------------------
+Stop Application
+===============
+
+  $ kill -1 PASTER_PID
+
+  Warning: always use SIGHUP because only with this signal all processes are
+stopped correctly.
+
+Cloudooo Description
+=====================
 
 - XMLRPC + WSGI will be one bridge for easy access OpenOffice.org. This will implement one XMLRPC server into WSGI (Paster).
 
