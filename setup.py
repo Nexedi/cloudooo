@@ -36,5 +36,6 @@ setup(name='cloudooo',
       unoconverter.py = cloudooo.bin.unoconverter:main
       unomimemapper.py = cloudooo.bin.unomimemapper:main
       openoffice_tester.py = cloudooo.bin.openoffice_tester:main
+      cloudooo_tester.py = cloudooo.bin.cloudooo_tester:main
       """,
       )
