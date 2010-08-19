@@ -53,11 +53,11 @@ def extract_cloudooo_script():
   console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
 
   openoffice_tester_bin_path = path.join(path.dirname(executable),
-                            console_scripts["openoffice_tester.py"].name)
+                            console_scripts["openoffice_tester"].name)
   unomimemapper_bin_path = path.join(path.dirname(executable),
-                          console_scripts["unomimemapper.py"].name)
+                          console_scripts["unomimemapper"].name)
   unoconverter_bin_path = path.join(path.dirname(executable),
-                          console_scripts["unoconverter.py"].name)
+                          console_scripts["unoconverter"].name)
   
   return dict(unoconverter_bin=unoconverter_bin_path,
               unomimemapper_bin=unomimemapper_bin_path, 

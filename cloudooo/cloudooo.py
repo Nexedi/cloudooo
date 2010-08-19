@@ -79,11 +79,11 @@ def application(global_config, **local_config):
   cloudooo_resources = pkg_resources.get_distribution('cloudooo')
   console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
   unomimemapper_bin = path.join(path.dirname(executable),
-                              console_scripts["unomimemapper.py"].name)
+                              console_scripts["unomimemapper"].name)
   unoconverter_bin = path.join(path.dirname(executable),
-                              console_scripts["unoconverter.py"].name)
+                              console_scripts["unoconverter"].name)
   openoffice_tester_bin = path.join(path.dirname(executable),
-                              console_scripts["openoffice_tester.py"].name)
+                              console_scripts["openoffice_tester"].name)
   
   # The Xvfb will run in the same local of the OpenOffice
   application_hostname = local_config.get('application_hostname')

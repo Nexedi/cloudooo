@@ -33,7 +33,7 @@ from os import environ
 from cloudoooTestCase import cloudoooTestCase, make_suite
 
 class TestUnoMimeMapper(cloudoooTestCase):
-  """Test Case to test all features of script unomimemapper.py"""
+  """Test Case to test all features of script unomimemapper"""
 
   def afterSetUp(self):
     """ """

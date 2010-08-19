@@ -192,7 +192,7 @@ class TestMimeMapper(cloudoooTestCase):
     try:
       mimemapper.loadFilterList(hostname, port)
     except:
-      self.assertEquals(mimemapper.unomimemapper_bin, "/usr/bin/unomimemapper.py")
+      self.assertEquals(mimemapper.unomimemapper_bin, "/usr/bin/unomimemapper")
     finally:
       openoffice.release()
     openoffice.acquire()

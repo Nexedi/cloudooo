@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0.6'
+version = '1.0.7'
 
 setup(name='cloudooo',
       version=version,
@@ -33,9 +33,9 @@ setup(name='cloudooo',
       [paste.app_factory]
       main = cloudooo.cloudooo:application
       [console_scripts]
-      unoconverter.py = cloudooo.bin.unoconverter:main
-      unomimemapper.py = cloudooo.bin.unomimemapper:main
-      openoffice_tester.py = cloudooo.bin.openoffice_tester:main
-      cloudooo_tester.py = cloudooo.bin.cloudooo_tester:main
+      unoconverter = cloudooo.bin.unoconverter:main
+      unomimemapper = cloudooo.bin.unomimemapper:main
+      openoffice_tester = cloudooo.bin.openoffice_tester:main
+      cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       """,
       )

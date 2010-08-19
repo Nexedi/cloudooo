@@ -36,7 +36,7 @@ from types import InstanceType
 
 __doc__ = """
 
-usage: unomimemapper.py [options]
+usage: unomimemapper [options]
 
 Options:
   -h, --help            this help screen

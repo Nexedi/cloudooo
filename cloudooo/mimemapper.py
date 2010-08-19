@@ -104,7 +104,7 @@ class MimeMapper(object):
     bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
     self.python_path = kw.get("python_path", "python")
     self.unomimemapper_bin = kw.get("unomimemapper_bin",
-                                            "/usr/bin/unomimemapper.py")
+                                            "/usr/bin/unomimemapper")
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_bin_path = kw.get("office_bin_path", environ.get('office_bin_path'))
     command = [python_path
