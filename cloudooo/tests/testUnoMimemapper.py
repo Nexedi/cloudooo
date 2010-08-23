@@ -31,6 +31,7 @@ from cloudooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ
 from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudooo.utils import extractModuleName
 
 class TestUnoMimeMapper(cloudoooTestCase):
   """Test Case to test all features of script unomimemapper"""
@@ -51,11 +52,12 @@ class TestUnoMimeMapper(cloudoooTestCase):
     """Test if filters returns correctly the filters and types in dict"""
     hostname, host  = openoffice.getAddress()
     command = [self.python_path,
-            self.unomimemapper_bin,
-            "--uno_path=%s" % self.uno_path,
-            "--office_bin_path=%s" % self.uno_path,
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
+            "-c",
+	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+            "'--uno_path=%s'" % self.uno_path,
+            "'--office_bin_path=%s'" % self.uno_path,
+            "'--hostname=%s'" % self.hostname,
+            "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     exec(stdout)
@@ -71,9 +73,10 @@ class TestUnoMimeMapper(cloudoooTestCase):
     """ Test call unomimemapper without uno_path and office_bin_path"""
     hostname, host  = openoffice.getAddress()
     command = [self.python_path,
-            self.unomimemapper_bin,
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
+            "-c",
+	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+            "'--hostname=%s'" % self.hostname,
+            "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr.endswith('No module named uno\n'), True)
@@ -85,11 +88,12 @@ class TestUnoMimeMapper(cloudoooTestCase):
     hostname, host  = openoffice.getAddress()
     openoffice.stop()
     command = [self.python_path,
-            self.unomimemapper_bin,
-            "--uno_path=%s" % self.uno_path,
-            "--office_bin_path=%s" % self.uno_path,
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
+            "-c",
+	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+            "'--uno_path=%s'" % self.uno_path,
+            "'--office_bin_path=%s'" % self.uno_path,
+            "'--hostname=%s'" % self.hostname,
+            "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stdout, '')

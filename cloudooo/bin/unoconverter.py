@@ -247,7 +247,7 @@ def main():
     if "unomimemapper_bin" in locals():
       kw['unomimemapper_bin'] = unomimemapper_bin
 
-    kw['python_path'] = executable
+    kw['python_path'] = sys.executable
     mimemapper.loadFilterList(hostname=hostname, port=port, **kw)
   
   kw.clear()

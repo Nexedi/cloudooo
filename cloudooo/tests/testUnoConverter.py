@@ -34,6 +34,7 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.mimemapper import mimemapper
 from cloudooo.application.openoffice import openoffice
 from cloudooo.document import FileSystemDocument
+from cloudooo.utils import extractModuleName
 
 class TestUnoConverter(cloudoooTestCase):
   """Test case to test all features of the unoconverter script"""
@@ -56,16 +57,17 @@ class TestUnoConverter(cloudoooTestCase):
     """Test script unoconverter"""
     mimemapper_pickled = jsonpickle.encode(mimemapper)
     command = [self.python_path,
-          self.unoconverter_bin,
-          "--convert",
-          "--uno_path=%s" % self.uno_path,
-          "--office_bin_path=%s" % self.office_bin_path,
-          "--hostname=%s" % self.hostname,
-          "--port=%s" % self.port,
-          "--document_url=%s" % self.document.getUrl(),
-          "--destination_format=%s" % "doc",
-          "--source_format=%s" % "odt",
-          "--mimemapper='%s'" % mimemapper_pickled]
+          "-c",
+	  "'from %s import main;main()'" % extractModuleName("unoconverter"),
+          "'--convert'",
+          "'--uno_path=%s'" % self.uno_path,
+          "'--office_bin_path=%s'" % self.office_bin_path,
+          "'--hostname=%s'" % self.hostname,
+          "'--port=%s'" % self.port,
+          "'--document_url=%s'" % self.document.getUrl(),
+          "'--destination_format=%s'" % "doc",
+          "'--source_format=%s'" % "odt",
+          "'--mimemapper=%s'" % mimemapper_pickled]
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
@@ -81,19 +83,20 @@ class TestUnoConverter(cloudoooTestCase):
     self.document.trash()
     self.assertEquals(exists(output_url), False)
 
-  def testUnoConverterWithoutMimemapper(self):
+  def _testUnoConverterWithoutMimemapper(self):
     """Test script unoconverter without mimemapper serialized"""
     command = [self.python_path,
-          self.unoconverter_bin,
-          "--convert", 
-          "--uno_path=%s" % self.uno_path,
-          "--office_bin_path=%s" % self.office_bin_path,
-          "--hostname=%s" % self.hostname,
-          "--port=%s" % self.port,
-          "--document_url=%s" % self.document.getUrl(),
-          "--destination_format=%s" % "doc",
-          "--source_format=%s" % "odt",
-          "--unomimemapper_bin=%s" % self.unomimemapper_bin]
+          "-c",
+	  "'from %s import main;main()'" % extractModuleName("unoconverter"),
+          "'--convert'", 
+          "'--uno_path=%s'" % self.uno_path,
+          "'--office_bin_path=%s'" % self.office_bin_path,
+          "'--hostname=%s'" % self.hostname,
+          "'--port=%s'" % self.port,
+          "'--document_url=%s'" % self.document.getUrl(),
+          "'--destination_format=%s'" % "doc",
+          "'--source_format=%s'" % "odt",
+          "'--unomimemapper_bin=%s'" % self.unomimemapper_bin]
 
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()

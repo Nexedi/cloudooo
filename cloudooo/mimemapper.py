@@ -34,6 +34,7 @@ from os import environ
 from sys import executable as python_path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
+from utils import extractModuleName
 
 class MimeMapper(object):
   """Load all filters from OOo. You can get the of the filter you want or all
@@ -102,16 +103,14 @@ class MimeMapper(object):
     # XXX - Is not good way to remove unnecessary filters
     # XXX - try find a good way to remove filters that are not used for export
     bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
-    self.python_path = kw.get("python_path", "python")
-    self.unomimemapper_bin = kw.get("unomimemapper_bin",
-                                            "/usr/bin/unomimemapper")
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_bin_path = kw.get("office_bin_path", environ.get('office_bin_path'))
     command = [python_path
-              , self.unomimemapper_bin
-              , "--uno_path=%s" % uno_path
-              , "--office_bin_path=%s" % office_bin_path
-              , "--hostname=%s" % hostname, "--port=%s" % port]
+              , "'-c'"
+	      , "'from %s import main;main()'" % extractModuleName("unomimemapper")
+              , "'--uno_path=%s'" % uno_path
+              , "'--office_bin_path=%s'" % office_bin_path
+              , "'--hostname=%s'" % hostname, "--port=%s" % port]
     stdout, stderr = Popen(' '.join(command),
                           stdout=PIPE,
                           close_fds=True,

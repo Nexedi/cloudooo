@@ -36,8 +36,8 @@ from application import Application
 from sys import executable as python_path
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
-from cloudooo.utils import logger, waitStartDaemon,\
-    removeDirectory, waitStopDaemon, convertStringToBool
+from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
+		waitStopDaemon, convertStringToBool, extractModuleName
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -59,10 +59,11 @@ class OpenOffice(Application):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
     command = [python_path
-              , self.openoffice_tester_bin
-              , "--hostname=%s" % host
-              , "--port=%s" % port
-              , "--uno_path=%s" % self.uno_path]
+              , "'-c'"
+	      , "'from %s import main;main()'" % extractModuleName("openoffice_tester")
+              , "'--hostname=%s'" % host
+              , "'--port=%s'" % port
+              , "'--uno_path=%s'" % self.uno_path]
     logger.debug("Testing Openoffice Instance %s" % port)
     stdout, stderr = Popen(" ".join(command), shell=True, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
@@ -93,10 +94,6 @@ class OpenOffice(Application):
     self.uno_path = uno_path
     self.process_name = "soffice.bin"
     self.document_url = kw.get('document_url', '')
-    self.unoconverter_bin = kw.get("unoconverter_bin", "unoconverter")
-    self.python_path = kw.get('python_path', 'python')
-    self.unomimemapper_bin = kw.get("unomimemapper_bin")
-    self.openoffice_tester_bin = kw.get("openoffice_tester_bin")
 
   def _start_process(self, command, env):
     """Start OpenOffice.org process"""

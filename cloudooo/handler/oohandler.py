@@ -36,8 +36,9 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.mimemapper import mimemapper
 from cloudooo.document import FileSystemDocument
 from cloudooo.monitor.timeout import MonitorTimeout
-from cloudooo.utils import logger
+from cloudooo.utils import logger, extractModuleName
 from psutil import pid_exists
+from sys import executable as python_path
 
 class OOHandler:
   """OOHandler is used to access the one Document and OpenOffice.
@@ -59,7 +60,6 @@ class OOHandler:
     self.timeout = kw.get("timeout", 600)
     self.unoconverter_bin = kw.get('unoconverter_bin', "unoconverter")
     self.source_format = source_format
-    self.python_path = kw.get('python_path', 'python')
     if not self.uno_path:
       self.uno_path = environ.get("uno_path")
     if not self.office_bin_path:
@@ -70,15 +70,16 @@ class OOHandler:
     hostname, port = openoffice.getAddress()
     kw['hostname'] = hostname
     kw['port'] = port
-    command_list = [self.python_path
-        , self.unoconverter_bin
+    command_list = [python_path
+        , "-c"
+	, "'from %s import main;main()'" % extractModuleName("unoconverter")
         , "--uno_path='%s'" % self.uno_path
         , "--office_bin_path='%s'" % self.office_bin_path
         , "--document_url='%s'" % self.document.getUrl()]
     for arg in args:
-      command_list.insert(2, "--%s" % arg)
+      command_list.insert(3, "'--%s'" % arg)
     for k, v in kw.iteritems():
-      command_list.append("--%s='%s'" % (k,v))
+      command_list.append("'--%s=%s'" % (k,v))
       
     return ' '.join(command_list)
   
