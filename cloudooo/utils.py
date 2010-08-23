@@ -122,3 +122,13 @@ def convertStringToBool(string):
     return False
   else:
     return None
+
+def extractModuleName(script_name):
+  """it extracts the module name from pkg_resources
+  """
+  import pkg_resources
+  resources = pkg_resources.get_distribution("cloudooo")
+  console_script_list = resources.get_entry_map()['console_scripts']
+  return console_script_list[script_name].module_name
+
+

@@ -28,7 +28,8 @@
 
 import unittest
 import logging
-from cloudooo.utils import logger, configureLogger, convertStringToBool
+from cloudooo.utils import logger, configureLogger, convertStringToBool, \
+		extractModuleName
 from cloudoooTestCase import make_suite
 
 class TestUtils(unittest.TestCase):
@@ -50,6 +51,13 @@ class TestUtils(unittest.TestCase):
     self.assertEquals(convertStringToBool('truE'), True)
     self.assertEquals(convertStringToBool('faLse'), False)
     self.assertEquals(convertStringToBool(''), None)
+
+  def testExtractModuleName(self):
+    """Test if the module name resturns correctly"""
+    self.assertEquals(extractModuleName("unoconverter"),
+		    "cloudooo.bin.unoconverter")
+    self.assertEquals(extractModuleName("unomimemapper"),
+		    "cloudooo.bin.unomimemapper")
 
 def test_suite():
   return make_suite(TestUtils)
