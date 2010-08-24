@@ -1,3 +1,9 @@
+1.0.9
+=====
+
+  - Remove all attributes that works with cloudooo script paths.
+  - Use all scripts according to your python eggs.
+
 1.0.8
 =====
 

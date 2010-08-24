@@ -34,7 +34,6 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.mimemapper import mimemapper
 from cloudooo.application.openoffice import openoffice
 from cloudooo.document import FileSystemDocument
-from cloudooo.utils import extractModuleName
 
 class TestUnoConverter(cloudoooTestCase):
   """Test case to test all features of the unoconverter script"""
@@ -58,7 +57,7 @@ class TestUnoConverter(cloudoooTestCase):
     mimemapper_pickled = jsonpickle.encode(mimemapper)
     command = [self.python_path,
           "-c",
-	  "'from %s import main;main()'" % extractModuleName("unoconverter"),
+	  "'from cloudooo.bin.unoconverter import main;main()'",
           "'--convert'",
           "'--uno_path=%s'" % self.uno_path,
           "'--office_bin_path=%s'" % self.office_bin_path,
@@ -87,7 +86,7 @@ class TestUnoConverter(cloudoooTestCase):
     """Test script unoconverter without mimemapper serialized"""
     command = [self.python_path,
           "-c",
-	  "'from %s import main;main()'" % extractModuleName("unoconverter"),
+	  "'from cloudooo.bin.unoconverter import main;main()'",
           "'--convert'", 
           "'--uno_path=%s'" % self.uno_path,
           "'--office_bin_path=%s'" % self.office_bin_path,

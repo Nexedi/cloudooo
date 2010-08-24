@@ -37,7 +37,7 @@ from sys import executable as python_path
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
-		waitStopDaemon, convertStringToBool, extractModuleName
+		waitStopDaemon, convertStringToBool
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -60,7 +60,7 @@ class OpenOffice(Application):
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
     command = [python_path
               , "'-c'"
-	      , "'from %s import main;main()'" % extractModuleName("openoffice_tester")
+	      , "'from cloudooo.bin.openoffice_tester import main;main()'"
               , "'--hostname=%s'" % host
               , "'--port=%s'" % port
               , "'--uno_path=%s'" % self.uno_path]

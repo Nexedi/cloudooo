@@ -31,7 +31,6 @@ from cloudooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.utils import extractModuleName
 
 class TestUnoMimeMapper(cloudoooTestCase):
   """Test Case to test all features of script unomimemapper"""
@@ -53,7 +52,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     hostname, host  = openoffice.getAddress()
     command = [self.python_path,
             "-c",
-	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+	    "'from cloudooo.bin.unomimemapper import main; main()'",
             "'--uno_path=%s'" % self.uno_path,
             "'--office_bin_path=%s'" % self.uno_path,
             "'--hostname=%s'" % self.hostname,
@@ -74,7 +73,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     hostname, host  = openoffice.getAddress()
     command = [self.python_path,
             "-c",
-	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+	    "'from cloudooo.bin.unomimemapper import main; main()'",
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
@@ -89,7 +88,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     openoffice.stop()
     command = [self.python_path,
             "-c",
-	    "'from %s import main; main()'" % extractModuleName("unomimemapper"),
+	    "'from cloudooo.bin.unomimemapper import main; main()'",
             "'--uno_path=%s'" % self.uno_path,
             "'--office_bin_path=%s'" % self.uno_path,
             "'--hostname=%s'" % self.hostname,

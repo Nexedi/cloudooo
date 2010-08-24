@@ -46,23 +46,6 @@ def check_folder(path_dir_run_cloudooo, tmp_dir_path):
   if not path.exists(tmp_dir_path):
     mkdir(tmp_dir_path)
 
-def extract_cloudooo_script():
-  from sys import executable
-  import pkg_resources
-  cloudooo_resources = pkg_resources.get_distribution('cloudooo')
-  console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
-
-  openoffice_tester_bin_path = path.join(path.dirname(executable),
-                            console_scripts["openoffice_tester"].name)
-  unomimemapper_bin_path = path.join(path.dirname(executable),
-                          console_scripts["unomimemapper"].name)
-  unoconverter_bin_path = path.join(path.dirname(executable),
-                          console_scripts["unoconverter"].name)
-  
-  return dict(unoconverter_bin=unoconverter_bin_path,
-              unomimemapper_bin=unomimemapper_bin_path, 
-              openoffice_tester_bin=openoffice_tester_bin_path)
-
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
@@ -108,24 +91,18 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                   virtual_screen='1')
   xvfb.start()
   waitStartDaemon(xvfb, 10)
-  cloudooo_script_dict = extract_cloudooo_script()
-
-  openoffice_tester_bin = cloudooo_script_dict["openoffice_tester_bin"]
-  unomimemapper_bin = cloudooo_script_dict["unomimemapper_bin"]
-
+  
   if start_openoffice:
     openoffice.loadSettings(hostname,
                             openoffice_port, 
                             path_dir_run_cloudooo,
                             virtual_display_id,
                             office_bin_path, 
-                            uno_path,
-                            openoffice_tester_bin=openoffice_tester_bin)
+                            uno_path)
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
-    kw = dict(unomimemapper_bin=unomimemapper_bin,
-              uno_path=config.get("app:main", "uno_path"),
+    kw = dict(uno_path=config.get("app:main", "uno_path"),
               office_bin_path=config.get("app:main", "office_bin_path"))
     if not mimemapper.isLoaded():
         mimemapper.loadFilterList(hostname, port, **kw)
@@ -147,12 +124,6 @@ class cloudoooTestCase(unittest.TestCase):
   def setUp(self):
     """Creates a environment to run the tests. Is called always before the
     tests."""
-    cloudooo_script_dict = extract_cloudooo_script()
-
-    self.openoffice_tester_bin = cloudooo_script_dict["openoffice_tester_bin"]
-    self.unomimemapper_bin = cloudooo_script_dict["unomimemapper_bin"]
-    self.unoconverter_bin = cloudooo_script_dict["unoconverter_bin"]
-
     self.hostname = config.get("server:main", "host")
     self.cloudooo_port = config.get("server:main", "port")
     self.openoffice_port = config.get("app:main", "openoffice_port")

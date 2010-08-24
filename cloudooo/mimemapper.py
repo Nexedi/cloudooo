@@ -34,7 +34,6 @@ from os import environ
 from sys import executable as python_path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
-from utils import extractModuleName
 
 class MimeMapper(object):
   """Load all filters from OOo. You can get the of the filter you want or all
@@ -107,7 +106,7 @@ class MimeMapper(object):
     office_bin_path = kw.get("office_bin_path", environ.get('office_bin_path'))
     command = [python_path
               , "'-c'"
-	      , "'from %s import main;main()'" % extractModuleName("unomimemapper")
+	      , "'from cloudooo.bin.unomimemapper import main;main()'"
               , "'--uno_path=%s'" % uno_path
               , "'--office_bin_path=%s'" % office_bin_path
               , "'--hostname=%s'" % hostname, "--port=%s" % port]

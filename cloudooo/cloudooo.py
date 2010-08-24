@@ -32,9 +32,8 @@ from application.xvfb import xvfb
 from wsgixmlrpcapplication import WSGIXMLRPCApplication
 from utils import convertStringToBool, configureLogger
 from os import path, mkdir
-from sys import executable
 from mimemapper import mimemapper
-import monitor, gc, pkg_resources
+import monitor, gc
 
 def stopProcesses():
   monitor.stop()
@@ -56,9 +55,6 @@ def application(global_config, **local_config):
   application_hostname -- Sets the host to Xvfb and Openoffice.
   virtual_screen -- Use to define the screen to Xvfb
       e.g virtual_screen='0'
-  number_instances_openoffice -- Defines a number of OOo Instances.
-  pool_port_range_start -- Initial number to start all OOo Instances.
-      e.g pool_port_range_start=4060
   office_bin_path -- Full Path of the OOo executable.
       e.g office_bin_path='/opt/openoffice.org3/program'
   uno_path -- Full path to pyuno library.

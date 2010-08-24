@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 from os import path
 
-version = '1.0.8'
+version = '1.0.9'
 
 folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 

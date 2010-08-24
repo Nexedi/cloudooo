@@ -36,7 +36,7 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.mimemapper import mimemapper
 from cloudooo.document import FileSystemDocument
 from cloudooo.monitor.timeout import MonitorTimeout
-from cloudooo.utils import logger, extractModuleName
+from cloudooo.utils import logger
 from psutil import pid_exists
 from sys import executable as python_path
 
@@ -72,7 +72,7 @@ class OOHandler:
     kw['port'] = port
     command_list = [python_path
         , "-c"
-	, "'from %s import main;main()'" % extractModuleName("unoconverter")
+	, "'from cloudooo.bin.unoconverter import main;main()'"
         , "--uno_path='%s'" % self.uno_path
         , "--office_bin_path='%s'" % self.office_bin_path
         , "--document_url='%s'" % self.document.getUrl()]
