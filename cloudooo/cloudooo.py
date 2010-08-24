@@ -47,16 +47,16 @@ def application(global_config, **local_config):
   Keyword arguments:
   debug_mode -- Mode as the application prints the messages.
       e.g debug_mode=logging.DEBUG
-  path_dir_run_cloudooo -- Full path to create the environment of the processes.
-      e.g path_dir_run_cloudooo='/var/run/cloudooo'
+  working_path -- Full path to create the environment of the processes.
+      e.g working_path='/var/run/cloudooo'
   virtual_display_port -- Port to start the Xvfb.
   virtual_display_id -- Sets the display.
       e.g virtual_display_id='99'
   application_hostname -- Sets the host to Xvfb and Openoffice.
   virtual_screen -- Use to define the screen to Xvfb
       e.g virtual_screen='0'
-  office_bin_path -- Full Path of the OOo executable.
-      e.g office_bin_path='/opt/openoffice.org3/program'
+  office_binary_path -- Full Path of the OOo executable.
+      e.g office_binary_path='/opt/openoffice.org3/program'
   uno_path -- Full path to pyuno library.
       e.g uno_path='/opt/openoffice.org/program'
   """
@@ -64,11 +64,11 @@ def application(global_config, **local_config):
   debug_mode = convertStringToBool(local_config.get('debug_mode'))
   configureLogger(debug_mode=debug_mode)
   # path of directory to run cloudooo
-  path_dir_run_cloudooo = local_config.get('path_dir_run_cloudooo')
-  if not path.exists(path_dir_run_cloudooo):
-    mkdir(path_dir_run_cloudooo)
+  working_path = local_config.get('working_path')
+  if not path.exists(working_path):
+    mkdir(working_path)
   # directory to create temporary files
-  cloudooo_path_tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
+  cloudooo_path_tmp_dir = path.join(working_path, 'tmp')
   if not path.exists(cloudooo_path_tmp_dir):
     mkdir(cloudooo_path_tmp_dir)
   # The Xvfb will run in the same local of the OpenOffice
@@ -77,7 +77,7 @@ def application(global_config, **local_config):
   # Before start Xvfb, first loads the configuration
   xvfb.loadSettings(application_hostname,
                     int(local_config.get('virtual_display_port')), 
-                    path_dir_run_cloudooo,
+                    working_path,
                     local_config.get('virtual_display_id'), 
                     virtual_screen=local_config.get('virtual_screen'),
                     start_timeout=local_config.get('start_timeout'))
@@ -86,9 +86,9 @@ def application(global_config, **local_config):
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname, 
                           openoffice_port,
-                          path_dir_run_cloudooo,
+                          working_path,
                           local_config.get('virtual_display_id'),
-                          local_config.get('office_bin_path'), 
+                          local_config.get('office_binary_path'), 
                           local_config.get('uno_path'))
   openoffice.start()
 

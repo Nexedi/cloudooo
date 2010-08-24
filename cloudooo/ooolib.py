@@ -30,7 +30,7 @@ from os import environ, putenv
 from sys import path
 from os.path import exists
 
-def setUpUnoEnvironment(uno_path=None, office_bin_path=None):
+def setUpUnoEnvironment(uno_path=None, office_binary_path=None):
   """Set up the environment to use the uno library and connect with the
   openoffice by socket"""
   if uno_path is not None:
@@ -38,15 +38,15 @@ def setUpUnoEnvironment(uno_path=None, office_bin_path=None):
   else:
     uno_path = environ.get('uno_path')
 
-  if office_bin_path is not None:
-    environ['office_bin_path'] = office_bin_path
+  if office_binary_path is not None:
+    environ['office_binary_path'] = office_binary_path
   else:
-    office_bin_path = environ.get('office_bin_path')
+    office_binary_path = environ.get('office_binary_path')
 
   # Add in sys.path the path of pyuno
   if uno_path not in path:
     path.append(uno_path)
-  fundamentalrc_file = '%s/fundamentalrc' % office_bin_path
+  fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
   if exists(fundamentalrc_file) and \
        not environ.has_key('URE_BOOTSTRAP'):
     putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)

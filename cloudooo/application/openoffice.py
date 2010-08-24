@@ -80,17 +80,17 @@ class OpenOffice(Application):
     self.request = 0
 
   def loadSettings(self, hostname, port, path_run_dir, display_id,
-      office_bin_path, uno_path, **kw):
+      office_binary_path, uno_path, **kw):
     """Method to load the configuratio to control one OpenOffice Instance
     
     Keyword arguments:
     office_path -- Full Path of the OOo executable.
-      e.g office_bin_path='/opt/openoffice.org3/program'
+      e.g office_binary_path='/opt/openoffice.org3/program'
     uno_path -- Full path of the Uno Library
     """
     Application.loadSettings(self, hostname, port, path_run_dir, display_id)
-    setUpUnoEnvironment(uno_path, office_bin_path)
-    self.office_bin_path = office_bin_path
+    setUpUnoEnvironment(uno_path, office_binary_path)
+    self.office_binary_path = office_binary_path
     self.uno_path = uno_path
     self.process_name = "soffice.bin"
     self.document_url = kw.get('document_url', '')
@@ -114,7 +114,7 @@ class OpenOffice(Application):
     if exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
-    self.command = [join(self.office_bin_path, self._bin_soffice)
+    self.command = [join(self.office_binary_path, self._bin_soffice)
               , '-invisible'
               , '-nologo'
               , '-nodefault'

@@ -39,9 +39,9 @@ class TestOpenOffice(cloudoooTestCase):
     """Instantiate one OpenOffice"""
     self.openoffice = OpenOffice()
     self.openoffice.loadSettings("localhost", 4090,
-                                self.path_dir_run_cloudooo,
+                                self.working_path,
                                 self.virtual_display_id,
-                                self.office_bin_path,
+                                self.office_binary_path,
                                 self.uno_path,
                                 openoffice_tester_bin=self.openoffice_tester_bin)
     self.openoffice.start()

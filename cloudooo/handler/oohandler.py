@@ -56,14 +56,14 @@ class OOHandler:
                                       source_format)
     self.zip = kw.get('zip', False)
     self.uno_path = kw.get("uno_path", None)
-    self.office_bin_path = kw.get("office_bin_path", None)
+    self.office_binary_path = kw.get("office_binary_path", None)
     self.timeout = kw.get("timeout", 600)
     self.unoconverter_bin = kw.get('unoconverter_bin', "unoconverter")
     self.source_format = source_format
     if not self.uno_path:
       self.uno_path = environ.get("uno_path")
-    if not self.office_bin_path:
-      self.office_bin_path = environ.get("office_bin_path")
+    if not self.office_binary_path:
+      self.office_binary_path = environ.get("office_binary_path")
 
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
@@ -74,7 +74,7 @@ class OOHandler:
         , "-c"
 	, "'from cloudooo.bin.unoconverter import main;main()'"
         , "--uno_path='%s'" % self.uno_path
-        , "--office_bin_path='%s'" % self.office_bin_path
+        , "--office_binary_path='%s'" % self.office_binary_path
         , "--document_url='%s'" % self.document.getUrl()]
     for arg in args:
       command_list.insert(3, "'--%s'" % arg)

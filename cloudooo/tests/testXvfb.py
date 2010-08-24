@@ -38,7 +38,7 @@ class TestXvfb(cloudoooTestCase):
     self.xvfb = Xvfb()
     self.xvfb.loadSettings(self.hostname,
                           int(self.virtual_display_port_int),
-                          self.path_dir_run_cloudooo,
+                          self.working_path,
                           self.virtual_display_id,
                           virtual_screen='1')
 

@@ -38,13 +38,13 @@ class TestUnoMimeMapper(cloudoooTestCase):
   def afterSetUp(self):
     """ """
     environ['uno_path'] = ''
-    environ['office_bin_path'] = ''
+    environ['office_binary_path'] = ''
     openoffice.acquire()
 
   def tearDown(self):
     """ """
     environ['uno_path'] = self.uno_path
-    environ['office_bin_path'] = self.office_bin_path
+    environ['office_binary_path'] = self.office_binary_path
     openoffice.release()
 
   def testCreateLocalAttributes(self):
@@ -54,7 +54,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
             "-c",
 	    "'from cloudooo.bin.unomimemapper import main; main()'",
             "'--uno_path=%s'" % self.uno_path,
-            "'--office_bin_path=%s'" % self.uno_path,
+            "'--office_binary_path=%s'" % self.uno_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
@@ -69,7 +69,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     self.assertEquals(stderr, '')
 
   def testCallUnoMimemapperWithoutSomeParameters(self):
-    """ Test call unomimemapper without uno_path and office_bin_path"""
+    """ Test call unomimemapper without uno_path and office_binary_path"""
     hostname, host  = openoffice.getAddress()
     command = [self.python_path,
             "-c",
@@ -90,7 +90,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
             "-c",
 	    "'from cloudooo.bin.unomimemapper import main; main()'",
             "'--uno_path=%s'" % self.uno_path,
-            "'--office_bin_path=%s'" % self.uno_path,
+            "'--office_binary_path=%s'" % self.uno_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,

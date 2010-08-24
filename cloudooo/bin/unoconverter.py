@@ -53,7 +53,7 @@ Options:
   --document_url=STRING_URL 
                         URL of document to load in OpenOffice
   
-  --office_bin_path=STRING_URL
+  --office_binary_path=STRING_URL
                         Folder path were is the binary openoffice
   --uno_path=STRING_URL
                         Folter path were is the uno library
@@ -196,7 +196,7 @@ def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help", "test",
       "convert", "getmetadata", "setmetadata",
-      "uno_path=", "office_bin_path=", 
+      "uno_path=", "office_binary_path=", 
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=", 
       "mimemapper=", "metadata=",
@@ -217,9 +217,9 @@ def main():
       port = arg
     elif opt == '--document_url':
       document_url = arg
-    elif opt == '--office_bin_path':
-      environ['office_bin_path'] = arg
-      office_bin_path = arg
+    elif opt == '--office_binary_path':
+      environ['office_binary_path'] = arg
+      office_binary_path = arg
     elif opt == '--uno_path':
       environ['uno_path'] = arg
       uno_path = arg
@@ -241,8 +241,8 @@ def main():
     if "uno_path" in locals():
       kw['uno_path'] = uno_path
 
-    if "office_bin_path" in locals():
-      kw['office_bin_path'] = office_bin_path
+    if "office_binary_path" in locals():
+      kw['office_binary_path'] = office_binary_path
     
     if "unomimemapper_bin" in locals():
       kw['unomimemapper_bin'] = unomimemapper_bin

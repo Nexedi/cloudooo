@@ -44,7 +44,7 @@ Options:
   
   --port=STRING         OpenOffice Instance port
   
-  --office_bin_path=STRING_URL
+  --office_binary_path=STRING_URL
                         Folder path were is the binary openoffice
   --uno_path=STRING_URL
                         Folter path were is the uno library
@@ -94,7 +94,7 @@ def help():
 def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help",
-      "uno_path=", "office_bin_path=",
+      "uno_path=", "office_binary_path=",
       "hostname=", "port="])
   except GetoptError, msg:
     msg = msg.msg + "\nUse --help or -h"
@@ -109,8 +109,8 @@ def main():
       help()
     if opt == "--uno_path":
       environ['uno_path'] = arg
-    elif opt == "--office_bin_path":
-      environ['office_bin_path'] = arg
+    elif opt == "--office_binary_path":
+      environ['office_binary_path'] = arg
     elif opt == '--hostname':
       hostname = arg
     elif opt == "--port":

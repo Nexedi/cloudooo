@@ -96,19 +96,19 @@ class MimeMapper(object):
       port -- port to connects by socket
     **kw:
       uno_path -- full path to uno library
-      office_bin_path -- full path to openoffice binary
+      office_binary_path -- full path to openoffice binary
     """
     # Filters that has flag in bad_flag_list is ignored. 
     # XXX - Is not good way to remove unnecessary filters
     # XXX - try find a good way to remove filters that are not used for export
     bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
     uno_path = kw.get("uno_path", environ.get('uno_path'))
-    office_bin_path = kw.get("office_bin_path", environ.get('office_bin_path'))
+    office_binary_path = kw.get("office_binary_path", environ.get('office_binary_path'))
     command = [python_path
               , "'-c'"
 	      , "'from cloudooo.bin.unomimemapper import main;main()'"
               , "'--uno_path=%s'" % uno_path
-              , "'--office_bin_path=%s'" % office_bin_path
+              , "'--office_binary_path=%s'" % office_binary_path
               , "'--hostname=%s'" % hostname, "--port=%s" % port]
     stdout, stderr = Popen(' '.join(command),
                           stdout=PIPE,

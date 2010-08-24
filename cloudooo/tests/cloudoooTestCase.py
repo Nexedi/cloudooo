@@ -40,9 +40,9 @@ config = ConfigParser()
 testcase_path = path.dirname(__file__)
 
 
-def check_folder(path_dir_run_cloudooo, tmp_dir_path):
-  if not path.exists(path_dir_run_cloudooo):
-    mkdir(path_dir_run_cloudooo)
+def check_folder(working_path, tmp_dir_path):
+  if not path.exists(working_path):
+    mkdir(working_path)
   if not path.exists(tmp_dir_path):
     mkdir(tmp_dir_path)
 
@@ -61,32 +61,32 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
     conf_path = sys.argv[1]
   loadConfig(conf_path)
   uno_path = config.get("app:main", "uno_path")
-  path_dir_run_cloudooo = config.get("app:main", "path_dir_run_cloudooo")
+  working_path = config.get("app:main", "working_path")
   virtual_display_id = int(config.get("app:main", "virtual_display_id"))
   virtual_display_port_int = int(config.get("app:main", "virtual_display_port"))
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
-  office_bin_path = config.get("app:main", "office_bin_path")
-  tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
-  check_folder(path_dir_run_cloudooo, tmp_dir)
+  office_binary_path = config.get("app:main", "office_binary_path")
+  tmp_dir = path.join(working_path, 'tmp')
+  check_folder(working_path, tmp_dir)
   if not environ.get('uno_path'):
     environ['uno_path'] = uno_path
   
-  office_bin_path = config.get("app:main", "office_bin_path")
-  if not environ.get('office_bin_path'):
-    environ['office_bin_path'] = office_bin_path
+  office_binary_path = config.get("app:main", "office_binary_path")
+  if not environ.get('office_binary_path'):
+    environ['office_binary_path'] = office_binary_path
   
   if uno_path not in sys.path:
     sys.path.append(uno_path)
   
-  fundamentalrc_file = '%s/fundamentalrc' % office_bin_path
+  fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
   if path.exists(fundamentalrc_file) and \
       not environ.has_key('URE_BOOTSTRAP'):
     putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   xvfb.loadSettings(hostname,
                   virtual_display_port_int,
-                  path_dir_run_cloudooo,
+                  working_path,
                   virtual_display_id,
                   virtual_screen='1')
   xvfb.start()
@@ -95,15 +95,15 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   if start_openoffice:
     openoffice.loadSettings(hostname,
                             openoffice_port, 
-                            path_dir_run_cloudooo,
+                            working_path,
                             virtual_display_id,
-                            office_bin_path, 
+                            office_binary_path, 
                             uno_path)
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
     kw = dict(uno_path=config.get("app:main", "uno_path"),
-              office_bin_path=config.get("app:main", "office_bin_path"))
+              office_binary_path=config.get("app:main", "office_binary_path"))
     if not mimemapper.isLoaded():
         mimemapper.loadFilterList(hostname, port, **kw)
     openoffice.release()
@@ -127,11 +127,11 @@ class cloudoooTestCase(unittest.TestCase):
     self.hostname = config.get("server:main", "host")
     self.cloudooo_port = config.get("server:main", "port")
     self.openoffice_port = config.get("app:main", "openoffice_port")
-    self.office_bin_path = config.get("app:main", "office_bin_path")
+    self.office_binary_path = config.get("app:main", "office_binary_path")
     self.python_path = sys.executable
-    self.path_dir_run_cloudooo = config.get("app:main", "path_dir_run_cloudooo")
-    self.tmp_url = path.join(self.path_dir_run_cloudooo, "tmp")
-    check_folder(self.path_dir_run_cloudooo, self.tmp_url)
+    self.working_path = config.get("app:main", "working_path")
+    self.tmp_url = path.join(self.working_path, "tmp")
+    check_folder(self.working_path, self.tmp_url)
     self.uno_path = config.get("app:main", "uno_path")
     self.virtual_display_id = config.get("app:main", "virtual_display_id")
     self.virtual_display_port_int = config.get("app:main", "virtual_display_port")
