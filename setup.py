@@ -1,11 +1,16 @@
 from setuptools import setup, find_packages
+from os import path
 
-version = '1.0.7'
+version = '1.0.8'
 
+folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
+
+long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(), 
+		               open(path.join(folder_path, "CHANGES.txt")).read()) 
 setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
-      long_description=open("./cloudooo/README").read(),
+      long_description=long_description,
       classifiers=["Topic :: System :: Networking",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: Internet :: WWW/HTTP :: WSGI",

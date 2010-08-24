@@ -75,16 +75,6 @@ def application(global_config, **local_config):
   cloudooo_path_tmp_dir = path.join(path_dir_run_cloudooo, 'tmp')
   if not path.exists(cloudooo_path_tmp_dir):
     mkdir(cloudooo_path_tmp_dir)
-  # it extracts the path of cloudooo scripts from pkg_resources
-  cloudooo_resources = pkg_resources.get_distribution('cloudooo')
-  console_scripts = cloudooo_resources.get_entry_map()['console_scripts']
-  unomimemapper_bin = path.join(path.dirname(executable),
-                              console_scripts["unomimemapper"].name)
-  unoconverter_bin = path.join(path.dirname(executable),
-                              console_scripts["unoconverter"].name)
-  openoffice_tester_bin = path.join(path.dirname(executable),
-                              console_scripts["openoffice_tester"].name)
-  
   # The Xvfb will run in the same local of the OpenOffice
   application_hostname = local_config.get('application_hostname')
   openoffice_port = int(local_config.get('openoffice_port'))
@@ -103,11 +93,7 @@ def application(global_config, **local_config):
                           path_dir_run_cloudooo,
                           local_config.get('virtual_display_id'),
                           local_config.get('office_bin_path'), 
-                          local_config.get('uno_path'),
-                          unoconverter_bin=unoconverter_bin,
-                          python_path=executable,
-                          unomimemapper_bin=unomimemapper_bin,
-                          openoffice_tester_bin=openoffice_tester_bin)
+                          local_config.get('uno_path'))
   openoffice.start()
 
   monitor.load(local_config)
@@ -118,15 +104,11 @@ def application(global_config, **local_config):
   # Load all filters
   openoffice.acquire()
   mimemapper.loadFilterList(application_hostname,
-                            openoffice_port,
-                            unomimemapper_bin=unomimemapper_bin,
-                            python_path=executable)
+                            openoffice_port)
   openoffice.release()
 
   from manager import Manager
   timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(timeout=timeout_response, 
-            unoconverter_bin=unoconverter_bin,
-            python_path=executable)
+  kw = dict(timeout=timeout_response)
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

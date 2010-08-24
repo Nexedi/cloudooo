@@ -1,0 +1,5 @@
+1.0.8
+=====
+
+  - Remove entry points, treat those as ordinary files.
+  - Search all script files using pkg_resources.
