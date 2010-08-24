@@ -33,9 +33,6 @@ setup(name='cloudooo',
       [paste.app_factory]
       main = cloudooo.cloudooo:application
       [console_scripts]
-      unoconverter = cloudooo.bin.unoconverter:main
-      unomimemapper = cloudooo.bin.unomimemapper:main
-      openoffice_tester = cloudooo.bin.openoffice_tester:main
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       """,
       )
