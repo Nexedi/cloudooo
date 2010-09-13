@@ -75,7 +75,7 @@ def createSpecificProperty(filter_name):
     property = PropertyValue('FilterData', 0,
                        uno.Any('[]com.sun.star.beans.PropertyValue',
                        (PropertyValue('ExportNotesPages', 0, True, 0),),), 0)
-  elif filter_name == "draw_html_Export":
+  elif filter_name in ("draw_html_Export", "HTML (StarCalc)"):
     property = PropertyValue('FilterData', 0,
                         uno.Any('[]com.sun.star.beans.PropertyValue',
                                 (PropertyValue('Format', 0, 2, 0),),), 0)

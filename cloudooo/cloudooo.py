@@ -102,7 +102,6 @@ def application(global_config, **local_config):
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port)
   openoffice.release()
-
   from manager import Manager
   timeout_response = int(local_config.get('timeout_response'))
   kw = dict(timeout=timeout_response)

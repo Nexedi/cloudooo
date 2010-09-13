@@ -202,11 +202,13 @@ class Manager(object):
       # XXX - use html format instead of xhtml
       if orig_format == "presentation" and format == "xhtml":
         format = 'html'
+      elif orig_format == "spreadsheet" and format in ("html", "xhtml"):
+        format = "htm"
       response_dict['data'] = self.convertFile(file, orig_format, format, zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
       if zip:
         response_dict['mime'] = "application/zip"
-      elif format == "html":
+      elif format in ("html", "htm", "xhtml"):
         response_dict['mime'] = "text/html"
       elif format == "pdf":
         response_dict['mime'] = "application/pdf"
