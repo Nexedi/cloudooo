@@ -106,7 +106,7 @@ class MimeMapper(object):
     office_binary_path = kw.get("office_binary_path", environ.get('office_binary_path'))
     command = [python_path
               , "'-c'"
-	      , "'from cloudooo.bin.unomimemapper import main;main()'"
+              , "'from cloudooo.bin.unomimemapper import main;main()'"
               , "'--uno_path=%s'" % uno_path
               , "'--office_binary_path=%s'" % office_binary_path
               , "'--hostname=%s'" % hostname, "--port=%s" % port]

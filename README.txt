@@ -3,7 +3,8 @@ Install Cloudooo
   
   $ python2.6 setup.py install
   
-  Warning: you must have installed setuptools>=0.6c11 in this python.
+  Warnings:
+      - you must have installed setuptools>=0.6c11 in this python.
 
 Install Dependencies in Mandriva
 ================================
@@ -38,12 +39,12 @@ Create Configuration File
 =========================
   
   The configuration file is used to start the application using paster.
-  $ cp ./cloudooo/samples/cloudooo.conf . # Copy to current folder
+  $ cp ./cloudooo/samples/samples.conf . # Copy to current folder
 
   The next step is define some attributes in cloudooo.conf:
- 
+    - working_path - folder to run the application. This folder need be created.
     - uno_path - full path to UNO library;
-    - soffice_bin_path - full path to soffice.bin;
+    - soffice_binary_path - full path to soffice.bin;
 
 Run Application
 ===============

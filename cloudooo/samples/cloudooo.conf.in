@@ -1,0 +1,21 @@
+[app:main]
+use = egg:cloudooo
+debug_mode = @DEBUG_MODE@
+working_path = @WORKING_PATH@
+uno_path = @UNO_PATH@
+office_binary_path = @OFFICE_BINARY_PATH@
+limit_number_request = @NUMBER_MAXIMUM_OF_REQUEST@
+monitor_interval = @MONITOR_INTERVAL@
+timeout_response = @TIMEOUT_RESPONSE@
+enable_memory_monitor = @ENABLE_MEMORY_MONITOR@
+limit_memory_used = @MAXIMUM_USE_BY_OPENOFFICE@
+application_hostname = @APPLICATION_HOSTNAME@
+openoffice_port = @OPENOFFICE_PORT@
+virtual_display_port = @XVFB_PORT@
+virtual_display_id = @XVFB_DISPLAY_ID@
+virtual_screen = @XVFB_SCREEN_NUMBER@
+
+[server:main]
+use = egg:PasteScript#wsgiutils
+host = @SERVER_HOST@
+port = @SERVER_PORT@
