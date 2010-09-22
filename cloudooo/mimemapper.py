@@ -26,11 +26,12 @@
 #
 ##############################################################################
 
+import pkg_resources
 from re import findall
 from subprocess import Popen, PIPE
 from zope.interface import implements
 from filter import Filter
-from os import environ
+from os import environ, path
 from sys import executable as python_path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
@@ -103,13 +104,15 @@ class MimeMapper(object):
     # XXX - try find a good way to remove filters that are not used for export
     bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
     uno_path = kw.get("uno_path", environ.get('uno_path'))
-    office_binary_path = kw.get("office_binary_path", environ.get('office_binary_path'))
+    office_binary_path = kw.get("office_binary_path",
+                                environ.get('office_binary_path'))
     command = [python_path
-              , "'-c'"
-              , "'from cloudooo.bin.unomimemapper import main;main()'"
+              , pkg_resources.resource_filename(__name__, 
+                                        path.join("helper","unomimemapper.py"))
               , "'--uno_path=%s'" % uno_path
               , "'--office_binary_path=%s'" % office_binary_path
-              , "'--hostname=%s'" % hostname, "--port=%s" % port]
+              , "'--hostname=%s'" % hostname 
+              , "--port=%s" % port]
     stdout, stderr = Popen(' '.join(command),
                           stdout=PIPE,
                           close_fds=True,

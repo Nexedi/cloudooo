@@ -30,12 +30,10 @@
 import sys
 import jsonpickle
 from types import UnicodeType, InstanceType
-from os import environ
-from os.path import dirname
+from os import environ, putenv
+from os.path import dirname, exists
 from tempfile import mktemp
 from getopt import getopt, GetoptError
-from cloudooo import ooolib
-from cloudooo.utils import usage
 
 __doc__ = """
 
@@ -77,7 +75,77 @@ class UnoConverter(object):
     self.document_url = document_url
     self.document_dir_path = dirname(document_url)
     self.source_format = kw.get('source_format')
+    self._setUpUnoEnvironment(kw.get("uno_path"), 
+                              kw.get("office_binary_path"))
     self._load()
+
+  def _setUpUnoEnvironment(self, uno_path=None, office_binary_path=None):
+    """Set up the environment to use the uno library and connect with the
+    openoffice by socket"""
+    if uno_path is not None:
+      environ['uno_path'] = uno_path
+    else:
+      uno_path = environ.get('uno_path')
+
+    if office_binary_path is not None:
+      environ['office_binary_path'] = office_binary_path
+    else:
+      office_binary_path = environ.get('office_binary_path')
+
+    # Add in sys.path the path of pyuno
+    if uno_path not in sys.path:
+      sys.path.append(uno_path)
+    fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
+    if exists(fundamentalrc_file) and \
+       not environ.has_key('URE_BOOTSTRAP'):
+      putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
+
+  def _createProperty(self, name, value):
+    """Create property"""
+    from com.sun.star.beans import PropertyValue
+    property = PropertyValue()
+    property.Name = name
+    property.Value = value
+    return property 
+
+  def _getServiceManager(self, host, port):
+    """Get the ServiceManager from the running OpenOffice.org."""
+    import uno
+    # Get the uno component context from the PyUNO runtime
+    uno_context = uno.getComponentContext()
+    # Create the UnoUrlResolver on the Python side.
+    url_resolver = "com.sun.star.bridge.UnoUrlResolver"
+    resolver = uno_context.ServiceManager.createInstanceWithContext(url_resolver,
+      uno_context)
+    # Connect to the running OpenOffice.org and get its
+    # context.
+    uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+    # Get the ServiceManager object
+    return uno_connection.ServiceManager
+
+  def _createSpecificProperty(self, filter_name):
+    """Creates a property according to the filter"""
+    import uno
+    from com.sun.star.beans import PropertyValue
+    if filter_name == "impress_html_Export":
+      property = PropertyValue('FilterData', 0,
+                        uno.Any('[]com.sun.star.beans.PropertyValue',
+                        (PropertyValue('IsExportNotes', 0, True, 0),
+                        PropertyValue('Format', 0, 2, 0),),), 0)
+    elif filter_name == "impress_pdf_Export":
+      property = PropertyValue('FilterData', 0,
+                       uno.Any('[]com.sun.star.beans.PropertyValue',
+                       (PropertyValue('ExportNotesPages', 0, True, 0),),), 0)
+    elif filter_name in ("draw_html_Export", "HTML (StarCalc)"):
+      property = PropertyValue('FilterData', 0,
+                        uno.Any('[]com.sun.star.beans.PropertyValue',
+                                (PropertyValue('Format', 0, 2, 0),),), 0)
+    elif filter_name == "Text (encoded)":
+      property = PropertyValue('FilterFlags', 0, 'UTF8,LF', 0)
+    else:
+      return []
+
+    return [property,]
 
   def _getPropertyToExport(self, destination_format=None):
     """Create the property according to the extension of the file."""
@@ -89,27 +157,32 @@ class UnoConverter(object):
       type = self.document_type
       filter_name = mimemapper.getFilterName(destination_format, type)
       property_list = []
-      property = ooolib.createProperty("Overwrite", True)
+      property = self._createProperty("Overwrite", True)
       property_list.append(property)
-      property = ooolib.createProperty("FilterName", filter_name)
+      property = self._createProperty("FilterName", filter_name)
       property_list.append(property)
-      property_list.extend(ooolib.createSpecificProperty(filter_name))
+      property_list.extend(self._createSpecificProperty(filter_name))
       return property_list
     else:
       return ()
 
   def _load(self):
     """Create one document with basic properties"""
-    service_manager = ooolib.getServiceManager(self.hostname, self.port)
+    service_manager = self._getServiceManager(self.hostname, self.port)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
-    uno_url = ooolib.systemPathToFileUrl(self.document_url)
+    uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
     module_manager = service_manager.createInstance("com.sun.star.frame.ModuleManager")
     if not uno_document:
       raise AttributeError, "This document can not be loaded or is empty"
     self.document_type = module_manager.identify(uno_document)
     self.document_loaded = uno_document
- 
+  
+  def systemPathToFileUrl(self, path):
+    """Returns a path in uno library patterns"""
+    from unohelper import systemPathToFileUrl
+    return systemPathToFileUrl(path)
+
   def convert(self, output_format=None):
     """it converts a document to specific format"""
     if output_format in ("html", "htm", "xhtml"):
@@ -121,7 +194,7 @@ class UnoConverter(object):
 
     property_list = self._getPropertyToExport(output_format)
     try:
-      self.document_loaded.storeToURL(ooolib.systemPathToFileUrl(output_url),
+      self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
          tuple(property_list))
     finally:
       self.document_loaded.dispose()
@@ -147,11 +220,11 @@ class UnoConverter(object):
       if field_value_str:
         fieldname = document_info.getUserFieldName(number)
         metadata[fieldname] = field_value_str
-    service_manager = ooolib.getServiceManager(self.hostname, self.port)
+    service_manager = self._getServiceManager(self.hostname, self.port)
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
-    doc = uno_file_access.openFileRead(ooolib.systemPathToFileUrl(self.document_url))
+    doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
     property_list = []
-    property = ooolib.createProperty("InputStream", doc)
+    property = self._createProperty("InputStream", doc)
     property_list.append(property)
     type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
     filter_name = type_detection.queryTypeByDescriptor(tuple(property_list), \
@@ -186,7 +259,7 @@ class UnoConverter(object):
     self.document_loaded.dispose()
 
 def help():
-  usage(sys.stderr, __doc__)
+  print >> sys.stderr, __doc__
   sys.exit(1)
 
 def main():
@@ -203,7 +276,7 @@ def main():
       "unomimemapper_bin="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
-    usage(sys.stderr, msg)
+    print >> sys.stderr, msg
     sys.exit(2)
   
   param_list = [tuple[0] for tuple in opt_list]
@@ -235,22 +308,17 @@ def main():
       unomimemapper_bin = arg
    
   kw = {}
-  
+  if "uno_path" in locals():
+    kw['uno_path'] = uno_path
+
+  if "office_binary_path" in locals():
+    kw['office_binary_path'] = office_binary_path
+ 
   if "mimemapper" not in globals() and "--setmetadata" not in param_list:
     from cloudooo.mimemapper import mimemapper
-    if "uno_path" in locals():
-      kw['uno_path'] = uno_path
-
-    if "office_binary_path" in locals():
-      kw['office_binary_path'] = office_binary_path
-    
-    if "unomimemapper_bin" in locals():
-      kw['unomimemapper_bin'] = unomimemapper_bin
-
     kw['python_path'] = sys.executable
     mimemapper.loadFilterList(hostname=hostname, port=port, **kw)
   
-  kw.clear()
   if 'source_format' in locals():
     kw['source_format'] = source_format
   

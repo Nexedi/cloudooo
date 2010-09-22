@@ -28,10 +28,8 @@
 ##############################################################################
 
 import sys
-from os import environ
+from os import environ, path, putenv
 from getopt import getopt, GetoptError
-from cloudooo.ooolib import getServiceManager
-from cloudooo.utils import usage
 from types import InstanceType
 
 __doc__ = """
@@ -53,9 +51,11 @@ Options:
 class UnoMimemapper(object):
   """ """
 
-  def __init__(self, hostname, port):
+  def __init__(self, hostname, port, **kw):
     """ Receives hostname and port from openoffice and create a service manager"""
-    self.service_manager = getServiceManager(hostname, port)
+    self._setUpUnoEnvironment(kw.get("uno_path"), 
+                              kw.get("office_binary_path"))
+    self.service_manager = self._getServiceManager(hostname, port)
 
   def _getElementNameByService(self, uno_service, ignore_name_list=[]):
     """Returns an dict with elements."""
@@ -74,6 +74,42 @@ class UnoMimemapper(object):
 
     return service_dict
 
+  def _setUpUnoEnvironment(self, uno_path=None, office_binary_path=None):
+    """Set up the environment to use the uno library and connect with the
+    openoffice by socket"""
+    if uno_path is not None:
+      environ['uno_path'] = uno_path
+    else:
+      uno_path = environ.get('uno_path')
+
+    if office_binary_path is not None:
+      environ['office_binary_path'] = office_binary_path
+    else:
+      office_binary_path = environ.get('office_binary_path')
+
+    # Add in sys.path the path of pyuno
+    if uno_path not in sys.path:
+      sys.path.append(uno_path)
+    fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
+    if path.exists(fundamentalrc_file) and \
+       not environ.has_key('URE_BOOTSTRAP'):
+      putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
+
+  def _getServiceManager(self, host, port):
+    """Get the ServiceManager from the running OpenOffice.org."""
+    import uno
+    # Get the uno component context from the PyUNO runtime
+    uno_context = uno.getComponentContext()
+    # Create the UnoUrlResolver on the Python side.
+    url_resolver = "com.sun.star.bridge.UnoUrlResolver"
+    resolver = uno_context.ServiceManager.createInstanceWithContext(url_resolver,
+      uno_context)
+    # Connect to the running OpenOffice.org and get its
+    # context.
+    uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+    # Get the ServiceManager object
+    return uno_connection.ServiceManager   
+
   def getFilterDict(self):
     """Return all filters and your properties"""
     filter_service = self.service_manager.createInstance("com.sun.star.document.FilterFactory")
@@ -86,9 +122,8 @@ class UnoMimemapper(object):
     type_dict = self._getElementNameByService(type_service, ["UINames", "URLPattern"])
     return type_dict
 
-
 def help():
-  usage(sys.stderr, __doc__)
+  print >> sys.stderr, __doc__
   sys.exit(1)
 
 def main():
@@ -98,12 +133,12 @@ def main():
       "hostname=", "port="])
   except GetoptError, msg:
     msg = msg.msg + "\nUse --help or -h"
-    usage(sys.stderr, msg)
+    print >> sys.stderr, msg
     sys.exit(2)
   
   if not opt_list:
     help()
-
+  
   for opt, arg in opt_list:
     if opt in ("-h", "--help"):
       help()
@@ -116,7 +151,7 @@ def main():
     elif opt == "--port":
       port = arg
   
-  mimemapper = UnoMimemapper(hostname, port)
+  mimemapper = UnoMimemapper(hostname, port, **environ)
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
   print "filter_dict = %s\ntype_dict = %s" % (filter_dict, type_dict)

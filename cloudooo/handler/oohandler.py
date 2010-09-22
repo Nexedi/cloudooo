@@ -26,8 +26,8 @@
 #
 ##############################################################################
 
-import jsonpickle
-from os import environ
+import jsonpickle, pkg_resources
+from os import environ, path
 from subprocess import Popen, PIPE
 from cloudooo.application.openoffice import openoffice
 from cloudooo.application.xvfb import xvfb
@@ -58,7 +58,6 @@ class OOHandler:
     self.uno_path = kw.get("uno_path", None)
     self.office_binary_path = kw.get("office_binary_path", None)
     self.timeout = kw.get("timeout", 600)
-    self.unoconverter_bin = kw.get('unoconverter_bin', "unoconverter")
     self.source_format = source_format
     if not self.uno_path:
       self.uno_path = environ.get("uno_path")
@@ -71,11 +70,11 @@ class OOHandler:
     kw['hostname'] = hostname
     kw['port'] = port
     command_list = [python_path
-        , "-c"
-	, "'from cloudooo.bin.unoconverter import main;main()'"
-        , "--uno_path='%s'" % self.uno_path
-        , "--office_binary_path='%s'" % self.office_binary_path
-        , "--document_url='%s'" % self.document.getUrl()]
+                    , pkg_resources.resource_filename("cloudooo",
+                                        path.join("helper", "unoconverter.py"))
+                    , "--uno_path='%s'" % self.uno_path
+                    , "--office_binary_path='%s'" % self.office_binary_path
+                    , "--document_url='%s'" % self.document.getUrl()]
     for arg in args:
       command_list.insert(3, "'--%s'" % arg)
     for k, v in kw.iteritems():
