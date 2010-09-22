@@ -5,7 +5,6 @@ import sys
 from base64 import encodestring
 from xmlrpclib import ServerProxy
 from getopt import getopt, GetoptError
-from cloudooo.utils import usage
 
 DOCUMENT_STRING = "MemoryMonitor - TimeoutMonitor - RequestMonitor\n\nOOHandler\n\nMimemapper\n\nERP5\n"
 HOSTNAME = PORT = None
@@ -44,7 +43,7 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "", 
                                 ["port=","hostname="])
   except GetoptError, e:
-    usage(sys.stderr, "%s \nUse --port and --hostname" % e)
+    print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)
   
   for opt, arg in opt_list:
@@ -54,7 +53,7 @@ def main():
       HOSTNAME = arg
   
   if not HOSTNAME and not PORT:
-    usage(sys.stderr, "Use --port and --hostname")
+    print >> sys.stderr, "Use --port and --hostname"
     sys.exit(2)
   suite = unittest.TestLoader().loadTestsFromTestCase(CloudoooTestCase)
   unittest.TextTestRunner(verbosity=2).run(suite)

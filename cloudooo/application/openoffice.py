@@ -30,7 +30,6 @@ from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
-from cloudooo.ooolib import setUpUnoEnvironment
 from zope.interface import implements
 from application import Application
 from sys import executable as python_path
@@ -89,7 +88,6 @@ class OpenOffice(Application):
     uno_path -- Full path of the Uno Library
     """
     Application.loadSettings(self, hostname, port, path_run_dir, display_id)
-    setUpUnoEnvironment(uno_path, office_binary_path)
     self.office_binary_path = office_binary_path
     self.uno_path = uno_path
     self.process_name = "soffice.bin"

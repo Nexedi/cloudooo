@@ -67,11 +67,6 @@ def waitStopDaemon(daemon, attempts=5):
     if not daemon.status():
       break
 
-def usage(stream, msg=None):
-  """Print the message"""
-  if msg:
-    print >>stream,  msg
-
 def configureLogger(level=None, debug_mode=False):
   """Configure logger.
 
