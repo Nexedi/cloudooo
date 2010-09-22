@@ -134,6 +134,20 @@ class OOHandler:
 
     return stdout, stderr
 
+  def _serializeMimemapper(self):
+    """Serialize parts of mimemapper"""
+    filter_list = []
+    for extension in mimemapper.extension_list:
+      for service_type in mimemapper.document_service_list:
+        if service_type in mimemapper._doc_type_list_by_extension[extension]:
+          filter_list.append((extension, 
+                              service_type, 
+                              mimemapper.getFilterName(extension, service_type)))
+    
+    return jsonpickle.encode(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
+                                  filter_list=filter_list,
+                                  mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
+
   def convert(self, destination_format=None, **kw):
     """Convert a document to another format supported by the OpenOffice
     
@@ -145,7 +159,7 @@ class OOHandler:
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
-      kw['mimemapper'] = jsonpickle.encode(mimemapper)
+    kw['mimemapper'] = self._serializeMimemapper()
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
     finally:
@@ -167,7 +181,7 @@ class OOHandler:
     openoffice.acquire()
     mimemapper_pickled = jsonpickle.encode(mimemapper)
     logger.debug("getMetadata")
-    kw = dict(mimemapper=mimemapper_pickled)
+    kw = dict(mimemapper=self._serializeMimemapper())
     if base_document:
       feature_list = ['getmetadata', 'convert']
     else:

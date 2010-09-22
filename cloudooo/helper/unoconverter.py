@@ -147,15 +147,20 @@ class UnoConverter(object):
 
     return [property,]
 
+  def _getFilterName(self, destination_format, type):
+    for filter_tuple in mimemapper["filter_list"]:
+      if destination_format == filter_tuple[0] and filter_tuple[1] == type:
+        return filter_tuple[2]
+
   def _getPropertyToExport(self, destination_format=None):
     """Create the property according to the extension of the file."""
     if destination_format and self.document_loaded:
-      doc_type_list = mimemapper._doc_type_list_by_extension.get(destination_format)
+      doc_type_list = mimemapper["doc_type_list_by_extension"].get(destination_format)
       if self.document_type not in doc_type_list:
         raise AttributeError, \
                         "This Document can not be converted for this format"
       type = self.document_type
-      filter_name = mimemapper.getFilterName(destination_format, type)
+      filter_name = self._getFilterName(destination_format, type)
       property_list = []
       property = self._createProperty("Overwrite", True)
       property_list.append(property)
@@ -230,7 +235,7 @@ class UnoConverter(object):
     filter_name = type_detection.queryTypeByDescriptor(tuple(property_list), \
         True)[0]
     doc.closeInput()
-    metadata['MIMEType'] = mimemapper.getMimetypeByFilterType(filter_name)
+    metadata['MIMEType'] = mimemapper["mimetype_by_filter_type"].get(filter_name)
     return metadata
 
   def setMetadata(self, metadata):
@@ -304,8 +309,6 @@ def main():
       metadata = jsonpickle.decode(arg)
     elif opt == '--mimemapper':
       mimemapper = jsonpickle.decode(arg)
-    elif opt == '--unomimemapper_bin':
-      unomimemapper_bin = arg
    
   kw = {}
   if "uno_path" in locals():
@@ -314,11 +317,6 @@ def main():
   if "office_binary_path" in locals():
     kw['office_binary_path'] = office_binary_path
  
-  if "mimemapper" not in globals() and "--setmetadata" not in param_list:
-    from cloudooo.mimemapper import mimemapper
-    kw['python_path'] = sys.executable
-    mimemapper.loadFilterList(hostname=hostname, port=port, **kw)
-  
   if 'source_format' in locals():
     kw['source_format'] = source_format
   

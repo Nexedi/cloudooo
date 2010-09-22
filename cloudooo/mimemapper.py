@@ -52,6 +52,7 @@ class MimeMapper(object):
     self._doc_type_list_by_extension = {}
     # List of extensions that are ODF
     self._odf_extension_list = []
+    self.extension_list = []
     self._mimetype_by_filter_type = {}
     self._document_type_dict = {}
     
@@ -128,9 +129,9 @@ class MimeMapper(object):
       filter_type_dict = type_dict.get(filter_type)
       if not ui_name:
         ui_name = filter_type_dict.get("UIName")
-      extension_list = filter_type_dict.get("Extensions")
+      filter_extension_list = filter_type_dict.get("Extensions")
       mimetype = filter_type_dict.get("MediaType")
-      if not (extension_list and mimetype):
+      if not (filter_extension_list and mimetype):
         continue
       preferred = filter_type_dict.get("Preferred")
       document_service_str = value.get('DocumentService')
@@ -153,9 +154,11 @@ class MimeMapper(object):
       if not self._extension_list_by_type.has_key(document_service_str):
         self._extension_list_by_type[document_service_str] = []
       
-      for ext in iter(extension_list):
+      for ext in iter(filter_extension_list):
         # All mimetypes that starts with "application/vnd.oasis.opendocument" are
         # ODF.
+        if ext not in self.extension_list:
+          self.extension_list.append(ext)
         if mimetype.startswith("application/vnd.oasis.opendocument"):
           if not ext in self._odf_extension_list:
             self._odf_extension_list.append(ext)
@@ -178,6 +181,7 @@ class MimeMapper(object):
           preferred=preferred, sort_index=sort_index, label=ui_name)
         # Adds the object in filter_by_extension_dict
         self._addFilter(filter)
+    self.document_service_list = self._extension_list_by_type.keys()
     self._loaded = True
 
   def getMimetypeByFilterType(self, filter_type):
