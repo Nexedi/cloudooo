@@ -51,18 +51,12 @@ class TestOOHandler(cloudoooTestCase):
                       True,
                       "\nStdout: %sMsg: %s" % (stdout, msg))
 
-  def afterSetUp(self):
-    """ """
-    self.kw = dict(unoconverter_bin=self.unoconverter_bin,
-                  python_path=self.python_path)
-
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""
     data = encodestring(open("data/test.odt").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'odt',
-                        **self.kw)
+                        'odt')
     doc_exported = handler.convert("doc")
     document_output_url = path.join(self.tmp_url, "testExport.doc")
     self._save_document(document_output_url, doc_exported)
@@ -74,8 +68,7 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.doc").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'doc',
-                        **self.kw)
+                        'doc')
     doc_exported = handler.convert("odt")
     document_output_url = path.join(self.tmp_url, "testConvert.odt")
     self._save_document(document_output_url, doc_exported)
@@ -87,8 +80,7 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.odt").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'odt',
-                        **self.kw)
+                        'odt')
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get('Data'), '')
     self.assertEquals(metadata.has_key('Data'), True)
@@ -103,13 +95,11 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.odt").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'odt',
-                        **self.kw)
+                        'odt')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
     new_handler = OOHandler(self.tmp_url,
                             new_data,
-                            'odt',
-                            **self.kw)
+                            'odt')
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
 
@@ -119,8 +109,7 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.doc").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'doc',
-                        **self.kw)
+                        'doc')
     doc_exported = handler.convert("odt")
     document_output_url = path.join(self.tmp_url, "testConvert.odt")
     self._save_document(document_output_url, doc_exported)
@@ -133,8 +122,7 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.odt").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'odt',
-                        **self.kw)
+                        'odt')
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get('Title'), 'title')
     self.assertEquals(metadata.get('MIMEType'),
@@ -146,13 +134,11 @@ class TestOOHandler(cloudoooTestCase):
     data = encodestring(open("data/test.doc").read())
     handler = OOHandler(self.tmp_url,
                         decodestring(data),
-                        'doc',
-                        **self.kw)
+                        'doc')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
     new_handler = OOHandler(self.tmp_url,
                             new_data,
-                            'doc',
-                             **self.kw)
+                            'doc')
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
 

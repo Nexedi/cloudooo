@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-import jsonpickle
+import jsonpickle, pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists
 from cloudoooTestCase import cloudoooTestCase, make_suite
@@ -56,8 +56,8 @@ class TestUnoConverter(cloudoooTestCase):
     """Test script unoconverter"""
     mimemapper_pickled = jsonpickle.encode(mimemapper)
     command = [self.python_path,
-          "-c",
-	  "'from cloudooo.bin.unoconverter import main;main()'",
+          pkg_resources.resource_filename("cloudooo", 
+                                          "helper/unoconverter.py"),
           "'--convert'",
           "'--uno_path=%s'" % self.uno_path,
           "'--office_binary_path=%s'" % self.office_binary_path,
@@ -70,37 +70,6 @@ class TestUnoConverter(cloudoooTestCase):
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
-    output_url = stdout.replace('\n', '')
-    self.assertEquals(exists(output_url), True)
-    stdout, stderr = Popen("file %s" % output_url, shell=True, 
-        stdout=PIPE, stderr=PIPE).communicate()
-    self.assertEquals(self.file_msg_list[1] in stdout \
-                      or \
-                      self.file_msg_list[0] in stdout,
-                      True,
-                      "%s don't have %s" % (self.file_msg_list, stdout))
-    self.document.trash()
-    self.assertEquals(exists(output_url), False)
-
-  def _testUnoConverterWithoutMimemapper(self):
-    """Test script unoconverter without mimemapper serialized"""
-    command = [self.python_path,
-          "-c",
-	  "'from cloudooo.bin.unoconverter import main;main()'",
-          "'--convert'", 
-          "'--uno_path=%s'" % self.uno_path,
-          "'--office_binary_path=%s'" % self.office_binary_path,
-          "'--hostname=%s'" % self.hostname,
-          "'--port=%s'" % self.port,
-          "'--document_url=%s'" % self.document.getUrl(),
-          "'--destination_format=%s'" % "doc",
-          "'--source_format=%s'" % "odt",
-          "'--unomimemapper_bin=%s'" % self.unomimemapper_bin]
-
-    stdout, stderr = Popen(' '.join(command), shell=True, 
-        stdout=PIPE, stderr=PIPE).communicate()
-    if not stdout:
-      self.fail(stderr)
     output_url = stdout.replace('\n', '')
     self.assertEquals(exists(output_url), True)
     stdout, stderr = Popen("file %s" % output_url, shell=True, 

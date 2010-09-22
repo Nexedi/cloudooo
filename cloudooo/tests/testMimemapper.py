@@ -180,7 +180,6 @@ class TestMimeMapper(cloudoooTestCase):
     hostname, port = openoffice.getAddress()
     self.mimemapper.loadFilterList(hostname,
                                   port,
-                                  unomimemapper_bin=self.unomimemapper_bin, 
                                   python_path=self.python_path)
     openoffice.release()
 

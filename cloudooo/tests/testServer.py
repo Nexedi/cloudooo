@@ -462,7 +462,6 @@ class TestServer(cloudoooTestCase):
     else:
       self.fail("Not exists one file with 'impr.html' format")
 
-
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
     data = open(join('data','test.odt'), 'r').read()[:100]
