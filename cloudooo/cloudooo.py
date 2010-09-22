@@ -93,6 +93,10 @@ def application(global_config, **local_config):
   openoffice.start()
 
   monitor.load(local_config)
+  timeout_response = int(local_config.get('timeout_response'))
+  kw = dict(uno_path=local_config.get('uno_path'), 
+           office_binary_path=local_config.get('office_binary_path'),
+           timeout=timeout_response)
 
   # Signal to stop all processes
   signal(SIGHUP, lambda x,y: stopProcesses())
@@ -100,10 +104,8 @@ def application(global_config, **local_config):
   # Load all filters
   openoffice.acquire()
   mimemapper.loadFilterList(application_hostname,
-                            openoffice_port)
+                            openoffice_port, **kw)
   openoffice.release()
   from manager import Manager
-  timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(timeout=timeout_response)
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)
