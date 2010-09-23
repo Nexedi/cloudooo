@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 import sys
+import helper_utils
 from getopt import getopt, GetoptError
-from cloudooo.utils import usage
-from cloudooo import ooolib
 from os import environ
 
 def test_openoffice(hostname, port):
   try:
-    ooolib.getServiceManager(hostname, port)
+    helper_utils.getServiceManager(hostname, port)
     return True
   except Exception, err:
     print err

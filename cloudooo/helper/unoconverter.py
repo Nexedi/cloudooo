@@ -29,6 +29,7 @@
 
 import sys
 import jsonpickle
+import helper_utils
 from types import UnicodeType, InstanceType
 from os import environ, putenv
 from os.path import dirname, exists
@@ -108,21 +109,6 @@ class UnoConverter(object):
     property.Value = value
     return property 
 
-  def _getServiceManager(self, host, port):
-    """Get the ServiceManager from the running OpenOffice.org."""
-    import uno
-    # Get the uno component context from the PyUNO runtime
-    uno_context = uno.getComponentContext()
-    # Create the UnoUrlResolver on the Python side.
-    url_resolver = "com.sun.star.bridge.UnoUrlResolver"
-    resolver = uno_context.ServiceManager.createInstanceWithContext(url_resolver,
-      uno_context)
-    # Connect to the running OpenOffice.org and get its
-    # context.
-    uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
-    # Get the ServiceManager object
-    return uno_connection.ServiceManager
-
   def _createSpecificProperty(self, filter_name):
     """Creates a property according to the filter"""
     import uno
@@ -173,7 +159,7 @@ class UnoConverter(object):
 
   def _load(self):
     """Create one document with basic properties"""
-    service_manager = self._getServiceManager(self.hostname, self.port)
+    service_manager = helper_utils.getServiceManager(self.hostname, self.port)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
@@ -225,7 +211,7 @@ class UnoConverter(object):
       if field_value_str:
         fieldname = document_info.getUserFieldName(number)
         metadata[fieldname] = field_value_str
-    service_manager = self._getServiceManager(self.hostname, self.port)
+    service_manager = helper_utils.getServiceManager(self.hostname, self.port)
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
     property_list = []
