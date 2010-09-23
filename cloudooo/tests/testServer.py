@@ -27,7 +27,8 @@
 ##############################################################################
 
 import unittest
-from os.path import join
+from os.path import join, exists
+from os import remove
 from subprocess import Popen, PIPE
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
@@ -439,6 +440,8 @@ class TestServer(cloudoooTestCase):
         break
     else:
       self.fail("Not exists one file with 'impr.html' format")
+    if exists(output_url):
+      remove(output_url)
 
   def testRunGenerateMethodConvertOdpToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
