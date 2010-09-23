@@ -1,3 +1,10 @@
+1.0.9
+=====
+  - use pkg_resources to get helper scripts.
+  - move internal scripts to helper folder.
+  - removed cloudooo as dependency of internal scripts.
+  - modified way that the filters of OpenOffice.org are passed.
+
 1.0.8
 =====
 
