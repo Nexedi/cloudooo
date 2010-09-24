@@ -32,7 +32,6 @@ from subprocess import Popen, PIPE
 from zope.interface import implements
 from filter import Filter
 from os import environ, path
-from sys import executable as python_path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
 
@@ -107,7 +106,7 @@ class MimeMapper(object):
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    command = [python_path
+    command = ["python"
               , pkg_resources.resource_filename(__name__, 
                                         path.join("helper","unomimemapper.py"))
               , "'--uno_path=%s'" % uno_path

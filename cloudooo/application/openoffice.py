@@ -26,17 +26,17 @@
 #
 ##############################################################################
 
+import pkg_resources
 from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
 from zope.interface import implements
 from application import Application
-from sys import executable as python_path
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
-		waitStopDaemon, convertStringToBool
+                                    waitStopDaemon, convertStringToBool
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -57,9 +57,9 @@ class OpenOffice(Application):
   def _testOpenOffice(self, host, port):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
-    command = [python_path
-              , "'-c'"
-	      , "'from cloudooo.bin.openoffice_tester import main;main()'"
+    command = ["python"
+              , pkg_resources.resource_filename("cloudooo",
+                                       join("helper", "openoffice_tester.py"))
               , "'--hostname=%s'" % host
               , "'--port=%s'" % port
               , "'--uno_path=%s'" % self.uno_path]

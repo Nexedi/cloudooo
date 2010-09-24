@@ -69,7 +69,7 @@ class OOHandler:
     hostname, port = openoffice.getAddress()
     kw['hostname'] = hostname
     kw['port'] = port
-    command_list = [python_path
+    command_list = ["python"
                     , pkg_resources.resource_filename("cloudooo",
                                         path.join("helper", "unoconverter.py"))
                     , "--uno_path='%s'" % self.uno_path
