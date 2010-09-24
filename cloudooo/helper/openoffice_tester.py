@@ -17,7 +17,7 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "", 
                                 ["port=","hostname=","uno_path="])
   except GetoptError, e:
-    usage(sys.stderr, "%s \nUse --port and --hostname" % e)
+    print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)
   
   for opt, arg in opt_list:

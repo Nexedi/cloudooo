@@ -34,6 +34,7 @@ from filter import Filter
 from os import environ, path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
+from sys import executable as python_path
 
 class MimeMapper(object):
   """Load all filters from OOo. You can get the of the filter you want or all
@@ -106,7 +107,7 @@ class MimeMapper(object):
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    command = ["python"
+    command = [python_path
               , pkg_resources.resource_filename(__name__, 
                                         path.join("helper","unomimemapper.py"))
               , "'--uno_path=%s'" % uno_path

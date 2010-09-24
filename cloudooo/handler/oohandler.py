@@ -69,7 +69,7 @@ class OOHandler:
     hostname, port = openoffice.getAddress()
     kw['hostname'] = hostname
     kw['port'] = port
-    command_list = ["python"
+    command_list = [python_path
                     , pkg_resources.resource_filename("cloudooo",
                                         path.join("helper", "unoconverter.py"))
                     , "--uno_path='%s'" % self.uno_path
@@ -179,7 +179,6 @@ class OOHandler:
     base_document -- Boolean variable. if true, the document is also returned
     along with the metadata."""
     openoffice.acquire()
-    mimemapper_pickled = jsonpickle.encode(mimemapper)
     logger.debug("getMetadata")
     kw = dict(mimemapper=self._serializeMimemapper())
     if base_document:
