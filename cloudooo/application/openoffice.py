@@ -91,8 +91,6 @@ class OpenOffice(Application):
     Application.loadSettings(self, hostname, port, path_run_dir, display_id)
     self.office_binary_path = office_binary_path
     self.uno_path = uno_path
-    self.process_name = "soffice.bin"
-    self.document_url = kw.get('document_url', '')
 
   def _start_process(self, command, env):
     """Start OpenOffice.org process"""
