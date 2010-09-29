@@ -31,7 +31,6 @@ from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
-from sys import executable as python_path
 from zope.interface import implements
 from application import Application
 from xvfb import xvfb
@@ -58,7 +57,7 @@ class OpenOffice(Application):
   def _testOpenOffice(self, host, port):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
-    command = [python_path
+    command = [join(self.office_binary_path, "python")
               , pkg_resources.resource_filename("cloudooo",
                                        join("helper", "openoffice_tester.py"))
               , "'--hostname=%s'" % host

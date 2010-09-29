@@ -67,14 +67,17 @@ class OOHandler:
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
     hostname, port = openoffice.getAddress()
+    jsonpickle_path = "/".join(pkg_resources.resource_filename("jsonpickle",
+                               "").split("/")[:-1])
     kw['hostname'] = hostname
     kw['port'] = port
-    command_list = [python_path
+    command_list = [path.join(self.office_binary_path, "python")
                     , pkg_resources.resource_filename("cloudooo",
                                         path.join("helper", "unoconverter.py"))
                     , "--uno_path='%s'" % self.uno_path
                     , "--office_binary_path='%s'" % self.office_binary_path
-                    , "--document_url='%s'" % self.document.getUrl()]
+                    , "--document_url='%s'" % self.document.getUrl()
+                    , "--jsonpickle_path='%s'" % jsonpickle_path]
     for arg in args:
       command_list.insert(3, "'--%s'" % arg)
     for k, v in kw.iteritems():

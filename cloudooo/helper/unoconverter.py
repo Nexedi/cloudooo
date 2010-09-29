@@ -28,7 +28,6 @@
 ##############################################################################
 
 import sys
-import jsonpickle
 import helper_utils
 from types import UnicodeType, InstanceType
 from os import environ, putenv
@@ -264,15 +263,22 @@ def main():
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=", 
       "mimemapper=", "metadata=",
-      "unomimemapper_bin="])
+      "unomimemapper_bin=", "jsonpickle_path="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
     print >> sys.stderr, msg
     sys.exit(2)
   
-  param_list = [tuple[0] for tuple in opt_list]
+  param_list = [tuple[0] for tuple in iter(opt_list)]
 
-  for opt, arg in opt_list:
+  for opt, arg in iter(opt_list):
+    if opt == "--jsonpickle_path":
+      sys.path.append(arg)
+      break
+
+  import jsonpickle
+
+  for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
     elif opt == '--hostname':

@@ -26,10 +26,10 @@
 #
 ##############################################################################
 
-import unittest
+import unittest, pkg_resources
 from cloudooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
-from os import environ
+from os import environ, path
 from cloudoooTestCase import cloudoooTestCase, make_suite
 
 class TestUnoMimeMapper(cloudoooTestCase):
@@ -50,15 +50,15 @@ class TestUnoMimeMapper(cloudoooTestCase):
   def testCreateLocalAttributes(self):
     """Test if filters returns correctly the filters and types in dict"""
     hostname, host  = openoffice.getAddress()
-    command = [self.python_path,
-            "-c",
-	    "'from cloudooo.bin.unomimemapper import main; main()'",
+    command = [path.join(self.office_binary_path, "python"),
+            pkg_resources.resource_filename("cloudooo", "helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
-            "'--office_binary_path=%s'" % self.uno_path,
+            "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
+    self.assertEquals(stderr, '')
     exec(stdout)
     self.assertEquals('filter_dict' in locals(), True)
     self.assertEquals('type_dict' in locals(), True)
@@ -68,29 +68,36 @@ class TestUnoMimeMapper(cloudoooTestCase):
     self.assertEquals(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
     self.assertEquals(stderr, '')
 
-  def testCallUnoMimemapperWithoutSomeParameters(self):
+  def testCallUnoMimemapperOnlyHostNameAndPort(self):
     """ Test call unomimemapper without uno_path and office_binary_path"""
     hostname, host  = openoffice.getAddress()
-    command = [self.python_path,
-            "-c",
-	    "'from cloudooo.bin.unomimemapper import main; main()'",
+    command = [path.join(self.office_binary_path, "python"),
+            pkg_resources.resource_filename("cloudooo", 
+                                            "helper/unomimemapper.py"),
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
-    self.assertEquals(stderr.endswith('No module named uno\n'), True)
-    self.assertEquals(stdout, '')
+    self.assertEquals(stderr, '')
+    exec(stdout)
+    self.assertEquals('filter_dict' in locals(), True)
+    self.assertEquals('type_dict' in locals(), True)
+    self.assertNotEquals(filter_dict.get('writer8'), None)
+    self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
+    self.assertNotEquals(filter_dict.get('writer8'), None)
+    self.assertEquals(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
+    self.assertEquals(stderr, '')
 
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
     error_msg = "couldn\'t connect to socket (Success)\n"
     hostname, host  = openoffice.getAddress()
     openoffice.stop()
-    command = [self.python_path,
-            "-c",
-	    "'from cloudooo.bin.unomimemapper import main; main()'",
+    command = [path.join(self.office_binary_path, "python"),
+            pkg_resources.resource_filename("cloudooo", 
+                                            "helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
-            "'--office_binary_path=%s'" % self.uno_path,
+            "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
