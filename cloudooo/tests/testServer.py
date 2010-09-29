@@ -443,6 +443,33 @@ class TestServer(cloudoooTestCase):
     if exists(output_url):
       remove(output_url)
 
+  def testPNGFileToConvertOdpToHTML(self):
+    """Test run_generate method. This test if returns good png files"""
+    data = open(join('data', 'test_png.odp'),'r').read()
+    generate_result = self.proxy.run_generate('test_png.odp',
+                                      encodestring(data),
+                                      None, 'html', 'presentation')
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertNotEquals(response_dict['data'], '')
+    self.assertEquals(response_dict['mime'], 'application/zip')
+    output_url = join(self.tmp_url, "zip.zip")
+    open(output_url, 'w').write(decodestring(response_dict['data']))
+    self.assertTrue(is_zipfile(output_url))
+    zipfile = ZipFile(output_url)
+    try:
+      png_path = join(self.tmp_url, "img0.png")
+      zipfile.extractall(self.tmp_url)
+      stdout, stderr = Popen("file -b %s" % png_path, shell=True,
+         stdout=PIPE).communicate()
+      self.assertEquals(stdout.startswith('PNG image data'), True, stdout)
+      self.assertTrue("8-bit/color RGB" in stdout, stdout)
+    finally:
+      zipfile.close()
+    if exists(output_url):
+      remove(output_url)
+
   def testRunGenerateMethodConvertOdpToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
     html"""
