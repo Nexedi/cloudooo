@@ -27,6 +27,7 @@
 ##############################################################################
 
 import jsonpickle, pkg_resources
+from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
 from cloudooo.application.openoffice import openoffice
@@ -38,7 +39,6 @@ from cloudooo.document import FileSystemDocument
 from cloudooo.monitor.timeout import MonitorTimeout
 from cloudooo.utils import logger
 from psutil import pid_exists
-from sys import executable as python_path
 
 class OOHandler:
   """OOHandler is used to access the one Document and OpenOffice.
@@ -79,9 +79,9 @@ class OOHandler:
                     , "--document_url='%s'" % self.document.getUrl()
                     , "--jsonpickle_path='%s'" % jsonpickle_path]
     for arg in args:
-      command_list.insert(3, "'--%s'" % arg)
+      command_list.insert(3, "--%s" % arg)
     for k, v in kw.iteritems():
-      command_list.append("'--%s=%s'" % (k,v))
+      command_list.append("--%s='%s'" % (k,v))
       
     return ' '.join(command_list)
   
@@ -194,8 +194,7 @@ class OOHandler:
       openoffice.release()
       if self.monitor.is_alive():
         self._stopTimeout()
-    metadata={}
-    exec("metadata=%s" % stdout)
+    metadata=jsonpickle.decode(decodestring(stdout))
     if metadata.get("Data"):
       self.document.reload(metadata['Data'])
       metadata['Data'] = self.document.getContent()
@@ -213,7 +212,7 @@ class OOHandler:
     openoffice.acquire()
     metadata_pickled = jsonpickle.encode(metadata)
     logger.debug("setMetadata")
-    kw = dict(metadata=metadata_pickled)
+    kw = dict(metadata=encodestring(metadata_pickled))
     try:
       stdout, stderr = self._callUnoConverter(*['setmetadata'], **kw)
     finally:

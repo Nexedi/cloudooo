@@ -33,6 +33,7 @@ from types import UnicodeType, InstanceType
 from os import environ, putenv
 from os.path import dirname, exists
 from tempfile import mktemp
+from base64 import decodestring, encodestring
 from getopt import getopt, GetoptError
 
 __doc__ = """
@@ -298,6 +299,7 @@ def main():
     elif opt == '--source_format':
       source_format = arg
     elif opt == '--metadata':
+      arg = decodestring(arg)
       metadata = jsonpickle.decode(arg)
     elif opt == '--mimemapper':
       mimemapper = jsonpickle.decode(arg)
@@ -319,10 +321,12 @@ def main():
   elif '--convert' in param_list and 'destination_format' in locals():
     output = unoconverter.convert(destination_format)
   elif '--getmetadata' in param_list and not '--convert' in param_list:
-    output = unoconverter.getMetadata()
+    metadata_dict = unoconverter.getMetadata()
+    output = encodestring(jsonpickle.encode(metadata_dict))
   elif '--getmetadata' in param_list and '--convert' in param_list:
-    output = unoconverter.getMetadata()
-    output['Data'] = unoconverter.convert()
+    metadata_dict = unoconverter.getMetadata()
+    metadata_dict['Data'] = unoconverter.convert()
+    output = encodestring(jsonpickle.encode(metadata_dict))
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
     output = document_url
