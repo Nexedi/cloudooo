@@ -520,6 +520,17 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(response_dict['meta']['MIMEType'], 
                       'application/vnd.oasis.opendocument.text') 
     self.assertEquals(response_dict['meta']['Description'], "Music")
+    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
+                          encodestring(data),
+                          {"Title":"Namie's working record", 
+                           "Description": "Music"})
+    response_code, response_dict, response_message = setmetadata_result
+    getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt', 
+                                                  response_dict['data'])
+    response_code, response_dict, response_message = getmetadata_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(response_dict['meta']['title'], 
+                      "Namie's working record") 
   
   def testRunSetMetadataFailResponse(self):
     """Test run_setmetadata method with invalid document"""

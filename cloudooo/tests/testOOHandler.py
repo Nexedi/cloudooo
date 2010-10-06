@@ -102,6 +102,15 @@ class TestOOHandler(cloudoooTestCase):
                             'odt')
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
+    handler = OOHandler(self.tmp_url,
+                        decodestring(data),
+                        'odt')
+    new_data = handler.setMetadata({"Title": "Namie's working record"})
+    new_handler = OOHandler(self.tmp_url,
+                            new_data,
+                            'odt')
+    metadata = new_handler.getMetadata()
+    self.assertEquals(metadata.get('Title'), "Namie's working record")
 
   def testConvertWithOpenOfficeStopped(self):
     """Test convert with openoffice stopped"""
