@@ -304,60 +304,33 @@ class TestServer(cloudoooTestCase):
                           'odt',
                           'OpenDocument Text\n')
   
-  def testSendInvalidFile(self):
-    """Test to verify if the behavior of server is normal when a invalid file is
-    sent"""
-    input_url = "cloudoooTestCase.py"
-    error_msg = "This document can not be loaded or is empty\n"
-    data = encodestring(open(input_url).read())
-    try:
-      self.proxy.convertFile(data, 'py', 'pdf')
-      self.fail(error_msg)
-    except Fault, err:
-      self.assertEquals(err.faultString.endswith(error_msg), True,
-                        err.faultString)
-    
-    try:
-      self.proxy.getFileMetadataItemList(data, 'py')
-      self.fail(error_msg)
-    except Fault, err:
-      self.assertEquals(err.faultString.endswith(error_msg), True,
-                        err.faultString)
-
-    try:
-      self.proxy.updateFileMetadata(data, 'odt',
-          {"Subject": "subject"})
-      self.fail(error_msg)
-    except Fault, err:
-      self.assertEquals(err.faultString.endswith(error_msg), True,
-                        err.faultString)
-
+  def testConvertPyToPDF(self):
+    """Test export python to pdf"""
+    self._testConvertFile("cloudoooTestCase.py",
+                          join(self.tmp_url, "cloudoooTestCase.py"),
+                          'py',
+                          'pdf',
+                          'PDF document, version 1.4\n')
+ 
   def testSendEmptyRequest(self):
     """Test to verify if the behavior of server is normal when a empty string
     is sent"""
     data = encodestring("")
     error_msg = "This document can not be loaded or is empty\n"
+    fail_msg = "This document can not be loaded, it is empty\n"
     try:
       self.proxy.convertFile(data, '', '')
-      self.fail(error_msg)
+      self.fail(fail_msg)
     except Fault, err:
       msg = "This format is not supported or is invalid"
       self.assertEquals(err.faultString.endswith(msg), True,
                         "ConvertFile\n" + err.faultString)
     
-    try:
-      self.proxy.getFileMetadataItemList(data, '')
-      self.fail(error_msg)
-    except Fault, err:
-      self.assertEquals(err.faultString.endswith(error_msg), True,
-                        "getFileMetadataItemList\n" + err.faultString)
-
-    try:
-      self.proxy.updateFileMetadata(data, '', {"Subject": "subject"})
-      self.fail(error_msg)
-    except Fault, err:
-      self.assertEquals(err.faultString.endswith(error_msg), True,
-          "updateFileMetadata\n" + err.faultString)
+    res = self.proxy.getFileMetadataItemList(data, '')
+    self.assertEquals(res['MIMEType'], "text/plain")
+    res = decodestring(self.proxy.updateFileMetadata(data, '', 
+                                         {"Subject": "subject"}))
+    self.assertEquals(decodestring(res), '')
 
   def testConvertDocumentToInvalidFormat(self):
     """Try convert one document for a invalid format"""
