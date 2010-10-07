@@ -42,9 +42,12 @@ class MonitorRequest(Monitor, Thread):
     Thread.__init__(self)
     self.request_limit = request_limit
 
+  def start(self):
+    self.status_flag = True
+    Thread.start(self)
+  
   def run(self):
     """Is called by start function"""
-    self.status_flag = True
     logger.debug("Start MonitorRequest")
     while self.status_flag:
       if self.openoffice.request > self.request_limit:
