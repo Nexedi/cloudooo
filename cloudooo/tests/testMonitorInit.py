@@ -54,18 +54,20 @@ class TestMonitorInit(cloudoooTestCase):
   def testMonitorLoadOnlyMonitorRequest(self):
     """Check if the monitors are started"""
     cloudooo.monitor.load(self.load_config)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, MonitorRequest),
-                      True)
-    self.assertEquals(cloudooo.monitor.monitor_memory, None)
-
+    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, 
+                                MonitorRequest),
+                                True)
+  
   def testMonitorLoadMonitorMemory(self):
     """Check if the MemoryMemory is started"""
     self.load_config['enable_memory_monitor'] = True
     cloudooo.monitor.load(self.load_config)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, MonitorRequest),
-                      True)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_memory, MonitorMemory),
-                      True)
+    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, 
+                                 MonitorRequest),
+                                 True)
+    self.assertEquals(isinstance(cloudooo.monitor.monitor_memory,
+                                 MonitorMemory),
+                                 True)
 
 def test_suite():
   return make_suite(TestMonitorInit)

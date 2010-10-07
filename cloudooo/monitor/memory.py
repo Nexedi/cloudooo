@@ -27,12 +27,12 @@
 ##############################################################################
 
 from cloudooo.monitor.monitor import Monitor
-from threading import Thread
-from psutil import Process
+from multiprocessing import Process
+import psutil
 from cloudooo.utils import logger
 from time import sleep
 
-class MonitorMemory(Monitor, Thread):
+class MonitorMemory(Monitor, Process):
   """Usefull to control the memory and does not allow use it unnecessarily"""
   
   def __init__(self, openoffice, interval, limit_memory_usage):
@@ -40,11 +40,11 @@ class MonitorMemory(Monitor, Thread):
     and ILockable, the limit of memory usage that the openoffice can use and the
     interval to check the object."""
     Monitor.__init__(self, openoffice, interval)
-    Thread.__init__(self)
+    Process.__init__(self)
     self.limit = limit_memory_usage
 
   def create_process(self):
-    self.process = Process(int(self.openoffice.pid()))
+    self.process = psutil.Process(int(self.openoffice.pid()))
 
   def get_memory_usage(self):
     try:
@@ -55,7 +55,7 @@ class MonitorMemory(Monitor, Thread):
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0
-    # convert bytes to GB
+    # convert bytes to MB
     return sum(self.process.get_memory_info())/(1024*1024)
 
   def run(self):
@@ -71,3 +71,7 @@ class MonitorMemory(Monitor, Thread):
         self.openoffice.stop()
       sleep(self.interval)
     logger.debug("Stop MonitorMemory")
+
+  def terminate(self):
+    Monitor.terminate(self)
+    Process.terminate(self)

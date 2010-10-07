@@ -38,6 +38,8 @@ class TestMonitorMemory(unittest.TestCase):
   """Test case to see if the MonitorMemory is properly managing the
   openoffice."""
   
+  interval = 3
+
   def setUp(self):
     if not openoffice.status():
       openoffice.start()
@@ -56,7 +58,7 @@ class TestMonitorMemory(unittest.TestCase):
     try:
       self.monitor = MonitorMemory(openoffice, 1, 1000)
       self.monitor.start()
-      sleep(2)
+      sleep(6)
       self.assertEquals(openoffice.status(), True)
     finally:
       self.monitor.terminate()
@@ -67,7 +69,7 @@ class TestMonitorMemory(unittest.TestCase):
     try:
       self.monitor = MonitorMemory(openoffice, 2, 10)
       self.monitor.start()
-      sleep(3)
+      sleep(self.interval)
       self.assertEquals(openoffice.status(), False)
     finally:
       self.monitor.terminate()
@@ -76,9 +78,9 @@ class TestMonitorMemory(unittest.TestCase):
     """Tests if the monitor continues to run even with openoffice stopped"""
     openoffice.stop()
     self.monitor = MonitorMemory(openoffice, 2, 1000)
+    self.monitor.start()
     try:
-      self.monitor.start()
-      sleep(3)
+      sleep(self.interval)
       self.assertEquals(self.monitor.is_alive(), True)
     finally:
       self.monitor.terminate()
