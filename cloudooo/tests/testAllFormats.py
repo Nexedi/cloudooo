@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-from xmlrpclib import ServerProxy
+from xmlrpclib import ServerProxy, Fault
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import cloudoooTestCase, make_suite
@@ -69,10 +69,17 @@ class TestAllFormats(cloudoooTestCase):
     data = open(filename,'r').read()
     request = {'document_type': document_type}
     extension_list = self.proxy.getAllowedExtensionList(request)
+    fault_list = []
     for extension in extension_list:
-      data_output = self.proxy.convertFile(encodestring(data),
+      try:
+        data_output = self.proxy.convertFile(encodestring(data),
                                             source_format,
                                             extension[0])
+      except Fault, err:
+         fault_list.append("%s >> %s - %s" % (source_format, 
+                                              extension[0], 
+                                              err.faultString))
+         continue
       output_file_url = '%s/test_%s.%s' % (self.tmp_url, document_type, extension[0])
       open(output_file_url, 'w').write(decodestring(data_output))
       stdout, stderr = Popen("file %s" % output_file_url, 
@@ -80,6 +87,8 @@ class TestAllFormats(cloudoooTestCase):
                             stdout=PIPE,
                             stderr=PIPE).communicate()
       self.assertEquals(stdout.endswith(": empty"), False, stdout)
+    if fault_list != []:
+      raise Fault(1, "\n".join(fault_list))
 
 def test_suite():
   return make_suite(TestAllFormats)
