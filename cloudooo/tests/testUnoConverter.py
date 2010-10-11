@@ -29,9 +29,8 @@
 import unittest
 import jsonpickle, pkg_resources
 from subprocess import Popen, PIPE
-from os.path import exists
+from os.path import exists, join
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.mimemapper import mimemapper
 from cloudooo.application.openoffice import openoffice
 from cloudooo.document import FileSystemDocument
 
@@ -54,24 +53,28 @@ class TestUnoConverter(cloudoooTestCase):
 
   def testUnoConverterOdtToDoc(self):
     """Test script unoconverter"""
+    mimemapper = dict(filter_list=[('doc', 
+                                    'com.sun.star.text.TextDocument',
+                                    'MS Word 97')],
+                     doc_type_list_by_extension=dict(doc=['com.sun.star.text.TextDocument']))
     mimemapper_pickled = jsonpickle.encode(mimemapper)
-    command = [self.python_path,
+    command = [join(self.office_binary_path, "python"),
           pkg_resources.resource_filename("cloudooo", 
                                           "helper/unoconverter.py"),
           "'--convert'",
-          "'--uno_path=%s'" % self.uno_path,
-          "'--office_binary_path=%s'" % self.office_binary_path,
-          "'--hostname=%s'" % self.hostname,
-          "'--port=%s'" % self.port,
-          "'--document_url=%s'" % self.document.getUrl(),
-          "'--destination_format=%s'" % "doc",
-          "'--source_format=%s'" % "odt",
-          "'--mimemapper=%s'" % mimemapper_pickled]
+          "--uno_path='%s'" % self.uno_path,
+          "--office_binary_path='%s'" % self.office_binary_path,
+          "--hostname='%s'" % self.hostname,
+          "--port='%s'" % self.port,
+          "--document_url='%s'" % self.document.getUrl(),
+          "--destination_format='%s'" % "doc",
+          "--source_format='%s'" % "odt",
+          "--mimemapper='%s'" % mimemapper_pickled]
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
-    self.assertEquals(exists(output_url), True)
+    self.assertEquals(exists(output_url), True, stdout)
     stdout, stderr = Popen("file %s" % output_url, shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(self.file_msg_list[1] in stdout \
