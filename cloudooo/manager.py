@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
@@ -133,18 +134,20 @@ class Manager(object):
     else:
       return [('','')]
 
-  def run_convert(self, filename, file):
+  def run_convert(self, filename='', data=None, meta=None, extension=None,
+                  orig_format=None):
     """Method to support the old API. Wrapper getFileMetadataItemList but 
     returns a dict.
     This is a Backwards compatibility provided for ERP5 Project, in order to
     keep compatibility with OpenOffice.org Daemon. 
     """
-    orig_format = filename.split('.')[-1]
+    if not extension:
+      extension = filename.split('.')[-1]
     try:
       response_dict = {}
-      response_dict['meta'] = self.getFileMetadataItemList(file, orig_format, True)
+      response_dict['meta'] = self.getFileMetadataItemList(data, extension, True)
       response_dict['meta']['MIMEType'] = self.getFileMetadataItemList(response_dict['meta']['Data'], 
-                                                                        orig_format)['MIMEType']
+                                                                        extension)['MIMEType']
       # XXX - Backward compatibility: Previous API expects 'mime' now we use 'MIMEType'"
       response_dict['meta']['mime'] = response_dict['meta']['MIMEType']
       response_dict['data'] = response_dict['meta']['Data'] 
@@ -155,29 +158,33 @@ class Manager(object):
       logger.error(e)
       return (402, {}, e.args[0])
 
-  def run_setmetadata(self, filename, file, meta):
+  def run_setmetadata(self, filename='', data=None, meta=None,
+                      extension=None, orig_format=None):
     """Wrapper updateFileMetadata but returns a dict.
     This is a Backwards compatibility provided for ERP5 Project, in order to
     keep compatibility with OpenOffice.org Daemon.
     """
-    orig_format = filename.split('.')[-1]
+    if not extension:
+      extension = filename.split('.')[-1]
     response_dict = {}
     try:
-      response_dict['data'] = self.updateFileMetadata(file, orig_format, meta)
+      response_dict['data'] = self.updateFileMetadata(data, extension, meta)
       return (200, response_dict, '')
     except Exception, e:
       logger.error(e)
       return (402, {}, e.args[0])
 
-  def run_getmetadata(self, filename, file):
+  def run_getmetadata(self, filename='', data=None, meta=None,
+                      extension=None, orig_format=None):
     """Wrapper for getFileMetadataItemList.
     This is a Backwards compatibility provided for ERP5 Project, in order to
     keep compatibility with OpenOffice.org Daemon.
     """
-    orig_format = filename.split('.')[-1]
+    if not extension:
+      extension = filename.split('.')[-1]
     response_dict = {}
     try:
-      response_dict['meta'] = self.getFileMetadataItemList(file, orig_format)
+      response_dict['meta'] = self.getFileMetadataItemList(data, extension)
       # XXX - Backward compatibility: Previous API expects 'title' now we use 'Title'"
       response_dict['meta']['title'] = response_dict['meta']['Title']
       return (200, response_dict, '')
@@ -185,7 +192,8 @@ class Manager(object):
       logger.error(e)
       return (402, {}, e.args[0])
 
-  def run_generate(self, filename, file, something, format, orig_format):
+  def run_generate(self, filename='', data=None, meta=None, extension=None,
+                   orig_format=''):
     """Wrapper convertFile but returns a dict which includes mimetype. 
     This is a Backwards compatibility provided for ERP5 Project, in order to keep
     compatibility with OpenOffice.org Daemon.
@@ -193,28 +201,30 @@ class Manager(object):
     # XXX - ugly way to remove "/" and "."
     orig_format = orig_format.split('.')[-1]
     orig_format = orig_format.split('/')[-1]
-    if "htm" in format:
+    if "htm" in extension:
       zip = True
     else:
       zip = False
     try:
       response_dict = {}
       # XXX - use html format instead of xhtml
-      if orig_format == "presentation" and format == "xhtml":
-        format = 'html'
-      elif orig_format == "spreadsheet" and format in ("html", "xhtml"):
-        format = "htm"
-      response_dict['data'] = self.convertFile(file, orig_format, format, zip)
+      if orig_format == "presentation" and extension == "xhtml":
+        extension = 'html'
+      elif orig_format == "spreadsheet" and extension in ("html", "xhtml"):
+        extension = "htm"
+      response_dict['data'] = self.convertFile(data, orig_format, extension,
+                                               zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
       if zip:
         response_dict['mime'] = "application/zip"
-      elif format in ("html", "htm", "xhtml"):
+      elif extension in ("html", "htm", "xhtml"):
         response_dict['mime'] = "text/html"
-      elif format == "pdf":
+      elif extension == "pdf":
         response_dict['mime'] = "application/pdf"
       else:
-        response_dict['mime'] = self.getFileMetadataItemList(response_dict['data'], 
-                                                            format)['MIMEType']
+        response_dict['mime'] = self.getFileMetadataItemList(
+                                                         response_dict['data'],
+                                                         extension)['MIMEType']
       return (200, response_dict, "")
     except Exception, e:
       logger.error(e)
