@@ -54,26 +54,27 @@ class IManager(Interface):
     """Returns a list extension which can be generated from given extension or
     document type."""
 
+
 class IERP5Compatibility(Interface):
   """ Provides compatibility interface with ERP5 Project. 
   This methods provide same API as OpenOffice.org project.
   XXX Unfinished Docstring.
   """
 
-  def run_convert(filename, file):
+  def run_convert(filename, data, meta, extension, orig_format):
     """Returns the metadata and the ODF in dictionary"""
     return (200 or 402, dict(), '')
 
-  def run_setmetadata(filename, file, metadata_dict):
+  def run_setmetadata(filename, data, meta, extension, orig_format):
     """Adds metadata in ODF and returns a new ODF with metadata in
     dictionary"""
     return (200 or 402, dict(), '')
 
-  def run_getmetadata(self, filename, file):
+  def run_getmetadata(self, filename, data, meta, extension, orig_format):
     """Extracts metadata from ODF and returns in dictionary"""
     return (200 or 402, dict(), '')
 
-  def run_generate(filename, file, something, format, orig_format):
+  def run_generate(filename, data, meta, extension; orig_format):
     """It exports a ODF to given format"""
     return (200 or 402, dict(), '')
 
