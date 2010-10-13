@@ -74,7 +74,7 @@ class IERP5Compatibility(Interface):
     """Extracts metadata from ODF and returns in dictionary"""
     return (200 or 402, dict(), '')
 
-  def run_generate(filename, data, meta, extension; orig_format):
+  def run_generate(filename, data, meta, extension, orig_format):
     """It exports a ODF to given format"""
     return (200 or 402, dict(), '')
 
