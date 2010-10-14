@@ -6,7 +6,7 @@ version = '1.0.9'
 folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 
 long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(), 
-		               open(path.join(folder_path, "CHANGES.txt")).read()) 
+                               open(path.join(folder_path, "CHANGES.txt")).read()) 
 setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
@@ -39,5 +39,6 @@ setup(name='cloudooo',
       main = cloudooo.cloudooo:application
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
+      echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
       """,
       )
