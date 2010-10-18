@@ -210,7 +210,7 @@ class Manager(object):
       # XXX - use html format instead of xhtml
       if orig_format == "presentation" and extension == "xhtml":
         extension = 'html'
-      elif orig_format == "spreadsheet" and extension in ("html", "xhtml"):
+      elif orig_format in ("spreadsheet", 'text') and extension in ("html", "xhtml"):
         extension = "htm"
       response_dict['data'] = self.convertFile(data, orig_format, extension,
                                                zip)
