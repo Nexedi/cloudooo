@@ -1,3 +1,7 @@
+1.0.10 (unreleased)
+===================
+  - Add granulate interface.
+
 1.0.9
 =====
   - use pkg_resources to get helper scripts.
@@ -7,13 +11,11 @@
 
 1.0.8
 =====
-
   - Remove all attributes that works with cloudooo script paths.
   - Use all scripts according to your python eggs.
   - Fixed problem when a spreadsheet will be converted to html.  
 
 1.0.7
 =====
-
   - Remove entry points, treat those as ordinary files.
   - Search all script files using pkg_resources.
