@@ -34,6 +34,7 @@ from filter import Filter
 from os import environ, path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
+from utils import getCleanPythonEnvironment
 from sys import executable as python_path
 
 class MimeMapper(object):
@@ -117,7 +118,7 @@ class MimeMapper(object):
     stdout, stderr = Popen(' '.join(command),
                           stdout=PIPE,
                           close_fds=True,
-                          shell=True).communicate()
+                          shell=True, env=getCleanPythonEnvironment()).communicate()
     exec(stdout)
     for key, value in filter_dict.iteritems():
       filter_name = key

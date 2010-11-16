@@ -29,11 +29,33 @@
 from socket import socket, error
 from errno import EADDRINUSE
 from time import sleep
-from os import remove
+from os import remove, environ
 from shutil import rmtree
 import logging
 
 logger = logging.getLogger('Cloudooo')
+
+PYTHON_ENVIRONMENT = [
+      'PYTHONHOME',
+      'PYTHONPATH',
+      'PYTHONSTARTUP',
+      'PYTHONY2K',
+      'PYTHONOPTIMIZE',
+      'PYTHONDEBUG',
+      'PYTHONDONTWRITEBYTECODE',
+      'PYTHONINSPECT',
+      'PYTHONNOUSERSITE',
+      'PYTHONNOUSERSITE',
+      'PYTHONUNBUFFERED',
+      'PYTHONVERBOSE'
+]
+
+def getCleanPythonEnvironment():
+    env = environ.copy()
+    # Clean python related environment variables
+    for k in PYTHON_ENVIRONMENT:
+      env.pop(k, None)
+    return env
 
 def removeDirectory(path):
   """Remove directory"""
