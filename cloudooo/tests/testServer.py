@@ -316,7 +316,6 @@ class TestServer(cloudoooTestCase):
     """Test to verify if the behavior of server is normal when a empty string
     is sent"""
     data = encodestring("")
-    error_msg = "This document can not be loaded or is empty\n"
     fail_msg = "This document can not be loaded, it is empty\n"
     try:
       self.proxy.convertFile(data, '', '')

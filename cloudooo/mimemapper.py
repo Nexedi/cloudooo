@@ -35,7 +35,6 @@ from os import environ, path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
 from utils import getCleanPythonEnvironment
-from sys import executable as python_path
 
 class MimeMapper(object):
   """Load all filters from OOo. You can get the of the filter you want or all
