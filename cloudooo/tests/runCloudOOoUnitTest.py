@@ -11,22 +11,17 @@ from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
-def wait_liberate_port(hostname, port):
+def wait_liberate_port(hostname, port, timeout_limit=10):
   for n in range(timeout_limit):
     if not socketStatus(hostname, port):
       break
     sleep(1)
 
-def wait_use_port(hostname, port):
+def wait_use_port(hostname, port, timeout_limit=10):
   for n in range(timeout_limit):
     if socketStatus(hostname, port):
       return
     sleep(1)
-
-def get_partial_log():
-  if path.exists(log_path):
-    return '\n'.join(open(log_path).read().split('\n')[-30:])
-  return ''
 
 def exit(msg):
   sys.stderr.write(msg)
@@ -54,10 +49,13 @@ def run():
                                                    "log_path=",
                                                    "cloudooo_runner=",
                                                    "server_cloudooo_conf=",
-                                                   "timeout_limit="])
+                                                   "timeout_limit=",
+                                                   "paster_path="])
   except GetoptError, msg:
     exit(msg.msg)
   
+  paster_path = "paster"
+
   for opt, arg in opt_list:
     if opt == "--with-daemon":
       DAEMON = True
@@ -74,12 +72,13 @@ def run():
       environ["server_cloudooo_conf"] = arg
     elif opt == "--timeout_limit":
       timeout_limit = arg
+    elif opt == "--paster_path":
+      paster_path = arg
   
   from cloudoooTestCase import loadConfig, startFakeEnvironment, stopFakeEnvironment
   
   sys.path.append(ENVIRONMENT_PATH)
-  chdir(ENVIRONMENT_PATH)
- 
+   
   config = ConfigParser()
   config.read(server_cloudooo_conf)
   openoffice_port = int(config.get("app:main", "openoffice_port"))
@@ -91,24 +90,30 @@ def run():
 
   if DAEMON:
     loadConfig(server_cloudooo_conf)
-    Popen([cloudooo_runner, 'start']).communicate()
+    command = [paster_path, "serve", server_cloudooo_conf]
+    process = Popen(" ".join(command), shell=True)
     wait_use_port(hostname, server_port)
-    print get_partial_log()
+    chdir(ENVIRONMENT_PATH)
     try:
       run_test(test_name)
     finally:
-      Popen([cloudooo_runner, 'stop']).communicate()
+      process.send_signal(1)
+      sleep(3)
+      process.terminate()
     wait_liberate_port(hostname, server_port)
   elif OPENOFFICE:
+    chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
     run_test(test_name)
     stopFakeEnvironment()
   elif XVFB:
+    chdir(ENVIRONMENT_PATH)
     xvfb = startFakeEnvironment(start_openoffice=False,
                                 conf_path=server_cloudooo_conf)
     run_test(test_name)
     stopFakeEnvironment(stop_openoffice=False)
   else:
+    chdir(ENVIRONMENT_PATH)
     loadConfig(server_cloudooo_conf)
     run_test(test_name)
 
