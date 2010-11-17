@@ -6,7 +6,7 @@ from getopt import getopt, GetoptError
 from time import sleep
 from cloudooo.utils import socketStatus
 from ConfigParser import ConfigParser
-from os import chdir, path
+from os import chdir, path, environ
 from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
@@ -71,6 +71,7 @@ def run():
       cloudooo_runner = arg
     elif opt == "--server_cloudooo_conf":
       server_cloudooo_conf = arg
+      environ["server_cloudooo_conf"] = arg
     elif opt == "--timeout_limit":
       timeout_limit = arg
   
@@ -87,10 +88,6 @@ def run():
   hostname = config.get("app:main", "application_hostname")
   server_port = int(config.get("server:main", "port"))
   run_dir = config.get('app:main', 'working_path')
-
-  test_name = sys.argv[-1]
-  if not path.exists(path.join(ENVIRONMENT_PATH, '%s.py' % test_name)):
-    exit("%s not exists\n" % test_name)
 
   if DAEMON:
     loadConfig(server_cloudooo_conf)

@@ -124,6 +124,9 @@ class cloudoooTestCase(unittest.TestCase):
   def setUp(self):
     """Creates a environment to run the tests. Is called always before the
     tests."""
+    server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
+    if server_cloudooo_conf is not None:
+      config.read(server_cloudooo_conf)
     self.hostname = config.get("server:main", "host")
     self.cloudooo_port = config.get("server:main", "port")
     self.openoffice_port = config.get("app:main", "openoffice_port")
