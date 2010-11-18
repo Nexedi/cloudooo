@@ -6,7 +6,7 @@ from getopt import getopt, GetoptError
 from time import sleep
 from cloudooo.utils import socketStatus
 from ConfigParser import ConfigParser
-from os import chdir, path, environ
+from os import chdir, path, environ, curdir
 from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
@@ -68,6 +68,8 @@ def run():
     elif opt == "--cloudooo_runner":
       cloudooo_runner = arg
     elif opt == "--server_cloudooo_conf":
+      if arg.startswith(curdir):
+        arg = path.join(path.abspath(curdir), arg)
       server_cloudooo_conf = arg
       environ["server_cloudooo_conf"] = arg
     elif opt == "--timeout_limit":
@@ -78,7 +80,7 @@ def run():
   from cloudoooTestCase import loadConfig, startFakeEnvironment, stopFakeEnvironment
   
   sys.path.append(ENVIRONMENT_PATH)
-   
+  
   config = ConfigParser()
   config.read(server_cloudooo_conf)
   openoffice_port = int(config.get("app:main", "openoffice_port"))
