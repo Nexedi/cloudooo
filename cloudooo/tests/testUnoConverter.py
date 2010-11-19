@@ -57,6 +57,8 @@ class TestUnoConverter(cloudoooTestCase):
                                     'com.sun.star.text.TextDocument',
                                     'MS Word 97')],
                      doc_type_list_by_extension=dict(doc=['com.sun.star.text.TextDocument']))
+    jsonpickle_path = "/".join(pkg_resources.resource_filename("jsonpickle",
+                                     "").split("/")[:-1])
     mimemapper_pickled = jsonpickle.encode(mimemapper)
     command = [join(self.office_binary_path, "python"),
           pkg_resources.resource_filename("cloudooo", 
@@ -69,7 +71,8 @@ class TestUnoConverter(cloudoooTestCase):
           "--document_url='%s'" % self.document.getUrl(),
           "--destination_format='%s'" % "doc",
           "--source_format='%s'" % "odt",
-          "--mimemapper='%s'" % mimemapper_pickled]
+          "--mimemapper='%s'" % mimemapper_pickled,
+          "--jsonpickle_path='%s'" % jsonpickle_path]
     stdout, stderr = Popen(' '.join(command), shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
