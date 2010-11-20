@@ -35,6 +35,7 @@ from cloudooo.mimemapper import MimeMapper
 from cloudooo.filter import Filter
 from cloudooo.application.xvfb import Xvfb
 from cloudooo.monitor.request import MonitorRequest
+from cloudooo.granulate.oogranulate import OOGranulate
 from cloudooo.interfaces.document import IDocument
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.interfaces.manager import IManager
@@ -43,10 +44,34 @@ from cloudooo.interfaces.filter import IFilter
 from cloudooo.interfaces.mimemapper import IMimemapper
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.interfaces.monitor import IMonitor
+from cloudooo.interfaces.granulate import ITableGranulator, \
+                                          IImageGranulator, \
+                                          ITextGranulator
 from cloudoooTestCase import make_suite
 
 class TestInterface(unittest.TestCase):
   """Test All Interfaces"""
+
+  def testITableGranulator(self):
+    """Test if OOGranulate implements ITableGranulator"""
+    self.assertEquals(ITableGranulator.implementedBy(OOGranulate), True)
+    method_list = ['getColumnItemList', 'getLineItemList', 'getTableItemList']
+    self.assertEquals(ITableGranulator.names(), method_list)
+
+  def testITextGranulator(self):
+    """Test if OOGranulate implements ITextGranulator"""
+    self.assertEquals(ITextGranulator.implementedBy(OOGranulate), True)
+    method_list = ['getChapterItemList',
+                   'getParagraphItem',
+                   'getChapterItem',
+                   'getParagraphItemList']
+    self.assertEquals(ITextGranulator.names(), method_list)
+
+  def testIImageGranulator(self):
+    """Test if OOGranulate implements IImageGranulator"""
+    self.assertEquals(IImageGranulator.implementedBy(OOGranulate), True)
+    method_list = ['getImageItemList', 'getImage']
+    self.assertEquals(IImageGranulator.names(), method_list)
 
   def testIDocument(self):
     """Test if FileSystemDocument implements IDocument"""
@@ -86,7 +111,7 @@ class TestInterface(unittest.TestCase):
         'isLoaded']
     for method in method_list:
       self.assertEquals(method in IMimemapper.names(), True)
-    
+
     self.assertEquals(IMimemapper.implementedBy(MimeMapper),True)
     self.assertEquals(len(method_list),len(IMimemapper.names()))
     self.assertEquals(IMimemapper.get('getFilterName').required, ('extension',
@@ -109,7 +134,7 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(IHandler.implementedBy(OOHandler), True)
     method_list = ['convert', 'getMetadata', 'setMetadata']
     for method in method_list:
-      self.assertEquals(method in IHandler.names(), True, 
+      self.assertEquals(method in IHandler.names(), True,
           "Method %s is not declared" % method)
     self.assertEquals(len(method_list), len(IHandler.names()))
     self.assertEquals(IHandler.get('convert').required, ('destination_format',))
@@ -125,7 +150,7 @@ class TestInterface(unittest.TestCase):
     application_method_list = ["start", "stop", "pid",
                               "status", "restart",
                               "loadSettings", "getAddress"]
-    self.assertEquals(sorted(IApplication.names()), 
+    self.assertEquals(sorted(IApplication.names()),
         sorted(application_method_list))
 
   def testILockable(self):
@@ -141,3 +166,4 @@ def test_suite():
 if __name__ == "__main__":
   suite = unittest.TestLoader().loadTestsFromTestCase(TestInterface)
   unittest.TextTestRunner(verbosity=2).run(suite)
+
