@@ -344,7 +344,6 @@ class TestMimeMapper(cloudoooTestCase):
     filtername = self.mimemapper.getFilterName("html", 'com.sun.star.presentation.PresentationDocument')
     self.assertEquals(filtername, "impress_html_Export")
 
-  
   def testGetMimetype(self):
     """Test get mimetype according to the filter type"""
     self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer8"),\

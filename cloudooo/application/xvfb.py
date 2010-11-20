@@ -33,6 +33,7 @@ from application import Application
 from cloudooo.interfaces.application import IApplication
 from os.path import exists
 
+
 class Xvfb(Application):
   """Start and control Xvfb. It is used to open/run
   instances OpenOffice.
@@ -50,7 +51,7 @@ class Xvfb(Application):
     Application.loadSettings(self, hostname, port, path_run_dir, display_id)
     self.virtual_screen = kwargs.get('virtual_screen', '0')
     self.process_name = "Xvfb"
-    
+
   def start(self):
     """Method to start Virtual Frame Buffer."""
     self.command = ["Xvfb", "-ac", ":%s" % self.display_id, \

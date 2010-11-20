@@ -66,6 +66,7 @@ Options:
                         Dictionary with metadata
 """
 
+
 class UnoConverter(object):
   """A module to easily work with OpenOffice.org."""
 
@@ -249,9 +250,11 @@ class UnoConverter(object):
     self.document_loaded.store()
     self.document_loaded.dispose()
 
+
 def help():
   print >> sys.stderr, __doc__
   sys.exit(1)
+
 
 def main():
   global mimemapper

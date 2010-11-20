@@ -31,19 +31,20 @@ from cloudooo.interfaces.application import IApplication
 from cloudooo.utils import logger, socketStatus
 from psutil import pid_exists, Process
 
+
 class Application(object):
   """Base object to create an object that is possible manipulation a
   process"""
-  
+
   implements(IApplication)
 
   name = "application"
 
   def start(self):
     """Start Application"""
-    logger.debug("Process Started %s, Port %s. Pid %s" % (self.name, 
-                                                       self.getAddress()[-1],
-                                                       self.pid()))
+    logger.debug("Process Started %s, Port %s. Pid %s" % (self.name,
+                                                    self.getAddress()[-1],
+                                                    self.pid()))
 
   def stop(self):
     """Stop the process"""
@@ -56,10 +57,8 @@ class Application(object):
         if pid_exists(process_pid) or self.status():
           Process(process_pid).kill()
 
-
   def loadSettings(self, hostname, port, path_run_dir, display_id, **kwargs):
     """Define attributes for application instance
-    
     Keyword arguments:
     hostname -- Host to start the instance.
     port -- Expected a int number.
@@ -71,7 +70,7 @@ class Application(object):
     self.path_run_dir = path_run_dir
     self.display_id = display_id
     self.timeout = kwargs.get('start_timeout', 20)
- 
+
   def restart(self):
     """Start and Stop the process"""
     self.stop()

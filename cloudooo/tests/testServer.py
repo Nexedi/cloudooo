@@ -196,7 +196,6 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(metadata_dict.get("MIMEType"),\
         "application/vnd.oasis.opendocument.text")
 
-
   def testupdateFileMetadata(self):
     """Test server using method updateFileMetadata"""
     document_output_url = join(self.tmp_url, "testSetMetadata.odt")

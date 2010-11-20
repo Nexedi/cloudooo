@@ -66,4 +66,3 @@ class ITextGranulator(Interface):
 
   def getChapterItem(file, chapter_id):
     """Return the chapter in the form of (title, level)."""
-

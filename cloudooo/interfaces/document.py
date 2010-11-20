@@ -29,6 +29,7 @@
 from zope.interface import Interface
 from zope.interface import Attribute
 
+
 class IDocument(Interface):
   """Manipulates documents in file system"""
 

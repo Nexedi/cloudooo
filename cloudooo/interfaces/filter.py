@@ -28,6 +28,7 @@
 
 from zope.interface import Interface
 
+
 class IFilter(Interface):
   """This is a type filter"""
 

@@ -4,6 +4,7 @@ import helper_utils
 from getopt import getopt, GetoptError
 from os import environ
 
+
 def test_openoffice(hostname, port):
   try:
     helper_utils.getServiceManager(hostname, port)
@@ -12,14 +13,15 @@ def test_openoffice(hostname, port):
     print err
     return False
 
+
 def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "", 
-                                ["port=","hostname=","uno_path="])
+/bin/bash: q: comando não encontrado
   except GetoptError, e:
     print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)
-  
+
   for opt, arg in opt_list:
     if opt == "--port":
       port = arg

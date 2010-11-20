@@ -31,12 +31,11 @@ from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.document import FileSystemDocument
 
+
 class FFMpegHandler:
-  """
-  
-  For each Document inputed is created on instance of this class to manipulate
-  the document. This Document must be able to create and remove a temporary
-  document at FS, load, export and export.
+  """For each Document inputed is created on instance of this class to
+  manipulate the document. This Document must be able to create and remove a
+  temporary document at FS, load, export and export.
   """
   implements(IHandler)
 
@@ -47,14 +46,13 @@ class FFMpegHandler:
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
     return ""
-  
+
   def convert(self, source_format=None, destination_format=None, **kw):
     """Executes a procedure in accordance with parameters passed."""
     return ""
 
   def getMetadata(self, converted_data=False):
     """Returns a dictionary with all metadata of document.
-    
     Keywords Arguments:
     converted_data -- Boolean variable. if true, the document is also returned
     along with the metadata."""
@@ -62,7 +60,6 @@ class FFMpegHandler:
 
   def setMetadata(self, metadata):
     """Returns a document with new metadata.
-    
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """

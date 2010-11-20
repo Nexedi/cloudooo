@@ -26,7 +26,8 @@
 #
 ##############################################################################
 
-import jsonpickle, pkg_resources
+import jsonpickle
+import pkg_resources
 from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
@@ -40,9 +41,9 @@ from cloudooo.monitor.timeout import MonitorTimeout
 from cloudooo.utils import logger
 from psutil import pid_exists
 
+
 class OOHandler:
   """OOHandler is used to access the one Document and OpenOffice.
-  
   For each Document inputed is created on instance of this class to manipulate
   the document. This Document must be able to create and remove a temporary
   document at FS, load, export and export.
@@ -71,20 +72,20 @@ class OOHandler:
                                "").split("/")[:-1])
     kw['hostname'] = hostname
     kw['port'] = port
-    command_list = [path.join(self.office_binary_path, "python")
-                    , pkg_resources.resource_filename("cloudooo",
-                                        path.join("helper", "unoconverter.py"))
-                    , "--uno_path='%s'" % self.uno_path
-                    , "--office_binary_path='%s'" % self.office_binary_path
-                    , "--document_url='%s'" % self.document.getUrl()
-                    , "--jsonpickle_path='%s'" % jsonpickle_path]
+    command_list = [path.join(self.office_binary_path, "python"),
+                    pkg_resources.resource_filename("cloudooo",
+                                       path.join("helper", "unoconverter.py")),
+                    "--uno_path='%s'" % self.uno_path,
+                    "--office_binary_path='%s'" % self.office_binary_path,
+                    "--document_url='%s'" % self.document.getUrl(),
+                    "--jsonpickle_path='%s'" % jsonpickle_path]
     for arg in args:
       command_list.insert(3, "--%s" % arg)
     for k, v in kw.iteritems():
-      command_list.append("--%s='%s'" % (k,v))
-      
+      command_list.append("--%s='%s'" % (k, v))
+
     return ' '.join(command_list)
-  
+
   def _startTimeout(self):
     """start the Monitor"""
     self.monitor = MonitorTimeout(openoffice, self.timeout)
@@ -143,17 +144,16 @@ class OOHandler:
     for extension in mimemapper.extension_list:
       for service_type in mimemapper.document_service_list:
         if service_type in mimemapper._doc_type_list_by_extension[extension]:
-          filter_list.append((extension, 
-                              service_type, 
-                              mimemapper.getFilterName(extension, service_type)))
-    
+          filter_list.append((extension,
+                              service_type,
+                              mimemapper.getFilterName(extension, service_type))) 
+
     return jsonpickle.encode(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                                   filter_list=filter_list,
                                   mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
 
   def convert(self, destination_format=None, **kw):
     """Convert a document to another format supported by the OpenOffice
-    
     Keyword Arguments:
     destination_format -- extension of document as String
     """
@@ -177,7 +177,6 @@ class OOHandler:
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.
-    
     Keywords Arguments:
     base_document -- Boolean variable. if true, the document is also returned
     along with the metadata."""
@@ -194,7 +193,7 @@ class OOHandler:
       openoffice.release()
       if self.monitor.is_alive():
         self._stopTimeout()
-    metadata=jsonpickle.decode(decodestring(stdout))
+    metadata = jsonpickle.decode(decodestring(stdout))
     if metadata.get("Data"):
       self.document.reload(metadata['Data'])
       metadata['Data'] = self.document.getContent()
@@ -202,10 +201,9 @@ class OOHandler:
       metadata['Data'] = ''
     self.document.trash() 
     return metadata
-   
+
   def setMetadata(self, metadata):
     """Returns a document with new metadata.
-    
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """

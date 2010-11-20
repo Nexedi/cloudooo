@@ -38,9 +38,10 @@ from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
                                     waitStopDaemon, convertStringToBool
 
+
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
-  
+
   implements(ILockable)
 
   name = "openoffice"
@@ -56,17 +57,18 @@ class OpenOffice(Application):
 
   def _testOpenOffice(self, host, port):
     """Test if OpenOffice was started correctly"""
-    logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1], self.pid()))
-    command = [join(self.office_binary_path, "python")
-              , pkg_resources.resource_filename("cloudooo",
-                                       join("helper", "openoffice_tester.py"))
-              , "'--hostname=%s'" % host
-              , "'--port=%s'" % port
-              , "'--uno_path=%s'" % self.uno_path]
+    logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
+                                                  self.pid()))
+    command = [join(self.office_binary_path, "python"),
+               pkg_resources.resource_filename("cloudooo",
+                                      join("helper", "openoffice_tester.py")),
+               "'--hostname=%s'" % host,
+               "'--port=%s'" % port,
+               "'--uno_path=%s'" % self.uno_path]
     logger.debug("Testing Openoffice Instance %s" % port)
     stdout, stderr = Popen(" ".join(command), shell=True, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
-    stdout_bool = convertStringToBool(stdout.replace("\n",""))
+    stdout_bool = convertStringToBool(stdout.replace("\n", ""))
     if stdout_bool and stderr != "":
       logger.debug("%s\n%s" % (stderr, stdout))
       return False
@@ -81,7 +83,6 @@ class OpenOffice(Application):
   def loadSettings(self, hostname, port, path_run_dir, display_id,
       office_binary_path, uno_path, **kw):
     """Method to load the configuratio to control one OpenOffice Instance
-    
     Keyword arguments:
     office_path -- Full Path of the OOo executable.
       e.g office_binary_path='/opt/openoffice.org3/program'
@@ -110,15 +111,15 @@ class OpenOffice(Application):
     if exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
-    self.command = [join(self.office_binary_path, self._bin_soffice)
-              , '-invisible'
-              , '-nologo'
-              , '-nodefault'
-              , '-norestore'
-              , '-nofirststartwizard'              
-              , '"-accept=socket,host=%s,port=%d;urp;StarOffice.ComponentContext"' % \
-              (self.hostname, self.port)
-              , '-env:UserInstallation=file://%s' % self.path_user_installation]
+    self.command = [join(self.office_binary_path, self._bin_soffice),
+         '-invisible',
+         '-nologo',
+         '-nodefault',
+         '-norestore',
+         '-nofirststartwizard',
+         '"-accept=socket,host=%s,port=%d;urp;StarOffice.ComponentContext"' % \
+              (self.hostname, self.port),
+         '-env:UserInstallation=file://%s' % self.path_user_installation]
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process
     env = environ.copy()

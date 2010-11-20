@@ -27,7 +27,8 @@
 ##############################################################################
 
 import unittest
-import jsonpickle, pkg_resources
+import jsonpickle
+import pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists, join
 from cloudoooTestCase import cloudoooTestCase, make_suite

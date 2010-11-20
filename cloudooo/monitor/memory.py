@@ -56,7 +56,7 @@ class MonitorMemory(Monitor, Process):
       logger.debug("OpenOffice is stopped")
       return 0
     # convert bytes to MB
-    return sum(self.process.get_memory_info())/(1024*1024)
+    return sum(self.process.get_memory_info()) / (1024 * 1024)
 
   def run(self):
     """Is called by start function. this function is responsible for

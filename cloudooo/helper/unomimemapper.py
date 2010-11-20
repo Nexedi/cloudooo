@@ -49,6 +49,7 @@ Options:
                         Folter path were is the uno library
 """
 
+
 class UnoMimemapper(object):
   """ """
 
@@ -108,9 +109,11 @@ class UnoMimemapper(object):
     type_dict = self._getElementNameByService(type_service, ["UINames", "URLPattern"])
     return type_dict
 
+
 def help():
   print >> sys.stderr, __doc__
   sys.exit(1)
+
 
 def main():
   try:

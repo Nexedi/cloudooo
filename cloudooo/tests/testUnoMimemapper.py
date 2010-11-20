@@ -26,7 +26,8 @@
 #
 ##############################################################################
 
-import unittest, pkg_resources
+import unittest
+import pkg_resources
 from cloudooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ, path
@@ -49,7 +50,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
 
   def testCreateLocalAttributes(self):
     """Test if filters returns correctly the filters and types in dict"""
-    hostname, host  = openoffice.getAddress()
+    hostname, host = openoffice.getAddress()
     command = [path.join(self.office_binary_path, "python"),
             pkg_resources.resource_filename("cloudooo", "helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
@@ -70,7 +71,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
 
   def testCallUnoMimemapperOnlyHostNameAndPort(self):
     """ Test call unomimemapper without uno_path and office_binary_path"""
-    hostname, host  = openoffice.getAddress()
+    hostname, host = openoffice.getAddress()
     command = [path.join(self.office_binary_path, "python"),
             pkg_resources.resource_filename("cloudooo", 
                                             "helper/unomimemapper.py"),
@@ -91,7 +92,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
     error_msg = "couldn\'t connect to socket (Success)\n"
-    hostname, host  = openoffice.getAddress()
+    hostname, host = openoffice.getAddress()
     openoffice.stop()
     command = [path.join(self.office_binary_path, "python"),
             pkg_resources.resource_filename("cloudooo", 

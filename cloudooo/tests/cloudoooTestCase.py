@@ -57,7 +57,7 @@ def loadConfig(path):
 
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
-  if not conf_path and len(sys.argv) >=1:
+  if not conf_path and len(sys.argv) >= 1:
     conf_path = sys.argv[1]
   loadConfig(conf_path)
   uno_path = config.get("app:main", "uno_path")
