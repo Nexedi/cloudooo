@@ -37,7 +37,7 @@ from types import InstanceType
 from utils import getCleanPythonEnvironment
 
 class MimeMapper(object):
-  """Load all filters from OOo. You can get the of the filter you want or all
+  """Load all filters from OOo. You can get the filter you want or all
   filters of the specific extension.
   """
   implements(IMimemapper)
