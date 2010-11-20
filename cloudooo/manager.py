@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-# Copyright (c) 2002-2010 Nexedi SA and Contributors. All Rights Reserved.
+# Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
 #                    Gabriel M. Monnerat <gabriel@tiolive.com>
 #
 # WARNING: This program as such is intended to be used by professional

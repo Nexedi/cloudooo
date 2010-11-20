@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2002-2010 Nexedi SARL and Contributors. All Rights Reserved.
+# Copyright (c) 2009-2010 Nexedi SARL and Contributors. All Rights Reserved.
 #                    Gabriel M. Monnerat <gabriel@tiolive.com>
 #
 # WARNING: This program as such is intended to be used by professional
