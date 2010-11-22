@@ -69,19 +69,19 @@ class FileSystemDocument(object):
     # If is a zipfile is need extract all files from whitin the compressed file
     if is_zipfile(file_path):
       zipfile = ZipFile(file_path)
-      if 'mimetype' not in zipfile.namelist() and \
-          '[Content_Types].xml' not in zipfile.namelist():
+      zip_filename_list = zipfile.namelist()
+      if 'mimetype' not in zip_filename_list and \
+          '[Content_Types].xml' not in zip_filename_list:
         zipfile.extractall(path=self.directory_name)
         zipfile.close()
-        remove(file_path)
-        file_list = listdir(self.directory_name)
+        filename_list = listdir(self.directory_name)
         if 'index.html' in file_list:
           file_path = join(self.directory_name, 'index.html')
         else:
-          extension_list = ['text/html', 'application/xhtml+xml']
-          for file in file_list:
-            if mimetypes.guess_type(file)[0] in extension_list:
-              file_path = join(self.directory_name, file)
+          mimetype_list = ['text/html', 'application/xhtml+xml']
+          for filename in filename_list:
+            if mimetypes.guess_type(filename)[0] in mimetype_list:
+              file_path = join(self.directory_name, filename)
               break
     return file_path
 
