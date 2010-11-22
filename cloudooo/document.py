@@ -133,3 +133,6 @@ class FileSystemDocument(object):
     if exists(self.directory_name):
       rmtree(self.directory_name)
       self.url = None
+
+  def __del__(self):
+    self.trash()
