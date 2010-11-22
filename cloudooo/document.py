@@ -75,7 +75,7 @@ class FileSystemDocument(object):
         zipfile.extractall(path=self.directory_name)
         zipfile.close()
         filename_list = listdir(self.directory_name)
-        if 'index.html' in file_list:
+        if 'index.html' in filename_list:
           file_path = join(self.directory_name, 'index.html')
         else:
           mimetype_list = ['text/html', 'application/xhtml+xml']
