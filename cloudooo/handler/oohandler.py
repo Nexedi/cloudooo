@@ -46,7 +46,7 @@ class OOHandler:
   """OOHandler is used to access the one Document and OpenOffice.
   For each Document inputed is created on instance of this class to manipulate
   the document. This Document must be able to create and remove a temporary
-  document at FS, load, export and export.
+  document at FS, load and export.
   """
   implements(IHandler)
 
