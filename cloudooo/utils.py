@@ -50,6 +50,7 @@ PYTHON_ENVIRONMENT = [
       'PYTHONVERBOSE'
 ]
 
+
 def getCleanPythonEnvironment():
     env = environ.copy()
     # Clean python related environment variables
@@ -57,12 +58,14 @@ def getCleanPythonEnvironment():
       env.pop(k, None)
     return env
 
+
 def removeDirectory(path):
   """Remove directory"""
   try:
     rmtree(path)
   except OSError, msg:
     logger.error(msg)
+
 
 def socketStatus(hostname, port):
   """Verify if the address is busy."""
@@ -75,12 +78,14 @@ def socketStatus(hostname, port):
       # True if the isn't free
       return True
 
+
 def waitStartDaemon(daemon, attempts):
   """Wait a certain time to start the daemon."""
   for num in range(attempts):
     sleep(1)
     if daemon.status():
       return
+
 
 def waitStopDaemon(daemon, attempts=5):
   """Wait a certain time to stop the daemon."""
@@ -89,25 +94,25 @@ def waitStopDaemon(daemon, attempts=5):
     if not daemon.status():
       break
 
+
 def configureLogger(level=None, debug_mode=False):
   """Configure logger.
-
   Keyword arguments:
   level -- Level to prints the log messages
   """
   if level is None:
     level = logging.INFO
- 
+
   if debug_mode:
     level = logging.DEBUG
 
-  handler_list = logger.handlers 
+  handler_list = logger.handlers
   if handler_list:
     for handler in iter(handler_list):
       logger.removeHandler(handler)
   # The propagate value indicates whether or not parents of this loggers will
   # be traversed when looking for handlers. It doesn't really make sense in the
-  # root logger - it's just there because a root logger is almost like any 
+  # root logger - it's just there because a root logger is almost like any
   # other logger.
   logger.propagate = 0
   logger.setLevel(level)
@@ -121,15 +126,16 @@ def configureLogger(level=None, debug_mode=False):
   # add ch to logger
   logger.addHandler(ch)
 
+
 def remove_file(filepath):
   try:
     remove(filepath)
   except OSError, msg:
     print msg.strerror
 
+
 def convertStringToBool(string):
   """This function is used to convert string 'true' and 'false' only.
-  
   Keyword arguments:
   string -- string to convert to boolean
   """

@@ -29,6 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.monitor import IMonitor
 
+
 class Monitor(object):
   """ """
 

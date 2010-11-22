@@ -49,6 +49,7 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
                                           ITextGranulator
 from cloudoooTestCase import make_suite
 
+
 class TestInterface(unittest.TestCase):
   """Test All Interfaces"""
 
@@ -79,7 +80,7 @@ class TestInterface(unittest.TestCase):
 
   def testIFilter(self):
     """Test if Filter implements IDocument"""
-    self.assertEquals(IFilter.implementedBy(Filter),True)
+    self.assertEquals(IFilter.implementedBy(Filter), True)
     self.assertEquals(IFilter.names(), ['getLabel', 'getName', 'getSortIndex',
       'isPreferred', 'getDocumentService', 'getExtension', 'getMimetype'])
 
@@ -100,9 +101,9 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(IManager.get('getAllowedExtensionList').required,
         ('request_dict',))
     self.assertEquals(IManager.get('getFileMetadataItemList').required,
-        ('file','source_format', 'base_document'))
+        ('file', 'source_format', 'base_document'))
     self.assertEquals(IManager.get('updateFileMetadata').required,
-        ('file','source_format', 'metadata_dict'))
+        ('file', 'source_format', 'metadata_dict'))
 
   def testIMimeMapper(self):
     """Test if Mimemapper implements IMimemapper."""
@@ -112,10 +113,10 @@ class TestInterface(unittest.TestCase):
     for method in method_list:
       self.assertEquals(method in IMimemapper.names(), True)
 
-    self.assertEquals(IMimemapper.implementedBy(MimeMapper),True)
-    self.assertEquals(len(method_list),len(IMimemapper.names()))
-    self.assertEquals(IMimemapper.get('getFilterName').required, ('extension',
-      'document_type'))
+    self.assertEquals(IMimemapper.implementedBy(MimeMapper), True)
+    self.assertEquals(len(method_list), len(IMimemapper.names()))
+    self.assertEquals(IMimemapper.get('getFilterName').required,
+                                  ('extension', 'document_type'))
     self.assertEquals(IMimemapper.get('loadFilterList').required, ())
     self.assertEquals(IMimemapper.get('getFilterList').required, ('extension',))
     self.assertEquals(IMimemapper.get('getDocumentTypeDict').required, ())
@@ -166,4 +167,3 @@ def test_suite():
 if __name__ == "__main__":
   suite = unittest.TestLoader().loadTestsFromTestCase(TestInterface)
   unittest.TextTestRunner(verbosity=2).run(suite)
-

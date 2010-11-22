@@ -34,6 +34,7 @@ from base64 import encodestring, decodestring
 from multiprocessing import Process
 from cloudoooTestCase import cloudoooTestCase, make_suite
 
+
 class TestHighLoad(cloudoooTestCase):
   """Test with many simultaneous connection"""
 
@@ -45,7 +46,7 @@ class TestHighLoad(cloudoooTestCase):
     """Test to use method generate of server"""
     document = self.proxy.convertFile(data, source_format, destination_format)
     document_output_url = os.path.join(self.tmp_url, "%s.%s" % (id, destination_format))
-    open(document_output_url,'wb').write(decodestring(document))
+    open(document_output_url, 'wb').write(decodestring(document))
     stdout, stderr = subprocess.Popen("file -b %s" % document_output_url,
         shell=True, stdout=subprocess.PIPE).communicate()
     self.assertEquals(stdout, 'PDF document, version 1.4\n')
@@ -56,7 +57,7 @@ class TestHighLoad(cloudoooTestCase):
   def testGenerateHighLoad(self):
     """Sends many request to Server. Calling generate method"""
     process_list = []
-    data = open("data/test.doc",'r').read()
+    data = open("data/test.doc", 'r').read()
     for id in range(50):
       process = Process(target=self.basicTestToGenerate, args=(id,
         encodestring(data), 'doc', 'pdf'))
@@ -66,6 +67,7 @@ class TestHighLoad(cloudoooTestCase):
     for proc in process_list[:]:
       proc.join()
       del proc
+
 
 def test_suite():
   return make_suite(TestHighLoad)

@@ -35,6 +35,7 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.application.openoffice import openoffice
 from cloudooo.document import FileSystemDocument
 
+
 class TestUnoConverter(cloudoooTestCase):
   """Test case to test all features of the unoconverter script"""
 
@@ -88,6 +89,7 @@ class TestUnoConverter(cloudoooTestCase):
                       "%s don't have %s" % (self.file_msg_list, stdout))
     self.document.trash()
     self.assertEquals(exists(output_url), False)
+
 
 def test_suite():
   return make_suite(TestUnoConverter)

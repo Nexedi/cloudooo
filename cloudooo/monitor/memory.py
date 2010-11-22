@@ -32,13 +32,14 @@ import psutil
 from cloudooo.utils import logger
 from time import sleep
 
+
 class MonitorMemory(Monitor, Process):
   """Usefull to control the memory and does not allow use it unnecessarily"""
-  
+
   def __init__(self, openoffice, interval, limit_memory_usage):
     """Expects to receive an object that implements the interfaces IApplication
-    and ILockable, the limit of memory usage that the openoffice can use and the
-    interval to check the object."""
+    and ILockable, the limit of memory usage that the openoffice can use and
+    the interval to check the object."""
     Monitor.__init__(self, openoffice, interval)
     Process.__init__(self)
     self.limit = limit_memory_usage

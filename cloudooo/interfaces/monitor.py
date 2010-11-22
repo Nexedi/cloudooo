@@ -28,6 +28,7 @@
 
 from zope.interface import Interface
 
+
 class IMonitor(Interface):
   """Provides features to monitor processes or python objects"""
 

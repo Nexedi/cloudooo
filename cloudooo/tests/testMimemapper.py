@@ -170,6 +170,7 @@ chart_expected_tuple = (('sds', 'StarChart 3.0'),
     ('sxs', 'OpenOffice.org 1.0 Chart'),
     ('odc', 'ODF Chart'))
 
+
 class TestMimeMapper(cloudoooTestCase):
   """Test if object load filters correctly of OOo."""
 
@@ -227,11 +228,11 @@ class TestMimeMapper(cloudoooTestCase):
   def testGetFilterByExt(self):
     """Test if passing the extension the filter returns corretcly."""
     pdf_filter_list = self.mimemapper.getFilterList('pdf')
-    self.assertEquals(len(pdf_filter_list),7)
+    self.assertEquals(len(pdf_filter_list), 7)
     xls_filter_list = self.mimemapper.getFilterList('xls')
-    self.assertEquals(len(xls_filter_list),5)
+    self.assertEquals(len(xls_filter_list), 5)
     doc_filter_list = self.mimemapper.getFilterList('doc')
-    self.assertEquals(len(doc_filter_list),3)
+    self.assertEquals(len(doc_filter_list), 3)
 
   def testGetDocumentTypeDict(self):
     """Test if dictonary document type returns type correctly."""
@@ -337,11 +338,14 @@ class TestMimeMapper(cloudoooTestCase):
 
   def testGetFilterName(self):
     """Test if passing extension and document_type, the filter is correct."""
-    filtername = self.mimemapper.getFilterName("pdf", 'com.sun.star.text.TextDocument')
+    filtername = self.mimemapper.getFilterName("pdf",
+                                            'com.sun.star.text.TextDocument')
     self.assertEquals(filtername, "writer_pdf_Export")
-    filtername = self.mimemapper.getFilterName('ppt', 'com.sun.star.presentation.PresentationDocument')
-    self.assertEquals(filtername,"MS PowerPoint 97")
-    filtername = self.mimemapper.getFilterName("html", 'com.sun.star.presentation.PresentationDocument')
+    filtername = self.mimemapper.getFilterName('ppt',
+                             'com.sun.star.presentation.PresentationDocument')
+    self.assertEquals(filtername, "MS PowerPoint 97")
+    filtername = self.mimemapper.getFilterName("html",
+                             'com.sun.star.presentation.PresentationDocument')
     self.assertEquals(filtername, "impress_html_Export")
 
   def testGetMimetype(self):
@@ -352,6 +356,7 @@ class TestMimeMapper(cloudoooTestCase):
         "application/vnd.oasis.opendocument.formula")
     self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer_MS_Word_97"),\
         'application/msword')
+
 
 def test_suite():
   return make_suite(TestMimeMapper)

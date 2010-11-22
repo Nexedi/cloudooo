@@ -30,6 +30,7 @@ import unittest
 from cloudooo.filter import Filter
 from cloudoooTestCase import make_suite
 
+
 class TestFilter(unittest.TestCase):
   """Test filter and your interface"""
 
@@ -51,6 +52,7 @@ class TestFilter(unittest.TestCase):
     self.assertEquals(self.filter.getMimetype(), 'application/pdf')
     self.assertEquals(self.filter.getSortIndex(), 1000)
     self.assertEquals(self.filter.isPreferred(), True)
+
 
 def test_suite():
   return make_suite(TestFilter)

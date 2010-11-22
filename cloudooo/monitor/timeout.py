@@ -31,9 +31,10 @@ from multiprocessing import Process
 from time import sleep
 from cloudooo.utils import logger
 
+
 class MonitorTimeout(Monitor, Process):
   """Monitors and controls the time of use of an object"""
-  
+
   def __init__(self, openoffice, interval):
     """Expects to receive an object that implements the interfaces IApplication
     and ILockable. And the interval to check the object."""

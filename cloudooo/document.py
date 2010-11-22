@@ -35,6 +35,7 @@ from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
 import tempfile
 
+
 class FileSystemDocument(object):
   """Filesystem Document is used to manipulate one temporary document
   stored into the filesystem.
@@ -43,7 +44,6 @@ class FileSystemDocument(object):
 
   def __init__(self, base_folder_url, data, source_format):
     """Create an document into file system and store the URL.
-    
     Keyword arguments:
     base_folder_url -- Full path to create a temporary folder
     data -- Content of the document
@@ -53,12 +53,12 @@ class FileSystemDocument(object):
     self.original_data = data
     self.source_format = source_format
     self.url = self.load()
-    
+
   def _createDirectory(self):
      return tempfile.mkdtemp(dir=self.base_folder_url)
 
   def load(self):
-    """Creates one Temporary Document and write data into it. 
+    """Creates one Temporary Document and write data into it.
     Return the url for the document.
     """
     # creates only the url of the file.
@@ -87,7 +87,6 @@ class FileSystemDocument(object):
 
   def getContent(self, zip=False):
     """Open the file and returns the content.
-    
     Keyword Arguments:
     zip -- Boolean attribute. If True"""
     if zip:

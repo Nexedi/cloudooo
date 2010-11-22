@@ -35,6 +35,7 @@ from zipfile import ZipFile, is_zipfile
 from cloudooo.document import FileSystemDocument
 from cloudoooTestCase import make_suite
 
+
 class TestFileSystemDocument(unittest.TestCase):
   """Test to class FileSystemDocument"""
 
@@ -54,8 +55,9 @@ class TestFileSystemDocument(unittest.TestCase):
     original state"""
     old_document_url = self.fsdocument.getUrl()
     document_filename = "document"
-    document_test_url = path.join(self.fsdocument.directory_name, document_filename)
-    open(document_test_url,'wb').write(decodestring("Test Document"))
+    document_test_url = path.join(self.fsdocument.directory_name,
+                                  document_filename)
+    open(document_test_url, 'wb').write(decodestring("Test Document"))
     self.fsdocument.reload(document_test_url)
     self.assertEquals(path.exists(old_document_url), False)
     self.assertNotEquals(self.fsdocument.original_data,
@@ -79,7 +81,7 @@ class TestFileSystemDocument(unittest.TestCase):
   def testLoadDocumentFile(self):
     """Test if the document is created correctly"""
     url = self.fsdocument.getUrl()
-    tmp_document = open(url,'r').read()
+    tmp_document = open(url, 'r').read()
     self.assertEquals(self.data, tmp_document)
     self.fsdocument.trash()
     self.assertEquals(path.exists(url), False)
@@ -88,8 +90,9 @@ class TestFileSystemDocument(unittest.TestCase):
     """Change url and check if occurs correctly"""
     old_document_url = self.fsdocument.getUrl()
     document_filename = "document"
-    document_test_url = path.join(self.fsdocument.directory_name, document_filename)
-    open(document_test_url,'wb').write(self.data)
+    document_test_url = path.join(self.fsdocument.directory_name,
+                                               document_filename)
+    open(document_test_url, 'wb').write(self.data)
     self.fsdocument.reload(document_test_url)
     url = self.fsdocument.getUrl()
     self.assertEquals(path.exists(old_document_url), False)
@@ -126,10 +129,11 @@ class TestFileSystemDocument(unittest.TestCase):
       self.assertEquals(is_zipfile(zip_output_url), True)
       zipfile = ZipFile(zip_output_url)
       self.assertEquals(sorted(zipfile.namelist()),
-        sorted(['logo.gif','test.htm']))
+        sorted(['logo.gif', 'test.htm']))
     finally:
       if path.exists(zip_output_url):
         remove(zip_output_url)
+
 
 def test_suite():
   return make_suite(TestFileSystemDocument)

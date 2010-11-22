@@ -53,6 +53,6 @@ class IApplication(Interface):
 
   def restart():
     """Restarts the application with the same settings"""
-  
+
   def getAddress():
     """Returns the hostname and port in tuple"""

@@ -33,6 +33,7 @@ from subprocess import Popen, PIPE
 from os import environ, path
 from cloudoooTestCase import cloudoooTestCase, make_suite
 
+
 class TestUnoMimeMapper(cloudoooTestCase):
   """Test Case to test all features of script unomimemapper"""
 
@@ -106,6 +107,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     self.assertEquals(stdout, '')
     self.assertEquals(stderr.endswith(error_msg), True)
     openoffice.start()
+
 
 def test_suite():
   return make_suite(TestUnoMimeMapper)

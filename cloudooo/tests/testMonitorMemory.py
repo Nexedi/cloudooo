@@ -34,6 +34,7 @@ from psutil import Process
 from types import IntType
 from cloudoooTestCase import make_suite
 
+
 class TestMonitorMemory(unittest.TestCase):
   """Test case to see if the MonitorMemory is properly managing the
   openoffice."""
@@ -102,6 +103,7 @@ class TestMonitorMemory(unittest.TestCase):
       openoffice.start()
     memory_usage_int = self.monitor.get_memory_usage()
     self.assertEquals(type(memory_usage_int), IntType)
+
 
 def test_suite():
   return make_suite(TestMonitorMemory)

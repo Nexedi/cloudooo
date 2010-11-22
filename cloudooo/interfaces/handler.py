@@ -28,6 +28,7 @@
 
 from zope.interface import Interface
 
+
 class IHandler(Interface):
   """Handles connections with the openoffice by socket"""
 

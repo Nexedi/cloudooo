@@ -29,9 +29,10 @@
 from zope.interface import Interface
 from zope.interface import Attribute
 
+
 class ILockable(Interface):
   """Controls concurrency control"""
-  
+
   _lock = Attribute("A primitive lock is in one of two states, 'locked' or \
       'unlocked'.")
 

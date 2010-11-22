@@ -36,6 +36,7 @@ from interfaces.mimemapper import IMimemapper
 from types import InstanceType
 from utils import getCleanPythonEnvironment
 
+
 class MimeMapper(object):
   """Load all filters from OOo. You can get the filter you want or all
   filters of the specific extension.
@@ -55,7 +56,7 @@ class MimeMapper(object):
     self.extension_list = []
     self._mimetype_by_filter_type = {}
     self._document_type_dict = {}
-    
+
   def _addFilter(self, filter):
     """Add filter in mimemapper catalog."""
     extension = filter.getExtension()
@@ -92,7 +93,6 @@ class MimeMapper(object):
 
   def loadFilterList(self, hostname, port, **kw):
     """Load all filters of openoffice.
-    
     Keyword arguments:
       hostname -- host of OpenOffice
       port -- port to connects by socket
@@ -100,24 +100,25 @@ class MimeMapper(object):
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
     """
-    # Filters that has flag in bad_flag_list is ignored. 
+    # Filters that has flag in bad_flag_list is ignored.
     # XXX - Is not good way to remove unnecessary filters
     # XXX - try find a good way to remove filters that are not used for export
     bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    command = [path.join(office_binary_path, "python")
-              , pkg_resources.resource_filename(__name__, 
-                                        path.join("helper","unomimemapper.py"))
-              , "'--uno_path=%s'" % uno_path
-              , "'--office_binary_path=%s'" % office_binary_path
-              , "'--hostname=%s'" % hostname 
-              , "--port=%s" % port]
+    command = [path.join(office_binary_path, "python"),
+               pkg_resources.resource_filename(__name__,
+                             path.join("helper", "unomimemapper.py")),
+               "--uno_path='%s'" % uno_path,
+               "--office_binary_path='%s'" % office_binary_path,
+               "--hostname='%s'" % hostname,
+               "--port=%s" % port]
     stdout, stderr = Popen(' '.join(command),
                           stdout=PIPE,
                           close_fds=True,
-                          shell=True, env=getCleanPythonEnvironment()).communicate()
+                          shell=True,
+                          env=getCleanPythonEnvironment()).communicate()
     exec(stdout)
     for key, value in filter_dict.iteritems():
       filter_name = key
@@ -135,7 +136,7 @@ class MimeMapper(object):
         continue
       preferred = filter_type_dict.get("Preferred")
       document_service_str = value.get('DocumentService')
-      sort_index = flag 
+      sort_index = flag
 
       doc_type = document_service_str.split('.')[-1]
       split_type_list = findall(r'[A-Z][a-z]+', doc_type)
@@ -153,10 +154,10 @@ class MimeMapper(object):
       # e.g: {'com.sun.star.text.TextDocument': [] }
       if not self._extension_list_by_type.has_key(document_service_str):
         self._extension_list_by_type[document_service_str] = []
-      
+
       for ext in iter(filter_extension_list):
-        # All mimetypes that starts with "application/vnd.oasis.opendocument" are
-        # ODF.
+        # All mimetypes that starts with "application/vnd.oasis.opendocument"
+        # are ODF.
         if ext not in self.extension_list:
           self.extension_list.append(ext)
         if mimetype.startswith("application/vnd.oasis.opendocument"):
@@ -186,10 +187,8 @@ class MimeMapper(object):
 
   def getMimetypeByFilterType(self, filter_type):
     """Get Mimetype according to the filter type
-    
     Keyword arguments:
     filter_type -- string of OOo filter
-    
     e.g
     >>> mimemapper.getMimetypeByFilterType("writer8")
     'application/vnd.oasis.opendocument.text'
@@ -198,7 +197,6 @@ class MimeMapper(object):
 
   def getFilterName(self, extension, document_service):
     """Get filter name according to the parameters passed.
-
     Keyword arguments:
     extension -- expected a string of the file format.
     document_type -- expected a string of the document type.
@@ -227,13 +225,12 @@ class MimeMapper(object):
 
   def getFilterList(self, extension):
     """Search filter by extension, and return the filter as string.
-
     Keyword arguments:
     extension -- expected a string of the file format.
     e.g
     >>> mimemapper.getFilterList("doc")
-    [<filter.Filter object at 0x9a2602c>, 
-    <filter.Filter object at 0x9a21d6c>, 
+    [<filter.Filter object at 0x9a2602c>,
+    <filter.Filter object at 0x9a21d6c>,
     <filter.Filter object at 0x9a261ec>]
     """
     return self._filter_by_extension_dict.get(extension, [])
@@ -243,11 +240,10 @@ class MimeMapper(object):
     document type passed.
     e.g
     >>> mimemapper.getAllowedExtensionList({"extension":"doc"})
-    or 
+    or
     >>> mimemapper.getAllowedExtensionList({"document_type":"text"})
     (('rtf', 'Rich Text Format'),
     ('htm', 'HTML Document'),)
-
     If both params are passed, document_type is discarded.
     """
     allowed_extension_list = []
@@ -265,7 +261,6 @@ class MimeMapper(object):
       for ext in iter(extension_list):
         if not ext in allowed_extension_list:
           allowed_extension_list.append(ext)
-    
     return tuple(allowed_extension_list)
 
 mimemapper = MimeMapper()

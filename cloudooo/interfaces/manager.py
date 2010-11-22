@@ -28,9 +28,10 @@
 
 from zope.interface import Interface
 
+
 class IManager(Interface):
   """Provides method to manipulate documents and metadatas using OOo"""
-  
+
   def convertFile(file, source_format, destination_format, zip):
     """Returns the converted file in the given format.
 
@@ -56,7 +57,7 @@ class IManager(Interface):
 
 
 class IERP5Compatibility(Interface):
-  """ Provides compatibility interface with ERP5 Project. 
+  """ Provides compatibility interface with ERP5 Project.
   This methods provide same API as OpenOffice.org project.
   XXX Unfinished Docstring.
   """

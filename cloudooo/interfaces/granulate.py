@@ -28,6 +28,7 @@
 
 from zope.interface import Interface
 
+
 class ITableGranulator(Interface):
   """Provides methods to granulate a document into tables."""
 

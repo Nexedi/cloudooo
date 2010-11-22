@@ -32,6 +32,7 @@ from cloudooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
 from cloudooo.utils import waitStopDaemon
 
+
 class TestOpenOffice(cloudoooTestCase):
   """Test OpenOffice object and manipulation of OOo Instance"""
   
@@ -84,6 +85,7 @@ class TestOpenOffice(cloudoooTestCase):
     self.assertEquals(self.openoffice.isLocked(), True)
     self.openoffice.release()
     self.assertEquals(self.openoffice.isLocked(), False)
+
 
 def test_suite():
   return make_suite(TestOpenOffice)

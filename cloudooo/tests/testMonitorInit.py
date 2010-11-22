@@ -32,6 +32,7 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.monitor.request import MonitorRequest
 from cloudooo.monitor.memory import MonitorMemory
 
+
 class TestMonitorInit(cloudoooTestCase):
   """Test Case to test if the monitors are controlled correctly"""
 
@@ -68,6 +69,7 @@ class TestMonitorInit(cloudoooTestCase):
     self.assertEquals(isinstance(cloudooo.monitor.monitor_memory,
                                  MonitorMemory),
                                  True)
+
 
 def test_suite():
   return make_suite(TestMonitorInit)

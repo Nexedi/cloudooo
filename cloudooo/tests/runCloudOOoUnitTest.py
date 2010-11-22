@@ -11,11 +11,13 @@ from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
+
 def wait_liberate_port(hostname, port, timeout_limit=10):
   for n in range(timeout_limit):
     if not socketStatus(hostname, port):
       break
     sleep(1)
+
 
 def wait_use_port(hostname, port, timeout_limit=10):
   for n in range(timeout_limit):
@@ -23,9 +25,11 @@ def wait_use_port(hostname, port, timeout_limit=10):
       return
     sleep(1)
 
+
 def exit(msg):
   sys.stderr.write(msg)
   sys.exit(0) 
+
 
 def run_test(test_name):
   module = __import__(test_name)
@@ -35,6 +39,7 @@ def run_test(test_name):
   suite = unittest.TestSuite()
   suite.addTest(module.test_suite())
   TestRunner(verbosity=2).run(suite)
+
 
 def run():
   DAEMON = OPENOFFICE = XVFB = False

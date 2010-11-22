@@ -29,6 +29,7 @@
 from zope.interface import implements
 from interfaces.filter import IFilter
 
+
 class Filter(object):
   """Filter of OOo."""
 
@@ -44,7 +45,7 @@ class Filter(object):
     self._preferred = kwargs.get('preferred')
     self._sort_index = kwargs.get('sort_index')
     self._label = kwargs.get("label")
-    
+
   def getLabel(self):
     """Returns label."""
     return self._label

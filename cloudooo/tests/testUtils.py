@@ -31,6 +31,7 @@ import logging
 from cloudooo.utils import logger, configureLogger, convertStringToBool
 from cloudoooTestCase import make_suite
 
+
 class TestUtils(unittest.TestCase):
   """Test Utils"""
 
@@ -50,6 +51,7 @@ class TestUtils(unittest.TestCase):
     self.assertEquals(convertStringToBool('truE'), True)
     self.assertEquals(convertStringToBool('faLse'), False)
     self.assertEquals(convertStringToBool(''), None)
+
 
 def test_suite():
   return make_suite(TestUtils)

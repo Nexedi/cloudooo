@@ -32,6 +32,7 @@ from cloudooo.application.openoffice import openoffice
 from cloudooo.monitor.timeout import MonitorTimeout
 from cloudoooTestCase import make_suite
 
+
 class TestMonitorTimeout(unittest.TestCase):
   """Test all features of a monitor following the interface"""
   
@@ -86,6 +87,7 @@ class TestMonitorTimeout(unittest.TestCase):
     finally:
       monitor_timeout.terminate()
       openoffice.release()
+
 
 def test_suite():
   return make_suite(TestMonitorTimeout)

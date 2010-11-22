@@ -68,4 +68,3 @@ def test_suite():
 if __name__ == "__main__":
   suite = unittest.TestLoader().loadTestsFromTestCase(TestOOGranulate)
   unittest.TextTestRunner(verbosity=2).run(suite)
-

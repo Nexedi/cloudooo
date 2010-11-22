@@ -30,6 +30,7 @@ import unittest
 from cloudooo.application.application import Application
 from cloudoooTestCase import make_suite
 
+
 class TestApplication(unittest.TestCase):
   
   def setUp(self):
@@ -58,6 +59,7 @@ class TestApplication(unittest.TestCase):
   def testPid(self):
     """As the application do not have the pid() should return None"""
     self.assertEquals(self.application.pid(), None)
+
 
 def test_suite():
   return make_suite(TestApplication)

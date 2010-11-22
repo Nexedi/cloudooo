@@ -35,6 +35,7 @@ from handler.oohandler import OOHandler
 from mimemapper import mimemapper
 from utils import logger
 
+
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
   implements(IManager, IERP5Compatibility)
@@ -43,10 +44,9 @@ class Manager(object):
     """Need pass the path where the temporary document will be created."""
     self._path_tmp_dir = path_tmp_dir
     self.kw = kw
-  
+
   def convertFile(self, file, source_format, destination_format, zip=False):
     """Returns the converted file in the given format.
-    
     Keywords arguments:
       file -- File as string in base64
       source_format -- Format of original file as string
@@ -84,7 +84,7 @@ class Manager(object):
   def getFileMetadataItemList(self, file, source_format, base_document=False):
     """Receives the string of document as encodestring and returns a dict with
     metadatas.
-    e.g. 
+    e.g.
     self.getFileMetadataItemList(data = encodestring(data))
     return {'Title': 'abc','Description': 'comments', 'Data': None}
 
@@ -102,7 +102,7 @@ class Manager(object):
     metadata_dict = document.getMetadata(base_document)
     metadata_dict['Data'] = encodestring(metadata_dict['Data'])
     return metadata_dict
-  
+
   def getAllowedExtensionList(self, request_dict={}):
     """List types which can be generated from given type
     Type can be given as:
@@ -132,25 +132,29 @@ class Manager(object):
     elif document_type:
       return mimemapper.getAllowedExtensionList(document_type=document_type)
     else:
-      return [('','')]
+      return [('', '')]
 
   def run_convert(self, filename='', data=None, meta=None, extension=None,
                   orig_format=None):
-    """Method to support the old API. Wrapper getFileMetadataItemList but 
+    """Method to support the old API. Wrapper getFileMetadataItemList but
     returns a dict.
     This is a Backwards compatibility provided for ERP5 Project, in order to
-    keep compatibility with OpenOffice.org Daemon. 
+    keep compatibility with OpenOffice.org Daemon.
     """
     if not extension:
       extension = filename.split('.')[-1]
     try:
       response_dict = {}
-      response_dict['meta'] = self.getFileMetadataItemList(data, extension, True)
-      response_dict['meta']['MIMEType'] = self.getFileMetadataItemList(response_dict['meta']['Data'], 
-                                                                        extension)['MIMEType']
-      # XXX - Backward compatibility: Previous API expects 'mime' now we use 'MIMEType'"
+      response_dict['meta'] = self.getFileMetadataItemList(data,
+                                                           extension,
+                                                           True)
+      mimetype = self.getFileMetadataItemList(response_dict['meta']['Data'],
+                                              extension)['MIMEType']
+      response_dict['meta']['MIMEType'] = mimetype
+      # XXX - Backward compatibility: Previous API expects 'mime' now we
+      # use 'MIMEType'
       response_dict['meta']['mime'] = response_dict['meta']['MIMEType']
-      response_dict['data'] = response_dict['meta']['Data'] 
+      response_dict['data'] = response_dict['meta']['Data']
       response_dict['mime'] = response_dict['meta']['MIMEType']
       del response_dict['meta']['Data']
       return (200, response_dict, "")
@@ -185,7 +189,8 @@ class Manager(object):
     response_dict = {}
     try:
       response_dict['meta'] = self.getFileMetadataItemList(data, extension)
-      # XXX - Backward compatibility: Previous API expects 'title' now we use 'Title'"
+      # XXX - Backward compatibility: Previous API expects 'title' now
+      # we use 'Title'"
       response_dict['meta']['title'] = response_dict['meta']['Title']
       return (200, response_dict, '')
     except Exception, e:
@@ -194,9 +199,9 @@ class Manager(object):
 
   def run_generate(self, filename='', data=None, meta=None, extension=None,
                    orig_format=''):
-    """Wrapper convertFile but returns a dict which includes mimetype. 
-    This is a Backwards compatibility provided for ERP5 Project, in order to keep
-    compatibility with OpenOffice.org Daemon.
+    """Wrapper convertFile but returns a dict which includes mimetype.
+    This is a Backwards compatibility provided for ERP5 Project, in order
+    to keep compatibility with OpenOffice.org Daemon.
     """
     # XXX - ugly way to remove "/" and "."
     orig_format = orig_format.split('.')[-1]
@@ -210,9 +215,12 @@ class Manager(object):
       # XXX - use html format instead of xhtml
       if orig_format == "presentation" and extension == "xhtml":
         extension = 'html'
-      elif orig_format in ("spreadsheet", 'text') and extension in ("html", "xhtml"):
+      elif orig_format in ("spreadsheet", 'text') and extension in ("html",
+                                                                    "xhtml"):
         extension = "htm"
-      response_dict['data'] = self.convertFile(data, orig_format, extension,
+      response_dict['data'] = self.convertFile(data,
+                                               orig_format,
+                                               extension,
                                                zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
       if zip:

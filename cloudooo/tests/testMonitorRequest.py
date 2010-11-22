@@ -32,6 +32,7 @@ from cloudooo.monitor.request import MonitorRequest
 from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.application.openoffice import openoffice
 
+
 class TestMonitorRequest(cloudoooTestCase):
   """Test all features of a monitor following the interface"""
 
@@ -56,6 +57,7 @@ class TestMonitorRequest(cloudoooTestCase):
     sleep(4)
     self.assertEquals(openoffice.request, 0)
     monitor_request.terminate()
+
 
 def test_suite():
   return make_suite(TestMonitorRequest)

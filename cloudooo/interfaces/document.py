@@ -43,9 +43,9 @@ class IDocument(Interface):
     """From the data creates one archive into file system using original data"""
 
   def reload(url):
-    """In the case of another file with the same content be created, pass the 
+    """In the case of another file with the same content be created, pass the
     url to load the new file"""
-  
+
   def getContent(zip):
     """Returns data of document"""
 
@@ -54,6 +54,6 @@ class IDocument(Interface):
 
   def trash():
     """Remove the file in file system"""
-  
+
   def restoreOriginal():
     """Restore the document with the original document"""

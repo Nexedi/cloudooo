@@ -16,8 +16,7 @@ def test_openoffice(hostname, port):
 
 def main():
   try:
-    opt_list, arg_list = getopt(sys.argv[1:], "", 
-/bin/bash: q: comando não encontrado
+    opt_list, arg_list = getopt(sys.argv[1:], "",
   except GetoptError, e:
     print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)

@@ -32,6 +32,7 @@ from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import cloudoooTestCase, make_suite
 
+
 class TestAllFormats(cloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
@@ -66,7 +67,7 @@ class TestAllFormats(cloudoooTestCase):
 
   def runTestForType(self, source_format, document_type, filename):
     """Generic test"""
-    data = open(filename,'r').read()
+    data = open(filename, 'r').read()
     request = {'document_type': document_type}
     extension_list = self.proxy.getAllowedExtensionList(request)
     fault_list = []
@@ -89,6 +90,7 @@ class TestAllFormats(cloudoooTestCase):
       self.assertEquals(stdout.endswith(": empty"), False, stdout)
     if fault_list != []:
       raise Fault(1, "\n".join(fault_list))
+
 
 def test_suite():
   return make_suite(TestAllFormats)

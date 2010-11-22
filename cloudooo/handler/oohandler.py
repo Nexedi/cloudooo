@@ -146,7 +146,8 @@ class OOHandler:
         if service_type in mimemapper._doc_type_list_by_extension[extension]:
           filter_list.append((extension,
                               service_type,
-                              mimemapper.getFilterName(extension, service_type))) 
+                              mimemapper.getFilterName(extension,
+                                                       service_type)))
 
     return jsonpickle.encode(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                                   filter_list=filter_list,
@@ -199,7 +200,7 @@ class OOHandler:
       metadata['Data'] = self.document.getContent()
     else:
       metadata['Data'] = ''
-    self.document.trash() 
+    self.document.trash()
     return metadata
 
   def setMetadata(self, metadata):

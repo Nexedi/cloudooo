@@ -36,6 +36,7 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from types import DictType
 
+
 class TestServer(cloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
   
@@ -115,13 +116,13 @@ class TestServer(cloudoooTestCase):
   def testGetAllowedExtensionListByType(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
     extension and ui_name. The request is by document type"""
-    text_request = {'document_type':"text"}
+    text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     text_allowed_list.sort()
     for arg in text_allowed_list:
       self.assertTrue(arg in self.text_expected_list, 
                     "%s not in %s" % (arg, self.text_expected_list))
-    request_dict = {'document_type':"presentation"}
+    request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     presentation_allowed_list.sort()
     for arg in presentation_allowed_list:
@@ -131,7 +132,7 @@ class TestServer(cloudoooTestCase):
   def testGetAllowedExtensionListByExtension(self):  
     """Call getAllowedExtensionList and verify if the returns is a list with
     extension and ui_name. The request is by extension"""
-    doc_allowed_list = self.proxy.getAllowedExtensionList({'extension':"doc"})
+    doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
     doc_allowed_list.sort()
     for arg in doc_allowed_list:
       self.assertTrue(arg in self.text_expected_list, 
@@ -140,7 +141,7 @@ class TestServer(cloudoooTestCase):
   def testGetAllowedExtensionListByMimetype(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
     extension and ui_name. The request is by mimetype"""
-    request_dict = {"mimetype":"application/msword"}
+    request_dict = {"mimetype": "application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     msword_allowed_list.sort()
     for arg in msword_allowed_list:
@@ -522,6 +523,7 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(response_code, 200)
     self.assertEquals(len(response_dict['response_data']), 31)
     self.assertTrue(['htm', 'HTML Document'] in response_dict['response_data'])
+
 
 def test_suite():
   return make_suite(TestServer)

@@ -26,6 +26,8 @@
 #
 ##############################################################################
 
+import gc
+import monitor
 from signal import signal, SIGHUP
 from application.openoffice import openoffice
 from application.xvfb import xvfb
@@ -33,17 +35,17 @@ from wsgixmlrpcapplication import WSGIXMLRPCApplication
 from utils import convertStringToBool, configureLogger
 from os import path, mkdir
 from mimemapper import mimemapper
-import monitor, gc
+
 
 def stopProcesses():
   monitor.stop()
   xvfb.stop()
   openoffice.stop()
 
+
 def application(global_config, **local_config):
   """Method to load all configuration of cloudooo and start the application.
   To start the application a number of params are required:
-  
   Keyword arguments:
   debug_mode -- Mode as the application prints the messages.
       e.g debug_mode=logging.DEBUG
@@ -76,31 +78,31 @@ def application(global_config, **local_config):
   openoffice_port = int(local_config.get('openoffice_port'))
   # Before start Xvfb, first loads the configuration
   xvfb.loadSettings(application_hostname,
-                    int(local_config.get('virtual_display_port')), 
+                    int(local_config.get('virtual_display_port')),
                     working_path,
-                    local_config.get('virtual_display_id'), 
+                    local_config.get('virtual_display_id'),
                     virtual_screen=local_config.get('virtual_screen'),
                     start_timeout=local_config.get('start_timeout'))
   xvfb.start()
-   
+
   # Loading Configuration to start OOo Instance and control it
-  openoffice.loadSettings(application_hostname, 
+  openoffice.loadSettings(application_hostname,
                           openoffice_port,
                           working_path,
                           local_config.get('virtual_display_id'),
-                          local_config.get('office_binary_path'), 
+                          local_config.get('office_binary_path'),
                           local_config.get('uno_path'))
   openoffice.start()
 
   monitor.load(local_config)
   timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(uno_path=local_config.get('uno_path'), 
+  kw = dict(uno_path=local_config.get('uno_path'),
            office_binary_path=local_config.get('office_binary_path'),
            timeout=timeout_response)
 
   # Signal to stop all processes
-  signal(SIGHUP, lambda x,y: stopProcesses())
-  
+  signal(SIGHUP, lambda x, y: stopProcesses())
+
   # Load all filters
   openoffice.acquire()
   mimemapper.loadFilterList(application_hostname,

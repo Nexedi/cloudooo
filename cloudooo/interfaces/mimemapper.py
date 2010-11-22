@@ -28,12 +28,13 @@
 
 from zope.interface import Interface
 
+
 class IMimemapper(Interface):
   """Provide methods to manipulate filters of OOo."""
 
   def isLoaded():
     """Returns if the filters were loaded."""
-    
+
   def getDocumentTypeDict():
     """Returns document type dict."""
 

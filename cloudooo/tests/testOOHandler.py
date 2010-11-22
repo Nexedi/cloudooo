@@ -35,6 +35,7 @@ from cloudooo.handler.oohandler import OOHandler
 from cloudooo.application.openoffice import openoffice
 from cloudoooTestCase import make_suite
 
+
 class TestOOHandler(cloudoooTestCase):
   """Test OOHandler and manipulation of OOo Instance"""
 
@@ -150,6 +151,7 @@ class TestOOHandler(cloudoooTestCase):
                             'doc')
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
+
 
 def test_suite():
   return make_suite(TestOOHandler)

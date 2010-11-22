@@ -31,6 +31,7 @@ from threading import Thread
 from cloudooo.utils import logger
 from time import sleep
 
+
 class MonitorRequest(Monitor, Thread):
   """Usefull to control the number of request in Object"""
 
@@ -45,7 +46,7 @@ class MonitorRequest(Monitor, Thread):
   def start(self):
     self.status_flag = True
     Thread.start(self)
-  
+
   def run(self):
     """Is called by start function"""
     logger.debug("Start MonitorRequest")

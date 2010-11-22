@@ -31,6 +31,7 @@ from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.application.xvfb import Xvfb
 from cloudooo.utils import waitStopDaemon
 
+
 class TestXvfb(cloudoooTestCase):
 
   def afterSetUp(self):
@@ -63,6 +64,7 @@ class TestXvfb(cloudoooTestCase):
       self.xvfb.stop()
       waitStopDaemon(self.xvfb)
     self.assertEquals(self.xvfb.status(), False)
+
 
 def test_suite():
   return make_suite(TestXvfb)

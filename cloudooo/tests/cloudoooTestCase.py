@@ -46,14 +46,17 @@ def check_folder(working_path, tmp_dir_path):
   if not path.exists(tmp_dir_path):
     mkdir(tmp_dir_path)
 
+
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
   suite.addTest(unittest.makeSuite(test_case))
   return suite
 
+
 def loadConfig(path):
   config.read(path)
+
 
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
@@ -63,7 +66,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   uno_path = config.get("app:main", "uno_path")
   working_path = config.get("app:main", "working_path")
   virtual_display_id = int(config.get("app:main", "virtual_display_id"))
-  virtual_display_port_int = int(config.get("app:main", "virtual_display_port"))
+  virtual_display_port_int = int(config.get("app:main",
+                                            "virtual_display_port"))
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
   office_binary_path = config.get("app:main", "office_binary_path")
@@ -71,18 +75,17 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   check_folder(working_path, tmp_dir)
   if not environ.get('uno_path'):
     environ['uno_path'] = uno_path
-  
   office_binary_path = config.get("app:main", "office_binary_path")
   if not environ.get('office_binary_path'):
     environ['office_binary_path'] = office_binary_path
-  
+
   if uno_path not in sys.path:
     sys.path.append(uno_path)
-  
+
   fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
   if path.exists(fundamentalrc_file) and \
       not environ.has_key('URE_BOOTSTRAP'):
-    putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
+    putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   xvfb.loadSettings(hostname,
                   virtual_display_port_int,
@@ -90,8 +93,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                   virtual_display_id,
                   virtual_screen='1')
   xvfb.start()
-  waitStartDaemon(xvfb, 10)
-  
+  waitStartDaemon(xvfb, 10) 
+
   if start_openoffice:
     openoffice.loadSettings(hostname,
                             openoffice_port, 
@@ -111,12 +114,14 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   
   return xvfb
 
+
 def stopFakeEnvironment(stop_openoffice=True):
   """Stop Openoffice and Xvfb """
   if stop_openoffice:
     openoffice.stop()
   xvfb.stop()
   return True
+
 
 class cloudoooTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""

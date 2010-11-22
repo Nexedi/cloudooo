@@ -49,6 +49,7 @@ Options:
   -l  filter log    Folder to store logs
 """
 
+
 class Log(object):
   """Object to manipulate the log file"""
 
@@ -67,6 +68,7 @@ class Log(object):
   def flush(self):
     """Flush the internal I/O buffer."""
     self._log.flush()
+
 
 class Client(Process):
   """Represents a client that sends requests to the server. The log file by
@@ -122,6 +124,7 @@ class Client(Process):
     self.log.msg("Test Stop: %s\n" % ctime())
     self.log.msg("Total Duration: %s" % sum(time_list))
     self.log.close()
+
 
 def main():
   
