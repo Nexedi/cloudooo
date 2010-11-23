@@ -27,13 +27,14 @@
 ##############################################################################
 
 import mimetypes
+import tempfile
 from os.path import join, exists, curdir, abspath
 from os import listdir, remove, chdir
 from zope.interface import implements
-from interfaces.document import IDocument
 from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
-import tempfile
+from StringIO import StringIO
+from interfaces.document import IDocument, IOdfDocument
 
 
 class FileSystemDocument(object):
@@ -47,6 +48,7 @@ class FileSystemDocument(object):
     Keyword arguments:
     base_folder_url -- Full path to create a temporary folder
     data -- Content of the document
+    source_format -- Document Extension
     """
     self.base_folder_url = base_folder_url
     self.directory_name = self._createDirectory()
@@ -136,3 +138,30 @@ class FileSystemDocument(object):
 
   def __del__(self):
     self.trash()
+
+
+class OdfDocument(object):
+  """Manipulates odf documents in memory"""
+
+  implements(IOdfDocument)
+
+  def __init__(self, data, source_format):
+    """Open the the file in memory.
+
+    Keyword arguments:
+    data -- Content of the document
+    source_format -- Document Extension
+    """
+    self._zipfile = ZipFile(StringIO(data))
+    self.source_format = source_format
+
+  def getContentXml(self):
+    """Returns the content.xml file as string"""
+    return self._zipfile.read('content.xml')
+
+  def getFile(self, path):
+    """If exists, returns file as string, else return None"""
+    try:
+      return self._zipfile.read(path)
+    except KeyError:
+      return None

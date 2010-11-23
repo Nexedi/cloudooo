@@ -33,7 +33,8 @@ from zope.interface import Attribute
 class IDocument(Interface):
   """Manipulates documents in file system"""
 
-  base_folder_url = Attribute("Url of folder that is used to create temporary files")
+  base_folder_url = Attribute("Url of folder that is used to create temporary \
+                              files")
   directory_name = Attribute("String of directory name")
   source_format = Attribute("Document Extension")
   url = Attribute("Complete path of document in file system")
@@ -57,3 +58,16 @@ class IDocument(Interface):
 
   def restoreOriginal():
     """Restore the document with the original document"""
+
+
+class IOdfDocument(Interface):
+  """Manipulates odf documents in memory"""
+
+  source_format = Attribute("Document Extension")
+
+  def getContentXml():
+    """Returns the content.xml file as string"""
+
+  def getFile(path):
+    """Returns, as string, the file located in the given path, inside de odf
+       file"""

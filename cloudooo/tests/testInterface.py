@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-from cloudooo.document import FileSystemDocument
+from cloudooo.document import FileSystemDocument, OdfDocument
 from cloudooo.handler.oohandler import OOHandler
 from cloudooo.application.openoffice import OpenOffice
 from cloudooo.manager import Manager
@@ -36,7 +36,7 @@ from cloudooo.filter import Filter
 from cloudooo.application.xvfb import Xvfb
 from cloudooo.monitor.request import MonitorRequest
 from cloudooo.granulate.oogranulate import OOGranulate
-from cloudooo.interfaces.document import IDocument
+from cloudooo.interfaces.document import IDocument, IOdfDocument
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.interfaces.manager import IManager
 from cloudooo.interfaces.application import IApplication
@@ -77,6 +77,14 @@ class TestInterface(unittest.TestCase):
   def testIDocument(self):
     """Test if FileSystemDocument implements IDocument"""
     self.assertEquals(IDocument.implementedBy(FileSystemDocument), True)
+
+  def testIOdfDocument(self):
+    """Test if OdfDocument implements IOdfDocument"""
+    self.assertEquals(IOdfDocument.implementedBy(OdfDocument), True)
+    method_list = ['getFile',
+                   'getContentXml',
+                   'source_format']
+    self.assertEquals(IOdfDocument.names(), method_list)
 
   def testIFilter(self):
     """Test if Filter implements IDocument"""
