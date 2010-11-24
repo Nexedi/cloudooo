@@ -27,7 +27,7 @@
 #
 ##############################################################################
 
-from mimetypes import guess_all_extensions
+from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
