@@ -33,6 +33,7 @@ setup(name='cloudooo',
           'WSGIUtils',
           'jsonpickle',
           'psutil',
+          'lxml',
       ],
       entry_points="""
       [paste.app_factory]

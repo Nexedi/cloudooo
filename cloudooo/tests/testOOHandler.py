@@ -34,14 +34,22 @@ from cloudoooTestCase import cloudoooTestCase
 from cloudooo.handler.oohandler import OOHandler
 from cloudooo.application.openoffice import openoffice
 from cloudoooTestCase import make_suite
+import os
+from lxml import etree
+from zipfile import ZipFile
 
 
 class TestOOHandler(cloudoooTestCase):
   """Test OOHandler and manipulation of OOo Instance"""
 
+  _file_path_list = []
+
   def _save_document(self, document_output_url, data):
     """Create document in file system"""
-    open(document_output_url, "w").write(data)
+    new_file = open(document_output_url, "w")
+    new_file.write(data)
+    new_file.close()
+    self._file_path_list.append(document_output_url)
 
   def _assert_document_output(self, document_output_url, msg):
     """Check if the document was created correctly"""
@@ -51,6 +59,16 @@ class TestOOHandler(cloudoooTestCase):
     self.assertEquals(msg in stdout,
                       True,
                       "\nStdout: %sMsg: %s" % (stdout, msg))
+
+  def tearDown(self):
+    """Cleanup temp files
+    """
+    while self._file_path_list:
+      file_path = self._file_path_list.pop()
+      if os.path.exists(file_path):
+        os.remove(file_path)
+    cloudoooTestCase.tearDown(self)
+
 
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""
@@ -152,6 +170,35 @@ class TestOOHandler(cloudoooTestCase):
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
 
+  def testRefreshOdt(self):
+    """Test refresh argument"""
+    # Check when refreshing is disabled
+    data = encodestring(open("data/test_fields.odt").read())
+    handler = OOHandler(self.tmp_url,
+                        decodestring(data),
+                        'odt',
+                        refresh=False)
+    doc_exported = handler.convert("odt")
+    document_output_url = path.join(self.tmp_url, "testExport.odt")
+    self._save_document(document_output_url, doc_exported)
+    zip_handler = ZipFile(document_output_url)
+    content_tree = etree.fromstring(zip_handler.read('content.xml'))
+    self.assertFalse(content_tree.xpath('//text:variable-get[text() = "DISPLAY ME"]',
+                                       namespaces=content_tree.nsmap))
+
+    # Check when refreshing is enabled
+    data = encodestring(open("data/test_fields.odt").read())
+    handler = OOHandler(self.tmp_url,
+                        decodestring(data),
+                        'odt',
+                        refresh=True)
+    doc_exported = handler.convert("odt")
+    document_output_url = path.join(self.tmp_url, "testExport.odt")
+    self._save_document(document_output_url, doc_exported)
+    zip_handler = ZipFile(document_output_url)
+    content_tree = etree.fromstring(zip_handler.read('content.xml'))
+    self.assertTrue(content_tree.xpath('//text:variable-get[text() = "DISPLAY ME"]',
+                                       namespaces=content_tree.nsmap))
 
 def test_suite():
   return make_suite(TestOOHandler)
