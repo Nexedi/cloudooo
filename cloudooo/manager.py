@@ -224,6 +224,9 @@ class Manager(object):
     This is a Backwards compatibility provided for ERP5 Project, in order
     to keep compatibility with OpenOffice.org Daemon.
     """
+    # calculate original extension required by convertFile from
+    # given content_type (orig_format)
+    original_extension = guess_extension(orig_format).strip('.')
     # XXX - ugly way to remove "/" and "."
     orig_format = orig_format.split('.')[-1]
     orig_format = orig_format.split('/')[-1]
@@ -240,7 +243,7 @@ class Manager(object):
                                                                     "xhtml"):
         extension = "htm"
       response_dict['data'] = self.convertFile(data,
-                                               orig_format,
+                                               original_extension,
                                                extension,
                                                zip)
       # FIXME: Fast solution to obtain the html or pdf mimetypes
