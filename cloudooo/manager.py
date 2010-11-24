@@ -45,7 +45,8 @@ class Manager(object):
     self._path_tmp_dir = path_tmp_dir
     self.kw = kw
 
-  def convertFile(self, file, source_format, destination_format, zip=False):
+  def convertFile(self, file, source_format, destination_format, zip=False,
+                  refresh=False):
     """Returns the converted file in the given format.
     Keywords arguments:
       file -- File as string in base64
@@ -57,6 +58,7 @@ class Manager(object):
     if not mimemapper.getFilterList(destination_format):
       raise ValueError, "This format is not supported or is invalid"
     self.kw['zip'] = zip
+    self.kw['refresh'] = refresh
     document = OOHandler(self._path_tmp_dir,
                         decodestring(file),
                         source_format,

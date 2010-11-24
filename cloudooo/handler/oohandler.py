@@ -59,6 +59,7 @@ class OOHandler:
     self.uno_path = kw.get("uno_path", None)
     self.office_binary_path = kw.get("office_binary_path", None)
     self.timeout = kw.get("timeout", 600)
+    self.refresh = kw.get('refresh', False)
     self.source_format = source_format
     if not self.uno_path:
       self.uno_path = environ.get("uno_path")
@@ -164,6 +165,7 @@ class OOHandler:
     if destination_format:
       kw['destination_format'] = destination_format
     kw['mimemapper'] = self._serializeMimemapper()
+    kw['refresh'] = jsonpickle.encode(self.refresh)
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
     finally:

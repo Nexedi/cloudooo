@@ -77,6 +77,7 @@ class UnoConverter(object):
     self.document_url = document_url
     self.document_dir_path = dirname(document_url)
     self.source_format = kw.get('source_format')
+    self.refresh = kw.get('refresh')
     self._setUpUnoEnvironment(kw.get("uno_path"), 
                               kw.get("office_binary_path"))
     self._load()
@@ -159,17 +160,28 @@ class UnoConverter(object):
       return ()
 
   def _load(self):
-    """Create one document with basic properties"""
+    """Create one document with basic properties
+    refresh argument tells to uno environment to
+    replace dynamic properties of document before conversion
+    """
     service_manager = helper_utils.getServiceManager(self.hostname, self.port)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
-    module_manager = service_manager.createInstance("com.sun.star.frame.ModuleManager")
     if not uno_document:
       raise AttributeError, "This document can not be loaded or is empty"
+    if self.refresh:
+      # Before converting to expected format, refresh dynamic
+      # value inside document.
+      dispatcher = service_manager.createInstance("com.sun.star.frame.DispatchHelper")
+      for uno_command in ('UpdateFields', 'UpdateAll', 'UpdateInputFields',
+                          'UpdateAllLinks', 'UpdateCharts',):
+        dispatcher.executeDispatch(uno_document.getCurrentController().getFrame(),
+                                   '.uno:%s' % uno_command, '', 0, ())
+    module_manager = service_manager.createInstance("com.sun.star.frame.ModuleManager")
     self.document_type = module_manager.identify(uno_document)
     self.document_loaded = uno_document
-  
+
   def systemPathToFileUrl(self, path):
     """Returns a path in uno library patterns"""
     from unohelper import systemPathToFileUrl
@@ -266,7 +278,7 @@ def main():
       "uno_path=", "office_binary_path=", 
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=", 
-      "mimemapper=", "metadata=",
+      "mimemapper=", "metadata=", "refresh=",
       "unomimemapper_bin=", "jsonpickle_path="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
@@ -281,7 +293,7 @@ def main():
       break
 
   import jsonpickle
-
+  refresh = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
@@ -301,6 +313,8 @@ def main():
       destination_format = arg
     elif opt == '--source_format':
       source_format = arg
+    elif opt == '--refresh':
+      refresh = jsonpickle.decode(arg)
     elif opt == '--metadata':
       arg = decodestring(arg)
       metadata = jsonpickle.decode(arg)
@@ -316,6 +330,8 @@ def main():
  
   if 'source_format' in locals():
     kw['source_format'] = source_format
+  if refresh:
+    kw['refresh'] = refresh
   
   unoconverter = UnoConverter(hostname, port, document_url, **kw)
   if "--convert" in param_list and not '--getmetadata' in param_list \

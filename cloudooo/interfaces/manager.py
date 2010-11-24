@@ -32,7 +32,7 @@ from zope.interface import Interface
 class IManager(Interface):
   """Provides method to manipulate documents and metadatas using OOo"""
 
-  def convertFile(file, source_format, destination_format, zip):
+  def convertFile(file, source_format, destination_format, zip, refresh):
     """Returns the converted file in the given format.
 
     zip parameter can be specified to return the result of conversion
