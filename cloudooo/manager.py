@@ -74,16 +74,19 @@ class Manager(object):
       zip -- Boolean Attribute. If true, returns the grains in the form of a
       zip archive
     """
-    raise NotImplemented
+    raise NotImplementedError
     GRANULATABLE_FORMAT_LIST = ("odt",)
     if source_format not in GRANULATABLE_FORMAT_LIST:
       file = self.convertFile(file, source_format, GRANULATABLE_FORMAT_LIST[0], zip=False)
     from granulate.oogranulate import OOGranulate
     document = OOGranulate(decodestring(file),
                            source_format)
-    grains = document.granulate(zip)
+    grain = document.granulate(zip)
 
-    return encodestring(grains)
+    if zip:
+      return encodestring(grain)
+
+    return map(encodestring, grain)
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
     """Receives the string of document and a dict with metadatas. The metadata
