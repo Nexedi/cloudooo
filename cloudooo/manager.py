@@ -67,25 +67,23 @@ class Manager(object):
     return encodestring(decode_data)
 
   def granulateFile(self, file, source_format, zip=False):
-    """Returns an zip file? with parts of an document splited by grains.
+    """Returns the parts of an document splited by grains.
     Keywords arguments:
       file -- File as string in base64
       source_format -- Format of original file as string
-      zip -- Boolean Attribute. If true, returns the file in the form of a
+      zip -- Boolean Attribute. If true, returns the grains in the form of a
       zip archive
     """
     raise NotImplemented
-    # Pseudo Implementation done by rafael
     GRANULATABLE_FORMAT_LIST = ("odt",)
     if source_format not in GRANULATABLE_FORMAT_LIST:
       file = self.convertFile(file, source_format, GRANULATABLE_FORMAT_LIST[0], zip=False)
     from granulate.oogranulate import OOGranulate
-    document = OOGranulate(self._path_tmp_dir,
-                           decodestring(file), 
+    document = OOGranulate(decodestring(file),
                            source_format)
-    grain_zip = document.granulate(zip=True) # Return a zip with all grains
-                                             # zip = content of a zip file.
-    return encodestring(grain_zip)
+    grains = document.granulate(zip)
+
+    return encodestring(grains)
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
     """Receives the string of document and a dict with metadatas. The metadata

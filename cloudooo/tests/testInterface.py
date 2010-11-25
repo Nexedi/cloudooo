@@ -98,7 +98,8 @@ class TestInterface(unittest.TestCase):
     method_list = ['convertFile',
                   'getFileMetadataItemList',
                   'updateFileMetadata',
-                  'getAllowedExtensionList']
+                  'getAllowedExtensionList',
+                  'granulateFile']
 
     for method in method_list:
       self.assertEquals(method in IManager.names(), True)

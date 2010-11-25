@@ -55,6 +55,9 @@ class IManager(Interface):
     """Returns a list extension which can be generated from given extension or
     document type."""
 
+  def granulateFile(file, source_format, zip):
+    """Returns a zip file with parts of an document splited by grains."""
+
 
 class IERP5Compatibility(Interface):
   """ Provides compatibility interface with ERP5 Project.
