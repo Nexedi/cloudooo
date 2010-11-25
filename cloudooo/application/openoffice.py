@@ -37,6 +37,7 @@ from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
                                     waitStopDaemon, convertStringToBool
+import os
 
 
 class OpenOffice(Application):
@@ -123,6 +124,9 @@ class OpenOffice(Application):
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process
     env = environ.copy()
+    env["HOME"] = self.path_user_installation
+    env["TMP"] = self.path_user_installation
+    env["TMPDIR"] = self.path_user_installation
     env["DISPLAY"] = ":%s" % self.display_id
     process_started = self._start_process(self.command, env)
     if not process_started:
