@@ -37,7 +37,6 @@ from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
                                     waitStopDaemon, convertStringToBool
-import os
 
 
 class OpenOffice(Application):
