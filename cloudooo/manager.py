@@ -77,7 +77,8 @@ class Manager(object):
     raise NotImplementedError
     GRANULATABLE_FORMAT_LIST = ("odt",)
     if source_format not in GRANULATABLE_FORMAT_LIST:
-      file = self.convertFile(file, source_format, GRANULATABLE_FORMAT_LIST[0], zip=False)
+      file = self.convertFile(file, source_format,
+                              GRANULATABLE_FORMAT_LIST[0], zip=False)
     from granulate.oogranulate import OOGranulate
     document = OOGranulate(decodestring(file),
                            source_format)
