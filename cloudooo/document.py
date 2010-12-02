@@ -155,7 +155,7 @@ class OdfDocument(object):
     """
     self._zipfile = ZipFile(StringIO(data))
     self.source_format = source_format
-    # XXX - I'm not confortable with this. Maybe it should be on OOGranulate
+    # XXX - Maybe parsed_content should not be here, but on OOGranulate
     self.parsed_content = etree.fromstring(self.getContentXml())
 
   def getContentXml(self):
