@@ -28,6 +28,7 @@
 
 import unittest
 from zipfile import ZipFile
+from lxml import etree
 from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.document import OdfDocument
 
@@ -39,12 +40,12 @@ class TestOdfDocument(cloudoooTestCase):
 
   def testReceivedGoodFile(self):
     """Test if received path is from a good document returing an ZipFile"""
-    self.assertEquals(isinstance(self.oodocument._zipfile, ZipFile), True)
+    self.assertTrue(isinstance(self.oodocument._zipfile, ZipFile))
 
   def testGetContentXml(self):
     """Test if the getContentXml method returns the content.xml file"""
     content_xml = self.oodocument.getContentXml()
-    self.assertEquals('The content of this file is just' in content_xml, True)
+    self.assertTrue('The content of this file is just' in content_xml)
 
   def testGetExistentFile(self):
     """Test if the getFile method returns the requested file"""
@@ -55,6 +56,12 @@ class TestOdfDocument(cloudoooTestCase):
     """Test if the getFile method returns None for not present file request"""
     requested_file = self.oodocument.getFile('not_present.xml')
     self.assertEquals(requested_file, None)
+
+  def testParseContent(self):
+    """Test if the _parsed_content attribute is the parsed content.xml"""
+    self.assertTrue(isinstance(self.oodocument.parsed_content, etree._Element))
+    self.assertTrue(self.oodocument.parsed_content.tag.endswith(
+                    'document-content'))
 
 
 def test_suite():

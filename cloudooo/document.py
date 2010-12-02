@@ -34,6 +34,7 @@ from zope.interface import implements
 from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
 from StringIO import StringIO
+from lxml import etree
 from interfaces.document import IDocument, IOdfDocument
 
 
@@ -154,6 +155,8 @@ class OdfDocument(object):
     """
     self._zipfile = ZipFile(StringIO(data))
     self.source_format = source_format
+    # XXX - I'm not confortable with this. Maybe it should be on OOGranulate
+    self.parsed_content = etree.fromstring(self.getContentXml())
 
   def getContentXml(self):
     """Returns the content.xml file as string"""
