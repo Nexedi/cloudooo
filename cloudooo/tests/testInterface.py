@@ -81,9 +81,10 @@ class TestInterface(unittest.TestCase):
   def testIOdfDocument(self):
     """Test if OdfDocument implements IOdfDocument"""
     self.assertEquals(IOdfDocument.implementedBy(OdfDocument), True)
-    method_list = ['getFile',
-                   'getContentXml',
-                   'source_format']
+    method_list = ['getContentXml',
+                   'parsed_content',
+                   'source_format',
+                   'getFile',]
     self.assertEquals(IOdfDocument.names(), method_list)
 
   def testIFilter(self):
@@ -106,7 +107,7 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(len(method_list), len(IManager.names()))
 
     self.assertEquals(IManager.get('convertFile').required, ('file',
-      'source_format', 'destination_format', 'zip'))
+      'source_format', 'destination_format', 'zip', 'refresh'))
     self.assertEquals(IManager.get('getAllowedExtensionList').required,
         ('request_dict',))
     self.assertEquals(IManager.get('getFileMetadataItemList').required,

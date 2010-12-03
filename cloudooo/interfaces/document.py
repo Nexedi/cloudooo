@@ -64,6 +64,7 @@ class IOdfDocument(Interface):
   """Manipulates odf documents in memory"""
 
   source_format = Attribute("Document Extension")
+  parsed_content = Attribute("Content.xml parsed with lxml")
 
   def getContentXml():
     """Returns the content.xml file as string"""
