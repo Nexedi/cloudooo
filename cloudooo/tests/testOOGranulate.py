@@ -27,6 +27,8 @@
 ##############################################################################
 
 import unittest
+from zipfile import ZipFile
+from StringIO import StringIO
 from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.granulate.oogranulate import OOGranulate
 
@@ -47,6 +49,7 @@ class TestOOGranulate(cloudoooTestCase):
       self.assertTrue(element.tag.endswith('image'))
 
   def testHasAncertor(self):
+    """_hasAncestor() should vefify if the elements has the ancestor or not"""
     image_list = self.oogranulate._getElementsByTagName(
                                       self.oogranulate.document.parsed_content,
                                       'draw:image')
@@ -55,6 +58,7 @@ class TestOOGranulate(cloudoooTestCase):
     self.assertTrue(self.oogranulate._hasAncestor(image_list[2], 'text-box'))
 
   def testGetImageTitle(self):
+    """_hasAncestor() should vefify if the elements has the ancestor or not"""
     image_list = self.oogranulate._getElementsByTagName(
                                       self.oogranulate.document.parsed_content,
                                       'draw:image')
@@ -92,13 +96,19 @@ class TestOOGranulate(cloudoooTestCase):
         'Illustration 2: Again TioLive Logo'),
       ], image_list)
 
-  def testGetImage(self):
-    """Test if getImage() returns the right image file"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getImage,
-                                     'file',
-                                     'image_id',
-                                     'format',
-                                     'resolution')
+  def testGetImageSuccessfully(self):
+    """Test if getImage() returns the right image file successfully"""
+    data = open('./data/granulate_test.odt').read()
+    zip = ZipFile(StringIO(data))
+    image_id = '10000000000000C80000009C38276C51.jpg'
+    original_image = zip.read('Pictures/%s' % image_id)
+    geted_image = self.oogranulate.getImage(image_id)
+    self.assertEquals(original_image, geted_image)
+
+  def testGetImageWithoutSuccess(self):
+    """Test if getImage() returns an empty string for not existent id"""
+    geted_image = self.oogranulate.getImage('anything.png')
+    self.assertEquals('', geted_image)
 
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList() returns the right paragraphs list"""

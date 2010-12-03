@@ -1,5 +1,6 @@
 1.0.10 (unreleased)
 ===================
+  - Add getImage for OOGranulate
   - Add getImageItemList for OOGranulate
   - Add OdfDocument
   - Add granulate interface.

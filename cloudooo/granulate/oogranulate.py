@@ -92,9 +92,10 @@ class OOGranulate(object):
       image_list.append((id, title))
     return image_list
 
-  def getImage(self, file, image_id, format=None, resolution=None, **kw):
+  def getImage(self, id, format=None, resolution=None, **kw):
     """Return the given image."""
-    raise NotImplementedError
+    path = 'Pictures/%s' % id
+    return self.document.getFile(path)
 
   def getParagraphItemList(self, file):
     """Returns the list of paragraphs in the form of (id, class) where class

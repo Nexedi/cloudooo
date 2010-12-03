@@ -48,7 +48,7 @@ class IImageGranulator(Interface):
   def getImageItemList():
     """Return the list of images in the form of (id, title)."""
 
-  def getImage(image_id, format=None, resolution=None, **kw):
+  def getImage(id, format=None, resolution=None, **kw):
     """Return the given image."""
 
 
