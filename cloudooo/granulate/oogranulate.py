@@ -42,33 +42,6 @@ class OOGranulate(object):
   def __init__(self, file, source_format):
     self.document = OdfDocument(file, source_format)
 
-  def _getElementsByTagName(self, xml_element, tag):
-    """Returns a list with the xml elements of the given tag
-
-        tag -- tag name with the namespace (e.g. namespace:tag_name)"""
-    return xml_element.xpath('.//%s' % tag, namespaces=xml_element.nsmap)
-
-  def _hasAncestor(self, xml_element, required_ancestor):
-    """Verifies if xml_element have an ancestor tag at a maximum level.
-
-        required_ancestor -- tag name without the namespace"""
-    for ancestor in xml_element.iterancestors():
-      actual_ancestor = ancestor.tag.split('}')[-1]
-      if actual_ancestor == required_ancestor:
-        return True
-    return False
-
-  def _getImageTitle(self, xml_element):
-    """Returns, if exists, the title of the given xml image element"""
-    if self._hasAncestor(xml_element, 'text-box'):
-      draw_frame = xml_element.getparent()
-      text_p = draw_frame.getparent()
-      title = ''
-      for word in text_p.itertext():
-        title += word
-      return title
-    return ''
-
   def getTableItemList(self, file):
     """Returns the list of table IDs in the form of (id, title)."""
     raise NotImplementedError
@@ -83,12 +56,15 @@ class OOGranulate(object):
 
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
-    xml_image_list = self._getElementsByTagName(self.document.parsed_content,
-                                                'draw:image')
+    xml_image_list = self.document.parsed_content.xpath('.//draw:image',
+                                namespaces=self.document.parsed_content.nsmap)
+
     image_list = []
-    for image in xml_image_list:
-      title = self._getImageTitle(image)
-      id = image.values()[0].split('/')[-1]
+    for xml_image in xml_image_list:
+      title_list = xml_image.xpath('.//../../text() | .//../../*/text()',
+                                    namespaces=xml_image.nsmap)
+      title = ''.join(title_list)
+      id = xml_image.values()[0].split('/')[-1]
       image_list.append((id, title))
     return image_list
 

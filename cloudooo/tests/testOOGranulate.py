@@ -39,33 +39,6 @@ class TestOOGranulate(cloudoooTestCase):
     data = open('./data/granulate_test.odt').read()
     self.oogranulate = OOGranulate(data, 'odt')
 
-  def testGetElementsByTagName(self):
-    """Test if _getElementsByTagName() returns right elements list"""
-    element_list = self.oogranulate._getElementsByTagName(
-                                      self.oogranulate.document.parsed_content,
-                                      'draw:image')
-    self.assertEquals(len(element_list), 5)
-    for element in element_list:
-      self.assertTrue(element.tag.endswith('image'))
-
-  def testHasAncertor(self):
-    """_hasAncestor() should vefify if the elements has the ancestor or not"""
-    image_list = self.oogranulate._getElementsByTagName(
-                                      self.oogranulate.document.parsed_content,
-                                      'draw:image')
-    self.assertFalse(self.oogranulate._hasAncestor(image_list[0], 'text-box'))
-    self.assertTrue(self.oogranulate._hasAncestor(image_list[0], 'frame'))
-    self.assertTrue(self.oogranulate._hasAncestor(image_list[2], 'text-box'))
-
-  def testGetImageTitle(self):
-    """_hasAncestor() should vefify if the elements has the ancestor or not"""
-    image_list = self.oogranulate._getElementsByTagName(
-                                      self.oogranulate.document.parsed_content,
-                                      'draw:image')
-    self.assertEquals(self.oogranulate._getImageTitle(image_list[0]), '')
-    self.assertEquals(self.oogranulate._getImageTitle(image_list[2]),
-                                                'Illustration 1: TioLive Logo')
-
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
     self.assertRaises(NotImplementedError, self.oogranulate.getTableItemList,
