@@ -83,10 +83,10 @@ class OOGranulate(object):
 
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
-    xml_images = self._getElementsByTagName(self.document.parsed_content,
-                                            'draw:image')
+    xml_image_list = self._getElementsByTagName(self.document.parsed_content,
+                                                'draw:image')
     image_list = []
-    for image in xml_images:
+    for image in xml_image_list:
       title = self._getImageTitle(image)
       id = image.values()[0].split('/')[-1]
       image_list.append((id, title))

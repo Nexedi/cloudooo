@@ -39,27 +39,27 @@ class TestOOGranulate(cloudoooTestCase):
 
   def testGetElementsByTagName(self):
     """Test if _getElementsByTagName() returns right elements list"""
-    elements = self.oogranulate._getElementsByTagName(
+    element_list = self.oogranulate._getElementsByTagName(
                                       self.oogranulate.document.parsed_content,
                                       'draw:image')
-    self.assertEquals(len(elements), 5)
-    for element in elements:
+    self.assertEquals(len(element_list), 5)
+    for element in element_list:
       self.assertTrue(element.tag.endswith('image'))
 
   def testHasAncertor(self):
-    images = self.oogranulate._getElementsByTagName(
+    image_list = self.oogranulate._getElementsByTagName(
                                       self.oogranulate.document.parsed_content,
                                       'draw:image')
-    self.assertFalse(self.oogranulate._hasAncestor(images[0], 'text-box'))
-    self.assertTrue(self.oogranulate._hasAncestor(images[0], 'frame'))
-    self.assertTrue(self.oogranulate._hasAncestor(images[2], 'text-box'))
+    self.assertFalse(self.oogranulate._hasAncestor(image_list[0], 'text-box'))
+    self.assertTrue(self.oogranulate._hasAncestor(image_list[0], 'frame'))
+    self.assertTrue(self.oogranulate._hasAncestor(image_list[2], 'text-box'))
 
   def testGetImageTitle(self):
-    images = self.oogranulate._getElementsByTagName(
+    image_list = self.oogranulate._getElementsByTagName(
                                       self.oogranulate.document.parsed_content,
                                       'draw:image')
-    self.assertEquals(self.oogranulate._getImageTitle(images[0]), '')
-    self.assertEquals(self.oogranulate._getImageTitle(images[2]),
+    self.assertEquals(self.oogranulate._getImageTitle(image_list[0]), '')
+    self.assertEquals(self.oogranulate._getImageTitle(image_list[2]),
                                                 'Illustration 1: TioLive Logo')
 
   def testgetTableItemList(self):
