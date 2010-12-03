@@ -1,5 +1,6 @@
 1.0.10 (unreleased)
 ===================
+  - Add getImageItemList for OOGranulate
   - Add OdfDocument
   - Add granulate interface.
 
@@ -20,4 +21,3 @@
 =====
   - Remove entry points, treat those as ordinary files.
   - Search all script files using pkg_resources.
-

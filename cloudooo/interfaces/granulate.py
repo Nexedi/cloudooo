@@ -45,10 +45,10 @@ class ITableGranulator(Interface):
 class IImageGranulator(Interface):
   """Provides methods to granulate a document into images."""
 
-  def getImageItemList(file):
+  def getImageItemList():
     """Return the list of images in the form of (id, title)."""
 
-  def getImage(file, image_id, format=None, resolution=None, **kw):
+  def getImage(image_id, format=None, resolution=None, **kw):
     """Return the given image."""
 
 

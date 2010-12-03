@@ -27,6 +27,7 @@
 ##############################################################################
 
 from zope.interface import implements
+from cloudooo.document import OdfDocument
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
@@ -37,6 +38,36 @@ class OOGranulate(object):
   paragraphs."""
 
   implements(ITableGranulator, IImageGranulator, ITextGranulator)
+
+  def __init__(self, file, source_format):
+    self.document = OdfDocument(file, source_format)
+
+  def _getElementsByTagName(self, xml_element, tag):
+    """Returns a list with the xml elements of the given tag
+
+        tag -- tag name with the namespace (e.g. namespace:tag_name)"""
+    return xml_element.xpath('.//%s' % tag, namespaces=xml_element.nsmap)
+
+  def _hasAncestor(self, xml_element, required_ancestor):
+    """Verifies if xml_element have an ancestor tag at a maximum level.
+
+        required_ancestor -- tag name without the namespace"""
+    for ancestor in xml_element.iterancestors():
+      actual_ancestor = ancestor.tag.split('}')[-1]
+      if actual_ancestor == required_ancestor:
+        return True
+    return False
+
+  def _getImageTitle(self, xml_element):
+    """Returns, if exists, the title of the given xml image element"""
+    if self._hasAncestor(xml_element, 'text-box'):
+      draw_frame = xml_element.getparent()
+      text_p = draw_frame.getparent()
+      title = ''
+      for word in text_p.itertext():
+        title += word
+      return title
+    return ''
 
   def getTableItemList(self, file):
     """Returns the list of table IDs in the form of (id, title)."""
@@ -50,9 +81,16 @@ class OOGranulate(object):
     """Returns the lines of a given table as (key, value) pairs."""
     raise NotImplementedError
 
-  def getImageItemList(self, file):
-    """Return the list of images in the form of (id, title)."""
-    raise NotImplementedError
+  def getImageItemList(self):
+    """Return a list of tuples with the id and title of image files"""
+    xml_images = self._getElementsByTagName(self.document.parsed_content,
+                                            'draw:image')
+    image_list = []
+    for image in xml_images:
+      title = self._getImageTitle(image)
+      id = image.values()[0].split('/')[-1]
+      image_list.append((id, title))
+    return image_list
 
   def getImage(self, file, image_id, format=None, resolution=None, **kw):
     """Return the given image."""

@@ -34,7 +34,33 @@ from cloudooo.granulate.oogranulate import OOGranulate
 class TestOOGranulate(cloudoooTestCase):
 
   def setUp(self):
-    self.oogranulate = OOGranulate()
+    data = open('./data/granulate_test.odt').read()
+    self.oogranulate = OOGranulate(data, 'odt')
+
+  def testGetElementsByTagName(self):
+    """Test if _getElementsByTagName() returns right elements list"""
+    elements = self.oogranulate._getElementsByTagName(
+                                      self.oogranulate.document.parsed_content,
+                                      'draw:image')
+    self.assertEquals(len(elements), 5)
+    for element in elements:
+      self.assertTrue(element.tag.endswith('image'))
+
+  def testHasAncertor(self):
+    images = self.oogranulate._getElementsByTagName(
+                                      self.oogranulate.document.parsed_content,
+                                      'draw:image')
+    self.assertFalse(self.oogranulate._hasAncestor(images[0], 'text-box'))
+    self.assertTrue(self.oogranulate._hasAncestor(images[0], 'frame'))
+    self.assertTrue(self.oogranulate._hasAncestor(images[2], 'text-box'))
+
+  def testGetImageTitle(self):
+    images = self.oogranulate._getElementsByTagName(
+                                      self.oogranulate.document.parsed_content,
+                                      'draw:image')
+    self.assertEquals(self.oogranulate._getImageTitle(images[0]), '')
+    self.assertEquals(self.oogranulate._getImageTitle(images[2]),
+                                                'Illustration 1: TioLive Logo')
 
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
@@ -55,8 +81,16 @@ class TestOOGranulate(cloudoooTestCase):
 
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getImageItemList,
-                                           'file')
+    image_list = self.oogranulate.getImageItemList()
+    self.assertEquals([
+      ('10000000000000C80000009C38276C51.jpg', ''),
+      ('10000201000000C80000004E7B947D46.png', ''),
+      ('10000201000000C80000004E7B947D46.png', 'Illustration 1: TioLive Logo'),
+      # XXX The svg image are stored into odf as svm
+      ('2000004F00004233000013707E7DE37A.svm', 'Figure 1: Python Logo'),
+      ('10000201000000C80000004E7B947D46.png',
+        'Illustration 2: Again TioLive Logo'),
+      ], image_list)
 
   def testGetImage(self):
     """Test if getImage() returns the right image file"""
