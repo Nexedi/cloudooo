@@ -163,8 +163,8 @@ class OdfDocument(object):
     return self._zipfile.read('content.xml')
 
   def getFile(self, path):
-    """If exists, returns file as string, else return None"""
+    """If exists, returns file as string, else return an empty string"""
     try:
       return self._zipfile.read(path)
     except KeyError:
-      return None
+      return ''
