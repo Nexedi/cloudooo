@@ -80,8 +80,8 @@ class TestOOGranulate(cloudoooTestCase):
 
   def testGetImageWithoutSuccess(self):
     """Test if getImage() returns an empty string for not existent id"""
-    geted_image = self.oogranulate.getImage('anything.png')
-    self.assertEquals('', geted_image)
+    obtained_image = self.oogranulate.getImage('anything.png')
+    self.assertEquals('', obtained_image)
 
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList() returns the right paragraphs list"""
