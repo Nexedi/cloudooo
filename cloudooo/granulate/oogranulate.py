@@ -89,3 +89,7 @@ class OOGranulate(object):
   def getChapterItem(self, file, chapter_id):
     """Return the chapter in the form of (title, level)."""
     raise NotImplementedError
+
+  def trash(self):
+    """Remove the file in memory."""
+    self.document.trash()

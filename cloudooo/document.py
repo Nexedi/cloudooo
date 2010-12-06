@@ -153,7 +153,12 @@ class OdfDocument(object):
     data -- Content of the document
     source_format -- Document Extension
     """
-    self._zipfile = ZipFile(StringIO(data))
+    data_file = StringIO(data)
+    try:
+      self._zipfile = ZipFile(data_file)
+    finally:
+      data_file.close()
+
     self.source_format = source_format
     # XXX - Maybe parsed_content should not be here, but on OOGranulate
     self.parsed_content = etree.fromstring(self.getContentXml())
@@ -168,3 +173,7 @@ class OdfDocument(object):
       return self._zipfile.read(path)
     except KeyError:
       return ''
+
+  def trash(self):
+    """Remove the file in memory."""
+    self._zipfile.close()

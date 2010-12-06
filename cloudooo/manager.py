@@ -80,14 +80,16 @@ class Manager(object):
       file = self.convertFile(file, source_format,
                               GRANULATABLE_FORMAT_LIST[0], zip=False)
     from granulate.oogranulate import OOGranulate
-    document = OOGranulate(decodestring(file),
-                           source_format)
-    grain = document.granulate(zip)
 
-    if zip:
-      return encodestring(grain)
-
-    return map(encodestring, grain)
+    try:
+      document = OOGranulate(decodestring(file), source_format)
+      grain = document.granulate(zip)
+      if zip:
+        return encodestring(grain)
+      return map(encodestring, grain)
+    finally:
+      document.trash()
+    return None
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
     """Receives the string of document and a dict with metadatas. The metadata
