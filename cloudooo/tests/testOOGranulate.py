@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2010 Nexedi SA and Contributors. All Rights Reserved.
@@ -83,17 +84,40 @@ class TestOOGranulate(cloudoooTestCase):
     obtained_image = self.oogranulate.getImage('anything.png')
     self.assertEquals('', obtained_image)
 
-  def testGetParagraphItemList(self):
-    """Test if getParagraphItemList() returns the right paragraphs list"""
-    self.assertRaises(NotImplementedError,
-                      self.oogranulate.getParagraphItemList,
-                      'file')
+  def testRelevantParagraphList(self):
+    """Test if _relevantParagraphList returns a list with 'p' excluding the 'p'
+    inside 'draw:frame'"""
+    draw_p_list = self.oogranulate.document.parsed_content.xpath(
+                    '//draw:frame//text:p',
+                    namespaces=self.oogranulate.document.parsed_content.nsmap)
+    self.assertTrue(draw_p_list not in self.oogranulate._relevantParagraphList())
 
-  def testGetParagraphItem(self):
+  def testGetParagraphItemList(self):
+    """Test if getParagraphItemList() returns the right paragraphs list, with
+    the ids always in the same order"""
+    for i in range(5):
+      data = open('./data/granulate_test.odt').read()
+      oogranulate = OOGranulate(data, 'odt')
+      paragraph_list = oogranulate.getParagraphItemList()
+      self.assertEquals((0, 'P3'), paragraph_list[0])
+      self.assertEquals((1, 'P1'), paragraph_list[1])
+      self.assertEquals((2, 'P12'), paragraph_list[2])
+      self.assertEquals((8, 'P13'), paragraph_list[8])
+      self.assertEquals((19, 'Standard'), paragraph_list[19])
+
+  def testGetParagraphItemSuccessfully(self):
     """Test if getParagraphItem() returns the right paragraph"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getParagraphItem,
-                                     'file',
-                                     'paragraph_id')
+    self.assertEquals(('Some images without title', 'P13'),
+                      self.oogranulate.getParagraphItem(8))
+
+    big_paragraph = self.oogranulate.getParagraphItem(5)
+    self.assertEquals('P8', big_paragraph[1])
+    self.assertTrue(big_paragraph[0].startswith(u'A prática cotidiana prova'))
+    self.assertTrue(big_paragraph[0].endswith(u'corresponde às necessidades.'))
+
+  def testGetParagraphItemWithoutSuccess(self):
+    """Test if getParagraphItem() returns None for not existent id"""
+    self.assertEquals(None, self.oogranulate.getParagraphItem(200))
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""

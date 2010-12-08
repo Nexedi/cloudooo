@@ -55,11 +55,11 @@ class IImageGranulator(Interface):
 class ITextGranulator(Interface):
   """Provides methods to granulate a document into chapters and paragraphs."""
 
-  def getParagraphItemList(file):
+  def getParagraphItemList():
     """Returns the list of paragraphs in the form of (id, class) where class may
     have special meaning to define TOC/TOI."""
 
-  def getParagraphItem(file, paragraph_id):
+  def getParagraphItem(paragraph_id):
     """Returns the paragraph in the form of (text, class)."""
 
   def getChapterItemList(file):
