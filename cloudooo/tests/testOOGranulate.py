@@ -84,14 +84,6 @@ class TestOOGranulate(cloudoooTestCase):
     obtained_image = self.oogranulate.getImage('anything.png')
     self.assertEquals('', obtained_image)
 
-  def testRelevantParagraphList(self):
-    """Test if _relevantParagraphList returns a list with 'p' excluding the 'p'
-    inside 'draw:frame'"""
-    draw_p_list = self.oogranulate.document.parsed_content.xpath(
-                    '//draw:frame//text:p',
-                    namespaces=self.oogranulate.document.parsed_content.nsmap)
-    self.assertTrue(draw_p_list not in self.oogranulate._relevantParagraphList())
-
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList() returns the right paragraphs list, with
     the ids always in the same order"""

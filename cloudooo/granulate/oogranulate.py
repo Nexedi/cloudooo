@@ -42,17 +42,6 @@ class OOGranulate(object):
   def __init__(self, file, source_format):
     self.document = OdfDocument(file, source_format)
 
-  def _relevantParagraphList(self):
-    """Returns a list with the relevants lxml.etree._Element 'p' tags of
-    self.document.parsed_content. It exclude the 'p' inside 'draw:frame'."""
-    # XXX: this algorithm could be improved to not iterate with the file twice
-    #      and probably get all relevant paragraph list by a single xpath call
-    all_p_list = self.document.parsed_content.xpath('//text:p',
-                                namespaces=self.document.parsed_content.nsmap)
-    draw_p_list = self.document.parsed_content.xpath('//draw:frame//text:p',
-                                namespaces=self.document.parsed_content.nsmap)
-    return [x for x in all_p_list if x not in draw_p_list]
-
   def getTableItemList(self, file):
     """Returns the list of table IDs in the form of (id, title)."""
     raise NotImplementedError
@@ -88,9 +77,12 @@ class OOGranulate(object):
     """Returns the list of paragraphs in the form of (id, class) where class
     may have special meaning to define TOC/TOI."""
     key = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
+    relevant_paragraph_list = self.document.parsed_content.xpath(
+                                '//text:p[not(ancestor::draw:frame)]',
+                                namespaces=self.document.parsed_content.nsmap)
     id = 0
     paragraph_list = []
-    for p in self._relevantParagraphList():
+    for p in relevant_paragraph_list:
       paragraph_list.append((id, p.attrib[key]))
       id += 1
     return paragraph_list
@@ -98,7 +90,10 @@ class OOGranulate(object):
   def getParagraphItem(self, paragraph_id):
     """Returns the paragraph in the form of (text, class)."""
     try:
-      paragraph = self._relevantParagraphList()[paragraph_id]
+      relevant_paragraph_list = self.document.parsed_content.xpath(
+                                '//text:p[not(ancestor::draw:frame)]',
+                                namespaces=self.document.parsed_content.nsmap)
+      paragraph = relevant_paragraph_list[paragraph_id]
       text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
       key = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
       p_class = paragraph.attrib[key]
