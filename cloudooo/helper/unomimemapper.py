@@ -140,7 +140,7 @@ def main():
     elif opt == "--port":
       port = arg
   
-  mimemapper = UnoMimemapper(hostname, port, **environ)
+  mimemapper = UnoMimemapper(hostname, port, **dict(environ))
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
   print "filter_dict = %s\ntype_dict = %s" % (filter_dict, type_dict)
