@@ -59,14 +59,14 @@ class OpenOffice(Application):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
                                                   self.pid()))
-    command = [join(self.office_binary_path, "python"),
-               pkg_resources.resource_filename("cloudooo",
+    args = [join(self.office_binary_path, "python"),
+            pkg_resources.resource_filename("cloudooo",
                                       join("helper", "openoffice_tester.py")),
-               "'--hostname=%s'" % host,
-               "'--port=%s'" % port,
-               "'--uno_path=%s'" % self.uno_path]
+            "--hostname=%s" % host,
+            "--port=%s" % port,
+            "--uno_path=%s" % self.uno_path]
     logger.debug("Testing Openoffice Instance %s" % port)
-    stdout, stderr = Popen(" ".join(command), shell=True, stdout=PIPE,
+    stdout, stderr = Popen(args, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
     stdout_bool = convertStringToBool(stdout.replace("\n", ""))
     if stdout_bool and stderr != "":

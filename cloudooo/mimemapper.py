@@ -107,18 +107,17 @@ class MimeMapper(object):
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    command = [path.join(office_binary_path, "python"),
-               pkg_resources.resource_filename(__name__,
+    args = [path.join(office_binary_path, "python"),
+            pkg_resources.resource_filename(__name__,
                              path.join("helper", "unomimemapper.py")),
-               "--uno_path='%s'" % uno_path,
-               "--office_binary_path='%s'" % office_binary_path,
-               "--hostname='%s'" % hostname,
-               "--port=%s" % port]
-    stdout, stderr = Popen(' '.join(command),
-                          stdout=PIPE,
-                          close_fds=True,
-                          shell=True,
-                          env=getCleanPythonEnvironment()).communicate()
+            "--uno_path=%s" % uno_path,
+            "--office_binary_path=%s" % office_binary_path,
+            "--hostname=%s" % hostname,
+            "--port=%s" % port]
+    stdout, stderr = Popen(args,
+                           stdout=PIPE,
+                           close_fds=True,
+                           env=getCleanPythonEnvironment()).communicate()
     exec(stdout)
     for key, value in filter_dict.iteritems():
       filter_name = key
