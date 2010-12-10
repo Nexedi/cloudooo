@@ -243,7 +243,7 @@ class Manager(object):
     try:
       response_dict = {}
       # XXX - use html format instead of xhtml
-      if orig_format == "presentation" and extension == "xhtml":
+      if orig_format in ("presentation", "graphics") and extension == "xhtml":
         extension = 'html'
       elif orig_format in ("spreadsheet", 'text') and extension in ("html",
                                                                     "xhtml"):
