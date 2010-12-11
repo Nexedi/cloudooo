@@ -42,9 +42,19 @@ class OOGranulate(object):
   def __init__(self, file, source_format):
     self.document = OdfDocument(file, source_format)
 
-  def getTableItemList(self, file):
+  def getTableItemList(self):
     """Returns the list of table IDs in the form of (id, title)."""
-    raise NotImplementedError
+    xml_table_list = self.document.parsed_content.xpath('.//table:table',
+                                namespaces=self.document.parsed_content.nsmap)
+    name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
+    table_list = []
+    for table in xml_table_list:
+      title = ''.join(table.xpath('following-sibling::text:p[position()=1] \
+                          [starts-with(@text:style-name, "Table")]//text()',
+                          namespaces=table.nsmap))
+      id = table.attrib[name_key]
+      table_list.append((id, title))
+    return table_list
 
   def getColumnItemList(self, file, table_id):
     """Return the list of columns in the form of (id, title)."""

@@ -42,8 +42,12 @@ class TestOOGranulate(cloudoooTestCase):
 
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getTableItemList,
-                                           'file')
+    data = open('./data/granulate_table_test.odt').read()
+    oogranulate = OOGranulate(data, 'odt')
+    table_list = [('Developers', ''),
+                  ('Prices', 'Table 1: Prices table from Mon Restaurant'),
+                  ('SoccerTeams', 'Tabela 2: Soccer Teams')]
+    self.assertEquals(table_list, oogranulate.getTableItemList())
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""

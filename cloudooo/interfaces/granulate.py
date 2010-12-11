@@ -32,7 +32,7 @@ from zope.interface import Interface
 class ITableGranulator(Interface):
   """Provides methods to granulate a document into tables."""
 
-  def getTableItemList(file):
+  def getTableItemList():
     """Returns the list of table IDs in the form of (id, title)."""
 
   def getColumnItemList(file, table_id):
