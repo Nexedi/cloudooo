@@ -27,6 +27,10 @@
 ##############################################################################
 
 from zope.interface import implements
+from zipfile import ZipFile
+from StringIO import StringIO
+from lxml import etree
+from os import path
 from cloudooo.document import OdfDocument
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
@@ -42,6 +46,19 @@ class OOGranulate(object):
   def __init__(self, file, source_format):
     self.document = OdfDocument(file, source_format)
 
+  def _odfWithoutContentXml(self, format='odt'):
+    """Returns an odf document without content.xml
+    It is a way to escape from this issue: http://bugs.python.org/issue6818"""
+    new_odf_document = ZipFile(StringIO(), 'a')
+    template_path = path.join(path.dirname(__file__), 'template.%s' % format)
+    template_file = ZipFile(template_path)
+    for item in template_file.filelist:
+      buffer = template_file.read(item.filename)
+      if item.filename != 'content.xml':
+        new_odf_document.writestr(item.filename, buffer)
+    template_file.close()
+    return new_odf_document
+
   def getTableItemList(self):
     """Returns the list of table IDs in the form of (id, title)."""
     xml_table_list = self.document.parsed_content.xpath('.//table:table',
@@ -55,6 +72,33 @@ class OOGranulate(object):
       id = table.attrib[name_key]
       table_list.append((id, title))
     return table_list
+
+  def getTableItem(self, id, format='odt'):
+    """Returns the table into a new 'format' file."""
+    try:
+      template_path = path.join(path.dirname(__file__), 'template.%s' % format)
+      template = ZipFile(template_path)
+      content_xml = etree.fromstring(template.read('content.xml'))
+      template.close()
+      table = self.document.parsed_content.xpath(
+                                '//table:table[@table:name="%s"]' % id,
+                                namespaces=self.document.parsed_content.nsmap)[0]
+      # Next line do this <office:content><office:body><office:text><table:table>
+      content_xml[-1][0].append(table)
+      # XXX: Next line replace the <office:automatic-styles> tag. This include a
+      #      lot of unused style tags. Will be better detect the used styles and
+      #      include only those.
+      content_xml.replace(content_xml[-2],
+                          self.document.parsed_content[-2])
+
+      odf_document = self._odfWithoutContentXml(format)
+      odf_document.writestr('content.xml', etree.tostring(content_xml))
+      odf_document_as_string = odf_document.fp
+      odf_document.close()
+      odf_document_as_string.seek(0)
+      return odf_document_as_string.read()
+    except:
+      return None
 
   def getColumnItemList(self, file, table_id):
     """Return the list of columns in the form of (id, title)."""

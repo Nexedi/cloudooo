@@ -35,6 +35,9 @@ class ITableGranulator(Interface):
   def getTableItemList():
     """Returns the list of table IDs in the form of (id, title)."""
 
+  def getTableItem(id, format):
+    """Returns the table into a new 'format' file."""
+
   def getColumnItemList(file, table_id):
     """Return the list of columns in the form of (id, title)."""
 

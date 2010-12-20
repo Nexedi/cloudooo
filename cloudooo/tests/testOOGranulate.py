@@ -30,6 +30,7 @@
 import unittest
 from zipfile import ZipFile
 from StringIO import StringIO
+from lxml import etree
 from cloudoooTestCase import cloudoooTestCase, make_suite
 from cloudooo.granulate.oogranulate import OOGranulate
 
@@ -40,6 +41,18 @@ class TestOOGranulate(cloudoooTestCase):
     data = open('./data/granulate_test.odt').read()
     self.oogranulate = OOGranulate(data, 'odt')
 
+  def testOdfWithoutContentXml(self):
+    """Test if _odfWithoutContentXml() return a ZipFile instance without the
+    content.xml file"""
+    odf_without_content_xml = self.oogranulate._odfWithoutContentXml('odt')
+    self.assertTrue(isinstance(odf_without_content_xml, ZipFile))
+    complete_name_list = []
+    for item in self.oogranulate.document._zipfile.filelist:
+      complete_name_list.append(item.filename)
+    for item in odf_without_content_xml.filelist:
+      self.assertTrue(item.filename in complete_name_list)
+      self.assertTrue(item.filename != 'content.xml')
+
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
     data = open('./data/granulate_table_test.odt').read()
@@ -48,6 +61,27 @@ class TestOOGranulate(cloudoooTestCase):
                   ('Prices', 'Table 1: Prices table from Mon Restaurant'),
                   ('SoccerTeams', 'Tabela 2: Soccer Teams')]
     self.assertEquals(table_list, oogranulate.getTableItemList())
+
+  def testGetTableItem(self):
+    """Test if getTableItem() returns on odf file with the right table"""
+    data = open('./data/granulate_table_test.odt').read()
+    oogranulate = OOGranulate(data, 'odt')
+    table_data_doc = oogranulate.getTableItem('Developers')
+    content_xml_str = ZipFile(StringIO(table_data_doc)).read('content.xml')
+    content_xml = etree.fromstring(content_xml_str)
+    table_list = content_xml.xpath('//table:table',
+                                   namespaces=content_xml.nsmap)
+    self.assertEquals(1, len(table_list))
+    table = table_list[0]
+    name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
+    self.assertEquals('Developers', table.attrib[name_key])
+
+  def testGetTableItemWithoutSuccess(self):
+    """Test if getTableItem() returns None for an non existent table name"""
+    data = open('./data/granulate_table_test.odt').read()
+    oogranulate = OOGranulate(data, 'odt')
+    table_data = oogranulate.getTableItem('NonExistentTable')
+    self.assertEquals(table_data, None)
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
