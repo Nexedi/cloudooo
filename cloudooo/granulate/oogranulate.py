@@ -31,6 +31,7 @@ from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
 from os import path
+from cloudooo.utils import logger
 from cloudooo.document import OdfDocument
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
@@ -80,9 +81,12 @@ class OOGranulate(object):
       template = ZipFile(template_path)
       content_xml = etree.fromstring(template.read('content.xml'))
       template.close()
-      table = self.document.parsed_content.xpath(
+      table_list = self.document.parsed_content.xpath(
                                 '//table:table[@table:name="%s"]' % id,
-                                namespaces=self.document.parsed_content.nsmap)[0]
+                                namespaces=self.document.parsed_content.nsmap)
+      if not table_list:
+        return None
+      table = table_list[0]
       # Next line do this <office:content><office:body><office:text><table:table>
       content_xml[-1][0].append(table)
       # XXX: Next line replace the <office:automatic-styles> tag. This include a
@@ -97,7 +101,8 @@ class OOGranulate(object):
       odf_document.close()
       odf_document_as_string.seek(0)
       return odf_document_as_string.read()
-    except:
+    except Exception, e:
+      logger.error(e)
       return None
 
   def getColumnItemList(self, file, table_id):
