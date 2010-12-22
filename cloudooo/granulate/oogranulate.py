@@ -53,8 +53,6 @@ def getTemplatePath(format):
   """
   return path.join(path.dirname(__file__), 'template.%s' % format)
 
-
-
 class OOGranulate(object):
   """Granulate an OpenOffice document into tables, images, chapters and
   paragraphs."""
@@ -147,31 +145,46 @@ class OOGranulate(object):
     path = 'Pictures/%s' % id
     return self.document.getFile(path)
 
+  def _getRelevantParagraphList(self):
+    """ This should use memcache or another cache infrastructure.
+    """
+    RELEVANT_PARAGRAPH_CACHE = getattr(self, "RELEVANT_PARAGRAPH_CACHE", None)
+    if RELEVANT_PARAGRAPH_CACHE is None:
+      relevant_paragraph_list = self.document.parsed_content.xpath(
+                                 RELEVANT_PARAGRAPH_XPATH_QUERY,
+                                 namespaces=self.document.parsed_content.nsmap)
+      setattr(self, "RELEVANT_PARAGRAPH_CACHE", relevant_paragraph_list)
+
+    return self.RELEVANT_PARAGRAPH_CACHE
+
   def getParagraphItemList(self):
     """Returns the list of paragraphs in the form of (id, class) where class
     may have special meaning to define TOC/TOI."""
-    relevant_paragraph_list = self.document.parsed_content.xpath(
-                                RELEVANT_PARAGRAPH_XPATH_QUERY,
-                                namespaces=self.document.parsed_content.nsmap)
     id = 0
     paragraph_list = []
-    for p in relevant_paragraph_list:
+    for p in self._getRelevantParagraphList():
       paragraph_list.append((id, p.attrib[TEXT_STYLENAME_NAMESPACE]))
       id += 1
     return paragraph_list
 
   def getParagraphItem(self, paragraph_id):
     """Returns the paragraph in the form of (text, class)."""
+    relevant_paragraph_list = self._getRelevantParagraphList()
     try:
-      relevant_paragraph_list = self.document.parsed_content.xpath(
-                                RELEVANT_PARAGRAPH_XPATH_QUERY,
-                                namespaces=self.document.parsed_content.nsmap)
       paragraph = relevant_paragraph_list[paragraph_id]
-      text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
-      p_class = paragraph.attrib[TEXT_STYLENAME_NAMESPACE]
-      return (text, p_class)
     except IndexError:
+      logger.error("Unable to find paragraph %s at paragraph list." % paragraph_id)
       return None
+
+    text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
+
+    if TEXT_STYLENAME_NAMESPACE not in paragraph.attrib.keys():
+      logger.error("Unable to find %s attribute at paragraph %s " % \
+                              (TEXT_STYLENAME_NAMESPACE, paragraph_id))
+      return None
+
+    p_class = paragraph.attrib[TEXT_STYLENAME_NAMESPACE]
+    return (text, p_class)
 
   def getChapterItemList(self, file):
     """Returns the list of chapters in the form of (id, level)."""
