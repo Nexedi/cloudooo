@@ -39,7 +39,7 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
 
 # URI Definitions.
 TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
-TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
+TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:table:1.0'
 
 # Odf Namespaces
 TABLE_ATTRIB_NAME = '{%s}name' % TABLE_URI
