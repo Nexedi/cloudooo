@@ -118,6 +118,7 @@ class MimeMapper(object):
                            stdout=PIPE,
                            close_fds=True,
                            env=getCleanPythonEnvironment()).communicate()
+    # XXX Use json here
     exec(stdout)
     for key, value in filter_dict.iteritems():
       filter_name = key
