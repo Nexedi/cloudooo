@@ -37,9 +37,13 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
 
+# URI Definitions.
+TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
+TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
+
 # Odf Namespaces
-TABLE_NAME_NAMESPACE = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
-TEXT_STYLENAME_NAMESPACE = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
+TABLE_ATTRIB_NAME = '{%s}name' % TABLE_URI
+TEXT_ATTRIB_STYLENAME = '{%s}style-name' % TEXT_URI
 
 # XPath queries for ODF format
 RELEVANT_PARAGRAPH_XPATH_QUERY = '//text:p[not(ancestor::draw:frame)]'
@@ -84,7 +88,7 @@ class OOGranulate(object):
       title = ''.join(table.xpath('following-sibling::text:p[position()=1] \
                           [starts-with(@text:style-name, "Table")]//text()',
                           namespaces=table.nsmap))
-      id = table.attrib[TABLE_NAME_NAMESPACE]
+      id = table.attrib[TABLE_ATTRIB_NAME]
       table_list.append((id, title))
     return table_list
 
@@ -163,7 +167,7 @@ class OOGranulate(object):
     id = 0
     paragraph_list = []
     for p in self._getRelevantParagraphList():
-      paragraph_list.append((id, p.attrib[TEXT_STYLENAME_NAMESPACE]))
+      paragraph_list.append((id, p.attrib[TEXT_ATTRIB_STYLENAME]))
       id += 1
     return paragraph_list
 
@@ -178,12 +182,12 @@ class OOGranulate(object):
 
     text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
 
-    if TEXT_STYLENAME_NAMESPACE not in paragraph.attrib.keys():
+    if TEXT_ATTRIB_STYLENAME not in paragraph.attrib.keys():
       logger.error("Unable to find %s attribute at paragraph %s " % \
-                              (TEXT_STYLENAME_NAMESPACE, paragraph_id))
+                              (TEXT_ATTRIB_STYLENAME, paragraph_id))
       return None
 
-    p_class = paragraph.attrib[TEXT_STYLENAME_NAMESPACE]
+    p_class = paragraph.attrib[TEXT_ATTRIB_STYLENAME]
     return (text, p_class)
 
   def getChapterItemList(self, file):
