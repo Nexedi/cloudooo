@@ -180,7 +180,7 @@ class OOGranulate(object):
       logger.error("Unable to find paragraph %s at paragraph list." % paragraph_id)
       return None
 
-    text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
+    text = ''.join(paragraph.itertext())
 
     if TEXT_ATTRIB_STYLENAME not in paragraph.attrib.keys():
       logger.error("Unable to find %s attribute at paragraph %s " % \
