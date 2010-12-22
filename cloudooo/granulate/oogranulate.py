@@ -37,6 +37,23 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
 
+# Odf Namespaces
+TABLE_NAME_NAMESPACE = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
+TEXT_STYLENAME_NAMESPACE = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
+
+# XPath queries for ODF format
+RELEVANT_PARAGRAPH_XPATH_QUERY = '//text:p[not(ancestor::draw:frame)]'
+DRAW_XPATH_QUERY = './/draw:image'
+TABLE_XPATH_QUERY = './/table:table'
+IMAGE_TITLE_XPATH_QUERY = './/../../text() | .//../../*/text()'
+
+def getTemplatePath(format):
+  """ Get the path of template file. This should goes to
+      some utils library.
+  """
+  return path.join(path.dirname(__file__), 'template.%s' % format)
+
+
 
 class OOGranulate(object):
   """Granulate an OpenOffice document into tables, images, chapters and
@@ -51,7 +68,7 @@ class OOGranulate(object):
     """Returns an odf document without content.xml
     It is a way to escape from this issue: http://bugs.python.org/issue6818"""
     new_odf_document = ZipFile(StringIO(), 'a')
-    template_path = path.join(path.dirname(__file__), 'template.%s' % format)
+    template_path = getTemplatePath(format)
     template_file = ZipFile(template_path)
     for item in template_file.filelist:
       buffer = template_file.read(item.filename)
@@ -62,29 +79,28 @@ class OOGranulate(object):
 
   def getTableItemList(self):
     """Returns the list of table IDs in the form of (id, title)."""
-    xml_table_list = self.document.parsed_content.xpath('.//table:table',
+    xml_table_list = self.document.parsed_content.xpath(TABLE_XPATH_QUERY,
                                 namespaces=self.document.parsed_content.nsmap)
-    name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
     table_list = []
     for table in xml_table_list:
       title = ''.join(table.xpath('following-sibling::text:p[position()=1] \
                           [starts-with(@text:style-name, "Table")]//text()',
                           namespaces=table.nsmap))
-      id = table.attrib[name_key]
+      id = table.attrib[TABLE_NAME_NAMESPACE]
       table_list.append((id, title))
     return table_list
 
   def getTableItem(self, id, format='odt'):
     """Returns the table into a new 'format' file."""
     try:
-      template_path = path.join(path.dirname(__file__), 'template.%s' % format)
+      template_path = getTemplatePath(format)
       template = ZipFile(template_path)
       content_xml = etree.fromstring(template.read('content.xml'))
       template.close()
       table_list = self.document.parsed_content.xpath(
                                 '//table:table[@table:name="%s"]' % id,
                                 namespaces=self.document.parsed_content.nsmap)
-      if not table_list:
+      if len(table_list) == 0:
         return None
       table = table_list[0]
       # Next line do this <office:content><office:body><office:text><table:table>
@@ -115,14 +131,13 @@ class OOGranulate(object):
 
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
-    xml_image_list = self.document.parsed_content.xpath('.//draw:image',
+    xml_image_list = self.document.parsed_content.xpath(DRAW_XPATH_QUERY,
                                 namespaces=self.document.parsed_content.nsmap)
 
     image_list = []
     for xml_image in xml_image_list:
-      title_list = xml_image.xpath('.//../../text() | .//../../*/text()',
-                                    namespaces=xml_image.nsmap)
-      title = ''.join(title_list)
+      title = ''.join(xml_image.xpath(IMAGE_TITLE_XPATH_QUERY,
+                                      namespaces=xml_image.nsmap))
       id = xml_image.values()[0].split('/')[-1]
       image_list.append((id, title))
     return image_list
@@ -135,14 +150,13 @@ class OOGranulate(object):
   def getParagraphItemList(self):
     """Returns the list of paragraphs in the form of (id, class) where class
     may have special meaning to define TOC/TOI."""
-    key = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
     relevant_paragraph_list = self.document.parsed_content.xpath(
-                                '//text:p[not(ancestor::draw:frame)]',
+                                RELEVANT_PARAGRAPH_XPATH_QUERY,
                                 namespaces=self.document.parsed_content.nsmap)
     id = 0
     paragraph_list = []
     for p in relevant_paragraph_list:
-      paragraph_list.append((id, p.attrib[key]))
+      paragraph_list.append((id, p.attrib[TEXT_STYLENAME_NAMESPACE]))
       id += 1
     return paragraph_list
 
@@ -150,12 +164,11 @@ class OOGranulate(object):
     """Returns the paragraph in the form of (text, class)."""
     try:
       relevant_paragraph_list = self.document.parsed_content.xpath(
-                                '//text:p[not(ancestor::draw:frame)]',
+                                RELEVANT_PARAGRAPH_XPATH_QUERY,
                                 namespaces=self.document.parsed_content.nsmap)
       paragraph = relevant_paragraph_list[paragraph_id]
       text = ''.join(paragraph.xpath('.//text()', namespaces=paragraph.nsmap))
-      key = '{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name'
-      p_class = paragraph.attrib[key]
+      p_class = paragraph.attrib[TEXT_STYLENAME_NAMESPACE]
       return (text, p_class)
     except IndexError:
       return None
