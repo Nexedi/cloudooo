@@ -28,6 +28,7 @@
 ##############################################################################
 
 import sys
+import json
 import helper_utils
 from os import environ, path, putenv
 from getopt import getopt, GetoptError
@@ -127,7 +128,7 @@ def main():
   
   if not opt_list:
     help()
-  
+
   for opt, arg in opt_list:
     if opt in ("-h", "--help"):
       help()
@@ -143,7 +144,8 @@ def main():
   mimemapper = UnoMimemapper(hostname, port, **dict(environ))
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
-  print "filter_dict = %s\ntype_dict = %s" % (filter_dict, type_dict)
+
+  print json.dumps((filter_dict, type_dict))
 
 if "__main__" == __name__:
   main()

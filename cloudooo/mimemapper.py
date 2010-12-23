@@ -35,6 +35,7 @@ from os import environ, path
 from interfaces.mimemapper import IMimemapper
 from types import InstanceType
 from utils import getCleanPythonEnvironment
+import json
 
 
 class MimeMapper(object):
@@ -107,21 +108,21 @@ class MimeMapper(object):
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    args = [path.join(office_binary_path, "python"),
+    command = [path.join(office_binary_path, "python"),
             pkg_resources.resource_filename(__name__,
                              path.join("helper", "unomimemapper.py")),
             "--uno_path=%s" % uno_path,
             "--office_binary_path=%s" % office_binary_path,
             "--hostname=%s" % hostname,
             "--port=%s" % port]
-    stdout, stderr = Popen(args,
+    
+    stdout, stderr = Popen(command,
                            stdout=PIPE,
                            close_fds=True,
                            env=getCleanPythonEnvironment()).communicate()
-    # XXX Use json here
-    exec(stdout)
-    for key, value in filter_dict.iteritems():
-      filter_name = key
+    filter_dict, type_dict = json.loads(stdout)
+    
+    for filter_name, value in filter_dict.iteritems():
       flag = value.get("Flags")
       if flag in bad_flag_list:
         continue
