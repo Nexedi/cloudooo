@@ -242,6 +242,7 @@ class Manager(object):
       zip = False
     try:
       response_dict = {}
+      response_dict["mime"] = ""
       # XXX - use html format instead of xhtml
       if orig_format in ("presentation", "graphics") and extension == "xhtml":
         extension = 'html'
@@ -266,7 +267,7 @@ class Manager(object):
       return (200, response_dict, "")
     except Exception, e:
       logger.error(e)
-      return (402, {}, e.args[0])
+      return (402, response_dict, e.args[0])
 
   def getAllowedTargetItemList(self, content_type):
     """Wrapper getAllowedExtensionList but returns a dict.

@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-import jsonpickle
+import json
 import pkg_resources
 from base64 import decodestring, encodestring
 from os import environ, path
@@ -69,8 +69,6 @@ class OOHandler:
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
     hostname, port = openoffice.getAddress()
-    jsonpickle_path = "/".join(pkg_resources.resource_filename("jsonpickle",
-                               "").split("/")[:-1])
     kw['hostname'] = hostname
     kw['port'] = port
     command_list = [path.join(self.office_binary_path, "python"),
@@ -78,8 +76,7 @@ class OOHandler:
                                        path.join("helper", "unoconverter.py")),
                     "--uno_path='%s'" % self.uno_path,
                     "--office_binary_path='%s'" % self.office_binary_path,
-                    "--document_url='%s'" % self.document.getUrl(),
-                    "--jsonpickle_path='%s'" % jsonpickle_path]
+                    "--document_url='%s'" % self.document.getUrl()]
     for arg in args:
       command_list.insert(3, "--%s" % arg)
     for k, v in kw.iteritems():
@@ -150,9 +147,9 @@ class OOHandler:
                               mimemapper.getFilterName(extension,
                                                        service_type)))
 
-    return jsonpickle.encode(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
-                                  filter_list=filter_list,
-                                  mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
+    return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
+                            filter_list=filter_list,
+                            mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
 
   def convert(self, destination_format=None, **kw):
     """Convert a document to another format supported by the OpenOffice
@@ -165,7 +162,7 @@ class OOHandler:
     if destination_format:
       kw['destination_format'] = destination_format
     kw['mimemapper'] = self._serializeMimemapper()
-    kw['refresh'] = jsonpickle.encode(self.refresh)
+    kw['refresh'] = json.dumps(self.refresh)
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
     finally:
@@ -196,7 +193,7 @@ class OOHandler:
       openoffice.release()
       if self.monitor.is_alive():
         self._stopTimeout()
-    metadata = jsonpickle.decode(decodestring(stdout))
+    metadata = json.loads(decodestring(stdout))
     if metadata.get("Data"):
       self.document.reload(metadata['Data'])
       metadata['Data'] = self.document.getContent()
@@ -211,7 +208,7 @@ class OOHandler:
     metadata -- expected an dictionary with metadata.
     """
     openoffice.acquire()
-    metadata_pickled = jsonpickle.encode(metadata)
+    metadata_pickled = json.dumps(metadata)
     logger.debug("setMetadata")
     kw = dict(metadata=encodestring(metadata_pickled))
     try:

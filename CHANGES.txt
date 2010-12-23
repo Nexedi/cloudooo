@@ -1,5 +1,6 @@
 1.0.10 (unreleased)
 ===================
+  - Refactor code to use json instead of jsonpickle.
   - Add getTableItem and getTableItemList for OOGranulate
   - Add getParagraphItemList and getParagraphItem for OOGranulate
   - Add getImageItemList and getImage for OOGranulate

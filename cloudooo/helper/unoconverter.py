@@ -60,7 +60,7 @@ Options:
                         extension to export the document
   --mimemapper=OBJECT_SERIALIZED
                         Mimemapper serialized. The object is passed using
-                        jsonpickle. IF this option is None, the object is
+                        json. IF this option is None, the object is
                         created
   --metadata=DICT_SERIALIZED
                         Dictionary with metadata
@@ -146,7 +146,7 @@ class UnoConverter(object):
       doc_type_list = mimemapper["doc_type_list_by_extension"].get(destination_format)
       if self.document_type not in doc_type_list:
         raise AttributeError, \
-                        "This Document can not be converted for this format"
+                          "This Document can not be converted for this format"
       type = self.document_type
       filter_name = self._getFilterName(destination_format, type)
       property_list = []
@@ -279,7 +279,7 @@ def main():
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=", 
       "mimemapper=", "metadata=", "refresh=",
-      "unomimemapper_bin=", "jsonpickle_path="])
+      "unomimemapper_bin="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
     print >> sys.stderr, msg
@@ -287,12 +287,7 @@ def main():
   
   param_list = [tuple[0] for tuple in iter(opt_list)]
 
-  for opt, arg in iter(opt_list):
-    if opt == "--jsonpickle_path":
-      sys.path.append(arg)
-      break
-
-  import jsonpickle
+  import json
   refresh = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
@@ -314,12 +309,12 @@ def main():
     elif opt == '--source_format':
       source_format = arg
     elif opt == '--refresh':
-      refresh = jsonpickle.decode(arg)
+      refresh = json.loads(arg)
     elif opt == '--metadata':
       arg = decodestring(arg)
-      metadata = jsonpickle.decode(arg)
+      metadata = json.loads(arg)
     elif opt == '--mimemapper':
-      mimemapper = jsonpickle.decode(arg)
+      mimemapper = json.loads(arg)
    
   kw = {}
   if "uno_path" in locals():
@@ -341,11 +336,11 @@ def main():
     output = unoconverter.convert(destination_format)
   elif '--getmetadata' in param_list and not '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
-    output = encodestring(jsonpickle.encode(metadata_dict))
+    output = encodestring(json.dumps(metadata_dict))
   elif '--getmetadata' in param_list and '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
     metadata_dict['Data'] = unoconverter.convert()
-    output = encodestring(jsonpickle.encode(metadata_dict))
+    output = encodestring(json.dumps(metadata_dict))
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
     output = document_url
