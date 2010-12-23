@@ -28,7 +28,10 @@
 ##############################################################################
 
 import sys
-import json
+try:
+  import json
+except ImportError:
+  import simplejson as json
 import helper_utils
 from os import environ, path, putenv
 from getopt import getopt, GetoptError

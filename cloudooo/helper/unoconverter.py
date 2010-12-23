@@ -287,7 +287,10 @@ def main():
   
   param_list = [tuple[0] for tuple in iter(opt_list)]
 
-  import json
+  try:
+    import json
+  except ImportError:
+    import simplejson as json
   refresh = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
