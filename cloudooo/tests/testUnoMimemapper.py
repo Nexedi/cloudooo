@@ -52,7 +52,8 @@ class TestUnoMimeMapper(cloudoooTestCase):
   def testCreateLocalAttributes(self):
     """Test if filters returns correctly the filters and types in dict"""
     hostname, host = openoffice.getAddress()
-    command = [path.join(self.office_binary_path, "python"),
+    python = path.join(self.office_binary_path, "python")
+    command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo", "helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
             "'--office_binary_path=%s'" % self.office_binary_path,
@@ -95,7 +96,8 @@ class TestUnoMimeMapper(cloudoooTestCase):
     error_msg = "couldn\'t connect to socket (Success)\n"
     hostname, host = openoffice.getAddress()
     openoffice.stop()
-    command = [path.join(self.office_binary_path, "python"),
+    python = path.join(self.office_binary_path, "python")
+    command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo", 
                                             "helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,

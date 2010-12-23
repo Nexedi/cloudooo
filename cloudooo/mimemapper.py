@@ -108,7 +108,8 @@ class MimeMapper(object):
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
-    command = [path.join(office_binary_path, "python"),
+    python = path.join(office_binary_path, "python")
+    command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename(__name__,
                              path.join("helper", "unomimemapper.py")),
             "--uno_path=%s" % uno_path,

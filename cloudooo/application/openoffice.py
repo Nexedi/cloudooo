@@ -59,7 +59,8 @@ class OpenOffice(Application):
     """Test if OpenOffice was started correctly"""
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
                                                   self.pid()))
-    args = [join(self.office_binary_path, "python"),
+    python = join(self.office_binary_path, "python")
+    args = [exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo",
                                       join("helper", "openoffice_tester.py")),
             "--hostname=%s" % host,

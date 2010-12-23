@@ -60,7 +60,8 @@ class TestUnoConverter(cloudoooTestCase):
                                     'MS Word 97')],
                      doc_type_list_by_extension=dict(doc=['com.sun.star.text.TextDocument']))
     mimemapper_pickled = json.dumps(mimemapper)
-    command = [join(self.office_binary_path, "python"),
+    python = join(self.office_binary_path, "python")
+    command = [exists(python) and python or "python",
           pkg_resources.resource_filename("cloudooo", 
                                           "helper/unoconverter.py"),
           "'--convert'",
