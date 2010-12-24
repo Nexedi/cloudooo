@@ -28,7 +28,7 @@
 
 from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
-from cloudooo.utils import logger, socketStatus
+from cloudooo.utils import logger, socketStatus, waitStopDaemon
 from psutil import pid_exists, Process
 
 
@@ -53,6 +53,7 @@ class Application(object):
       logger.debug("Stop Pid - %s" % process_pid)
       try:
         self.process.terminate()
+        waitStopDaemon(self, self.timeout)
       finally:
         if pid_exists(process_pid) or self.status():
           Process(process_pid).kill()

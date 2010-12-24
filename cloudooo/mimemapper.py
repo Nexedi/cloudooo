@@ -54,9 +54,9 @@ class MimeMapper(object):
     self._doc_type_list_by_extension = {}
     # List of extensions that are ODF
     self._odf_extension_list = []
-    self.extension_list = []
     self._mimetype_by_filter_type = {}
     self._document_type_dict = {}
+    self.extension_list = []
 
   def _addFilter(self, filter):
     """Add filter in mimemapper catalog."""
@@ -104,7 +104,8 @@ class MimeMapper(object):
     # Filters that has flag in bad_flag_list is ignored.
     # XXX - Is not good way to remove unnecessary filters
     # XXX - try find a good way to remove filters that are not used for export
-    bad_flag_list = [65, 94217, 536641, 1572929, 268959937, 524373, 85, 524353]
+    bad_flag_list = [65, 94217, 536641, 1572929, 268959937,
+                     524373, 85, 524353, 524391]
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
@@ -122,7 +123,6 @@ class MimeMapper(object):
                            close_fds=True,
                            env=getCleanPythonEnvironment()).communicate()
     filter_dict, type_dict = json.loads(stdout)
-    
     for filter_name, value in filter_dict.iteritems():
       flag = value.get("Flags")
       if flag in bad_flag_list:
@@ -185,6 +185,9 @@ class MimeMapper(object):
         # Adds the object in filter_by_extension_dict
         self._addFilter(filter)
     self.document_service_list = self._extension_list_by_type.keys()
+    self.extension_list_by_doc_type =\
+        dict([(type, [extension[0] for extension in extension_list])\
+              for type, extension_list in self._extension_list_by_type.iteritems()])
     self._loaded = True
 
   def getMimetypeByFilterType(self, filter_type):

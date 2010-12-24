@@ -27,6 +27,7 @@
 ##############################################################################
 
 import json
+import re
 import pkg_resources
 from base64 import decodestring, encodestring
 from os import environ, path
@@ -119,35 +120,30 @@ class OOHandler:
       openoffice.start()
     command = self._getCommand(*feature_list, **kw)
     stdout, stderr = self._subprocess(command)
-    if not stdout and stderr != '':
+    if not stdout and len(re.findall("[A-Za-z]*Exception", stderr)) >= 1:
       logger.debug(stderr)
-      if "NoConnectException" in stderr or \
-         "RuntimeException" in stderr or \
-         "DisposedException" in stderr:
-        self.document.restoreOriginal()
-        openoffice.restart()
-        kw['document_url'] = self.document.getUrl()
-        command = self._getCommand(*feature_list, **kw)
-        stdout, stderr = self._subprocess(command)
-      elif "ErrorCodeIOException" in stderr:
-        raise Exception, stderr + \
-            "This document can not be converted to this format"
-      else:
-        raise Exception, stderr
+      self.document.restoreOriginal()
+      openoffice.restart()
+      kw['document_url'] = self.document.getUrl()
+      command = self._getCommand(*feature_list, **kw)
+      stdout, stderr = self._subprocess(command)
+      if stderr != "":
+          raise Exception, stderr
 
     return stdout, stderr
 
-  def _serializeMimemapper(self):
+  def _serializeMimemapper(self, extension=None):
     """Serialize parts of mimemapper"""
-    filter_list = []
-    for extension in mimemapper.extension_list:
-      for service_type in mimemapper.document_service_list:
-        if service_type in mimemapper._doc_type_list_by_extension[extension]:
-          filter_list.append((extension,
-                              service_type,
-                              mimemapper.getFilterName(extension,
-                                                       service_type)))
+    if extension is None:
+      return json.dumps(dict(mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
 
+    filter_list = []
+    for service_type in mimemapper._doc_type_list_by_extension[extension]:
+      for extension in mimemapper.extension_list_by_doc_type[service_type]:
+        filter_list.append((extension,
+                            service_type,
+                            mimemapper.getFilterName(extension,
+                                                     service_type)))
     return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                             filter_list=filter_list,
                             mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
@@ -162,7 +158,7 @@ class OOHandler:
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
-    kw['mimemapper'] = self._serializeMimemapper()
+    kw['mimemapper'] = self._serializeMimemapper(destination_format)
     kw['refresh'] = json.dumps(self.refresh)
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
