@@ -346,14 +346,12 @@ class TestServer(cloudoooTestCase):
   def testConvertDocumentToImpossibleFormat(self):
     """Try convert one document to format not possible"""
     data = open(join('data','test.odp'),'r').read()
-    error_msg = "This Document can not be converted for this format\n"
     try:
       self.proxy.convertFile(encodestring(data), 'odp', 'doc')
       self.fail("")
     except Fault, err:
       err_str = err.faultString
-      self.assertEquals(err_str.endswith(error_msg), True,
-                        "%s\n%s" % (error_msg, err_str))
+      self.assertEquals(err_str.endswith("ErrorCodeIOException\n"), True)
 
   def testRunConvertMethod(self):
     """Test run_convert method"""
@@ -377,14 +375,18 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(response_code, 402)
     self.assertEquals(type(response_dict), DictType)
     self.assertEquals(response_dict, {})
-    self.assertEquals(response_message.startswith('Traceback'), True)
+    msg = 'No JSON object could be decoded'
+    self.assertEquals(response_message, 
+                      'No JSON object could be decoded',
+                      "%s != %s" % (response_message, msg))
 
   def testRunGenerateMethod(self):
     """Test run_generate method"""
     data = open(join('data', 'test.odt'),'r').read()
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
-                                      None, 'pdf', 'odt')
+                                      None, 'pdf',
+                                      'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
@@ -397,7 +399,8 @@ class TestServer(cloudoooTestCase):
     data = open(join('data', 'test.ods'),'r').read()
     generate_result = self.proxy.run_generate('test.ods',
                                       encodestring(data),
-                                      None, 'html', 'ods')
+                                      None, 'html',
+                                      "application/vnd.oasis.opendocument.spreadsheet")
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
@@ -420,7 +423,8 @@ class TestServer(cloudoooTestCase):
     data = open(join('data', 'test_png.odp'),'r').read()
     generate_result = self.proxy.run_generate('test_png.odp',
                                       encodestring(data),
-                                      None, 'html', 'presentation')
+                                      None, 'html', 
+                                      'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
@@ -448,7 +452,8 @@ class TestServer(cloudoooTestCase):
     data = open(join('data','test.odp'),'r').read()
     generate_result = self.proxy.run_generate('test.odp',
                                       encodestring(data),
-                                      None, 'html', 'odp')
+                                      None, 'html', 
+                                      'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
     self.assertEquals(type(response_dict), DictType)
@@ -469,7 +474,7 @@ class TestServer(cloudoooTestCase):
     data = open(join('data','test.odt'), 'r').read()[:100]
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
-                                      None, 'odt', 'pdf')
+                                      None, 'odt', 'application/pdf')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 402)
     self.assertEquals(type(response_dict), DictType)
@@ -521,7 +526,7 @@ class TestServer(cloudoooTestCase):
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    self.assertEquals(len(response_dict['response_data']), 31)
+    self.assertEquals(len(response_dict['response_data']), 29)
     self.assertTrue(['htm', 'HTML Document'] in response_dict['response_data'])
 
 
