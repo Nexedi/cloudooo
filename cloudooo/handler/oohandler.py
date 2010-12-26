@@ -120,7 +120,7 @@ class OOHandler:
       openoffice.start()
     command = self._getCommand(*feature_list, **kw)
     stdout, stderr = self._subprocess(command)
-    if not stdout and len(re.findall("[A-Za-z]*Exception", stderr)) >= 1:
+    if not stdout and len(re.findall("\w*Exception|\w*Error", stderr)) >= 1:
       logger.debug(stderr)
       self.document.restoreOriginal()
       openoffice.restart()

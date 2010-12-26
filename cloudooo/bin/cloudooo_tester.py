@@ -20,7 +20,7 @@ class CloudoooTestCase(unittest.TestCase):
   def test_run_generate(self):
     data = encodestring(DOCUMENT_STRING)
     proxy = ServerProxy(self.proxy_address, allow_none=True)
-    res = proxy.run_generate("t.text", data, None, 'pdf', 'txt')
+    res = proxy.run_generate("t.text", data, None, 'pdf', 'text/plain')
     self.assertEquals(res[1]['mime'], "application/pdf")
     self.assertEquals(res[0], 200)
 

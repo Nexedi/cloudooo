@@ -27,6 +27,7 @@
 ##############################################################################
 
 import unittest
+import json
 import pkg_resources
 from cloudooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
@@ -62,7 +63,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
-    exec(stdout)
+    filter_dict, type_dict = json.loads(stdout)
     self.assertEquals('filter_dict' in locals(), True)
     self.assertEquals('type_dict' in locals(), True)
     self.assertNotEquals(filter_dict.get('writer8'), None)
@@ -82,7 +83,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
-    exec(stdout)
+    filter_dict, type_dict = json.loads(stdout)
     self.assertEquals('filter_dict' in locals(), True)
     self.assertEquals('type_dict' in locals(), True)
     self.assertNotEquals(filter_dict.get('writer8'), None)

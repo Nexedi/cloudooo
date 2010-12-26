@@ -264,7 +264,7 @@ class TestServer(cloudoooTestCase):
     output_msg = 'Zip archive data, at least v2.0 to extract\n'
     self._testConvertFile("data/test.zip",
                           join(self.tmp_url, "output_zipfile.zip"),
-                          'html',
+                          'zip',
                           'txt',
                           output_msg,
                           True)
@@ -274,7 +274,7 @@ class TestServer(cloudoooTestCase):
     output_url = join(self.tmp_url, "output.txt")
     self._testConvertFile("data/test.zip",
                           output_url,
-                          'html',
+                          'zip',
                           'txt',
                           'ASCII text\n')
 
@@ -375,10 +375,9 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(response_code, 402)
     self.assertEquals(type(response_dict), DictType)
     self.assertEquals(response_dict, {})
-    msg = 'No JSON object could be decoded'
-    self.assertEquals(response_message, 
-                      'No JSON object could be decoded',
-                      "%s != %s" % (response_message, msg))
+    msg = "This document can not be loaded or is empty\n"
+    self.assertTrue(response_message.endswith(msg), 
+                    "%s != %s" % (response_message, msg))
 
   def testRunGenerateMethod(self):
     """Test run_generate method"""
