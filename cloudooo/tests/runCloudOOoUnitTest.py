@@ -12,17 +12,17 @@ from subprocess import Popen
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
 
-def wait_liberate_port(hostname, port, timeout_limit=10):
+def wait_liberate_port(hostname, port, timeout_limit=30):
   for n in range(timeout_limit):
     if not socketStatus(hostname, port):
       break
     sleep(1)
 
 
-def wait_use_port(hostname, port, timeout_limit=10):
+def wait_use_port(hostname, port, timeout_limit=30):
   for n in range(timeout_limit):
     if socketStatus(hostname, port):
-      return
+      break
     sleep(1)
 
 
@@ -94,18 +94,18 @@ def run():
   hostname = config.get("app:main", "application_hostname")
   server_port = int(config.get("server:main", "port"))
   run_dir = config.get('app:main', 'working_path')
-
   if DAEMON:
     loadConfig(server_cloudooo_conf)
     command = [paster_path, "serve", server_cloudooo_conf]
-    process = Popen(" ".join(command), shell=True)
+    process = Popen(command)
+    wait_use_port(hostname, openoffice_port)
     wait_use_port(hostname, server_port)
     chdir(ENVIRONMENT_PATH)
     try:
       run_test(test_name)
     finally:
       process.send_signal(1)
-      sleep(3)
+      wait_liberate_port(hostname, server_port)
       process.terminate()
     wait_liberate_port(hostname, server_port)
   elif OPENOFFICE:
