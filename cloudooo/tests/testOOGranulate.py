@@ -83,18 +83,6 @@ class TestOOGranulate(cloudoooTestCase):
     table_data = oogranulate.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
-  def testGetColumnItemList(self):
-    """Test if getColumnItemList() returns the right table columns list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getColumnItemList,
-                                     'file',
-                                     'table_id')
-
-  def testGetLineItemList(self):
-    """Test if getLineItemList() returns the right table lines list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getLineItemList,
-                                     'file',
-                                     'table_id')
-
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
     image_list = self.oogranulate.getImageItemList()

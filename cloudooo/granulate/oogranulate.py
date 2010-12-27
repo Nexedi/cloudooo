@@ -123,14 +123,6 @@ class OOGranulate(object):
       logger.error(e)
       return None
 
-  def getColumnItemList(self, file, table_id):
-    """Return the list of columns in the form of (id, title)."""
-    raise NotImplementedError
-
-  def getLineItemList(self, file, table_id):
-    """Returns the lines of a given table as (key, value) pairs."""
-    raise NotImplementedError
-
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
     xml_image_list = self.document.parsed_content.xpath(DRAW_XPATH_QUERY,
