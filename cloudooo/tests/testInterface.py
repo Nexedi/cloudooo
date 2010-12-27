@@ -57,6 +57,8 @@ class TestInterface(unittest.TestCase):
     """Test if OOGranulate implements ITableGranulator"""
     self.assertEquals(ITableGranulator.implementedBy(OOGranulate), True)
     method_list = ['getTableItem',
+                   'getLineItemList',
+                   'getColumnItemList',
                    'getTableItemList']
     self.assertEquals(ITableGranulator.names(), method_list)
 

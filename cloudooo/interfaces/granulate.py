@@ -38,6 +38,12 @@ class ITableGranulator(Interface):
   def getTableItem(id, format):
     """Returns the table into a new 'format' file."""
 
+  def getColumnItemList(file, table_id):
+    """Return the list of columns in the form of (id, title)."""
+
+  def getLineItemList(file, table_id):
+    """Returns the lines of a given table as (key, value) pairs."""
+
 
 class IImageGranulator(Interface):
   """Provides methods to granulate a document into images."""
