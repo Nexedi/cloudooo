@@ -32,22 +32,22 @@ from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.granulate.oogranulate import OOGranulate
+from cloudooo.handler.ooo.granulator import OOGranulator
 
 
-class TestOOGranulate(cloudoooTestCase):
+class TestOOGranulator(cloudoooTestCase):
 
   def setUp(self):
     data = open('./data/granulate_test.odt').read()
-    self.oogranulate = OOGranulate(data, 'odt')
+    self.oogranulator = OOGranulator(data, 'odt')
 
   def testOdfWithoutContentXml(self):
     """Test if _odfWithoutContentXml() return a ZipFile instance without the
     content.xml file"""
-    odf_without_content_xml = self.oogranulate._odfWithoutContentXml('odt')
+    odf_without_content_xml = self.oogranulator._odfWithoutContentXml('odt')
     self.assertTrue(isinstance(odf_without_content_xml, ZipFile))
     complete_name_list = []
-    for item in self.oogranulate.document._zipfile.filelist:
+    for item in self.oogranulator.document._zipfile.filelist:
       complete_name_list.append(item.filename)
     for item in odf_without_content_xml.filelist:
       self.assertTrue(item.filename in complete_name_list)
@@ -56,17 +56,17 @@ class TestOOGranulate(cloudoooTestCase):
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
     data = open('./data/granulate_table_test.odt').read()
-    oogranulate = OOGranulate(data, 'odt')
+    oogranulator = OOGranulator(data, 'odt')
     table_list = [('Developers', ''),
                   ('Prices', 'Table 1: Prices table from Mon Restaurant'),
                   ('SoccerTeams', 'Tabela 2: Soccer Teams')]
-    self.assertEquals(table_list, oogranulate.getTableItemList())
+    self.assertEquals(table_list, oogranulator.getTableItemList())
 
   def testGetTableItem(self):
     """Test if getTableItem() returns on odf file with the right table"""
     data = open('./data/granulate_table_test.odt').read()
-    oogranulate = OOGranulate(data, 'odt')
-    table_data_doc = oogranulate.getTableItem('Developers')
+    oogranulator = OOGranulator(data, 'odt')
+    table_data_doc = oogranulator.getTableItem('Developers')
     content_xml_str = ZipFile(StringIO(table_data_doc)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
@@ -79,43 +79,43 @@ class TestOOGranulate(cloudoooTestCase):
   def testGetTableItemWithoutSuccess(self):
     """Test if getTableItem() returns None for an non existent table name"""
     data = open('./data/granulate_table_test.odt').read()
-    oogranulate = OOGranulate(data, 'odt')
-    table_data = oogranulate.getTableItem('NonExistentTable')
+    oogranulator = OOGranulator(data, 'odt')
+    table_data = oogranulator.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
   def testGetTableMatrix(self):
     """Test if getTableMatrix() returns the right matrix"""
     data = open('./data/granulate_table_test.odt').read()
-    oogranulate = OOGranulate(data, 'odt')
+    oogranulator = OOGranulator(data, 'odt')
     matrix = [['Name', 'Phone', 'Email'],
              ['Hugo', '+55 (22) 8888-8888', 'hugomaia@tiolive.com'],
              ['Rafael', '+55 (22) 9999-9999', 'rafael@tiolive.com']]
-    self.assertEquals(matrix, oogranulate.getTableMatrix('Developers'))
+    self.assertEquals(matrix, oogranulator.getTableMatrix('Developers'))
 
     matrix = [['Product', 'Price'],
              ['Pizza', 'R$ 25,00'],
              ['Petit Gateau', 'R$ 10,00'],
              ['Feijoada', 'R$ 30,00']]
-    self.assertEquals(matrix, oogranulate.getTableMatrix('Prices'))
+    self.assertEquals(matrix, oogranulator.getTableMatrix('Prices'))
 
-    self.assertEquals(None, oogranulate.getTableMatrix('Non existent'))
+    self.assertEquals(None, oogranulator.getTableMatrix('Non existent'))
 
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getColumnItemList,
+    self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,
                                      'file',
                                      'table_id')
 
   def testGetLineItemList(self):
     """Test if getLineItemList() returns the right table lines list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getLineItemList,
+    self.assertRaises(NotImplementedError, self.oogranulator.getLineItemList,
                                      'file',
                                      'table_id')
 
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
-    image_list = self.oogranulate.getImageItemList()
+    image_list = self.oogranulator.getImageItemList()
     self.assertEquals([
       ('10000000000000C80000009C38276C51.jpg', ''),
       ('10000201000000C80000004E7B947D46.png', ''),
@@ -132,12 +132,12 @@ class TestOOGranulate(cloudoooTestCase):
     zip = ZipFile(StringIO(data))
     image_id = '10000000000000C80000009C38276C51.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
-    geted_image = self.oogranulate.getImage(image_id)
+    geted_image = self.oogranulator.getImage(image_id)
     self.assertEquals(original_image, geted_image)
 
   def testGetImageWithoutSuccess(self):
     """Test if getImage() returns an empty string for not existent id"""
-    obtained_image = self.oogranulate.getImage('anything.png')
+    obtained_image = self.oogranulator.getImage('anything.png')
     self.assertEquals('', obtained_image)
 
   def testGetParagraphItemList(self):
@@ -145,8 +145,8 @@ class TestOOGranulate(cloudoooTestCase):
     the ids always in the same order"""
     for i in range(5):
       data = open('./data/granulate_test.odt').read()
-      oogranulate = OOGranulate(data, 'odt')
-      paragraph_list = oogranulate.getParagraphItemList()
+      oogranulator = OOGranulator(data, 'odt')
+      paragraph_list = oogranulator.getParagraphItemList()
       self.assertEquals((0, 'P3'), paragraph_list[0])
       self.assertEquals((1, 'P1'), paragraph_list[1])
       self.assertEquals((2, 'P12'), paragraph_list[2])
@@ -156,32 +156,32 @@ class TestOOGranulate(cloudoooTestCase):
   def testGetParagraphItemSuccessfully(self):
     """Test if getParagraphItem() returns the right paragraph"""
     self.assertEquals(('Some images without title', 'P13'),
-                      self.oogranulate.getParagraphItem(8))
+                      self.oogranulator.getParagraphItem(8))
 
-    big_paragraph = self.oogranulate.getParagraphItem(5)
+    big_paragraph = self.oogranulator.getParagraphItem(5)
     self.assertEquals('P8', big_paragraph[1])
     self.assertTrue(big_paragraph[0].startswith(u'A prática cotidiana prova'))
     self.assertTrue(big_paragraph[0].endswith(u'corresponde às necessidades.'))
 
   def testGetParagraphItemWithoutSuccess(self):
     """Test if getParagraphItem() returns None for not existent id"""
-    self.assertEquals(None, self.oogranulate.getParagraphItem(200))
+    self.assertEquals(None, self.oogranulator.getParagraphItem(200))
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getChapterItemList,
+    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItemList,
                                            'file')
 
   def testGetChapterItem(self):
     """Test if getChapterItem() returns the right chapter"""
-    self.assertRaises(NotImplementedError, self.oogranulate.getChapterItem,
+    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItem,
                                      'file',
                                      'chapter_id')
 
 
 def test_suite():
-  return make_suite(TestOOGranulate)
+  return make_suite(TestOOGranulator)
 
 if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestOOGranulate)
+  suite = unittest.TestLoader().loadTestsFromTestCase(TestOOGranulator)
   unittest.TextTestRunner(verbosity=2).run(suite)

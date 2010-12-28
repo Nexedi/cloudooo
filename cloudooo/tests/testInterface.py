@@ -35,7 +35,7 @@ from cloudooo.mimemapper import MimeMapper
 from cloudooo.filter import Filter
 from cloudooo.application.xvfb import Xvfb
 from cloudooo.monitor.request import MonitorRequest
-from cloudooo.granulate.oogranulate import OOGranulate
+from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.interfaces.document import IDocument, IOdfDocument
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.interfaces.manager import IManager
@@ -54,8 +54,8 @@ class TestInterface(unittest.TestCase):
   """Test All Interfaces"""
 
   def testITableGranulator(self):
-    """Test if OOGranulate implements ITableGranulator"""
-    self.assertEquals(ITableGranulator.implementedBy(OOGranulate), True)
+    """Test if OOGranulator implements ITableGranulator"""
+    self.assertEquals(ITableGranulator.implementedBy(OOGranulator), True)
     method_list = ['getLineItemList',
                    'getTableItem',
                    'getTableItemList',
@@ -64,8 +64,8 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(sorted(ITableGranulator.names()), sorted(method_list))
 
   def testITextGranulator(self):
-    """Test if OOGranulate implements ITextGranulator"""
-    self.assertEquals(ITextGranulator.implementedBy(OOGranulate), True)
+    """Test if OOGranulator implements ITextGranulator"""
+    self.assertEquals(ITextGranulator.implementedBy(OOGranulator), True)
     method_list = ['getChapterItemList',
                    'getParagraphItem',
                    'getChapterItem',
@@ -73,8 +73,8 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(ITextGranulator.names(), method_list)
 
   def testIImageGranulator(self):
-    """Test if OOGranulate implements IImageGranulator"""
-    self.assertEquals(IImageGranulator.implementedBy(OOGranulate), True)
+    """Test if OOGranulator implements IImageGranulator"""
+    self.assertEquals(IImageGranulator.implementedBy(OOGranulator), True)
     method_list = ['getImageItemList', 'getImage']
     self.assertEquals(IImageGranulator.names(), method_list)
 

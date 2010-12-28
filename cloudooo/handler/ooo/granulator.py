@@ -57,7 +57,7 @@ def getTemplatePath(format):
   """
   return path.join(path.dirname(__file__), 'template.%s' % format)
 
-class OOGranulate(object):
+class OOGranulator(object):
   """Granulate an OpenOffice document into tables, images, chapters and
   paragraphs."""
 
