@@ -56,10 +56,11 @@ class TestInterface(unittest.TestCase):
   def testITableGranulator(self):
     """Test if OOGranulate implements ITableGranulator"""
     self.assertEquals(ITableGranulator.implementedBy(OOGranulate), True)
-    method_list = ['getTableItem',
+    method_list = ['getColumnItemList',
                    'getLineItemList',
-                   'getColumnItemList',
-                   'getTableItemList']
+                   'getTableItem',
+                   'getTableItemList',
+                   'getTableMatrix']
     self.assertEquals(ITableGranulator.names(), method_list)
 
   def testITextGranulator(self):

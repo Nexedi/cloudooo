@@ -83,6 +83,24 @@ class TestOOGranulate(cloudoooTestCase):
     table_data = oogranulate.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
+  def testGetTableMatriz(self):
+    """Test if getTableMatrix() returns the right matrix"""
+    data = open('./data/granulate_table_test.odt').read()
+    oogranulate = OOGranulate(data, 'odt')
+    matrix = [['Name', 'Phone', 'Email'],
+             ['Hugo', '+55 (22) 8888-8888', 'hugomaia@tiolive.com'],
+             ['Rafael', '+55 (22) 9999-9999', 'rafael@tiolive.com']]
+    self.assertEquals(matrix, oogranulate.getTableMatrix('Developers'))
+
+    matrix = [['Product', 'Price'],
+             ['Pizza', 'R$ 25,00'],
+             ['Petit Gateau', 'R$ 10,00'],
+             ['Feijoada', 'R$ 30,00']]
+    self.assertEquals(matrix, oogranulate.getTableMatrix('Prices'))
+
+    self.assertEquals(None, oogranulate.getTableMatrix('Non existent'))
+
+
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
     self.assertRaises(NotImplementedError, self.oogranulate.getColumnItemList,

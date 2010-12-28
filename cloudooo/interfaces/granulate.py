@@ -38,6 +38,9 @@ class ITableGranulator(Interface):
   def getTableItem(id, format):
     """Returns the table into a new 'format' file."""
 
+  def getTableMatrix(self, id):
+    """Returns the table as a matrix."""
+
   def getColumnItemList(file, table_id):
     """Return the list of columns in the form of (id, title)."""
 
