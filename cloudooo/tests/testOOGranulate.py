@@ -83,7 +83,7 @@ class TestOOGranulate(cloudoooTestCase):
     table_data = oogranulate.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
-  def testGetTableMatriz(self):
+  def testGetTableMatrix(self):
     """Test if getTableMatrix() returns the right matrix"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulate = OOGranulate(data, 'odt')
