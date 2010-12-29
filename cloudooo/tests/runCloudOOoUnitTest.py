@@ -12,6 +12,19 @@ from subprocess import Popen
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
 
+__doc__ = """Unit Test Runner for Cloudooo
+usage: %(program)s [options] Unit_Test_Name
+
+Options:
+  -h, --help                         Display help documentation
+  --server_cloudooo_conf=STRING      Path to cloudooo configuration file
+  --paster_path=STRING               Path to Paster script
+  --with-daemon                      it starts the cloudooo daemon
+  --with-openoffice                  it starts one Xvfb and one OpenOffice.org
+  --with-xvfb                        it starts one Xvfb only
+"""
+
+
 def wait_liberate_port(hostname, port, timeout_limit=30):
   for n in range(timeout_limit):
     if not socketStatus(hostname, port):
@@ -43,25 +56,25 @@ def run_test(test_name):
 
 def run():
   DAEMON = OPENOFFICE = XVFB = False
-  test_name = sys.argv[-1]
-  if not path.exists(path.join(ENVIRONMENT_PATH, '%s.py' % test_name)):
-    exit("%s not exists\n" % test_name)
-
   try:
-    opt_list, arg_list = getopt(sys.argv[1:-1], "", ["with-daemon",
-                                                   "with-openoffice",
-                                                   "with-xvfb",
-                                                   "log_path=",
-                                                   "cloudooo_runner=",
-                                                   "server_cloudooo_conf=",
-                                                   "timeout_limit=",
-                                                   "paster_path="])
+    opt_list, arg_list = getopt(sys.argv[1:], "h", ["help",
+                                                    "with-daemon",
+                                                    "with-openoffice",
+                                                    "with-xvfb",
+                                                    "log_path=",
+                                                    "cloudooo_runner=",
+                                                    "server_cloudooo_conf=",
+                                                    "timeout_limit=",
+                                                    "paster_path="])
   except GetoptError, msg:
     exit(msg.msg)
   
   paster_path = "paster"
 
   for opt, arg in opt_list:
+    if opt in ("-h", "--help"):
+      print >> sys.stderr, __doc__ % {"program": path.basename(sys.argv[0])}
+      sys.exit(2)
     if opt == "--with-daemon":
       DAEMON = True
     elif opt == "--with-openoffice":
@@ -81,11 +94,15 @@ def run():
       timeout_limit = arg
     elif opt == "--paster_path":
       paster_path = arg
-  
+
+  test_name = sys.argv[-1]
+  if not path.exists(path.join(ENVIRONMENT_PATH, '%s.py' % test_name)):
+    exit("%s not exists\n" % test_name)
+
   from cloudoooTestCase import loadConfig, startFakeEnvironment, stopFakeEnvironment
-  
+
   sys.path.append(ENVIRONMENT_PATH)
-  
+
   config = ConfigParser()
   config.read(server_cloudooo_conf)
   openoffice_port = int(config.get("app:main", "openoffice_port"))
