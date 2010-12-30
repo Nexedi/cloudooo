@@ -115,6 +115,9 @@ class OpenOffice(Application):
             process.terminate()
       except psutil.error.AccessDenied, e:
         logger.error(e)
+      except TypeError, e:
+        # exception to prevent one psutil issue with svn processes
+        logger.error(e)
       except NotImplementedError, e:
         logger.error("lsof isn't installed on this machine: " + str(e))
 
