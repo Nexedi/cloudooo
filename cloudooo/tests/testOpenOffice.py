@@ -31,6 +31,7 @@ from cloudoooTestCase import cloudoooTestCase
 from cloudooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
 from cloudooo.utils import waitStopDaemon
+from psutil import Process, AccessDenied
 
 
 class TestOpenOffice(cloudoooTestCase):
@@ -85,6 +86,79 @@ class TestOpenOffice(cloudoooTestCase):
     self.assertEquals(self.openoffice.isLocked(), True)
     self.openoffice.release()
     self.assertEquals(self.openoffice.isLocked(), False)
+
+  def testStartTwoOpenOfficeWithTheSameAddress(self):
+    """Check if starting two openoffice using the same address, the second
+    openoffice will terminate the first"""
+    second_openoffice = OpenOffice()
+    second_openoffice.loadSettings("localhost", 4090,
+                                self.working_path,
+                                self.virtual_display_id,
+                                self.office_binary_path,
+                                self.uno_path)
+    try:
+      second_openoffice.start()
+      try:
+        openoffice_process = Process(self.openoffice.pid())
+        openoffice_process.get_connections()
+        self.fail("Access get_connections() function should fails")
+      except AccessDenied:
+        self.assertTrue("Excepted failure")
+    finally:
+      second_openoffice.stop()
+
+    self.openoffice.start()
+    second_openoffice = OpenOffice()
+    second_openoffice.loadSettings("localhost", 4091,
+                                self.working_path + "_",
+                                self.virtual_display_id,
+                                self.office_binary_path,
+                                self.uno_path)
+    try:
+      second_openoffice.start()
+      try:
+        openoffice_process = Process(self.openoffice.pid())
+        connection = openoffice_process.get_connections()[0]
+        self.assertEquals(connection.local_address[1], 4090)
+        openoffice_process = Process(second_openoffice.pid())
+        connection = openoffice_process.get_connections()[0]
+        self.assertEquals(connection.local_address[1], 4091)
+      except AccessDenied:
+        self.fail("Access get_connections() function should be allowed")
+    finally:
+      second_openoffice.stop()
+
+    if not self.openoffice.status():
+      self.openoffice.start()
+    second_openoffice = OpenOffice()
+    second_openoffice.loadSettings("localhost", 40900,
+                                self.working_path + "_",
+                                self.virtual_display_id,
+                                self.office_binary_path,
+                                self.uno_path)
+    second_openoffice.start()
+
+    third_openoffice = OpenOffice()
+    third_openoffice.loadSettings("localhost", 40900,
+                                self.working_path + "_",
+                                self.virtual_display_id,
+                                self.office_binary_path,
+                                self.uno_path)
+
+    try:
+      third_openoffice.start()
+      try:
+        openoffice_process = Process(self.openoffice.pid())
+        connection = openoffice_process.get_connections()[0]
+        self.assertEquals(connection.local_address[1], 4090)
+        openoffice_process = Process(second_openoffice.pid())
+        openoffice_process.get_connections()
+        self.fail("Access get_connections() function should fails")
+      except AccessDenied:
+        self.assertTrue("Excepted failure")
+    finally:
+      second_openoffice.stop()
+      third_openoffice.stop()
 
 
 def test_suite():

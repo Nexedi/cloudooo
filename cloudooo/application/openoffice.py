@@ -27,6 +27,7 @@
 ##############################################################################
 
 import pkg_resources
+import psutil
 from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
@@ -36,7 +37,8 @@ from application import Application
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils import logger, waitStartDaemon, removeDirectory, \
-                                    waitStopDaemon, convertStringToBool
+                                    waitStopDaemon, convertStringToBool, \
+                                    socketStatus
 
 
 class OpenOffice(Application):
@@ -103,6 +105,19 @@ class OpenOffice(Application):
     waitStartDaemon(self, self.timeout)
     return self._testOpenOffice(self.hostname, self.port)
 
+  def _releaseOpenOfficePort(self):
+    for process in psutil.process_iter():
+      try:
+        if process.exe == join(self.office_binary_path, self._bin_soffice):
+          connection_list = process.get_connections()
+          if len(connection_list) > 0 and \
+              connection_list[0].local_address[1] == self.port:
+            process.terminate()
+      except psutil.error.AccessDenied, e:
+        logger.error(e)
+      except NotImplementedError, e:
+        logger.error("lsof isn't installed on this machine: " + str(e))
+
   def start(self):
     """Start Instance."""
     if not xvfb.status():
@@ -128,6 +143,8 @@ class OpenOffice(Application):
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
     env["DISPLAY"] = ":%s" % self.display_id
+    if socketStatus(self.hostname, self.port):
+      self._releaseOpenOfficePort()
     process_started = self._start_process(self.command, env)
     if not process_started:
       self.stop()
