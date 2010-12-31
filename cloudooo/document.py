@@ -71,6 +71,7 @@ class FileSystemDocument(object):
     open(file_path, 'wb').write(self.original_data)
     # If is a zipfile is need extract all files from whitin the compressed file
     if is_zipfile(file_path):
+      zip_path = file_path
       zipfile = ZipFile(file_path)
       zip_filename_list = zipfile.namelist()
       if 'mimetype' not in zip_filename_list and \
@@ -86,6 +87,7 @@ class FileSystemDocument(object):
             if mimetypes.guess_type(filename)[0] in mimetype_list:
               file_path = join(self.directory_name, filename)
               break
+      remove(zip_path)
     return file_path
 
   def getContent(self, zip=False):
