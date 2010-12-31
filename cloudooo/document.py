@@ -75,6 +75,7 @@ class FileSystemDocument(object):
       zip_filename_list = zipfile.namelist()
       if 'mimetype' not in zip_filename_list and \
           '[Content_Types].xml' not in zip_filename_list:
+        zipfile_path = file_path
         zipfile.extractall(path=self.directory_name)
         zipfile.close()
         filename_list = listdir(self.directory_name)
@@ -86,6 +87,8 @@ class FileSystemDocument(object):
             if mimetypes.guess_type(filename)[0] in mimetype_list:
               file_path = join(self.directory_name, filename)
               break
+        if zipfile_path != file_path:
+          remove(zipfile_path)
     return file_path
 
   def getContent(self, zip=False):
