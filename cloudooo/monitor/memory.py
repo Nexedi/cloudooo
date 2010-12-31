@@ -49,15 +49,17 @@ class MonitorMemory(Monitor, Process):
 
   def get_memory_usage(self):
     try:
-      if not hasattr(self, 'process'):
+      if not hasattr(self, 'process') or \
+          self.process.pid != int(self.openoffice.pid()):
         self.create_process()
-      elif self.process.pid != int(self.openoffice.pid()):
-        self.create_process()
+      return sum(self.process.get_memory_info()) / (1024 * 1024)
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0
-    # convert bytes to MB
-    return sum(self.process.get_memory_info()) / (1024 * 1024)
+    except psutil.NoSuchProcess, e:
+      # Exception raised when a process with a certain PID doesn't or no longer
+      # exists (zombie).
+      return 0
 
   def run(self):
     """Is called by start function. this function is responsible for
