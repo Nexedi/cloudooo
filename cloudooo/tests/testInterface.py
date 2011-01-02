@@ -27,24 +27,24 @@
 ##############################################################################
 
 import unittest
-from cloudooo.document import FileSystemDocument, OdfDocument
-from cloudooo.handler.oohandler import OOHandler
-from cloudooo.application.openoffice import OpenOffice
+from cloudooo.handler.ooo.document import FileSystemDocument, OdfDocument
+from cloudooo.handler.ooo.handler import OOHandler
+from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudooo.manager import Manager
-from cloudooo.mimemapper import MimeMapper
-from cloudooo.filter import Filter
-from cloudooo.application.xvfb import Xvfb
-from cloudooo.monitor.request import MonitorRequest
+from cloudooo.handler.ooo.mimemapper import MimeMapper
+from cloudooo.handler.ooo.filter import Filter
+from cloudooo.handler.ooo.application.xvfb import Xvfb
+from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.granulator import OOGranulator
-from cloudooo.interfaces.document import IDocument, IOdfDocument
-from cloudooo.interfaces.lockable import ILockable
-from cloudooo.interfaces.manager import IManager
-from cloudooo.interfaces.application import IApplication
-from cloudooo.interfaces.filter import IFilter
-from cloudooo.interfaces.mimemapper import IMimemapper
-from cloudooo.interfaces.handler import IHandler
-from cloudooo.interfaces.monitor import IMonitor
-from cloudooo.interfaces.granulate import ITableGranulator, \
+from cloudooo.handler.ooo.interfaces.document import IDocument, IOdfDocument
+from cloudooo.handler.ooo.interfaces.lockable import ILockable
+from cloudooo.handler.ooo.interfaces.manager import IManager
+from cloudooo.handler.ooo.interfaces.application import IApplication
+from cloudooo.handler.ooo.interfaces.filter import IFilter
+from cloudooo.handler.ooo.interfaces.mimemapper import IMimemapper
+from cloudooo.handler.ooo.interfaces.handler import IHandler
+from cloudooo.handler.ooo.interfaces.monitor import IMonitor
+from cloudooo.handler.ooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
 from cloudoooTestCase import make_suite

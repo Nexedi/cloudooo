@@ -26,10 +26,10 @@
 #
 ##############################################################################
 
-from cloudooo.monitor.monitor import Monitor
+from monitor import Monitor
 from multiprocessing import Process
 import psutil
-from cloudooo.utils import logger
+from cloudooo.handler.ooo.utils import logger
 from time import sleep
 
 

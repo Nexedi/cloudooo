@@ -27,10 +27,10 @@
 ##############################################################################
 
 from subprocess import Popen, PIPE
-from cloudooo.utils import logger, waitStartDaemon, remove_file
+from cloudooo.handler.ooo.utils import logger, waitStartDaemon, remove_file
 from zope.interface import implements
 from application import Application
-from cloudooo.interfaces.application import IApplication
+from cloudooo.handler.ooo.interfaces.application import IApplication
 from os.path import exists
 
 

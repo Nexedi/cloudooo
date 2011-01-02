@@ -32,7 +32,7 @@ from base64 import decodestring
 from os import path
 from os import remove
 from zipfile import ZipFile, is_zipfile
-from cloudooo.document import FileSystemDocument
+from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudoooTestCase import make_suite
 
 

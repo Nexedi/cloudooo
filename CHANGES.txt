@@ -1,5 +1,7 @@
 1.0.10 (unreleased)
 ===================
+  - Change folder structure of cloudooo to put handler, mimemapper, helpers
+    related to handler in same folder than handler.
   - Refactor code to use json instead of jsonpickle.
   - Add getTableItem, getTableItemList and getTableMatrix for OOGranulate
   - Add getParagraphItemList and getParagraphItem for OOGranulate

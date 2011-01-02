@@ -28,9 +28,9 @@
 
 import unittest
 from time import sleep
-from cloudooo.monitor.request import MonitorRequest
+from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.application.openoffice import openoffice
 
 
 class TestMonitorRequest(cloudoooTestCase):

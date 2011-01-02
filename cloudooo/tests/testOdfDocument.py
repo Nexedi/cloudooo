@@ -30,7 +30,7 @@ import unittest
 from zipfile import ZipFile
 from lxml import etree
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.document import OdfDocument
+from cloudooo.handler.ooo.document import OdfDocument
 
 class TestOdfDocument(cloudoooTestCase):
 

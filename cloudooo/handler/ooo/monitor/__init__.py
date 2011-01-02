@@ -1,6 +1,6 @@
 from request import MonitorRequest
 from memory import MonitorMemory
-from cloudooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.application.openoffice import openoffice
 
 monitor_request = None
 monitor_memory = None

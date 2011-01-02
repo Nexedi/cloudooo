@@ -28,7 +28,8 @@
 
 import unittest
 import logging
-from cloudooo.utils import logger, configureLogger, convertStringToBool
+from cloudooo.handler.ooo.utils import logger, configureLogger, \
+                                               convertStringToBool
 from cloudoooTestCase import make_suite
 
 

@@ -29,7 +29,7 @@
 import unittest
 import json
 import pkg_resources
-from cloudooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ, path
 from cloudoooTestCase import cloudoooTestCase, make_suite
@@ -55,7 +55,8 @@ class TestUnoMimeMapper(cloudoooTestCase):
     hostname, host = openoffice.getAddress()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
-            pkg_resources.resource_filename("cloudooo", "helper/unomimemapper.py"),
+            pkg_resources.resource_filename("cloudooo",
+                                       "handler/ooo/helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
             "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
@@ -77,7 +78,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     hostname, host = openoffice.getAddress()
     command = [path.join(self.office_binary_path, "python"),
             pkg_resources.resource_filename("cloudooo", 
-                                            "helper/unomimemapper.py"),
+                                       "handler/ooo/helper/unomimemapper.py"),
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
     stdout, stderr = Popen(' '.join(command), shell=True,
@@ -100,7 +101,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo", 
-                                            "helper/unomimemapper.py"),
+                                            "handler/ooo/helper/unomimemapper.py"),
             "'--uno_path=%s'" % self.uno_path,
             "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
@@ -108,7 +109,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stdout, '')
-    self.assertEquals(stderr.endswith(error_msg), True)
+    self.assertEquals(stderr.endswith(error_msg), True, stderr)
     openoffice.start()
 
 

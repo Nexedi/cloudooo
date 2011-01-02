@@ -28,9 +28,9 @@
 
 import unittest
 from cloudoooTestCase import cloudoooTestCase
-from cloudooo.application.openoffice import OpenOffice
+from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
-from cloudooo.utils import waitStopDaemon
+from cloudooo.handler.ooo.utils import waitStopDaemon
 from psutil import Process, AccessDenied
 
 

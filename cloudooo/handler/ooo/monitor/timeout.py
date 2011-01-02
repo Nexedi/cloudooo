@@ -26,21 +26,33 @@
 #
 ##############################################################################
 
-from zope.interface import implements
-from cloudooo.interfaces.monitor import IMonitor
+from monitor import Monitor
+from multiprocessing import Process
+from time import sleep
+from cloudooo.handler.ooo.utils import logger
 
 
-class Monitor(object):
-  """ """
-
-  implements(IMonitor)
+class MonitorTimeout(Monitor, Process):
+  """Monitors and controls the time of use of an object"""
 
   def __init__(self, openoffice, interval):
-    """Expects an openoffice object and the interval"""
-    self.status_flag = False
-    self.openoffice = openoffice
-    self.interval = interval
+    """Expects to receive an object that implements the interfaces IApplication
+    and ILockable. And the interval to check the object."""
+    Monitor.__init__(self, openoffice, interval)
+    Process.__init__(self)
+
+  def run(self):
+    """Start the process"""
+    port = self.openoffice.getAddress()[-1]
+    pid = self.openoffice.pid()
+    logger.debug("Monitoring OpenOffice: Port %s, Pid: %s" % (port, pid))
+    self.status_flag = True
+    sleep(self.interval)
+    if self.openoffice.isLocked():
+      logger.debug("Stop OpenOffice - Port %s - Pid %s" % (port, pid))
+      self.openoffice.stop()
 
   def terminate(self):
-    """Set False in monitor flag"""
-    self.status_flag = False
+    """Stop the process"""
+    Monitor.terminate(self)
+    Process.terminate(self)

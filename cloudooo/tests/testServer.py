@@ -282,8 +282,9 @@ class TestServer(cloudoooTestCase):
 
   def testConvertPNGToSVG(self):
     """Test export png to svg"""
+    output_url = join(self.tmp_url, "output.svg")
     self._testConvertFile("data/test.png",
-                          join("output.svg"),
+                          output_url,
                           'png',
                           'svg',
                           'SVG Scalable Vector Graphics image\n')

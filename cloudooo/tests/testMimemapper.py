@@ -28,8 +28,8 @@
 
 import unittest
 from cloudoooTestCase import cloudoooTestCase
-from cloudooo.application.openoffice import openoffice
-from cloudooo.mimemapper import MimeMapper
+from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudoooTestCase import make_suite
 
 text_expected_tuple = (('doc', 'Microsoft Word 6.0'),

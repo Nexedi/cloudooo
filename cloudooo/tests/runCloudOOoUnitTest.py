@@ -4,7 +4,7 @@ import sys
 import unittest
 from getopt import getopt, GetoptError
 from time import sleep
-from cloudooo.utils import socketStatus
+from cloudooo.handler.ooo.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir
 from subprocess import Popen

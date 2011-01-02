@@ -30,10 +30,10 @@
 from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
-from interfaces.manager import IManager, IERP5Compatibility
-from handler.oohandler import OOHandler
-from mimemapper import mimemapper
-from utils import logger
+from handler.ooo.interfaces.manager import IManager, IERP5Compatibility
+from handler.ooo.handler import OOHandler
+from handler.ooo.mimemapper import mimemapper
+from handler.ooo.utils import logger
 
 
 class Manager(object):

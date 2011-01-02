@@ -31,8 +31,8 @@ from os import path
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import cloudoooTestCase
-from cloudooo.handler.oohandler import OOHandler
-from cloudooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.handler import OOHandler
+from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudoooTestCase import make_suite
 import os
 from lxml import etree

@@ -26,33 +26,36 @@
 #
 ##############################################################################
 
-from cloudooo.monitor.monitor import Monitor
-from multiprocessing import Process
+from monitor import Monitor
+from threading import Thread
+from cloudooo.handler.ooo.utils import logger
 from time import sleep
-from cloudooo.utils import logger
 
 
-class MonitorTimeout(Monitor, Process):
-  """Monitors and controls the time of use of an object"""
+class MonitorRequest(Monitor, Thread):
+  """Usefull to control the number of request in Object"""
 
-  def __init__(self, openoffice, interval):
+  def __init__(self, openoffice, interval, request_limit):
     """Expects to receive an object that implements the interfaces IApplication
-    and ILockable. And the interval to check the object."""
+    and ILockable, the limit of request that the openoffice can receive and the
+    interval to check the object."""
     Monitor.__init__(self, openoffice, interval)
-    Process.__init__(self)
+    Thread.__init__(self)
+    self.request_limit = request_limit
+
+  def start(self):
+    self.status_flag = True
+    Thread.start(self)
 
   def run(self):
-    """Start the process"""
-    port = self.openoffice.getAddress()[-1]
-    pid = self.openoffice.pid()
-    logger.debug("Monitoring OpenOffice: Port %s, Pid: %s" % (port, pid))
-    self.status_flag = True
-    sleep(self.interval)
-    if self.openoffice.isLocked():
-      logger.debug("Stop OpenOffice - Port %s - Pid %s" % (port, pid))
-      self.openoffice.stop()
-
-  def terminate(self):
-    """Stop the process"""
-    Monitor.terminate(self)
-    Process.terminate(self)
+    """Is called by start function"""
+    logger.debug("Start MonitorRequest")
+    while self.status_flag:
+      if self.openoffice.request > self.request_limit:
+        self.openoffice.acquire()
+        logger.debug("Openoffice: %s, %s will be restarted" % \
+          self.openoffice.getAddress())
+        self.openoffice.restart()
+        self.openoffice.release()
+      sleep(self.interval)
+    logger.debug("Stop MonitorRequest ")

@@ -28,8 +28,8 @@
 
 import unittest
 from time import sleep
-from cloudooo.application.openoffice import openoffice
-from cloudooo.monitor.timeout import MonitorTimeout
+from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
 from cloudoooTestCase import make_suite
 
 

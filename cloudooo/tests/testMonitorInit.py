@@ -27,10 +27,10 @@
 ##############################################################################
 
 import unittest
-import cloudooo.monitor
+import cloudooo.handler.ooo.monitor as monitor
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.monitor.request import MonitorRequest
-from cloudooo.monitor.memory import MonitorMemory
+from cloudooo.handler.ooo.monitor.request import MonitorRequest
+from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 
 
 class TestMonitorInit(cloudoooTestCase):
@@ -45,28 +45,28 @@ class TestMonitorInit(cloudoooTestCase):
 
   def tearDown(self):
     """stop all monitors"""
-    cloudooo.monitor.stop()
+    monitor.stop()
 
   def testMonitorInitGlobalAttributes(self):
     """Test the global attributes"""
-    self.assertEquals(cloudooo.monitor.monitor_request, None)
-    self.assertEquals(cloudooo.monitor.monitor_memory, None)
+    self.assertEquals(monitor.monitor_request, None)
+    self.assertEquals(monitor.monitor_memory, None)
 
   def testMonitorLoadOnlyMonitorRequest(self):
     """Check if the monitors are started"""
-    cloudooo.monitor.load(self.load_config)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, 
+    monitor.load(self.load_config)
+    self.assertEquals(isinstance(monitor.monitor_request, 
                                 MonitorRequest),
                                 True)
   
   def testMonitorLoadMonitorMemory(self):
     """Check if the MemoryMemory is started"""
     self.load_config['enable_memory_monitor'] = True
-    cloudooo.monitor.load(self.load_config)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_request, 
+    monitor.load(self.load_config)
+    self.assertEquals(isinstance(monitor.monitor_request, 
                                  MonitorRequest),
                                  True)
-    self.assertEquals(isinstance(cloudooo.monitor.monitor_memory,
+    self.assertEquals(isinstance(monitor.monitor_memory,
                                  MonitorMemory),
                                  True)
 

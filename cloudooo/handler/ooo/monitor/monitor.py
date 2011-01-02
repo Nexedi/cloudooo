@@ -26,36 +26,21 @@
 #
 ##############################################################################
 
-from cloudooo.monitor.monitor import Monitor
-from threading import Thread
-from cloudooo.utils import logger
-from time import sleep
+from zope.interface import implements
+from cloudooo.handler.ooo.interfaces.monitor import IMonitor
 
 
-class MonitorRequest(Monitor, Thread):
-  """Usefull to control the number of request in Object"""
+class Monitor(object):
+  """ """
 
-  def __init__(self, openoffice, interval, request_limit):
-    """Expects to receive an object that implements the interfaces IApplication
-    and ILockable, the limit of request that the openoffice can receive and the
-    interval to check the object."""
-    Monitor.__init__(self, openoffice, interval)
-    Thread.__init__(self)
-    self.request_limit = request_limit
+  implements(IMonitor)
 
-  def start(self):
-    self.status_flag = True
-    Thread.start(self)
+  def __init__(self, openoffice, interval):
+    """Expects an openoffice object and the interval"""
+    self.status_flag = False
+    self.openoffice = openoffice
+    self.interval = interval
 
-  def run(self):
-    """Is called by start function"""
-    logger.debug("Start MonitorRequest")
-    while self.status_flag:
-      if self.openoffice.request > self.request_limit:
-        self.openoffice.acquire()
-        logger.debug("Openoffice: %s, %s will be restarted" % \
-          self.openoffice.getAddress())
-        self.openoffice.restart()
-        self.openoffice.release()
-      sleep(self.interval)
-    logger.debug("Stop MonitorRequest ")
+  def terminate(self):
+    """Set False in monitor flag"""
+    self.status_flag = False

@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-from cloudooo.filter import Filter
+from cloudooo.handler.ooo.filter import Filter
 from cloudoooTestCase import make_suite
 
 

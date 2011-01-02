@@ -27,14 +27,14 @@
 ##############################################################################
 
 import gc
-import monitor
+import handler.ooo.monitor as monitor
 from signal import signal, SIGHUP
-from application.openoffice import openoffice
-from application.xvfb import xvfb
+from handler.ooo.application.openoffice import openoffice
+from handler.ooo.application.xvfb import xvfb
 from wsgixmlrpcapplication import WSGIXMLRPCApplication
-from utils import convertStringToBool, configureLogger
+from handler.ooo.utils import convertStringToBool, configureLogger
 from os import path, mkdir
-from mimemapper import mimemapper
+from handler.ooo.mimemapper import mimemapper
 
 
 def stopProcesses():

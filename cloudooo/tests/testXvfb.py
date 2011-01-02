@@ -28,8 +28,8 @@
 
 import unittest
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.application.xvfb import Xvfb
-from cloudooo.utils import waitStopDaemon
+from cloudooo.handler.ooo.application.xvfb import Xvfb
+from cloudooo.hanlder.ooo.utils import waitStopDaemon
 
 
 class TestXvfb(cloudoooTestCase):

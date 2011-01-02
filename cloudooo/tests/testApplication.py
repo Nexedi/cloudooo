@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-from cloudooo.application.application import Application
+from cloudooo.handler.ooo.application.application import Application
 from cloudoooTestCase import make_suite
 
 

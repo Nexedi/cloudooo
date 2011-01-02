@@ -32,8 +32,8 @@ import pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists, join
 from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.application.openoffice import openoffice
-from cloudooo.document import FileSystemDocument
+from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.document import FileSystemDocument
 
 
 class TestUnoConverter(cloudoooTestCase):
@@ -63,7 +63,7 @@ class TestUnoConverter(cloudoooTestCase):
     python = join(self.office_binary_path, "python")
     command = [exists(python) and python or "python",
           pkg_resources.resource_filename("cloudooo", 
-                                          "helper/unoconverter.py"),
+                                          "handler/ooo/helper/unoconverter.py"),
           "'--convert'",
           "--uno_path='%s'" % self.uno_path,
           "--office_binary_path='%s'" % self.office_binary_path,
