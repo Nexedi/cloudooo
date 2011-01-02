@@ -90,12 +90,10 @@ class OOHandler:
     """start the Monitor"""
     self.monitor = MonitorTimeout(openoffice, self.timeout)
     self.monitor.start()
-    return
 
   def _stopTimeout(self):
     """stop the Monitor"""
     self.monitor.terminate()
-    return
 
   def _subprocess(self, command):
     """Run one procedure"""
@@ -107,10 +105,14 @@ class OOHandler:
                     stderr=PIPE,
                     close_fds=True)
       stdout, stderr = process.communicate()
+    except OSError, e:
+      self.monitor = process = None
+      stdout, stderr = "", "OSError: %s" % e
     finally:
-      self._stopTimeout()
-      if pid_exists(process.pid):
-        process.terminate()
+      if self.monitor is not None and process is not None:
+        self._stopTimeout()
+        if pid_exists(process.pid):
+          process.terminate()
     return stdout, stderr
 
   def _callUnoConverter(self, *feature_list, **kw):
