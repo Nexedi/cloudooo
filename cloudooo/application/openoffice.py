@@ -114,10 +114,10 @@ class OpenOffice(Application):
               connection_list[0].local_address[1] == self.port:
             process.terminate()
       except psutil.error.AccessDenied, e:
-        logger.error(e)
+        logger.debug(e)
       except TypeError, e:
         # exception to prevent one psutil issue with svn processes
-        logger.error(e)
+        logger.debug(e)
       except NotImplementedError, e:
         logger.error("lsof isn't installed on this machine: " + str(e))
 
