@@ -31,7 +31,7 @@ setup(name='cloudooo',
           'PasteDeploy',
           'PasteScript',
           'WSGIUtils',
-          'psutil',
+          'psutil>=0.2.0',
           'lxml',
       ],
       entry_points="""
