@@ -35,7 +35,7 @@ from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
 from StringIO import StringIO
 from lxml import etree
-from interfaces.document import IDocument, IOdfDocument
+from cloudooo.interfaces.document import IDocument, IOdfDocument
 
 
 class FileSystemDocument(object):

@@ -27,7 +27,7 @@
 ##############################################################################
 
 from zope.interface import implements
-from interfaces.filter import IFilter
+from cloudooo.interfaces.filter import IFilter
 
 
 class Filter(object):

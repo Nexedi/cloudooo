@@ -36,15 +36,15 @@ from cloudooo.handler.ooo.filter import Filter
 from cloudooo.handler.ooo.application.xvfb import Xvfb
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.granulator import OOGranulator
-from cloudooo.handler.ooo.interfaces.document import IDocument, IOdfDocument
-from cloudooo.handler.ooo.interfaces.lockable import ILockable
-from cloudooo.handler.ooo.interfaces.manager import IManager
-from cloudooo.handler.ooo.interfaces.application import IApplication
-from cloudooo.handler.ooo.interfaces.filter import IFilter
-from cloudooo.handler.ooo.interfaces.mimemapper import IMimemapper
-from cloudooo.handler.ooo.interfaces.handler import IHandler
-from cloudooo.handler.ooo.interfaces.monitor import IMonitor
-from cloudooo.handler.ooo.interfaces.granulate import ITableGranulator, \
+from cloudooo.interfaces.document import IDocument, IOdfDocument
+from cloudooo.interfaces.lockable import ILockable
+from cloudooo.interfaces.manager import IManager
+from cloudooo.interfaces.application import IApplication
+from cloudooo.interfaces.filter import IFilter
+from cloudooo.interfaces.mimemapper import IMimemapper
+from cloudooo.interfaces.handler import IHandler
+from cloudooo.interfaces.monitor import IMonitor
+from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
 from cloudoooTestCase import make_suite

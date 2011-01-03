@@ -33,7 +33,7 @@ from lxml import etree
 from os import path
 from cloudooo.handler.ooo.utils import logger
 from cloudooo.handler.ooo.document import OdfDocument
-from cloudooo.handler.ooo.interfaces.granulate import ITableGranulator, \
+from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
 

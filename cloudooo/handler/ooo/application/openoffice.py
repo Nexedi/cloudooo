@@ -35,7 +35,7 @@ from threading import Lock
 from zope.interface import implements
 from application import Application
 from xvfb import xvfb
-from cloudooo.handler.ooo.interfaces.lockable import ILockable
+from cloudooo.interfaces.lockable import ILockable
 from cloudooo.handler.ooo.utils import logger, waitStartDaemon, \
                                     removeDirectory, waitStopDaemon, \
                                     convertStringToBool, socketStatus

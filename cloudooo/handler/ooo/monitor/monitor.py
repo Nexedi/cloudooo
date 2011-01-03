@@ -27,7 +27,7 @@
 ##############################################################################
 
 from zope.interface import implements
-from cloudooo.handler.ooo.interfaces.monitor import IMonitor
+from cloudooo.interfaces.monitor import IMonitor
 
 
 class Monitor(object):

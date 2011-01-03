@@ -32,7 +32,7 @@ from subprocess import Popen, PIPE
 from zope.interface import implements
 from filter import Filter
 from os import environ, path
-from interfaces.mimemapper import IMimemapper
+from cloudooo.interfaces.mimemapper import IMimemapper
 from types import InstanceType
 from utils import getCleanPythonEnvironment
 import json

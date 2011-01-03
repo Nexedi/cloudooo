@@ -35,7 +35,7 @@ from subprocess import Popen, PIPE
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.application.xvfb import xvfb
 from zope.interface import implements
-from cloudooo.handler.ooo.interfaces.handler import IHandler
+from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
