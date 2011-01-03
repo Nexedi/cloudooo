@@ -39,7 +39,7 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
-from cloudooo.handler.ooo.utils import logger
+from cloudooo.utils.utils import logger
 from psutil import pid_exists
 
 

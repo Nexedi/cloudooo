@@ -29,7 +29,6 @@
 import sys
 from multiprocessing import Process
 from os import listdir
-from cloudooo.utils import usage
 from xmlrpclib import ServerProxy
 from os.path import join
 from getopt import getopt, GetoptError
@@ -133,13 +132,13 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "hc:n:f:s:l:", ["help"])
   except GetoptError, msg:
     msg = msg.msg + help_msg
-    usage(sys.stderr, msg)
+    print >> sys.stderr, msg
     sys.exit(2)
 
   kw = {}
   for opt, arg in opt_list:
     if opt in ('-h', '--help'):
-      usage(sys.stdout, __doc__)
+      print >> sys.stdout, __doc__
       sys.exit(2)
     elif opt == '-c':
       number_client = int(arg)

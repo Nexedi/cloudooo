@@ -31,7 +31,7 @@ from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
 from os import path
-from cloudooo.handler.ooo.utils import logger
+from cloudooo.utils.utils import logger
 from cloudooo.handler.ooo.document import OdfDocument
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \

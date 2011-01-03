@@ -34,7 +34,7 @@ from filter import Filter
 from os import environ, path
 from cloudooo.interfaces.mimemapper import IMimemapper
 from types import InstanceType
-from utils import getCleanPythonEnvironment
+from cloudooo.utils.utils import getCleanPythonEnvironment
 import json
 
 

@@ -28,7 +28,7 @@
 
 from monitor import Monitor
 from threading import Thread
-from cloudooo.handler.ooo.utils import logger
+from cloudooo.utils.utils import logger
 from time import sleep
 
 

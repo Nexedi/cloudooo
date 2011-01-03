@@ -27,7 +27,8 @@
 ##############################################################################
 
 from subprocess import Popen, PIPE
-from cloudooo.handler.ooo.utils import logger, waitStartDaemon, remove_file
+from cloudooo.utils.utils import logger
+from cloudooo.handler.ooo.utils.utils import waitStartDaemon, remove_file
 from zope.interface import implements
 from application import Application
 from cloudooo.interfaces.application import IApplication
@@ -55,7 +56,6 @@ class Xvfb(Application):
   def start(self):
     """Method to start Virtual Frame Buffer."""
     self.command = ["Xvfb", "-ac", ":%s" % self.display_id, \
-#        "-nolisten", "tcp",
         "-screen", self.virtual_screen, "800x600x16", \
         "-fbdir", self.path_run_dir]
     self.process = Popen(" ".join(self.command),

@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2010 Nexedi SA and Contributors. All Rights Reserved.
-#                    Hugo H. Maia Vieira <hugomaia@tiolive.com>
+# Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gabriel@tiolive.com>
 #
 # WARNING: This program as such is intended to be used by professional
 # programmers who take the whole responsibility of assessing all potential
@@ -26,23 +26,52 @@
 #
 ##############################################################################
 
-import unittest
-from cloudoooTestCase import cloudoooTestCase, make_suite
-from cloudooo.manager import Manager
+from socket import socket, error
+from errno import EADDRINUSE
+from time import sleep
+from os import remove, environ
+from shutil import rmtree
+from cloudooo.utils.utils import logger
 
 
-class TestGranulate(cloudoooTestCase):
+def removeDirectory(path):
+  """Remove directory"""
+  try:
+    rmtree(path)
+  except OSError, msg:
+    logger.error(msg)
 
-  def testGranulateFile(self):
-    """Test if the granulateFile returns the grains correctly"""
-    manager = Manager('some/path')
-    self.assertRaises(NotImplementedError, manager.granulateFile, 'some/file',
-                                                                  'odt')
+
+def socketStatus(hostname, port):
+  """Verify if the address is busy."""
+  try:
+    socket().bind((hostname, port),)
+    # False if the is free
+    return False
+  except error, (num, err):
+    if num == EADDRINUSE:
+      # True if the isn't free
+      return True
 
 
-def test_suite():
-  return make_suite(TestGranulate)
+def waitStartDaemon(daemon, attempts):
+  """Wait a certain time to start the daemon."""
+  for num in range(attempts):
+    sleep(1)
+    if daemon.status():
+      return
 
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestGranulate)
-  unittest.TextTestRunner(verbosity=2).run(suite)
+
+def waitStopDaemon(daemon, attempts=5):
+  """Wait a certain time to stop the daemon."""
+  for num in range(attempts):
+    sleep(1)
+    if not daemon.status():
+      break
+
+
+def remove_file(filepath):
+  try:
+    remove(filepath)
+  except OSError, msg:
+    print msg.strerror

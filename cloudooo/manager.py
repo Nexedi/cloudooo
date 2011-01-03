@@ -33,7 +33,7 @@ from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
 from handler.ooo.handler import OOHandler
 from handler.ooo.mimemapper import mimemapper
-from handler.ooo.utils import logger
+from utils.utils import logger
 
 
 class Manager(object):

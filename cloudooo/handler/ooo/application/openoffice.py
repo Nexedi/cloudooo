@@ -36,9 +36,10 @@ from zope.interface import implements
 from application import Application
 from xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
-from cloudooo.handler.ooo.utils import logger, waitStartDaemon, \
-                                    removeDirectory, waitStopDaemon, \
-                                    convertStringToBool, socketStatus
+from cloudooo.utils.utils import logger, convertStringToBool
+from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
+                                      removeDirectory, waitStopDaemon, \
+                                      socketStatus
 
 
 class OpenOffice(Application):
@@ -114,10 +115,10 @@ class OpenOffice(Application):
               connection_list[0].local_address[1] == self.port:
             process.terminate()
       except psutil.error.AccessDenied, e:
-        logger.error(e)
+        logger.debug(e)
       except TypeError, e:
         # exception to prevent one psutil issue with svn processes
-        logger.error(e)
+        logger.debug(e)
       except NotImplementedError, e:
         logger.error("lsof isn't installed on this machine: " + str(e))
 

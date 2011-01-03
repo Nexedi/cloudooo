@@ -33,7 +33,7 @@ from os import path, mkdir
 from os import environ, putenv
 from cloudooo.handler.ooo.application.xvfb import xvfb
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from cloudooo.handler.ooo.utils import waitStartDaemon
+from cloudooo.handler.ooo.utils.utils import waitStartDaemon
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
 config = ConfigParser()

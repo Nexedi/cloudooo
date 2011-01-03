@@ -29,7 +29,7 @@
 from monitor import Monitor
 from multiprocessing import Process
 import psutil
-from cloudooo.handler.ooo.utils import logger
+from cloudooo.utils.utils import logger
 from time import sleep
 
 
