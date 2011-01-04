@@ -85,7 +85,7 @@ class OpenOffice(Application):
     self.request = 0
 
   def loadSettings(self, hostname, port, path_run_dir, display_id,
-      office_binary_path, uno_path, **kw):
+      office_binary_path, uno_path, default_language, **kw):
     """Method to load the configuratio to control one OpenOffice Instance
     Keyword arguments:
     office_path -- Full Path of the OOo executable.
@@ -95,6 +95,7 @@ class OpenOffice(Application):
     Application.loadSettings(self, hostname, port, path_run_dir, display_id)
     self.office_binary_path = office_binary_path
     self.uno_path = uno_path
+    self.default_language = default_language
 
   def _start_process(self, command, env):
     """Start OpenOffice.org process"""
@@ -140,6 +141,7 @@ class OpenOffice(Application):
          '-display',
          ':%s' % self.display_id,
          '-env:UserInstallation=file://%s' % self.path_user_installation,
+         '-language=%s' % self.default_language,
          ]
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process

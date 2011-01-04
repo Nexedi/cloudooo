@@ -91,7 +91,10 @@ def application(global_config, **local_config):
                           working_path,
                           local_config.get('virtual_display_id'),
                           local_config.get('office_binary_path'),
-                          local_config.get('uno_path'))
+                          local_config.get('uno_path'),
+                          local_config.get('openoffice_user_interface_language',
+                                           'en'),
+                          )
   openoffice.start()
 
   monitor.load(local_config)
