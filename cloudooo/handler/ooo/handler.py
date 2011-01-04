@@ -39,6 +39,7 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
+from cloudooo.handler.ooo.monitor import monitor_sleeping_time
 from cloudooo.utils.utils import logger
 from psutil import pid_exists
 
@@ -99,6 +100,8 @@ class OOHandler:
 
   def _subprocess(self, command):
     """Run one procedure"""
+    if monitor_sleeping_time is not None:
+      monitor_sleeping_time.touch()
     try:
       self._startTimeout()
       process = Popen(command,
