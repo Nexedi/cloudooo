@@ -96,12 +96,16 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   waitStartDaemon(xvfb, 10) 
 
   if start_openoffice:
+    default_language = config.get('app:main',
+                                    'openoffice_user_interface_language', 
+                                    'en')
     openoffice.loadSettings(hostname,
                             openoffice_port, 
                             working_path,
                             virtual_display_id,
                             office_binary_path, 
-                            uno_path)
+                            uno_path,
+                            default_language)
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
