@@ -98,11 +98,10 @@ class OpenOffice(Application):
 
   def _start_process(self, command, env):
     """Start OpenOffice.org process"""
-    self.process = Popen(' '.join(command),
-                      stdout=PIPE,
-                      shell=True,
-                      close_fds=True,
-                      env=env)
+    self.process = Popen(command,
+                         close_fds=True,
+                         env=env)
+    returned_code = self.process.poll()
     waitStartDaemon(self, self.timeout)
     return self._testOpenOffice(self.hostname, self.port)
 
