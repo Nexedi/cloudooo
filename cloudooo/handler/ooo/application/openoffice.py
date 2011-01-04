@@ -40,7 +40,7 @@ from cloudooo.utils.utils import logger, convertStringToBool
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
                                       removeDirectory, waitStopDaemon, \
                                       socketStatus
-
+from cloudooo.handler.ooo.utils import getCleanPythonEnvironment
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -136,12 +136,14 @@ class OpenOffice(Application):
          '-nodefault',
          '-norestore',
          '-nofirststartwizard',
-         '"-accept=socket,host=%s,port=%d;urp;StarOffice.ComponentContext"' % \
-              (self.hostname, self.port),
-         '-env:UserInstallation=file://%s' % self.path_user_installation]
+         '-accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
+         '-display',
+         ':%s' % self.display_id,
+         '-env:UserInstallation=file://%s' % self.path_user_installation,
+         ]
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process
-    env = environ.copy()
+    env = getCleanPythonEnvironment()
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
