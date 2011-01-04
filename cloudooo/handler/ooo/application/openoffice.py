@@ -40,7 +40,7 @@ from cloudooo.utils.utils import logger, convertStringToBool
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
                                       removeDirectory, waitStopDaemon, \
                                       socketStatus
-from cloudooo.handler.ooo.utils import getCleanPythonEnvironment
+from cloudooo.utils.utils import getCleanPythonEnvironment
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
