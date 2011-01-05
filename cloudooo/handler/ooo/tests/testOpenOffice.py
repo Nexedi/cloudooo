@@ -96,7 +96,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.working_path + "_",
                                 self.virtual_display_id,
                                 self.office_binary_path,
-                                self.uno_path)
+                                self.uno_path,
+                                'en')
     try:
       second_openoffice.start()
       openoffice_process = Process(self.openoffice.pid())
@@ -110,7 +111,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.working_path + "_",
                                 self.virtual_display_id,
                                 self.office_binary_path,
-                                self.uno_path)
+                                self.uno_path,
+                                'en')
     try:
       second_openoffice.start()
       openoffice_process = Process(self.openoffice.pid())
@@ -129,7 +131,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.working_path + "_",
                                 self.virtual_display_id,
                                 self.office_binary_path,
-                                self.uno_path)
+                                self.uno_path,
+                                'en')
     second_openoffice.start()
 
     third_openoffice = OpenOffice()
@@ -137,7 +140,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.working_path + "_",
                                 self.virtual_display_id,
                                 self.office_binary_path,
-                                self.uno_path)
+                                self.uno_path,
+                                'en')
 
     try:
       third_openoffice.start()
