@@ -30,7 +30,7 @@ from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
 from cloudooo.utils.utils import logger
 from cloudooo.handler.ooo.utils.utils import socketStatus, waitStopDaemon
-from psutil import pid_exists, Process
+from psutil import pid_exists, Process, AccessDenied
 
 
 class Application(object):
@@ -80,7 +80,20 @@ class Application(object):
 
   def status(self):
     """Check by socket if the openoffice work."""
-    return socketStatus(self.hostname, self.port)
+    pid = self.pid()
+    if pid is None:
+      return False
+    process = Process(pid)
+    
+    try:
+      process.exe
+    except AccessDenied:
+      return False
+
+    for connection in process.get_connections():
+      if connection.status == 'LISTEN' and connection.local_address[1] == self.port:
+        return True
+    return False
 
   def getAddress(self):
     """Return port and hostname of OOo Instance."""
@@ -88,6 +101,6 @@ class Application(object):
 
   def pid(self):
     """Returns the pid"""
-    if not hasattr(self, 'process') or not self.status():
+    if not hasattr(self, 'process'):
       return None
     return self.process.pid

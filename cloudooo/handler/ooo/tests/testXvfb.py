@@ -46,13 +46,12 @@ class TestXvfb(cloudoooTestCase):
   def testPid(self):
     """Test pid function to validate if the return is correctly"""
     self.assertEquals(self.xvfb.pid(), None)
-    try:
-      self.xvfb.start()
-      self.assertNotEquals(self.xvfb.pid(), None)
-    finally:
-      self.xvfb.stop()
-      waitStopDaemon(self.xvfb)
-    self.assertEquals(self.xvfb.pid(), None)
+    self.xvfb.start()
+    self.assertNotEquals(self.xvfb.pid(), None)
+    self.assertEquals(self.xvfb.status(), True)
+    self.xvfb.stop()
+    self.assertNotEquals(self.xvfb.pid(), None)
+    self.assertEquals(self.xvfb.status(), False)
 
   def testStatus(self):
     """Test if xvfb is started and stopped correctly"""

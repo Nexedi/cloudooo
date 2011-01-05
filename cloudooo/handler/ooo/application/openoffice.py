@@ -110,14 +110,14 @@ class OpenOffice(Application):
     for process in psutil.process_iter():
       try:
         if process.exe == join(self.office_binary_path, self._bin_soffice):
-          connection_list = process.get_connections()
-          if len(connection_list) > 0 and \
-              connection_list[0].local_address[1] == self.port:
-            process.terminate()
+          for connection in process.get_connections():
+            if connection.status == "LISTEN" and \
+                connection.local_address[1] == self.port:
+              process.terminate()
       except psutil.error.AccessDenied, e:
         logger.debug(e)
       except TypeError, e:
-        # exception to prevent one psutil issue with svn processes
+        # exception to prevent one psutil issue with zombie processes
         logger.debug(e)
       except NotImplementedError, e:
         logger.error("lsof isn't installed on this machine: " + str(e))
