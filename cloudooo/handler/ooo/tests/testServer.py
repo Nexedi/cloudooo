@@ -278,7 +278,7 @@ class TestServer(cloudoooTestCase):
                           'txt',
                           'ASCII text\n')
 
-    self.assertEquals(open(output_url).read().endswith('cloudooo Test\n \n'), True)
+    self.assertTrue(open(output_url).read().endswith('cloudooo Test\n \n'))
 
   def testConvertPNGToSVG(self):
     """Test export png to svg"""
@@ -323,8 +323,8 @@ class TestServer(cloudoooTestCase):
       self.fail(fail_msg)
     except Fault, err:
       msg = "This format is not supported or is invalid"
-      self.assertEquals(err.faultString.endswith(msg), True,
-                        "ConvertFile\n" + err.faultString)
+      self.assertTrue(err.faultString.endswith(msg), 
+                              "ConvertFile\n" + err.faultString)
     
     res = self.proxy.getFileMetadataItemList(data, '')
     self.assertEquals(res['MIMEType'], "text/plain")
@@ -341,8 +341,8 @@ class TestServer(cloudoooTestCase):
       self.fail("")
     except Fault, err:
       err_str = err.faultString
-      self.assertEquals(err_str.endswith(error_msg), True,
-                        "%s\n%s" % (error_msg, err_str))
+      self.assertTrue(err_str.endswith(error_msg),
+                                  "%s\n%s" % (error_msg, err_str))
   
   def testConvertDocumentToImpossibleFormat(self):
     """Try convert one document to format not possible"""
@@ -352,7 +352,7 @@ class TestServer(cloudoooTestCase):
       self.fail("")
     except Fault, err:
       err_str = err.faultString
-      self.assertEquals(err_str.endswith("ErrorCodeIOException\n"), True)
+      self.assertTrue(err_str.endswith("ErrorCodeIOException\n"))
 
   def testRunConvertMethod(self):
     """Test run_convert method"""
@@ -439,7 +439,7 @@ class TestServer(cloudoooTestCase):
       zipfile.extractall(self.tmp_url)
       stdout, stderr = Popen("file -b %s" % png_path, shell=True,
          stdout=PIPE).communicate()
-      self.assertEquals(stdout.startswith('PNG image data'), True, stdout)
+      self.assertTrue(stdout.startswith('PNG image data'), stdout)
       self.assertTrue("8-bit/color RGB" in stdout, stdout)
     finally:
       zipfile.close()
@@ -479,7 +479,7 @@ class TestServer(cloudoooTestCase):
     self.assertEquals(response_code, 402)
     self.assertEquals(type(response_dict), DictType)
     self.assertEquals(response_dict, {})
-    self.assertEquals(response_message.startswith('Traceback'), True)
+    self.assertTrue(response_message.startswith('Traceback'))
 
   def testRunSetMetadata(self):
     """Test run_setmetadata method"""
@@ -518,7 +518,7 @@ class TestServer(cloudoooTestCase):
     response_code, response_dict, response_message = setmetadata_result
     self.assertEquals(response_code, 402)
     self.assertEquals(response_dict, {})
-    self.assertEquals(response_message.startswith('Traceback'), True)
+    self.assertTrue(response_message.startswith('Traceback'))
 
   def testGetAllowedTargetItemList(self):
     """Test if filter name returns correctly with ERP5 API"""

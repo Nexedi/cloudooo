@@ -55,7 +55,7 @@ class TestInterface(unittest.TestCase):
 
   def testITableGranulator(self):
     """Test if OOGranulator implements ITableGranulator"""
-    self.assertEquals(ITableGranulator.implementedBy(OOGranulator), True)
+    self.assertTrue(ITableGranulator.implementedBy(OOGranulator))
     method_list = ['getLineItemList',
                    'getTableItem',
                    'getTableItemList',
@@ -65,7 +65,7 @@ class TestInterface(unittest.TestCase):
 
   def testITextGranulator(self):
     """Test if OOGranulator implements ITextGranulator"""
-    self.assertEquals(ITextGranulator.implementedBy(OOGranulator), True)
+    self.assertTrue(ITextGranulator.implementedBy(OOGranulator))
     method_list = ['getChapterItemList',
                    'getParagraphItem',
                    'getChapterItem',
@@ -74,17 +74,17 @@ class TestInterface(unittest.TestCase):
 
   def testIImageGranulator(self):
     """Test if OOGranulator implements IImageGranulator"""
-    self.assertEquals(IImageGranulator.implementedBy(OOGranulator), True)
+    self.assertTrue(IImageGranulator.implementedBy(OOGranulator))
     method_list = ['getImageItemList', 'getImage']
     self.assertEquals(IImageGranulator.names(), method_list)
 
   def testIDocument(self):
     """Test if FileSystemDocument implements IDocument"""
-    self.assertEquals(IDocument.implementedBy(FileSystemDocument), True)
+    self.assertTrue(IDocument.implementedBy(FileSystemDocument))
 
   def testIOdfDocument(self):
     """Test if OdfDocument implements IOdfDocument"""
-    self.assertEquals(IOdfDocument.implementedBy(OdfDocument), True)
+    self.assertTrue(IOdfDocument.implementedBy(OdfDocument))
     method_list = ['getContentXml',
                    'parsed_content',
                    'source_format',
@@ -93,13 +93,13 @@ class TestInterface(unittest.TestCase):
 
   def testIFilter(self):
     """Test if Filter implements IDocument"""
-    self.assertEquals(IFilter.implementedBy(Filter), True)
+    self.assertTrue(IFilter.implementedBy(Filter))
     self.assertEquals(IFilter.names(), ['getLabel', 'getName', 'getSortIndex',
       'isPreferred', 'getDocumentService', 'getExtension', 'getMimetype'])
 
   def testIManager(self):
     """Test if Manager implements IManager"""
-    self.assertEquals(IManager.implementedBy(Manager), True)
+    self.assertTrue(IManager.implementedBy(Manager))
     method_list = ['convertFile',
                   'getFileMetadataItemList',
                   'updateFileMetadata',
@@ -107,7 +107,7 @@ class TestInterface(unittest.TestCase):
                   'granulateFile']
 
     for method in method_list:
-      self.assertEquals(method in IManager.names(), True)
+      self.assertTrue(method in IManager.names())
     self.assertEquals(len(method_list), len(IManager.names()))
 
     self.assertEquals(IManager.get('convertFile').required, ('file',
@@ -125,9 +125,9 @@ class TestInterface(unittest.TestCase):
         'getFilterList', 'getAllowedExtensionList', 'getMimetypeByFilterType',
         'isLoaded']
     for method in method_list:
-      self.assertEquals(method in IMimemapper.names(), True)
+      self.assertTrue(method in IMimemapper.names())
 
-    self.assertEquals(IMimemapper.implementedBy(MimeMapper), True)
+    self.assertTrue(IMimemapper.implementedBy(MimeMapper))
     self.assertEquals(len(method_list), len(IMimemapper.names()))
     self.assertEquals(IMimemapper.get('getFilterName').required,
                                   ('extension', 'document_type'))
@@ -141,16 +141,16 @@ class TestInterface(unittest.TestCase):
 
   def testIMonitor(self):
     """Test if Monitors implements IMonitor"""
-    self.assertEquals(IMonitor.implementedBy(MonitorRequest), True)
+    self.assertTrue(IMonitor.implementedBy(MonitorRequest))
     self.assertEquals(IMonitor.names(), ["run"])
 
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
-    self.assertEquals(IHandler.implementedBy(OOHandler), True)
+    self.assertTrue(IHandler.implementedBy(OOHandler))
     method_list = ['convert', 'getMetadata', 'setMetadata']
     for method in method_list:
-      self.assertEquals(method in IHandler.names(), True,
-          "Method %s is not declared" % method)
+      self.assertTrue(method in IHandler.names(),
+                            "Method %s is not declared" % method)
     self.assertEquals(len(method_list), len(IHandler.names()))
     self.assertEquals(IHandler.get('convert').required, ('destination_format',))
     self.assertEquals(IHandler.get('getMetadata').required,
@@ -160,8 +160,8 @@ class TestInterface(unittest.TestCase):
 
   def testIApplication(self):
     """Test if OpenOffice implements IApplication"""
-    self.assertEquals(IApplication.implementedBy(OpenOffice), True)
-    self.assertEquals(IApplication.implementedBy(Xvfb), True)
+    self.assertTrue(IApplication.implementedBy(OpenOffice))
+    self.assertTrue(IApplication.implementedBy(Xvfb))
     application_method_list = ["start", "stop", "pid",
                               "status", "restart",
                               "loadSettings", "getAddress"]
@@ -170,7 +170,7 @@ class TestInterface(unittest.TestCase):
 
   def testILockable(self):
     """Test if Openoffice implements ILockable"""
-    self.assertEquals(ILockable.implementedBy(OpenOffice), True)
+    self.assertTrue(ILockable.implementedBy(OpenOffice))
     lockable_method_list = ["_lock", "acquire", "release", "isLocked"]
     self.assertEquals(sorted(ILockable.names()), sorted(lockable_method_list))
 

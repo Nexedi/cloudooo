@@ -60,7 +60,7 @@ class TestMonitorMemory(unittest.TestCase):
       self.monitor = MonitorMemory(openoffice, 1, 1000)
       self.monitor.start()
       sleep(6)
-      self.assertEquals(openoffice.status(), True)
+      self.assertTrue(openoffice.status())
     finally:
       self.monitor.terminate()
 
@@ -82,7 +82,7 @@ class TestMonitorMemory(unittest.TestCase):
     self.monitor.start()
     try:
       sleep(self.interval)
-      self.assertEquals(self.monitor.is_alive(), True)
+      self.assertTrue(self.monitor.is_alive())
     finally:
       self.monitor.terminate()
 
@@ -90,7 +90,7 @@ class TestMonitorMemory(unittest.TestCase):
     """Test if the psutil.Process is create correctly"""
     self.monitor = MonitorMemory(openoffice, 2, 1000)
     self.monitor.create_process()
-    self.assertEquals(hasattr(self.monitor, 'process'), True)
+    self.assertTrue(hasattr(self.monitor, 'process'))
     self.assertEquals(type(self.monitor.process), Process)
 
   def testGetMemoryUsage(self):

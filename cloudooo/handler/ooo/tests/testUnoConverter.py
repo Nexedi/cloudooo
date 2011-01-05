@@ -77,7 +77,7 @@ class TestUnoConverter(cloudoooTestCase):
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
-    self.assertEquals(exists(output_url), True, stdout)
+    self.assertTrue(exists(output_url), stdout)
     stdout, stderr = Popen("file %s" % output_url, shell=True, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(self.file_msg_list[1] in stdout \

@@ -51,7 +51,7 @@ class TestFilter(unittest.TestCase):
     self.assertEquals(self.filter.getName(), 'writer_pdf_Export')
     self.assertEquals(self.filter.getMimetype(), 'application/pdf')
     self.assertEquals(self.filter.getSortIndex(), 1000)
-    self.assertEquals(self.filter.isPreferred(), True)
+    self.assertTrue(self.filter.isPreferred())
 
 
 def test_suite():

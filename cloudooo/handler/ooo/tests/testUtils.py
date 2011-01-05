@@ -47,9 +47,9 @@ class TestUtils(unittest.TestCase):
 
   def testConversion(self):
     """Test convertion to bool"""
-    self.assertEquals(convertStringToBool('true'), True)
+    self.assertTrue(convertStringToBool('true'))
     self.assertEquals(convertStringToBool('false'), False)
-    self.assertEquals(convertStringToBool('truE'), True)
+    self.assertTrue(convertStringToBool('truE'))
     self.assertEquals(convertStringToBool('faLse'), False)
     self.assertEquals(convertStringToBool(''), None)
 

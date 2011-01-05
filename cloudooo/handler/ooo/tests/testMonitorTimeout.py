@@ -44,7 +44,7 @@ class TestMonitorTimeout(unittest.TestCase):
     """Test if the monitor of memory works"""
     monitor_timeout = self._createMonitor(10)
     monitor_timeout.start()
-    self.assertEquals(monitor_timeout.is_alive(), True)
+    self.assertTrue(monitor_timeout.is_alive())
     monitor_timeout.terminate()
     monitor_timeout = self._createMonitor(1)
     monitor_timeout.start()
@@ -61,7 +61,7 @@ class TestMonitorTimeout(unittest.TestCase):
       sleep(2)
       self.assertEquals(openoffice.status(), False)
       openoffice.restart()
-      self.assertEquals(openoffice.status(), True)
+      self.assertTrue(openoffice.status())
     finally:
       monitor_timeout.terminate()
       openoffice.release()
@@ -76,7 +76,7 @@ class TestMonitorTimeout(unittest.TestCase):
       self.assertEquals(openoffice.status(), False)
       monitor_timeout.terminate()
       openoffice.restart()
-      self.assertEquals(openoffice.status(), True)
+      self.assertTrue(openoffice.status())
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
       sleep(2)

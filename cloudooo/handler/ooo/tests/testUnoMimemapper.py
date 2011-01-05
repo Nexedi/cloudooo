@@ -65,8 +65,8 @@ class TestUnoMimeMapper(cloudoooTestCase):
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertEquals('filter_dict' in locals(), True)
-    self.assertEquals('type_dict' in locals(), True)
+    self.assertTrue('filter_dict' in locals())
+    self.assertTrue('type_dict' in locals())
     self.assertNotEquals(filter_dict.get('writer8'), None)
     self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEquals(filter_dict.get('writer8'), None)
@@ -85,8 +85,8 @@ class TestUnoMimeMapper(cloudoooTestCase):
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertEquals('filter_dict' in locals(), True)
-    self.assertEquals('type_dict' in locals(), True)
+    self.assertTrue('filter_dict' in locals())
+    self.assertTrue('type_dict' in locals())
     self.assertNotEquals(filter_dict.get('writer8'), None)
     self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEquals(filter_dict.get('writer8'), None)
@@ -109,7 +109,7 @@ class TestUnoMimeMapper(cloudoooTestCase):
     stdout, stderr = Popen(' '.join(command), shell=True,
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stdout, '')
-    self.assertEquals(stderr.endswith(error_msg), True, stderr)
+    self.assertTrue(stderr.endswith(error_msg), stderr)
     openoffice.start()
 
 

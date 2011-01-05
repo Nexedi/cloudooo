@@ -31,7 +31,6 @@ from cloudoooTestCase import cloudoooTestCase
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
 from cloudooo.handler.ooo.utils.utils import waitStopDaemon
-from psutil import Process, AccessDenied
 
 
 class TestOpenOffice(cloudoooTestCase):
@@ -62,7 +61,7 @@ class TestOpenOffice(cloudoooTestCase):
 
   def testOpenOfficeStart(self):
     """Test if the start method works correclty"""
-    self.assertEquals(self.openoffice.status(), True)
+    self.assertTrue(self.openoffice.status())
 
   def testOpenOfficeStop(self):
     """Test if the stop method works correctly"""
@@ -79,12 +78,12 @@ class TestOpenOffice(cloudoooTestCase):
   def testOpenOfficeRestart(self):
     """Test if the method restart works correctly"""
     self.openoffice.restart()
-    self.assertEquals(self.openoffice.status(), True)
+    self.assertTrue(self.openoffice.status())
 
   def testOpenOfficeLock(self):
     """Test lock and unlock"""
     self.openoffice.acquire()
-    self.assertEquals(self.openoffice.isLocked(), True)
+    self.assertTrue(self.openoffice.isLocked())
     self.openoffice.release()
     self.assertEquals(self.openoffice.isLocked(), False)
 
@@ -100,7 +99,7 @@ class TestOpenOffice(cloudoooTestCase):
                                 'en')
     second_openoffice.start()
     self.assertEquals(self.openoffice.status(), False)
-    self.assertEquals(second_openoffice.status(), True)
+    self.assertTrue(second_openoffice.status())
     second_openoffice.stop()
 
     self.openoffice.start()
@@ -112,8 +111,8 @@ class TestOpenOffice(cloudoooTestCase):
                                 self.uno_path,
                                 'en')
     second_openoffice.start()
-    self.assertEquals(self.openoffice.status(), True)
-    self.assertEquals(second_openoffice.status(), True)
+    self.assertTrue(self.openoffice.status())
+    self.assertTrue(second_openoffice.status())
 
 
 def test_suite():

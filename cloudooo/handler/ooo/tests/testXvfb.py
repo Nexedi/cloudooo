@@ -48,21 +48,21 @@ class TestXvfb(cloudoooTestCase):
     self.assertEquals(self.xvfb.pid(), None)
     self.xvfb.start()
     self.assertNotEquals(self.xvfb.pid(), None)
-    self.assertEquals(self.xvfb.status(), True)
+    self.assertTrue(self.xvfb.status())
     self.xvfb.stop()
     self.assertNotEquals(self.xvfb.pid(), None)
     self.assertEquals(self.xvfb.status(), False)
 
   def testStatus(self):
     """Test if xvfb is started and stopped correctly"""
-    self.assertEquals(self.xvfb.status(), False)
+    self.assertFalse(self.xvfb.status())
     try:
       self.xvfb.start()
-      self.assertEquals(self.xvfb.status(), True)
+      self.assertTrue(self.xvfb.status())
     finally:
       self.xvfb.stop()
       waitStopDaemon(self.xvfb)
-    self.assertEquals(self.xvfb.status(), False)
+    self.assertFalse(self.xvfb.status())
 
 
 def test_suite():

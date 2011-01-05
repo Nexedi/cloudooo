@@ -102,7 +102,7 @@ class TestOOHandler(cloudoooTestCase):
                         'odt')
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get('Data'), '')
-    self.assertEquals(metadata.has_key('Data'), True)
+    self.assertTrue(metadata.has_key('Data'))
     self.assertEquals(metadata.get('MIMEType'),
                       'application/vnd.oasis.opendocument.text')
     handler.document.restoreOriginal() 

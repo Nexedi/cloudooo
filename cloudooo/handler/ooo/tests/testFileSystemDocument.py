@@ -66,7 +66,7 @@ class TestFileSystemDocument(unittest.TestCase):
     self.fsdocument.restoreOriginal()
     self.assertEquals(path.exists(old_document_url), False)
     self.assertNotEquals(old_document_url, self.fsdocument.getUrl())
-    self.assertEquals(path.exists(self.fsdocument.getUrl()), True)
+    self.assertTrue(path.exists(self.fsdocument.getUrl()))
     self.assertEquals(self.fsdocument.getContent(), self.data)
 
   def testgetContent(self):
@@ -76,7 +76,7 @@ class TestFileSystemDocument(unittest.TestCase):
   def testgetUrl(self):
     """Check if the url is correct"""
     url = self.fsdocument.getUrl()
-    self.assertEquals(path.exists(url), True)
+    self.assertTrue(path.exists(url))
 
   def testLoadDocumentFile(self):
     """Test if the document is created correctly"""
@@ -126,7 +126,7 @@ class TestFileSystemDocument(unittest.TestCase):
       data = open(zip_input_url).read()
       zipdocument = FileSystemDocument(self.tmp_url, data, 'zip')
       open(zip_output_url, 'w').write(zipdocument.getContent(True))
-      self.assertEquals(is_zipfile(zip_output_url), True)
+      self.assertTrue(is_zipfile(zip_output_url))
       zipfile = ZipFile(zip_output_url)
       self.assertEquals(sorted(zipfile.namelist()),
         sorted(['logo.gif', 'test.htm']))

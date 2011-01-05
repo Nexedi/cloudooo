@@ -40,7 +40,7 @@ class TestMonitorRequest(cloudoooTestCase):
     """Test terminate function to stop the thread"""
     monitor_request = MonitorRequest(openoffice, 0, 2)
     monitor_request.start()
-    self.assertEquals(monitor_request.is_alive(), True)
+    self.assertTrue(monitor_request.is_alive())
     monitor_request.terminate()
     sleep(4)
     try:
