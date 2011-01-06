@@ -2,7 +2,7 @@
 
 import sys
 import unittest
-from getopt import getopt, GetoptError
+from optparse import OptionParser
 from time import sleep
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
@@ -55,48 +55,37 @@ def run_test(test_name):
 
 
 def run():
-  DAEMON = OPENOFFICE = XVFB = False
-  try:
-    opt_list, arg_list = getopt(sys.argv[1:], "h", ["help",
-                                                    "with-daemon",
-                                                    "with-openoffice",
-                                                    "with-xvfb",
-                                                    "log_path=",
-                                                    "cloudooo_runner=",
-                                                    "server_cloudooo_conf=",
-                                                    "timeout_limit=",
-                                                    "paster_path="])
-  except GetoptError, msg:
-    exit(msg.msg)
-  
-  paster_path = "paster"
+  usage = "usage: %prog [options] server_cloudooo_conf Unit_Test_Name"
+  parser = OptionParser(usage=usage)
+  parser.add_option('-w', '--with-daemon', dest='DAEMON',
+                    action='store_true')
+  parser.add_option('-o', '--with-openoffice', dest='OPENOFFICE',
+                    action='store_true')
+  parser.add_option('-x', '--with-xvfb', dest='XVFB',
+                    action='store_true')
+  parser.add_option('-t', '--timeout_limit', dest='timeout_limit',
+                    type="long", default=30)
+  parser.add_option('-p', '--paster_path', dest='paster_path',
+                    default='paster')
+  options_instance, argument_list = parser.parse_args()
+  if len(argument_list) != 2:
+    parser.error("incorrect number of arguments")
 
-  for opt, arg in opt_list:
-    if opt in ("-h", "--help"):
-      print >> sys.stderr, __doc__ % {"program": path.basename(sys.argv[0])}
-      sys.exit(2)
-    if opt == "--with-daemon":
-      DAEMON = True
-    elif opt == "--with-openoffice":
-      OPENOFFICE = True
-    elif opt == "--with-xvfb":
-      XVFB = True
-    elif opt == "--log_path":
-      log_path = arg
-    elif opt == "--cloudooo_runner":
-      cloudooo_runner = arg
-    elif opt == "--server_cloudooo_conf":
-      if arg.startswith(curdir):
-        arg = path.join(path.abspath(curdir), arg)
-      server_cloudooo_conf = arg
-      environ["server_cloudooo_conf"] = arg
-    elif opt == "--timeout_limit":
-      timeout_limit = arg
-    elif opt == "--paster_path":
-      paster_path = arg
+  server_cloudooo_conf, test_name = argument_list
+  if server_cloudooo_conf.startswith(curdir):
+    server_cloudooo_conf = path.join(path.abspath(curdir),
+                                     server_cloudooo_conf)
 
-  test_name = sys.argv[-1]
-  if not path.exists(path.join(ENVIRONMENT_PATH, '%s.py' % test_name)):
+  DAEMON = options_instance.DAEMON
+  OPENOFFICE = options_instance.OPENOFFICE
+  XVFB = options_instance.XVFB
+  paster_path = options_instance.paster_path
+
+  python_extension = '.py'
+  if test_name[-3:] == python_extension:
+    test_name = test_name[:-3]
+  if not path.exists(path.join(ENVIRONMENT_PATH, 
+                               '%s%s' % (test_name, python_extension))):
     exit("%s not exists\n" % test_name)
 
   from cloudoooTestCase import loadConfig, startFakeEnvironment, stopFakeEnvironment
