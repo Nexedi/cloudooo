@@ -59,9 +59,9 @@ class TestServer(CloudoooTestCase):
         ['txt', 'Text'], ['txt', 'Text Encoded'],
         ['xhtml', 'XHTML'], ['pdb', 'AportisDoc (Palm)'],
         ['psw', 'Pocket Word']]
-    
+
     self.text_expected_list.sort()
-    
+
     self.presentation_expected_list = [['bmp', 'BMP - Windows Bitmap'], 
         ['emf', 'EMF - Enhanced Metafile'],
         ['eps', 'EPS - Encapsulated PostScript'],
@@ -96,9 +96,9 @@ class TestServer(CloudoooTestCase):
         ['tiff', 'TIFF - Tagged Image File Format'],
         ['wmf', 'WMF - Windows Metafile'], 
         ['xhtml', 'XHTML'], ['xpm', 'XPM - X PixMap']]
-    
+
     self.presentation_expected_list.sort()
-  
+
   def _testConvertFile(self, input_url, output_url,
                       source_format, destination_format,
                       stdout_msg, zip=False):
@@ -312,7 +312,7 @@ class TestServer(CloudoooTestCase):
                           'py',
                           'pdf',
                           'PDF document, version 1.4\n')
- 
+
   def testSendEmptyRequest(self):
     """Test to verify if the behavior of server is normal when a empty string
     is sent"""
@@ -325,7 +325,7 @@ class TestServer(CloudoooTestCase):
       msg = "This format is not supported or is invalid"
       self.assertTrue(err.faultString.endswith(msg), 
                               "ConvertFile\n" + err.faultString)
-    
+
     res = self.proxy.getFileMetadataItemList(data, '')
     self.assertEquals(res['MIMEType'], "text/plain")
     res = decodestring(self.proxy.updateFileMetadata(data, '', 
@@ -343,7 +343,7 @@ class TestServer(CloudoooTestCase):
       err_str = err.faultString
       self.assertTrue(err_str.endswith(error_msg),
                                   "%s\n%s" % (error_msg, err_str))
-  
+
   def testConvertDocumentToImpossibleFormat(self):
     """Try convert one document to format not possible"""
     data = open(join('data','test.odp'),'r').read()
@@ -508,7 +508,7 @@ class TestServer(CloudoooTestCase):
     self.assertEquals(response_code, 200)
     self.assertEquals(response_dict['meta']['title'], 
                       "Namie's working record") 
-  
+
   def testRunSetMetadataFailResponse(self):
     """Test run_setmetadata method with invalid document"""
     data = open(join('data','testMetadata.odt'),'r').read()[:100]
