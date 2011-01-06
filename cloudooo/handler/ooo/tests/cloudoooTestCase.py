@@ -54,15 +54,10 @@ def make_suite(test_case):
   return suite
 
 
-def loadConfig(path):
-  config.read(path)
-
-
 def startFakeEnvironment(start_openoffice=True, conf_path=None):
   """Create a fake environment"""
-  if not conf_path and len(sys.argv) >= 1:
-    conf_path = sys.argv[1]
-  loadConfig(conf_path)
+
+  config.read(conf_path)
   uno_path = config.get("app:main", "uno_path")
   working_path = config.get("app:main", "working_path")
   virtual_display_id = int(config.get("app:main", "virtual_display_id"))

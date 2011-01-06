@@ -80,7 +80,7 @@ def run():
                                '%s%s' % (test_name, python_extension))):
     exit("%s not exists\n" % test_name)
 
-  from cloudoooTestCase import loadConfig, startFakeEnvironment, stopFakeEnvironment
+  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
 
   sys.path.append(ENVIRONMENT_PATH)
 
