@@ -109,14 +109,18 @@ def run():
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
-    run_test(test_name)
-    stopFakeEnvironment()
+    try:
+      run_test(test_name)
+    finally:
+      stopFakeEnvironment()
   elif XVFB:
     chdir(ENVIRONMENT_PATH)
     xvfb = startFakeEnvironment(start_openoffice=False,
                                 conf_path=server_cloudooo_conf)
-    run_test(test_name)
-    stopFakeEnvironment(stop_openoffice=False)
+    try:
+      run_test(test_name)
+    finally:
+      stopFakeEnvironment(stop_openoffice=False)
   else:
     chdir(ENVIRONMENT_PATH)
     loadConfig(server_cloudooo_conf)
