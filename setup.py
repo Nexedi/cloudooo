@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from os import path
+import sys
 
 version = '1.0.9'
 
@@ -7,6 +8,17 @@ folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 
 long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(), 
                                open(path.join(folder_path, "CHANGES.txt")).read()) 
+install_require_list = [
+          # -*- Extra requirements: -*-
+          'zope.interface',
+          'PasteDeploy',
+          'PasteScript',
+          'WSGIUtils',
+          'psutil>=0.2.0',
+          'lxml',
+      ]
+if sys.version_info < (2, 7):
+  install_require_list.append('argparse')
 setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
@@ -25,15 +37,7 @@ setup(name='cloudooo',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          # -*- Extra requirements: -*-
-          'zope.interface',
-          'PasteDeploy',
-          'PasteScript',
-          'WSGIUtils',
-          'psutil>=0.2.0',
-          'lxml',
-      ],
+      install_requires=install_require_list,
       entry_points="""
       [paste.app_factory]
       main = cloudooo.cloudooo:application
