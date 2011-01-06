@@ -32,6 +32,7 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
 from cloudoooTestCase import make_suite
 
+OPENOFFICE = True
 
 class TestMonitorTimeout(unittest.TestCase):
   """Test all features of a monitor following the interface"""

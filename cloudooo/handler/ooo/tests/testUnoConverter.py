@@ -35,6 +35,7 @@ from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.document import FileSystemDocument
 
+OPENOFFICE = True
 
 class TestUnoConverter(CloudoooTestCase):
   """Test case to test all features of the unoconverter script"""

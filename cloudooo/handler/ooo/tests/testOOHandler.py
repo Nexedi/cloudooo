@@ -38,6 +38,7 @@ import os
 from lxml import etree
 from zipfile import ZipFile
 
+OPENOFFICE = True
 
 class TestOOHandler(CloudoooTestCase):
   """Test OOHandler and manipulation of OOo Instance"""

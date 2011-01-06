@@ -30,30 +30,10 @@ def exit(msg):
   sys.stderr.write(msg)
   sys.exit(0) 
 
-
-def run_test(test_name):
-  module = __import__(test_name)
-  if not hasattr(module, "test_suite"):
-    exit("No test suite to run, exiting immediately")
-  TestRunner = unittest.TextTestRunner
-  suite = unittest.TestSuite()
-  suite.addTest(module.test_suite())
-  TestRunner(verbosity=2).run(suite)
-
-
 def run():
   parser = ArgumentParser(description="Unit Test Runner for Cloudooo")
   parser.add_argument('server_cloudooo_conf')
   parser.add_argument('test_name')
-  parser.add_argument('--with-daemon', dest='DAEMON',
-                      action='store_true',
-                      help="it starts the cloudooo daemon")
-  parser.add_argument('--with-openoffice', dest='OPENOFFICE',
-                      action='store_true',
-                      help="it starts one Xvfb and one OpenOffice")
-  parser.add_argument('--with-xvfb', dest='XVFB',
-                      action='store_true',
-                      help="it starts one Xvfb only")
   parser.add_argument('--timeout_limit', dest='timeout_limit',
                       type=long, default=30,
                       help="Timeout to waiting for the cloudooo stop")
@@ -67,10 +47,7 @@ def run():
   if server_cloudooo_conf.startswith(curdir):
     server_cloudooo_conf = path.join(path.abspath(curdir),
                                      server_cloudooo_conf)
-
-  DAEMON = namespace.DAEMON
-  OPENOFFICE = namespace.OPENOFFICE
-  XVFB = namespace.XVFB
+  environ['server_cloudooo_conf'] = server_cloudooo_conf
   paster_path = namespace.paster_path
 
   python_extension = '.py'
@@ -92,15 +69,27 @@ def run():
   hostname = config.get("app:main", "application_hostname")
   server_port = int(config.get("server:main", "port"))
   run_dir = config.get('app:main', 'working_path')
+  module = __import__(test_name)
+  if not hasattr(module, "test_suite"):
+    exit("No test suite to run, exiting immediately")
+
+  
+  DAEMON = getattr(module, 'DAEMON', False)
+  OPENOFFICE = getattr(module, 'OPENOFFICE', False)
+  XVFB = getattr(module, 'XVFB', False)
+
+  TestRunner = unittest.TextTestRunner
+  suite = unittest.TestSuite()
+  suite.addTest(module.test_suite())
+
   if DAEMON:
-    loadConfig(server_cloudooo_conf)
     command = [paster_path, "serve", server_cloudooo_conf]
     process = Popen(command)
     wait_use_port(hostname, openoffice_port)
     wait_use_port(hostname, server_port)
     chdir(ENVIRONMENT_PATH)
     try:
-      run_test(test_name)
+      TestRunner(verbosity=2).run(suite)
     finally:
       process.send_signal(1)
       wait_liberate_port(hostname, server_port)
@@ -110,7 +99,7 @@ def run():
     chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
     try:
-      run_test(test_name)
+      TestRunner(verbosity=2).run(suite)
     finally:
       stopFakeEnvironment()
   elif XVFB:
@@ -118,13 +107,12 @@ def run():
     xvfb = startFakeEnvironment(start_openoffice=False,
                                 conf_path=server_cloudooo_conf)
     try:
-      run_test(test_name)
+      TestRunner(verbosity=2).run(suite)
     finally:
       stopFakeEnvironment(stop_openoffice=False)
   else:
     chdir(ENVIRONMENT_PATH)
-    loadConfig(server_cloudooo_conf)
-    run_test(test_name)
+    TestRunner(verbosity=2).run(suite)
 
 if __name__ == "__main__":
   run()

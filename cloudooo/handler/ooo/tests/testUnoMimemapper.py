@@ -34,6 +34,7 @@ from subprocess import Popen, PIPE
 from os import environ, path
 from cloudoooTestCase import CloudoooTestCase, make_suite
 
+OPENOFFICE = True
 
 class TestUnoMimeMapper(CloudoooTestCase):
   """Test Case to test all features of script unomimemapper"""

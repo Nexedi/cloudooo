@@ -32,6 +32,7 @@ from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
 from cloudooo.handler.ooo.utils.utils import waitStopDaemon
 
+OPENOFFICE = True
 
 class TestOpenOffice(CloudoooTestCase):
   """Test OpenOffice object and manipulation of OOo Instance"""

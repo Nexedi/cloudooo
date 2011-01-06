@@ -32,6 +32,7 @@ from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 
+OPENOFFICE = True
 
 class TestMonitorInit(CloudoooTestCase):
   """Test Case to test if the monitors are controlled correctly"""

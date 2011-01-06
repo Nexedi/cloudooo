@@ -32,6 +32,7 @@ from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.application.openoffice import openoffice
 
+OPENOFFICE = True
 
 class TestMonitorRequest(CloudoooTestCase):
   """Test all features of a monitor following the interface"""

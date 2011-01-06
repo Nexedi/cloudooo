@@ -168,6 +168,7 @@ chart_expected_tuple = (('sds', 'StarChart 3.0'),
     ('sxs', 'OpenOffice.org 1.0 Chart'),
     ('odc', 'ODF Chart'))
 
+OPENOFFICE = True
 
 class TestMimeMapper(CloudoooTestCase):
   """Test if object load filters correctly of OOo."""

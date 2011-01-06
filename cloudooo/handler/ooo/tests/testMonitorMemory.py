@@ -34,6 +34,7 @@ from psutil import Process
 from types import IntType
 from cloudoooTestCase import make_suite
 
+OPENOFFICE = True
 
 class TestMonitorMemory(unittest.TestCase):
   """Test case to see if the MonitorMemory is properly managing the

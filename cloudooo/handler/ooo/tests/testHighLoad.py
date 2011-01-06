@@ -34,6 +34,7 @@ from base64 import encodestring, decodestring
 from multiprocessing import Process
 from cloudoooTestCase import CloudoooTestCase, make_suite
 
+DAEMON = True
 
 class TestHighLoad(CloudoooTestCase):
   """Test with many simultaneous connection"""

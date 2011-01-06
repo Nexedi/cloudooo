@@ -32,6 +32,7 @@ from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import CloudoooTestCase, make_suite
 
+DAEMON = True
 
 class TestAllFormats(CloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""

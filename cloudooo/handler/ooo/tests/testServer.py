@@ -36,6 +36,7 @@ from cloudoooTestCase import CloudoooTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from types import DictType
 
+DAEMON = True
 
 class TestServer(CloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
