@@ -47,8 +47,9 @@ class TestHighLoad(CloudoooTestCase):
     document = self.proxy.convertFile(data, source_format, destination_format)
     document_output_url = os.path.join(self.tmp_url, "%s.%s" % (id, destination_format))
     open(document_output_url, 'wb').write(decodestring(document))
-    stdout, stderr = subprocess.Popen("file -b %s" % document_output_url,
-        shell=True, stdout=subprocess.PIPE).communicate()
+    command_list = ["file", "-b", document_output_url]
+    stdout, stderr = subprocess.Popen(command_list,
+                                      stdout=subprocess.PIPE).communicate()
     self.assertEquals(stdout, 'PDF document, version 1.4\n')
     self.assertEquals(stderr, None)
     os.remove(document_output_url)

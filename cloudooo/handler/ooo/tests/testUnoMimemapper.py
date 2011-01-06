@@ -61,8 +61,9 @@ class TestUnoMimeMapper(CloudoooTestCase):
             "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
-    stdout, stderr = Popen(' '.join(command), shell=True,
-        stdout=PIPE, stderr=PIPE).communicate()
+    stdout, stderr = Popen(command, 
+                           stdout=PIPE,
+                           stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
@@ -81,8 +82,9 @@ class TestUnoMimeMapper(CloudoooTestCase):
                                        "handler/ooo/helper/unomimemapper.py"),
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
-    stdout, stderr = Popen(' '.join(command), shell=True,
-        stdout=PIPE, stderr=PIPE).communicate()
+    stdout, stderr = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
@@ -106,8 +108,9 @@ class TestUnoMimeMapper(CloudoooTestCase):
             "'--office_binary_path=%s'" % self.office_binary_path,
             "'--hostname=%s'" % self.hostname,
             "'--port=%s'" % self.openoffice_port]
-    stdout, stderr = Popen(' '.join(command), shell=True,
-        stdout=PIPE, stderr=PIPE).communicate()
+    stdout, stderr = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE).communicate()
     self.assertEquals(stdout, '')
     self.assertTrue(stderr.endswith(error_msg), stderr)
     openoffice.start()

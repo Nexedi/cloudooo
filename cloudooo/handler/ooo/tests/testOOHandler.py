@@ -53,8 +53,8 @@ class TestOOHandler(CloudoooTestCase):
 
   def _assert_document_output(self, document_output_url, msg):
     """Check if the document was created correctly"""
-    stdout, stderr = Popen("file -b %s" % document_output_url,
-                          shell=True,
+    command_list = ["file", "-b", document_output_url]
+    stdout, stderr = Popen(command_list
                           stdout=PIPE).communicate()
     self.assertEquals(msg in stdout,
                       True,

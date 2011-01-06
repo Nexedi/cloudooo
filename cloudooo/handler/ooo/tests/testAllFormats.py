@@ -83,8 +83,8 @@ class TestAllFormats(CloudoooTestCase):
          continue
       output_file_url = '%s/test_%s.%s' % (self.tmp_url, document_type, extension[0])
       open(output_file_url, 'w').write(decodestring(data_output))
-      stdout, stderr = Popen("file %s" % output_file_url, 
-                            shell=True,
+      command = [file, output_file_url]
+      stdout, stderr = Popen(command, 
                             stdout=PIPE,
                             stderr=PIPE).communicate()
       self.assertEquals(stdout.endswith(": empty"), False, stdout)

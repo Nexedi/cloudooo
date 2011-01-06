@@ -106,8 +106,9 @@ class TestFileSystemDocument(unittest.TestCase):
     open(path.join(self.fsdocument.directory_name, 'document2'), 'w').write('test')
     zip_file = self.fsdocument.getContent(True)
     open(zip_output_url, 'w').write(zip_file)
-    stdout, stderr = Popen("file %s" % zip_output_url, 
-        shell=True, stdout=PIPE).communicate()
+    command = ["file", zip_output_url]
+    stdout, stderr = Popen(command, 
+                           stdout=PIPE).communicate()
     self.assertEquals(stdout, '/tmp/ziptest.zip: Zip archive data, at least v2.0 to extract\n')
     ziptest = ZipFile(zip_output_url, 'r')
     self.assertEquals(len(ziptest.filelist), 2)

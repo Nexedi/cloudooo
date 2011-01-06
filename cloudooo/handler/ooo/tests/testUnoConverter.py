@@ -73,13 +73,15 @@ class TestUnoConverter(CloudoooTestCase):
           "--destination_format='%s'" % "doc",
           "--source_format='%s'" % "odt",
           "--mimemapper='%s'" % mimemapper_pickled]
-    stdout, stderr = Popen(' '.join(command), shell=True, 
+    stdout, stderr = Popen(command, 
         stdout=PIPE, stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
-    stdout, stderr = Popen("file %s" % output_url, shell=True, 
-        stdout=PIPE, stderr=PIPE).communicate()
+    command = [file, output_url]
+    stdout, stderr = Popen(command,
+                           stdout=PIPE, 
+                           stderr=PIPE).communicate()
     self.assertEquals(self.file_msg_list[1] in stdout \
                       or \
                       self.file_msg_list[0] in stdout,

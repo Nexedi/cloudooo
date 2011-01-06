@@ -108,10 +108,14 @@ class TestServer(CloudoooTestCase):
                                         source_format,
                                         destination_format, zip)
     open(output_url, 'w').write(decodestring(output_data))
-    stdout, stderr = Popen("file -b %s" % output_url, shell=True,
-         stdout=PIPE).communicate()
+    stdout, stderr = self._getFileType(output_url)
     self.assertEquals(stdout, stdout_msg)
     self.assertEquals(stderr, None)
+
+  def _getFileType(self, output_url):
+    return Popen(["file", "-b", output_url],
+                 stdout=PIPE,
+                 stderr=PIPE).communicate()
 
   def testGetAllowedExtensionListByType(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
@@ -187,8 +191,7 @@ class TestServer(CloudoooTestCase):
                                                        True)
     self.assertNotEquals(metadata_dict.get("Data"), None)
     open(document_output_url, 'w').write(decodestring(metadata_dict["Data"]))
-    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
-        stdout=PIPE).communicate()
+    stdout, stderr = self._getFileType(document_output_url)
     self.assertEquals(stdout, 'OpenDocument Text\n')
     self.assertEquals(metadata_dict.get("Title"), "cloudooo Test")
     self.assertEquals(metadata_dict.get("Subject"), "Subject Test")
@@ -204,8 +207,7 @@ class TestServer(CloudoooTestCase):
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
         {"Title":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
-        stdout=PIPE).communicate()
+    stdout, stderr = self._getFileType(document_output_url)
     self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Title"), "testSetMetadata")
@@ -221,8 +223,7 @@ class TestServer(CloudoooTestCase):
                                               'odt',
                                               {"Reference":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
-        stdout=PIPE).communicate()
+    stdout, stderr = self._getFileType(document_output_url)
     self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "testSetMetadata")
@@ -237,8 +238,7 @@ class TestServer(CloudoooTestCase):
     new_odf_data = self.proxy.updateFileMetadata(odf_data, 'odt',
                         {"Reference":"new value", "Something": "ABC"})
     open(document_output_url, 'w').write(decodestring(new_odf_data))
-    stdout, stderr = Popen("file -b %s" % document_output_url, shell=True,
-        stdout=PIPE).communicate()
+    stdout, stderr = self._getFileType(document_output_url)
     self.assertEquals(stdout, 'OpenDocument Text\n')
     metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "new value")
@@ -437,8 +437,7 @@ class TestServer(CloudoooTestCase):
     try:
       png_path = join(self.tmp_url, "img0.png")
       zipfile.extractall(self.tmp_url)
-      stdout, stderr = Popen("file -b %s" % png_path, shell=True,
-         stdout=PIPE).communicate()
+      stdout, stderr =  self._getFileType(png_path)
       self.assertTrue(stdout.startswith('PNG image data'), stdout)
       self.assertTrue("8-bit/color RGB" in stdout, stdout)
     finally:

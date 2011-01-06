@@ -85,7 +85,7 @@ class OOHandler:
     for k, v in kw.iteritems():
       command_list.append("--%s='%s'" % (k, v))
 
-    return ' '.join(command_list)
+    return command_list
 
   def _startTimeout(self):
     """start the Monitor"""
@@ -98,14 +98,13 @@ class OOHandler:
     self.monitor.terminate()
     return
 
-  def _subprocess(self, command):
+  def _subprocess(self, command_list):
     """Run one procedure"""
     if monitor_sleeping_time is not None:
       monitor_sleeping_time.touch()
     try:
       self._startTimeout()
-      process = Popen(command,
-                    shell=True,
+      process = Popen(command_list,
                     stdout=PIPE,
                     stderr=PIPE,
                     close_fds=True)
@@ -121,8 +120,8 @@ class OOHandler:
     if not openoffice.status():
       xvfb.restart()
       openoffice.start()
-    command = self._getCommand(*feature_list, **kw)
-    stdout, stderr = self._subprocess(command)
+    command_list = self._getCommand(*feature_list, **kw)
+    stdout, stderr = self._subprocess(command_list)
     if not stdout and len(re.findall("\w*Exception|\w*Error", stderr)) >= 1:
       logger.debug(stderr)
       self.document.restoreOriginal()
