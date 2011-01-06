@@ -11,20 +11,6 @@ from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
-#XXX nicolas: I don not know if still useful
-# since optparse replaced getopt
-__doc__ = """Unit Test Runner for Cloudooo
-usage: %(program)s [options] Unit_Test_Name
-
-Options:
-  -h, --help                         Display help documentation
-  --server_cloudooo_conf=STRING      Path to cloudooo configuration file
-  --paster_path=STRING               Path to Paster script
-  --with-daemon                      it starts the cloudooo daemon
-  --with-openoffice                  it starts one Xvfb and one OpenOffice.org
-  --with-xvfb                        it starts one Xvfb only
-"""
-
 
 def wait_liberate_port(hostname, port, timeout_limit=30):
   for n in range(timeout_limit):
@@ -56,19 +42,24 @@ def run_test(test_name):
 
 
 def run():
-  parser = ArgumentParser()
+  parser = ArgumentParser(description="Unit Test Runner for Cloudooo")
   parser.add_argument('server_cloudooo_conf')
   parser.add_argument('test_name')
   parser.add_argument('--with-daemon', dest='DAEMON',
-                      action='store_true')
+                      action='store_true',
+                      help="it starts the cloudooo daemon")
   parser.add_argument('--with-openoffice', dest='OPENOFFICE',
-                      action='store_true')
+                      action='store_true',
+                      help="it starts one Xvfb and one OpenOffice")
   parser.add_argument('--with-xvfb', dest='XVFB',
-                      action='store_true')
+                      action='store_true',
+                      help="it starts one Xvfb only")
   parser.add_argument('--timeout_limit', dest='timeout_limit',
-                      type=long, default=30)
+                      type=long, default=30,
+                      help="Timeout to waiting for the cloudooo stop")
   parser.add_argument('--paster_path', dest='paster_path',
-                      default='paster')
+                      default='paster',
+                      help="Path to Paster script")
   namespace = parser.parse_args()
 
   server_cloudooo_conf = namespace.server_cloudooo_conf
