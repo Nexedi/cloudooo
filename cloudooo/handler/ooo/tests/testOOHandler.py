@@ -39,7 +39,7 @@ from lxml import etree
 from zipfile import ZipFile
 
 
-class TestOOHandler(cloudoooTestCase):
+class TestOOHandler(CloudoooTestCase):
   """Test OOHandler and manipulation of OOo Instance"""
 
   _file_path_list = []
@@ -67,7 +67,7 @@ class TestOOHandler(cloudoooTestCase):
       file_path = self._file_path_list.pop()
       if os.path.exists(file_path):
         os.remove(file_path)
-    cloudoooTestCase.tearDown(self)
+    CloudoooTestCase.tearDown(self)
 
 
   def testConvertOdtToDoc(self):
