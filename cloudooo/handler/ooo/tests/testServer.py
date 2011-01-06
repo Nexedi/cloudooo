@@ -532,10 +532,4 @@ class TestServer(CloudoooTestCase):
 
 def test_suite():
   return make_suite(TestServer)
-  
-if __name__ == "__main__":
-  import sys
-  from cloudoooTestCase import loadConfig
-  loadConfig(sys.argv[1])
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestServer)
-  unittest.TextTestRunner(verbosity=2).run(suite)
+

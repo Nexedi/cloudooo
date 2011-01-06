@@ -67,6 +67,3 @@ class TestOdfDocument(CloudoooTestCase):
 def test_suite():
   return make_suite(TestOdfDocument)
 
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestOdfDocument)
-  unittest.TextTestRunner(verbosity=2).run(suite)

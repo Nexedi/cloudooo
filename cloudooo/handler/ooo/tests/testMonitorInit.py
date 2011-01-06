@@ -74,9 +74,3 @@ class TestMonitorInit(CloudoooTestCase):
 def test_suite():
   return make_suite(TestMonitorInit)
 
-if "__main__" == __name__:
-  import sys
-  from cloudoooTestCase import loadConfig
-  loadConfig(sys.argv[1])
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestMonitorInit)
-  unittest.TextTestRunner(verbosity=2).run(suite)

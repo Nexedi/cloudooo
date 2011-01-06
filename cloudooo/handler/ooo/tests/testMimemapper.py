@@ -358,10 +358,3 @@ class TestMimeMapper(CloudoooTestCase):
 
 def test_suite():
   return make_suite(TestMimeMapper)
-
-if '__main__' == __name__:
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-  startFakeEnvironment()
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestMimeMapper)
-  unittest.TextTestRunner(verbosity=2).run(suite)
-  stopFakeEnvironment()

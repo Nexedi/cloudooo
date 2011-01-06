@@ -181,7 +181,3 @@ class TestOOGranulator(CloudoooTestCase):
 
 def test_suite():
   return make_suite(TestOOGranulator)
-
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestOOGranulator)
-  unittest.TextTestRunner(verbosity=2).run(suite)

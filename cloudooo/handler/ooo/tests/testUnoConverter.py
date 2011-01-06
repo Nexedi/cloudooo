@@ -91,10 +91,3 @@ class TestUnoConverter(CloudoooTestCase):
 
 def test_suite():
   return make_suite(TestUnoConverter)
-
-if __name__ == "__main__":
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-  startFakeEnvironment()
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestUnoConverter)
-  unittest.TextTestRunner(verbosity=2).run(suite)
-  stopFakeEnvironment()

@@ -203,9 +203,3 @@ class TestOOHandler(CloudoooTestCase):
 def test_suite():
   return make_suite(TestOOHandler)
 
-if __name__ == "__main__":
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-  startFakeEnvironment()
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestOOHandler)
-  unittest.TextTestRunner(verbosity=2).run(suite)
-  stopFakeEnvironment()

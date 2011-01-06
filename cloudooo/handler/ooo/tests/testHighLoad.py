@@ -72,9 +72,3 @@ class TestHighLoad(CloudoooTestCase):
 def test_suite():
   return make_suite(TestHighLoad)
 
-if __name__ == "__main__":
-  import sys
-  from cloudoooTestCase import loadConfig
-  loadConfig(sys.argv[1])
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestHighLoad)
-  unittest.TextTestRunner(verbosity=2).run(suite)

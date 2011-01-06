@@ -116,9 +116,3 @@ class TestUnoMimeMapper(CloudoooTestCase):
 def test_suite():
   return make_suite(TestUnoMimeMapper)
 
-if __name__ == "__main__":
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-  startFakeEnvironment()
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestUnoMimeMapper)
-  unittest.TextTestRunner(verbosity=2).run(suite)
-  stopFakeEnvironment()

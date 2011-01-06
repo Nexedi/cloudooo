@@ -117,10 +117,3 @@ class TestOpenOffice(CloudoooTestCase):
 
 def test_suite():
   return make_suite(TestOpenOffice)
-
-if __name__ == "__main__":
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-  startFakeEnvironment(False)
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestOpenOffice)
-  unittest.TextTestRunner(verbosity=2).run(suite)
-  stopFakeEnvironment()
