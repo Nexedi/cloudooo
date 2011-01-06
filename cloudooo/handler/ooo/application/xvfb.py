@@ -58,10 +58,7 @@ class Xvfb(Application):
     self.command = ["Xvfb", "-ac", ":%s" % self.display_id, \
         "-screen", self.virtual_screen, "800x600x16", \
         "-fbdir", self.path_run_dir]
-    self.process = Popen(" ".join(self.command),
-                        stdout=PIPE,
-                        shell=True,
-                        close_fds=True)
+    self.process = Popen(self.command, close_fds=True)
     waitStartDaemon(self, self.timeout)
     Application.start(self)
     logger.debug("Xvfb pid - %s" % self.pid())
