@@ -30,10 +30,10 @@ import unittest
 from xmlrpclib import ServerProxy, Fault
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 
 
-class TestAllFormats(cloudoooTestCase):
+class TestAllFormats(CloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
   def afterSetUp(self):

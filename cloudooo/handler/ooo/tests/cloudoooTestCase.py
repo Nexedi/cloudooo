@@ -127,7 +127,7 @@ def stopFakeEnvironment(stop_openoffice=True):
   return True
 
 
-class cloudoooTestCase(unittest.TestCase):
+class CloudoooTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""
   
   def setUp(self):

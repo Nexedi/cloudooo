@@ -32,10 +32,10 @@ import subprocess
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from multiprocessing import Process
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 
 
-class TestHighLoad(cloudoooTestCase):
+class TestHighLoad(CloudoooTestCase):
   """Test with many simultaneous connection"""
 
   def afterSetUp(self):

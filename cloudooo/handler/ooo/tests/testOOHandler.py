@@ -30,7 +30,7 @@ import unittest
 from os import path
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
-from cloudoooTestCase import cloudoooTestCase
+from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudoooTestCase import make_suite

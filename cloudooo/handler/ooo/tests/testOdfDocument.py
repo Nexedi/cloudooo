@@ -29,10 +29,10 @@
 import unittest
 from zipfile import ZipFile
 from lxml import etree
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.document import OdfDocument
 
-class TestOdfDocument(cloudoooTestCase):
+class TestOdfDocument(CloudoooTestCase):
 
   def setUp(self):
     data = open('./data/granulate_test.odt').read()

@@ -32,12 +32,12 @@ from os import remove
 from subprocess import Popen, PIPE
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from types import DictType
 
 
-class TestServer(cloudoooTestCase):
+class TestServer(CloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
   
   def afterSetUp(self):

@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-from cloudoooTestCase import cloudoooTestCase
+from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudoooTestCase import make_suite
@@ -169,7 +169,7 @@ chart_expected_tuple = (('sds', 'StarChart 3.0'),
     ('odc', 'ODF Chart'))
 
 
-class TestMimeMapper(cloudoooTestCase):
+class TestMimeMapper(CloudoooTestCase):
   """Test if object load filters correctly of OOo."""
 
   def afterSetUp(self):

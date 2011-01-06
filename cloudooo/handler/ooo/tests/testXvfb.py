@@ -27,12 +27,12 @@
 ##############################################################################
 
 import unittest
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.application.xvfb import Xvfb
 from cloudooo.handler.ooo.utils.utils import waitStopDaemon
 
 
-class TestXvfb(cloudoooTestCase):
+class TestXvfb(CloudoooTestCase):
 
   def afterSetUp(self):
     """Instanciate a xvfb object"""

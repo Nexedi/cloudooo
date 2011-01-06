@@ -28,12 +28,12 @@
 
 import unittest
 import cloudooo.handler.ooo.monitor as monitor
-from cloudoooTestCase import cloudoooTestCase, make_suite
+from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 
 
-class TestMonitorInit(cloudoooTestCase):
+class TestMonitorInit(CloudoooTestCase):
   """Test Case to test if the monitors are controlled correctly"""
 
   def afterSetUp(self):

@@ -27,13 +27,13 @@
 ##############################################################################
 
 import unittest
-from cloudoooTestCase import cloudoooTestCase
+from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite
 from cloudooo.handler.ooo.utils.utils import waitStopDaemon
 
 
-class TestOpenOffice(cloudoooTestCase):
+class TestOpenOffice(CloudoooTestCase):
   """Test OpenOffice object and manipulation of OOo Instance"""
   
   def afterSetUp(self):
