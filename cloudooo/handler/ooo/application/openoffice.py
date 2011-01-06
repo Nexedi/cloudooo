@@ -163,6 +163,8 @@ class OpenOffice(Application):
     """Stop the instance by pid. By the default
     the signal is 15."""
     Application.stop(self)
+    if socketStatus(self.hostname, self.port):
+      self._releaseOpenOfficePort()
     if exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     self._cleanRequest()
