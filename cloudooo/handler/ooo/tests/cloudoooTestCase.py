@@ -97,8 +97,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
 
   if start_openoffice:
     default_language = config.get('app:main',
-                                    'openoffice_user_interface_language', 
-                                    'en')
+                                  'openoffice_user_interface_language', False,
+                                  {'openoffice_user_interface_language': 'en'})
     openoffice.loadSettings(hostname,
                             openoffice_port, 
                             working_path,
