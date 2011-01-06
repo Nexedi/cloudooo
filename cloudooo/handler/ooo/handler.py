@@ -77,13 +77,13 @@ class OOHandler:
     command_list = [path.exists(python) and python or "python",
                     pkg_resources.resource_filename(__name__,
                                  path.join("helper", "unoconverter.py")),
-                    "--uno_path='%s'" % self.uno_path,
-                    "--office_binary_path='%s'" % self.office_binary_path,
-                    "--document_url='%s'" % self.document.getUrl()]
+                    "--uno_path=%s" % self.uno_path,
+                    "--office_binary_path=%s" % self.office_binary_path,
+                    '--document_url=%s' % self.document.getUrl()]
     for arg in args:
       command_list.insert(3, "--%s" % arg)
     for k, v in kw.iteritems():
-      command_list.append("--%s='%s'" % (k, v))
+      command_list.append("--%s=%s" % (k, v))
 
     return command_list
 
