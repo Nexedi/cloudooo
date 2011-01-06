@@ -40,7 +40,6 @@ from cloudooo.utils.utils import logger, convertStringToBool
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
                                       removeDirectory, waitStopDaemon, \
                                       socketStatus
-from cloudooo.utils.utils import getCleanPythonEnvironment
 
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
@@ -145,7 +144,7 @@ class OpenOffice(Application):
          ]
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process
-    env = getCleanPythonEnvironment()
+    env = {}
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation

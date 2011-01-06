@@ -34,7 +34,6 @@ from filter import Filter
 from os import environ, path
 from cloudooo.interfaces.mimemapper import IMimemapper
 from types import InstanceType
-from cloudooo.utils.utils import getCleanPythonEnvironment
 import json
 
 
@@ -120,8 +119,7 @@ class MimeMapper(object):
     
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           close_fds=True,
-                           env=getCleanPythonEnvironment()).communicate()
+                           close_fds=True).communicate()
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
       flag = value.get("Flags")

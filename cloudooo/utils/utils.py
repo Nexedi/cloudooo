@@ -47,14 +47,6 @@ PYTHON_ENVIRONMENT = [
 ]
 
 
-def getCleanPythonEnvironment():
-  env = environ.copy()
-  # Clean python related environment variables
-  for k in PYTHON_ENVIRONMENT:
-    env.pop(k, None)
-  return env
-
-
 def configureLogger(level=None, debug_mode=False):
   """Configure logger.
   Keyword arguments:

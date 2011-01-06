@@ -51,14 +51,6 @@ PYTHON_ENVIRONMENT = [
 ]
 
 
-def getCleanPythonEnvironment():
-  env = environ.copy()
-  # Clean python related environment variables
-  for k in PYTHON_ENVIRONMENT:
-    env.pop(k, None)
-  return env
-
-
 def removeDirectory(path):
   """Remove directory"""
   try:
