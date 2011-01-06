@@ -2,7 +2,7 @@
 
 import sys
 import unittest
-from optparse import OptionParser
+from argparse import ArgumentParser
 from time import sleep
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
@@ -56,31 +56,31 @@ def run_test(test_name):
 
 
 def run():
-  usage = "usage: %prog [options] server_cloudooo_conf Unit_Test_Name"
-  parser = OptionParser(usage=usage)
-  parser.add_option('-w', '--with-daemon', dest='DAEMON',
-                    action='store_true')
-  parser.add_option('-o', '--with-openoffice', dest='OPENOFFICE',
-                    action='store_true')
-  parser.add_option('-x', '--with-xvfb', dest='XVFB',
-                    action='store_true')
-  parser.add_option('-t', '--timeout_limit', dest='timeout_limit',
-                    type="long", default=30)
-  parser.add_option('-p', '--paster_path', dest='paster_path',
-                    default='paster')
-  options_instance, argument_list = parser.parse_args()
-  if len(argument_list) != 2:
-    parser.error("incorrect number of arguments")
+  parser = ArgumentParser()
+  parser.add_argument('server_cloudooo_conf')
+  parser.add_argument('test_name')
+  parser.add_argument('--with-daemon', dest='DAEMON',
+                      action='store_true')
+  parser.add_argument('--with-openoffice', dest='OPENOFFICE',
+                      action='store_true')
+  parser.add_argument('--with-xvfb', dest='XVFB',
+                      action='store_true')
+  parser.add_argument('--timeout_limit', dest='timeout_limit',
+                      type=long, default=30)
+  parser.add_argument('--paster_path', dest='paster_path',
+                      default='paster')
+  namespace = parser.parse_args()
 
-  server_cloudooo_conf, test_name = argument_list
+  server_cloudooo_conf = namespace.server_cloudooo_conf
+  test_name = namespace.test_name
   if server_cloudooo_conf.startswith(curdir):
     server_cloudooo_conf = path.join(path.abspath(curdir),
                                      server_cloudooo_conf)
 
-  DAEMON = options_instance.DAEMON
-  OPENOFFICE = options_instance.OPENOFFICE
-  XVFB = options_instance.XVFB
-  paster_path = options_instance.paster_path
+  DAEMON = namespace.DAEMON
+  OPENOFFICE = namespace.OPENOFFICE
+  XVFB = namespace.XVFB
+  paster_path = namespace.paster_path
 
   python_extension = '.py'
   if test_name[-3:] == python_extension:
