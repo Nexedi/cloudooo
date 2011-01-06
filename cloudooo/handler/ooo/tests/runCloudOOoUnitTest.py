@@ -11,7 +11,8 @@ from subprocess import Popen
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
-
+#XXX nicolas: I don not know if still useful
+# since optparse replaced getopt
 __doc__ = """Unit Test Runner for Cloudooo
 usage: %(program)s [options] Unit_Test_Name
 
