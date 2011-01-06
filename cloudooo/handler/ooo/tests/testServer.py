@@ -35,6 +35,7 @@ from base64 import encodestring, decodestring
 from cloudoooTestCase import CloudoooTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from types import DictType
+import magic
 
 DAEMON = True
 
@@ -109,14 +110,13 @@ class TestServer(CloudoooTestCase):
                                         source_format,
                                         destination_format, zip)
     open(output_url, 'w').write(decodestring(output_data))
-    stdout, stderr = self._getFileType(output_url)
-    self.assertEquals(stdout, stdout_msg)
-    self.assertEquals(stderr, None)
+    content_type = self._getFileType(output_url)
+    self.assertEquals(content_type, stdout_msg)
+
 
   def _getFileType(self, output_url):
-    return Popen(["file", "-b", output_url],
-                 stdout=PIPE,
-                 stderr=PIPE).communicate()
+    mime = magic.Magic(mime=True)
+    return mime.from_file(output_url)
 
   def testGetAllowedExtensionListByType(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
@@ -159,7 +159,7 @@ class TestServer(CloudoooTestCase):
                           join(self.tmp_url, "document_output.odt"),
                           'doc',
                           'odt',
-                          'OpenDocument Text\n')
+                          'application/vnd.oasis.opendocument.text')
 
   def testconvertDocToPdf(self):
     """Test Convert Doc -> Pdf"""
@@ -167,7 +167,7 @@ class TestServer(CloudoooTestCase):
                           join(self.tmp_url, "document_output.pdf"),
                           'doc',
                           'pdf',
-                          'PDF document, version 1.4\n')
+                          'application/pdf')
 
   def testgetFileMetadataItemListWithoutData(self):
     """Test server using method getFileMetadataItemList. Without data
@@ -192,8 +192,8 @@ class TestServer(CloudoooTestCase):
                                                        True)
     self.assertNotEquals(metadata_dict.get("Data"), None)
     open(document_output_url, 'w').write(decodestring(metadata_dict["Data"]))
-    stdout, stderr = self._getFileType(document_output_url)
-    self.assertEquals(stdout, 'OpenDocument Text\n')
+    content_type = self._getFileType(document_output_url)
+    self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
     self.assertEquals(metadata_dict.get("Title"), "cloudooo Test")
     self.assertEquals(metadata_dict.get("Subject"), "Subject Test")
     self.assertEquals(metadata_dict.get("Description"), "cloudooo Comments")
@@ -208,8 +208,8 @@ class TestServer(CloudoooTestCase):
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
         {"Title":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = self._getFileType(document_output_url)
-    self.assertEquals(stdout, 'OpenDocument Text\n')
+    content_type = self._getFileType(document_output_url)
+    self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Title"), "testSetMetadata")
     self.assertEquals(metadata_dict.get("CreationDate"), "9/7/2009 17:38:25")
@@ -224,8 +224,8 @@ class TestServer(CloudoooTestCase):
                                               'odt',
                                               {"Reference":"testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
-    stdout, stderr = self._getFileType(document_output_url)
-    self.assertEquals(stdout, 'OpenDocument Text\n')
+    content_type = self._getFileType(document_output_url)
+    self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
     metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "testSetMetadata")
 
@@ -239,8 +239,8 @@ class TestServer(CloudoooTestCase):
     new_odf_data = self.proxy.updateFileMetadata(odf_data, 'odt',
                         {"Reference":"new value", "Something": "ABC"})
     open(document_output_url, 'w').write(decodestring(new_odf_data))
-    stdout, stderr = self._getFileType(document_output_url)
-    self.assertEquals(stdout, 'OpenDocument Text\n')
+    content_type = self._getFileType(document_output_url)
+    self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
     metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
     self.assertEquals(metadata_dict.get("Reference"), "new value")
     self.assertEquals(metadata_dict.get("Something"), "ABC")
@@ -262,12 +262,11 @@ class TestServer(CloudoooTestCase):
 
   def testWithZipFile(self):
     """Test if send a zipfile returns a document correctly"""
-    output_msg = 'Zip archive data, at least v2.0 to extract\n'
     self._testConvertFile("data/test.zip",
                           join(self.tmp_url, "output_zipfile.zip"),
                           'zip',
                           'txt',
-                          output_msg,
+                          'application/zip',
                           True)
 
   def testSendZipAndReturnTxt(self):
@@ -277,8 +276,7 @@ class TestServer(CloudoooTestCase):
                           output_url,
                           'zip',
                           'txt',
-                          'ASCII text\n')
-
+                          'text/plain')
     self.assertTrue(open(output_url).read().endswith('cloudooo Test\n \n'))
 
   def testConvertPNGToSVG(self):
@@ -288,7 +286,7 @@ class TestServer(CloudoooTestCase):
                           output_url,
                           'png',
                           'svg',
-                          'SVG Scalable Vector Graphics image\n')
+                          'image/svg+xml')
   
   def testConvertPPTXToODP(self):
     """Test export pptx to odp"""
@@ -296,7 +294,7 @@ class TestServer(CloudoooTestCase):
                           join(self.tmp_url, "output.pptx"),
                           'pptx',
                           'odp',
-                          'OpenDocument Presentation\n')
+                          'application/vnd.oasis.opendocument.presentation')
 
   def testConvertDocxToODT(self):
     """Test export docx to odt"""
@@ -304,7 +302,7 @@ class TestServer(CloudoooTestCase):
                           join(self.tmp_url, "output_docx.odt"),
                           'docx',
                           'odt',
-                          'OpenDocument Text\n')
+                          'application/vnd.oasis.opendocument.text')
   
   def testConvertPyToPDF(self):
     """Test export python to pdf"""
@@ -312,7 +310,7 @@ class TestServer(CloudoooTestCase):
                           join(self.tmp_url, "cloudoooTestCase.py"),
                           'py',
                           'pdf',
-                          'PDF document, version 1.4\n')
+                          'application/pdf')
 
   def testSendEmptyRequest(self):
     """Test to verify if the behavior of server is normal when a empty string
@@ -438,9 +436,10 @@ class TestServer(CloudoooTestCase):
     try:
       png_path = join(self.tmp_url, "img0.png")
       zipfile.extractall(self.tmp_url)
-      stdout, stderr =  self._getFileType(png_path)
-      self.assertTrue(stdout.startswith('PNG image data'), stdout)
-      self.assertTrue("8-bit/color RGB" in stdout, stdout)
+      content_type = self._getFileType(png_path)
+      self.assertEquals(content_type, 'image/png')
+      m = magic.Magic()
+      self.assertTrue("8-bit/color RGB" in m.from_file(png_path))
     finally:
       zipfile.close()
     if exists(output_url):
