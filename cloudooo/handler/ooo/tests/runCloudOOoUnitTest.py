@@ -7,7 +7,7 @@ from time import sleep
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
@@ -84,7 +84,7 @@ def run():
 
   if DAEMON:
     command = [paster_path, "serve", server_cloudooo_conf]
-    process = Popen(command)
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
     wait_use_port(hostname, openoffice_port)
     wait_use_port(hostname, server_port)
     chdir(ENVIRONMENT_PATH)
