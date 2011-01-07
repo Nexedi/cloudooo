@@ -8,6 +8,8 @@ from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir
 from subprocess import Popen, PIPE
+import tempfile
+import os
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
@@ -83,18 +85,21 @@ def run():
   suite.addTest(module.test_suite())
 
   if DAEMON:
-    command = [paster_path, "serve", server_cloudooo_conf]
-    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    fd, pid_filename = tempfile.mkstemp()
+    command = [paster_path, "serve", '--daemon', '--pid-file', pid_filename,
+               server_cloudooo_conf]
+    process = Popen(command)
     wait_use_port(hostname, openoffice_port)
     wait_use_port(hostname, server_port)
     chdir(ENVIRONMENT_PATH)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
-      process.send_signal(1)
-      wait_liberate_port(hostname, server_port)
-      process.terminate()
-    wait_liberate_port(hostname, server_port)
+      command = [paster_path, 'serve', '--stop-daemon', '--pid-file',
+                 pid_filename]
+      stop_process = Popen(command)
+      stop_process.communicate()
+      # pid file is destroyed by paster
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
