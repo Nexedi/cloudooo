@@ -28,6 +28,7 @@
 
 import unittest
 import json
+import magic
 import pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists, join
@@ -80,15 +81,9 @@ class TestUnoConverter(CloudoooTestCase):
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
-    command = [file, output_url]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE, 
-                           stderr=PIPE).communicate()
-    self.assertEquals(self.file_msg_list[1] in stdout \
-                      or \
-                      self.file_msg_list[0] in stdout,
-                      True,
-                      "%s don't have %s" % (self.file_msg_list, stdout))
+    file_detector = magic.Magic()
+    magic_result = file_detector.from_buffer(output_url)
+    self.assertTrue(magic_result.startswith("ASCII text"))
     self.document.trash()
     self.assertEquals(exists(output_url), False)
 
