@@ -16,7 +16,7 @@ install_require_list = [
           'WSGIUtils',
           'psutil>=0.2.0',
           'lxml',
-          'python-magic',
+          # 'python-magic', # required for unit tests only
       ]
 if sys.version_info < (2, 7):
   install_require_list.append('argparse')
