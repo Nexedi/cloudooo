@@ -81,9 +81,8 @@ class TestUnoConverter(CloudoooTestCase):
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
-    file_detector = magic.Magic()
-    magic_result = file_detector.from_buffer(output_url)
-    self.assertTrue(magic_result.startswith("ASCII text"))
+    mime = magic.Magic(mime=True)
+    self.assertEquals(mime.from_file(output_url), 'application/vnd.ms-office')
     self.document.trash()
     self.assertEquals(exists(output_url), False)
 
