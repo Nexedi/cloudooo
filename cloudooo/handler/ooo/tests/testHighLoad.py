@@ -31,10 +31,20 @@ import os
 import subprocess
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
-from multiprocessing import Process
+from multiprocessing import Process, Array
 from cloudoooTestCase import CloudoooTestCase, make_suite
+import magic
 
 DAEMON = True
+mime_decoder = magic.Magic(mime=True)
+
+def basicTestToGenerate(id, proxy, data, source_format, destination_format,
+                        result_list):
+  """Test to use method generate of server"""
+  document = proxy.convertFile(data, source_format, destination_format)
+  mimetype = mime_decoder.from_buffer(decodestring(document))
+  assert mimetype == 'application/pdf'
+  result_list[id] = True
 
 class TestHighLoad(CloudoooTestCase):
   """Test with many simultaneous connection"""
@@ -43,32 +53,23 @@ class TestHighLoad(CloudoooTestCase):
     """Creates connection with cloudooo Server"""
     self.proxy = ServerProxy("http://%s:%s" % (self.hostname, self.cloudooo_port))
 
-  def basicTestToGenerate(self, id, data, source_format, destination_format):
-    """Test to use method generate of server"""
-    document = self.proxy.convertFile(data, source_format, destination_format)
-    document_output_url = os.path.join(self.tmp_url, "%s.%s" % (id, destination_format))
-    open(document_output_url, 'wb').write(decodestring(document))
-    command_list = ["file", "-b", document_output_url]
-    stdout, stderr = subprocess.Popen(command_list,
-                                      stdout=subprocess.PIPE).communicate()
-    self.assertEquals(stdout, 'PDF document, version 1.4\n')
-    self.assertEquals(stderr, None)
-    os.remove(document_output_url)
-    self.assertEquals(os.path.exists(document_output_url), False)
-
   def testGenerateHighLoad(self):
     """Sends many request to Server. Calling generate method"""
     process_list = []
-    data = open("data/test.doc", 'r').read()
-    for id in range(50):
-      process = Process(target=self.basicTestToGenerate, args=(id,
-        encodestring(data), 'doc', 'pdf'))
+    data = encodestring(open("data/test.doc", 'r').read())
+    LOOP = 50
+    result_list = Array('i', range(LOOP))
+    for id in range(LOOP):
+      process = Process(target=basicTestToGenerate, args=(id, self.proxy, data,
+                                                          'doc', 'pdf',
+                                                          result_list))
       process.start()
       process_list.append(process)
 
     for proc in process_list[:]:
       proc.join()
       del proc
+    self.assertTrue(all(result_list))
 
 
 def test_suite():
