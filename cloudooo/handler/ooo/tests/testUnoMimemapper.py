@@ -58,10 +58,10 @@ class TestUnoMimeMapper(CloudoooTestCase):
     command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo",
                                        "handler/ooo/helper/unomimemapper.py"),
-            "'--uno_path=%s'" % self.uno_path,
-            "'--office_binary_path=%s'" % self.office_binary_path,
-            "'--hostname=%s'" % self.hostname,
-            "'--port=%s'" % self.openoffice_port]
+            "--uno_path=%s" % self.uno_path,
+            "--office_binary_path=%s" % self.office_binary_path,
+            "--hostname=%s" % self.hostname,
+            "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command, 
                            stdout=PIPE,
                            stderr=PIPE).communicate()
@@ -81,8 +81,8 @@ class TestUnoMimeMapper(CloudoooTestCase):
     command = [path.join(self.office_binary_path, "python"),
             pkg_resources.resource_filename("cloudooo", 
                                        "handler/ooo/helper/unomimemapper.py"),
-            "'--hostname=%s'" % self.hostname,
-            "'--port=%s'" % self.openoffice_port]
+            "--hostname=%s" % self.hostname,
+            "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
@@ -105,10 +105,10 @@ class TestUnoMimeMapper(CloudoooTestCase):
     command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo", 
                                             "handler/ooo/helper/unomimemapper.py"),
-            "'--uno_path=%s'" % self.uno_path,
-            "'--office_binary_path=%s'" % self.office_binary_path,
-            "'--hostname=%s'" % self.hostname,
-            "'--port=%s'" % self.openoffice_port]
+            "--uno_path=%s" % self.uno_path,
+            "--office_binary_path=%s" % self.office_binary_path,
+            "--hostname=%s" % self.hostname,
+            "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
