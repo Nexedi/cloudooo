@@ -75,7 +75,7 @@ def run():
   if not hasattr(module, "test_suite"):
     exit("No test suite to run, exiting immediately")
 
-  
+
   DAEMON = getattr(module, 'DAEMON', False)
   OPENOFFICE = getattr(module, 'OPENOFFICE', False)
   XVFB = getattr(module, 'XVFB', False)
