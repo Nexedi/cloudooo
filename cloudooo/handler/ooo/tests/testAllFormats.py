@@ -31,7 +31,9 @@ from xmlrpclib import ServerProxy, Fault
 from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import CloudoooTestCase, make_suite
+import magic
 
+file_detector = magic.Magic()
 DAEMON = True
 
 class TestAllFormats(CloudoooTestCase):
@@ -82,13 +84,8 @@ class TestAllFormats(CloudoooTestCase):
                                               extension[0], 
                                               err.faultString))
          continue
-      output_file_url = '%s/test_%s.%s' % (self.tmp_url, document_type, extension[0])
-      open(output_file_url, 'w').write(decodestring(data_output))
-      command = [file, output_file_url]
-      stdout, stderr = Popen(command, 
-                            stdout=PIPE,
-                            stderr=PIPE).communicate()
-      self.assertEquals(stdout.endswith(": empty"), False, stdout)
+      magic_result = file_detector.from_buffer(decodestring(data_output))
+      self.assertEquals(magic_result.endswith(": empty"), False, magic_result)
     if fault_list != []:
       raise Fault(1, "\n".join(fault_list))
 
