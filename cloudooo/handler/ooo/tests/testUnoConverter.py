@@ -65,17 +65,18 @@ class TestUnoConverter(CloudoooTestCase):
     command = [exists(python) and python or "python",
           pkg_resources.resource_filename("cloudooo", 
                                           "handler/ooo/helper/unoconverter.py"),
-          "'--convert'",
-          "--uno_path='%s'" % self.uno_path,
-          "--office_binary_path='%s'" % self.office_binary_path,
-          "--hostname='%s'" % self.hostname,
-          "--port='%s'" % self.port,
-          "--document_url='%s'" % self.document.getUrl(),
-          "--destination_format='%s'" % "doc",
-          "--source_format='%s'" % "odt",
-          "--mimemapper='%s'" % mimemapper_pickled]
+          "--convert",
+          "--uno_path=%s" % self.uno_path,
+          "--office_binary_path=%s" % self.office_binary_path,
+          "--hostname=%s" % self.hostname,
+          "--port=%s" % self.port,
+          "--document_url=%s" % self.document.getUrl(),
+          "--destination_format=%s" % "doc",
+          "--source_format=%s" % "odt",
+          "--mimemapper=%s" % mimemapper_pickled]
     stdout, stderr = Popen(command, 
-        stdout=PIPE, stderr=PIPE).communicate()
+                           stdout=PIPE,
+                           stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
