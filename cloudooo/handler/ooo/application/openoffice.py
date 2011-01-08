@@ -145,6 +145,7 @@ class OpenOffice(Application):
     # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
     # is passed to env and the environment customized is passed to the process
     env = {}
+    env["LANG"] = "UTF-8"
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
