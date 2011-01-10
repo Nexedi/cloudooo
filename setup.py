@@ -16,8 +16,13 @@ install_require_list = [
           'WSGIUtils',
           'psutil>=0.2.0',
           'lxml',
-          # 'python-magic', # required for unit tests only
+          'python-magic', # required for unit tests only
       ]
+
+test_require_list = [
+    'python-magic',
+    ]
+
 if sys.version_info < (2, 7):
   install_require_list.append('argparse')
 setup(name='cloudooo',
@@ -39,6 +44,7 @@ setup(name='cloudooo',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_require_list,
+      test_requires=test_require_list,
       entry_points="""
       [paste.app_factory]
       main = cloudooo.cloudooo:application
