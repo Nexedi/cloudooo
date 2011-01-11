@@ -59,7 +59,8 @@ def waitStartDaemon(daemon, attempts):
   for num in range(attempts):
     sleep(1)
     if daemon.status():
-      return
+      return True
+  return False
 
 
 def waitStopDaemon(daemon, attempts=5):
@@ -67,7 +68,8 @@ def waitStopDaemon(daemon, attempts=5):
   for num in range(attempts):
     sleep(1)
     if not daemon.status():
-      break
+      return True
+  return False
 
 
 def remove_file(filepath):
