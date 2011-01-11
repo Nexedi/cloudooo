@@ -82,7 +82,7 @@ class TestAllFormats(CloudoooTestCase):
       magic_result = file_detector.from_buffer(decodestring(data_output))
       self.assertEquals(magic_result.endswith(": empty"), False, magic_result)
     if fault_list != []:
-      raise self.fail(fault_list)
+      self.fail(fault_list)
 
 
 def test_suite():
