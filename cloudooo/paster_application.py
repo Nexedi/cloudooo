@@ -66,13 +66,14 @@ def application(global_config, **local_config):
   prefix = 'env-'
   environment_dict = {}
   for parameter_name, value in local_config.iteritems():
-    if value and parameter_name[:len(prefix)] == prefix:
-      variable_name = parameter_name[len(prefix):].upper()
+    if parameter_name.startswith(prefix):
+      value = value or ''
+      variable_name = parameter_name[len(prefix):]
       if variable_name == 'PATH':
         # merge only for PATH
         current_value = os.environ.get(variable_name, '')
         if current_value:
-          value = current_value + ':' + value
+          value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
 
   gc.enable()
