@@ -64,6 +64,3 @@ class TestApplication(unittest.TestCase):
 def test_suite():
   return make_suite(TestApplication)
 
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestApplication)
-  unittest.TextTestRunner(verbosity=2).run(suite)
