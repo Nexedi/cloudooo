@@ -120,7 +120,7 @@ class OpenOffice(Application):
                 connection.local_address[1] == self.port:
               process.terminate()
       except psutil.error.AccessDenied, e:
-        logger.debug(e)
+        pass
       except TypeError, e:
         # exception to prevent one psutil issue with zombie processes
         logger.debug(e)
