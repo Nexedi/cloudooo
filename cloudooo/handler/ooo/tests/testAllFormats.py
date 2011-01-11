@@ -77,10 +77,10 @@ class TestAllFormats(CloudoooTestCase):
         data_output = self.proxy.convertFile(encodestring(data),
                                              source_format,
                                              extension[0])
+        magic_result = file_detector.from_buffer(decodestring(data_output))
+        self.assertEquals(magic_result.endswith(": empty"), False, magic_result)
       except Fault, err:
         fault_list.append((source_format, extension[0], err.faultString))
-      magic_result = file_detector.from_buffer(decodestring(data_output))
-      self.assertEquals(magic_result.endswith(": empty"), False, magic_result)
     if fault_list != []:
       self.fail(fault_list)
 
