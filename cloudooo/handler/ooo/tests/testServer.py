@@ -26,10 +26,8 @@
 #
 ##############################################################################
 
-import unittest
 from os.path import join, exists
 from os import remove
-from subprocess import Popen, PIPE
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
 from cloudoooTestCase import CloudoooTestCase, make_suite
@@ -47,6 +45,7 @@ class TestServer(CloudoooTestCase):
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
 
+    # XXX Duplicated list of filters
     self.text_expected_list = [['doc', 'Microsoft Word 6.0'], 
         ['doc', 'Microsoft Word 95'], 
         ['doc', 'Microsoft Word 97/2000/XP'], 
@@ -316,14 +315,7 @@ class TestServer(CloudoooTestCase):
     """Test to verify if the behavior of server is normal when a empty string
     is sent"""
     data = encodestring("")
-    fail_msg = "This document can not be loaded, it is empty\n"
-    try:
-      self.proxy.convertFile(data, '', '')
-      self.fail(fail_msg)
-    except Fault, err:
-      msg = "This format is not supported or is invalid"
-      self.assertTrue(err.faultString.endswith(msg), 
-                              "ConvertFile\n" + err.faultString)
+    self.assertRaises(Fault, self.proxy.convertFile, (data, '', ''))
 
     res = self.proxy.getFileMetadataItemList(data, '')
     self.assertEquals(res['MIMEType'], "text/plain")
@@ -334,24 +326,12 @@ class TestServer(CloudoooTestCase):
   def testConvertDocumentToInvalidFormat(self):
     """Try convert one document for a invalid format"""
     data = open(join('data','test.doc'),'r').read()
-    error_msg = "This format is not supported or is invalid"
-    try:
-      self.proxy.convertFile(encodestring(data), 'doc', 'xyz')
-      self.fail("")
-    except Fault, err:
-      err_str = err.faultString
-      self.assertTrue(err_str.endswith(error_msg),
-                                  "%s\n%s" % (error_msg, err_str))
+    self.assertRaises(Fault, self.proxy.convertFile, (data, 'doc', 'xyz'))
 
   def testConvertDocumentToImpossibleFormat(self):
     """Try convert one document to format not possible"""
     data = open(join('data','test.odp'),'r').read()
-    try:
-      self.proxy.convertFile(encodestring(data), 'odp', 'doc')
-      self.fail("")
-    except Fault, err:
-      err_str = err.faultString
-      self.assertTrue(err_str.endswith("ErrorCodeIOException\n"))
+    self.assertRaises(Fault, self.proxy.convertFile, (data, 'odp', 'doc'))
 
   def testRunConvertMethod(self):
     """Test run_convert method"""
