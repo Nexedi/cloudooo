@@ -98,12 +98,17 @@ class OpenOffice(Application):
 
   def _startProcess(self, command, env):
     """Start OpenOffice.org process"""
-    self.process = Popen(command,
-                         close_fds=True,
-                         env=env)
-    returned_code = self.process.poll()
-    waitStartDaemon(self, self.timeout)
-    return self._testOpenOffice(self.hostname, self.port)
+    for i in range(5):
+      self.stop()
+      waitStopDaemon(self, self.timeout)
+      self.process = Popen(command,
+                           close_fds=True,
+                           env=env)
+      returned_code = self.process.poll()
+      if not waitStartDaemon(self, self.timeout):
+        continue
+      if self._testOpenOffice(self.hostname, self.port):
+        return
 
   def _releaseOpenOfficePort(self):
     for process in psutil.process_iter():
@@ -150,13 +155,7 @@ class OpenOffice(Application):
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
     env["DISPLAY"] = ":%s" % self.display_id
-    if socketStatus(self.hostname, self.port):
-      self._releaseOpenOfficePort()
-    process_started = self._startProcess(self.command, env)
-    if not process_started:
-      self.stop()
-      waitStopDaemon(self, self.timeout)
-      self._startProcess(self.command, env)
+    self._startProcess(self.command, env)
     self._cleanRequest()
     Application.start(self)
 
@@ -166,8 +165,6 @@ class OpenOffice(Application):
     Application.stop(self)
     if socketStatus(self.hostname, self.port):
       self._releaseOpenOfficePort()
-    if exists(self.path_user_installation):
-      removeDirectory(self.path_user_installation)
     self._cleanRequest()
 
   def isLocked(self):
