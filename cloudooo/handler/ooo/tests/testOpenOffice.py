@@ -57,7 +57,7 @@ class TestOpenOffice(CloudoooTestCase):
     """Test pid function to validate if the return is correctly"""
     self.assertNotEquals(self.openoffice.pid(), None)
     self.openoffice.stop()
-    self.assertNotEquals(self.openoffice.pid(), None)
+    self.assertEquals(self.openoffice.pid(), None)
     self.assertEquals(self.openoffice.status(), False)
 
   def testOpenOfficeStart(self):
@@ -106,7 +106,7 @@ class TestOpenOffice(CloudoooTestCase):
     self.openoffice.start()
     second_openoffice = OpenOffice()
     second_openoffice.loadSettings("localhost", 4091,
-                                self.working_path + "_",
+                                self.working_path,
                                 self.virtual_display_id,
                                 self.office_binary_path,
                                 self.uno_path,

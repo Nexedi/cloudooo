@@ -58,6 +58,7 @@ class Application(object):
       finally:
         if pid_exists(process_pid) or self.status():
           Process(process_pid).kill()
+      delattr(self, "process")
 
   def loadSettings(self, hostname, port, path_run_dir, display_id, **kwargs):
     """Define attributes for application instance

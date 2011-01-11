@@ -26,10 +26,8 @@
 #
 ##############################################################################
 
-import unittest
 from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.application.xvfb import Xvfb
-from cloudooo.handler.ooo.utils.utils import waitStopDaemon
 
 
 class TestXvfb(CloudoooTestCase):
@@ -50,7 +48,7 @@ class TestXvfb(CloudoooTestCase):
     self.assertNotEquals(self.xvfb.pid(), None)
     self.assertTrue(self.xvfb.status())
     self.xvfb.stop()
-    self.assertNotEquals(self.xvfb.pid(), None)
+    self.assertEquals(self.xvfb.pid(), None)
     self.assertEquals(self.xvfb.status(), False)
 
   def testStatus(self):
@@ -61,7 +59,6 @@ class TestXvfb(CloudoooTestCase):
       self.assertTrue(self.xvfb.status())
     finally:
       self.xvfb.stop()
-      waitStopDaemon(self.xvfb)
     self.assertFalse(self.xvfb.status())
 
 
