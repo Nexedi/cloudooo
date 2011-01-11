@@ -53,7 +53,7 @@ class TestOOHandler(CloudoooTestCase):
 
   def _assert_document_output(self, document, expected_mimetype):
     """Check if the document was created correctly"""
-    mime = magic.Magic(mime_encoding=True)
+    mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(document)
     self.assertEquals(mimetype, expected_mimetype)
 
