@@ -37,7 +37,7 @@ from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
 from cloudooo.utils.utils import convertStringToBool, configureLogger
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
-def stopProcesses():
+def stopProcesses(signum, frame):
   monitor.stop()
   xvfb.stop()
   openoffice.stop()
@@ -104,7 +104,7 @@ def application(global_config, **local_config):
            timeout=timeout_response)
 
   # Signal to stop all processes
-  signal(SIGHUP, lambda x, y: stopProcesses())
+  signal(SIGHUP, stopProcesses)
 
   # Load all filters
   openoffice.acquire()
