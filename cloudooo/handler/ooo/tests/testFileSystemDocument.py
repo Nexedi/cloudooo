@@ -118,20 +118,17 @@ class TestFileSystemDocument(unittest.TestCase):
 
   def testSendZipFile(self):
     """Tests if the htm is extrated from zipfile"""
-    # XXX it seems that only zipfile module is tested here
     zip_input_url = 'data/test.zip'
-    zip_output_url = path.join(self.tmp_url, 'zipdocument.zip')
-    try:
-      data = open(zip_input_url).read()
-      zipdocument = FileSystemDocument(self.tmp_url, data, 'zip')
-      open(zip_output_url, 'w').write(zipdocument.getContent(True))
-      self.assertTrue(is_zipfile(zip_output_url))
-      zipfile = ZipFile(zip_output_url)
-      self.assertEquals(sorted(zipfile.namelist()),
-        sorted(['logo.gif', 'test.htm']))
-    finally:
-      if path.exists(zip_output_url):
-        remove(zip_output_url)
+    data = open(zip_input_url).read()
+    zipdocument = FileSystemDocument(self.tmp_url, data, 'zip')
+    mime = magic.Magic(mime=True)
+    mimetype = mime.from_buffer(zipdocument.getContent(True))
+    self.assertEquals(mimetype, "application/zip")
+    mimetype = mime.from_buffer(zipdocument.getContent())
+    self.assertEquals(mimetype, "text/html")
+    zipfile = ZipFile(StringIO(zipdocument.getContent(True)))
+    self.assertEquals(sorted(zipfile.namelist()),
+                sorted(['logo.gif', 'test.htm']))
 
 
 def test_suite():
