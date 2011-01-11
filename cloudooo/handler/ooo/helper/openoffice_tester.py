@@ -17,6 +17,7 @@ def test_openoffice(hostname, port):
 def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "",
+                                ["port=","hostname=","uno_path="])
   except GetoptError, e:
     print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)
