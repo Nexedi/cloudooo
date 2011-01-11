@@ -27,15 +27,15 @@
 ##############################################################################
 
 import gc
-import handler.ooo.monitor as monitor
 from signal import signal, SIGHUP
-from handler.ooo.application.openoffice import openoffice
-from handler.ooo.application.xvfb import xvfb
-from wsgixmlrpcapplication import WSGIXMLRPCApplication
-from utils.utils import convertStringToBool, configureLogger
 from os import path, mkdir
-from handler.ooo.mimemapper import mimemapper
 
+import cloudooo.handler.ooo.monitor as monitor
+from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.application.xvfb import xvfb
+from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
+from cloudooo.utils.utils import convertStringToBool, configureLogger
+from cloudooo.handler.ooo.mimemapper import mimemapper
 
 def stopProcesses():
   monitor.stop()
