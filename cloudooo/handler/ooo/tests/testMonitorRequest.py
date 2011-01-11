@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 from time import sleep
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudoooTestCase import CloudoooTestCase, make_suite

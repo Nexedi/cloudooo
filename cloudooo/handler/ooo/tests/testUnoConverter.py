@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 import json
 import magic
 import pkg_resources
