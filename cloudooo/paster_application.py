@@ -29,6 +29,7 @@
 import gc
 from signal import signal, SIGHUP
 from os import path, mkdir
+import os
 
 import cloudooo.handler.ooo.monitor as monitor
 from cloudooo.handler.ooo.application.openoffice import openoffice
@@ -62,6 +63,18 @@ def application(global_config, **local_config):
   uno_path -- Full path to pyuno library.
       e.g uno_path='/opt/openoffice.org/program'
   """
+  prefix = 'env-'
+  environment_dict = {}
+  for parameter_name, value in local_config.iteritems():
+    if value and parameter_name[:len(prefix)] == prefix:
+      variable_name = parameter_name[len(prefix):].upper()
+      if variable_name == 'PATH':
+        # merge only for PATH
+        current_value = os.environ.get(variable_name, '')
+        if current_value:
+          value = current_value + ':' + value
+      environment_dict[variable_name] = value
+
   gc.enable()
   debug_mode = convertStringToBool(local_config.get('debug_mode'))
   configureLogger(debug_mode=debug_mode)
@@ -94,6 +107,7 @@ def application(global_config, **local_config):
                           local_config.get('uno_path'),
                           local_config.get('openoffice_user_interface_language',
                                            'en'),
+                          environment_dict=environment_dict,
                           )
   openoffice.start()
 
