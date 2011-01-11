@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 import cloudooo.handler.ooo.monitor as monitor
 from cloudoooTestCase import CloudoooTestCase, make_suite
 from cloudooo.handler.ooo.monitor.request import MonitorRequest

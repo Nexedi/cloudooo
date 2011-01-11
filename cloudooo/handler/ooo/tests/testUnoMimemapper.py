@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 import json
 import pkg_resources
 from cloudooo.handler.ooo.application.openoffice import openoffice

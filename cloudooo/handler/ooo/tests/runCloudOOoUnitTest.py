@@ -4,12 +4,11 @@ import sys
 import unittest
 from argparse import ArgumentParser
 from time import sleep
+from subprocess import Popen
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir
-from subprocess import Popen, PIPE
 import tempfile
-import os
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
@@ -66,11 +65,8 @@ def run():
   config = ConfigParser()
   config.read(server_cloudooo_conf)
   openoffice_port = int(config.get("app:main", "openoffice_port"))
-  xvfb_port = int(config.get("app:main", "virtual_display_port"))
-  xvfb_display_id = int(config.get("app:main", "virtual_display_id"))
   hostname = config.get("app:main", "application_hostname")
   server_port = int(config.get("server:main", "port"))
-  run_dir = config.get('app:main', 'working_path')
   module = __import__(test_name)
   if not hasattr(module, "test_suite"):
     exit("No test suite to run, exiting immediately")
@@ -109,8 +105,8 @@ def run():
       stopFakeEnvironment()
   elif XVFB:
     chdir(ENVIRONMENT_PATH)
-    xvfb = startFakeEnvironment(start_openoffice=False,
-                                conf_path=server_cloudooo_conf)
+    startFakeEnvironment(start_openoffice=False,
+                         conf_path=server_cloudooo_conf)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:

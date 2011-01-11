@@ -57,6 +57,3 @@ class TestFilter(unittest.TestCase):
 def test_suite():
   return make_suite(TestFilter)
 
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestFilter)
-  unittest.TextTestRunner(verbosity=2).run(suite)

@@ -26,9 +26,6 @@
 #
 ##############################################################################
 
-import unittest
-import os
-import subprocess
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from multiprocessing import Process, Array
