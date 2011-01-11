@@ -34,7 +34,7 @@ from subprocess import Popen, PIPE
 from threading import Lock
 from zope.interface import implements
 from application import Application
-from xvfb import xvfb
+from cloudooo.handler.ooo.application.xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils.utils import logger, convertStringToBool
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
