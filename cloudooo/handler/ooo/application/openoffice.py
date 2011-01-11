@@ -96,7 +96,7 @@ class OpenOffice(Application):
     self.uno_path = uno_path
     self.default_language = default_language
 
-  def _start_process(self, command, env):
+  def _startProcess(self, command, env):
     """Start OpenOffice.org process"""
     self.process = Popen(command,
                          close_fds=True,
@@ -152,11 +152,11 @@ class OpenOffice(Application):
     env["DISPLAY"] = ":%s" % self.display_id
     if socketStatus(self.hostname, self.port):
       self._releaseOpenOfficePort()
-    process_started = self._start_process(self.command, env)
+    process_started = self._startProcess(self.command, env)
     if not process_started:
       self.stop()
       waitStopDaemon(self, self.timeout)
-      self._start_process(self.command, env)
+      self._startProcess(self.command, env)
     self._cleanRequest()
     Application.start(self)
 
