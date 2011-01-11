@@ -28,14 +28,14 @@
 
 require 'xmlrpc/client'
 
-input_filename = '../tests/data/test.doc'
-output_filename = '../tests/output/ruby_test.odt'
+input_filename = File.dirname(__FILE__) + '/../handler/ooo/tests/data/test.doc'
+output_filename = 'ruby_test.odt'
 
 in_data = File.read input_filename
 enc_data = XMLRPC::Base64.encode in_data
 
 server = XMLRPC::Client.new2 'http://localhost:8008'
-result = server.call('convert', enc_data)
+result = server.call('convertFile', enc_data, 'doc', 'odt')
 
 out_data = XMLRPC::Base64.decode result
 out_file = File.open(output_filename, 'w')
