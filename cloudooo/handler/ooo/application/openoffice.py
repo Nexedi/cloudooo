@@ -64,7 +64,8 @@ class OpenOffice(Application):
     python = join(self.office_binary_path, "python")
     args = [exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo",
-                                      join("helper", "openoffice_tester.py")),
+                                      join('handler', 'ooo',
+                                           "helper", "openoffice_tester.py")),
             "--hostname=%s" % host,
             "--port=%s" % port,
             "--uno_path=%s" % self.uno_path]
