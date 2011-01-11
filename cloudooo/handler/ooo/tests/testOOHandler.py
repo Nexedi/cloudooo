@@ -26,9 +26,8 @@
 #
 ##############################################################################
 
-import unittest
+import magic
 from os import path
-from subprocess import Popen, PIPE
 from base64 import encodestring, decodestring
 from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.handler import OOHandler
@@ -52,14 +51,11 @@ class TestOOHandler(CloudoooTestCase):
     new_file.close()
     self._file_path_list.append(document_output_url)
 
-  def _assert_document_output(self, document_output_url, msg):
+  def _assert_document_output(self, document, expected_mimetype):
     """Check if the document was created correctly"""
-    command_list = ["file", "-b", document_output_url]
-    stdout, stderr = Popen(command_list,
-                           stdout=PIPE).communicate()
-    self.assertEquals(msg in stdout,
-                      True,
-                      "\nStdout: %sMsg: %s" % (stdout, msg))
+    mime = magic.Magic(mime_encoding=True)
+    mimetype = mime.from_buffer(document)
+    self.assertEquals(mimetype, expected_mimetype)
 
   def tearDown(self):
     """Cleanup temp files
@@ -70,7 +66,6 @@ class TestOOHandler(CloudoooTestCase):
         os.remove(file_path)
     CloudoooTestCase.tearDown(self)
 
-
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""
     data = encodestring(open("data/test.odt").read())
@@ -78,10 +73,7 @@ class TestOOHandler(CloudoooTestCase):
                         decodestring(data),
                         'odt')
     doc_exported = handler.convert("doc")
-    document_output_url = path.join(self.tmp_url, "testExport.doc")
-    self._save_document(document_output_url, doc_exported)
-    msg = 'Microsoft Office Document'
-    self._assert_document_output(document_output_url, msg)
+    self._assert_document_output(doc_exported, "application/msword")
 
   def testConvertDocToOdt(self):
     """Test convert DOC to ODT"""
@@ -90,10 +82,8 @@ class TestOOHandler(CloudoooTestCase):
                         decodestring(data),
                         'doc')
     doc_exported = handler.convert("odt")
-    document_output_url = path.join(self.tmp_url, "testConvert.odt")
-    self._save_document(document_output_url, doc_exported)
-    msg = 'OpenDocument Text\n'
-    self._assert_document_output(document_output_url, msg)
+    self._assert_document_output(doc_exported,
+                          "application/vnd.oasis.opendocument.text")
     
   def testGetMetadata(self):
     """Test getMetadata"""
@@ -140,10 +130,8 @@ class TestOOHandler(CloudoooTestCase):
                         decodestring(data),
                         'doc')
     doc_exported = handler.convert("odt")
-    document_output_url = path.join(self.tmp_url, "testConvert.odt")
-    self._save_document(document_output_url, doc_exported)
-    msg = 'OpenDocument Text\n'
-    self._assert_document_output(document_output_url, msg)
+    self._assert_document_output(doc_exported,
+                          "application/vnd.oasis.opendocument.text")
   
   def testGetMetadataWithOpenOfficeStopped(self):
     """Test getMetadata with openoffice stopped"""

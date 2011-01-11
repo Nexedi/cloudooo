@@ -27,7 +27,8 @@
 ##############################################################################
 
 import unittest
-from subprocess import Popen, PIPE
+import magic
+from StringIO import StringIO
 from base64 import decodestring
 from os import path
 from os import remove
@@ -102,25 +103,22 @@ class TestFileSystemDocument(unittest.TestCase):
     
   def testZipDocumentList(self):
     """Tests if the zip file is returned correctly"""
-    zip_output_url = path.join(self.tmp_url, 'ziptest.zip')
     open(path.join(self.fsdocument.directory_name, 'document2'), 'w').write('test')
     zip_file = self.fsdocument.getContent(True)
-    open(zip_output_url, 'w').write(zip_file)
-    command = ["file", zip_output_url]
-    stdout, stderr = Popen(command, 
-                           stdout=PIPE).communicate()
-    self.assertEquals(stdout, '/tmp/ziptest.zip: Zip archive data, at least v2.0 to extract\n')
-    ziptest = ZipFile(zip_output_url, 'r')
+    mime = magic.Magic(mime=True)
+    mimetype = mime.from_buffer(zip_file)
+    self.assertEquals(mimetype, 'application/zip')
+    ziptest = ZipFile(StringIO(zip_file), 'r')
     self.assertEquals(len(ziptest.filelist), 2)
     for file in ziptest.filelist:
       if file.filename.endswith("document2"):
         self.assertEquals(file.file_size, 4)
       else:
         self.assertEquals(file.file_size, 9)
-    remove(zip_output_url)
 
   def testSendZipFile(self):
     """Tests if the htm is extrated from zipfile"""
+    # XXX it seems that only zipfile module is tested here
     zip_input_url = 'data/test.zip'
     zip_output_url = path.join(self.tmp_url, 'zipdocument.zip')
     try:
@@ -138,7 +136,3 @@ class TestFileSystemDocument(unittest.TestCase):
 
 def test_suite():
   return make_suite(TestFileSystemDocument)
-
-if "__main__" == __name__:
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestFileSystemDocument)
-  unittest.TextTestRunner(verbosity=2).run(suite)
