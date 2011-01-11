@@ -47,7 +47,7 @@ setup(name='cloudooo',
       test_requires=test_require_list,
       entry_points="""
       [paste.app_factory]
-      main = cloudooo.cloudooo:application
+      main = cloudooo.paster_application:application
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
