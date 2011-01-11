@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
@@ -37,13 +36,17 @@ text_expected_tuple = (('doc', 'Microsoft Word 6.0'),
     ('doc', 'Microsoft Word 97/2000/XP'), 
     ('htm', 'HTML Document (OpenOffice.org Writer)'),
     ('html', 'HTML Document (OpenOffice.org Writer)'), 
-    ('html', 'XHTML'), ('odt', 'ODF Text Document'), 
+    ('html', 'XHTML'),
+    ('odt', 'ODF Text Document'), 
     ('ott', 'ODF Text Document Template'), 
     ('pdf', 'PDF - Portable Document Format'), 
-    ('rtf', 'Rich Text Format'), ('sdw', 'StarWriter 3.0'),
-    ('sdw', 'StarWriter 4.0'), ('sdw', 'StarWriter 5.0'), 
+    ('rtf', 'Rich Text Format'),
+    ('sdw', 'StarWriter 3.0'),
+    ('sdw', 'StarWriter 4.0'),
+    ('sdw', 'StarWriter 5.0'), 
     ('sxw', 'OpenOffice.org 1.0 Text Document'),
-    ('txt', 'Text'), ('txt', 'Text Encoded'), 
+    ('txt', 'Text'),
+    ('txt', 'Text Encoded'), 
     ('xhtml', 'XHTML'),
     (u'pdb', u'AportisDoc (Palm)'),
     (u'psw', u'Pocket Word'))
@@ -72,15 +75,18 @@ drawing_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('jpe', 'JPEG - Joint Photographic Experts Group'), 
     ('jpeg', 'JPEG - Joint Photographic Experts Group'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'), 
-    ('met', 'MET - OS/2 Metafile'), ('odg', 'ODF Drawing'),
-    ('otg', 'ODF Drawing Template'), ('pbm', 'PBM - Portable Bitmap'),
+    ('met', 'MET - OS/2 Metafile'),
+    ('odg', 'ODF Drawing'),
+    ('otg', 'ODF Drawing Template'),
+    ('pbm', 'PBM - Portable Bitmap'),
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
     ('pgm', 'PGM - Portable Graymap'),
     ('pict', 'PCT - Mac Pict'),
     ('png', 'PNG - Portable Network Graphic'),
     ('ppm', 'PPM - Portable Pixelmap'),
-    ('ras', 'RAS - Sun Raster Image'), ('sda', 'StarDraw 5.0'),
+    ('ras', 'RAS - Sun Raster Image'),
+    ('sda', 'StarDraw 5.0'),
     ('sdd', 'StarDraw 3.0'), 
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
@@ -107,14 +113,18 @@ presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('htm', 'HTML Document (OpenOffice.org Impress)'),
     ('html', 'HTML Document (OpenOffice.org Impress)'),
-    ('html', 'XHTML'), ('jfif', 'JPEG - Joint Photographic Experts Group'),
+    ('html', 'XHTML'),
+    ('jfif', 'JPEG - Joint Photographic Experts Group'),
     ('jif', 'JPEG - Joint Photographic Experts Group'),
     ('jpe', 'JPEG - Joint Photographic Experts Group'),
     ('jpeg', 'JPEG - Joint Photographic Experts Group'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
-    ('met', 'MET - OS/2 Metafile'), ('odg', 'ODF Drawing (Impress)'),
-    ('odp', 'ODF Presentation'), ('otp', 'ODF Presentation Template'),
-    ('pbm', 'PBM - Portable Bitmap'), ('pct', 'PCT - Mac Pict'),
+    ('met', 'MET - OS/2 Metafile'),
+    ('odg', 'ODF Drawing (Impress)'),
+    ('odp', 'ODF Presentation'),
+    ('otp', 'ODF Presentation Template'),
+    ('pbm', 'PBM - Portable Bitmap'),
+    ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
     ('pgm', 'PGM - Portable Graymap'), 
     ('pict', 'PCT - Mac Pict'),
@@ -134,32 +144,49 @@ presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('tif', 'TIFF - Tagged Image File Format'), 
     ('tiff', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xhtml', 'XHTML'), ('xpm', 'XPM - X PixMap'))
+    ('xhtml', 'XHTML'),
+    ('xpm', 'XPM - X PixMap'))
 
 spreadsheet_expected_list = (('csv', 'Text CSV'), 
     ('htm', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'HTML Document (OpenOffice.org Calc)'),
-    ('html', 'XHTML'), ('ods', 'ODF Spreadsheet'),
+    ('html', 'XHTML'),
+    ('ods', 'ODF Spreadsheet'),
     ('ots', 'ODF Spreadsheet Template'), 
     ('pdf', 'PDF - Portable Document Format'),
-    ('sdc', 'StarCalc 3.0'), ('sdc', 'StarCalc 4.0'),
-    ('sdc', 'StarCalc 5.0'), ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
-    ('txt', 'Text CSV'), ('xhtml', 'XHTML'),
-    ('xlc', 'Microsoft Excel 4.0'), ('xlc', 'Microsoft Excel 5.0'),
-    ('xlc', 'Microsoft Excel 95'), ('xlc', 'Microsoft Excel 97/2000/XP'),
-    ('xlm', 'Microsoft Excel 4.0'), ('xlm', 'Microsoft Excel 5.0'),
-    ('xlm', 'Microsoft Excel 95'), ('xlm', 'Microsoft Excel 97/2000/XP'),
-    ('xls', 'Microsoft Excel 4.0'), ('xls', 'Microsoft Excel 5.0'),
-    ('xls', 'Microsoft Excel 95'), ('xls', 'Microsoft Excel 97/2000/XP'),
-    ('xls', 'Text CSV'), ('xlt', 'Microsoft Excel 5.0 Template'),
+    ('sdc', 'StarCalc 3.0'),
+    ('sdc', 'StarCalc 4.0'),
+    ('sdc', 'StarCalc 5.0'),
+    ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
+    ('txt', 'Text CSV'),
+    ('xhtml', 'XHTML'),
+    ('xlc', 'Microsoft Excel 4.0'),
+    ('xlc', 'Microsoft Excel 5.0'),
+    ('xlc', 'Microsoft Excel 95'),
+    ('xlc', 'Microsoft Excel 97/2000/XP'),
+    ('xlm', 'Microsoft Excel 4.0'),
+    ('xlm', 'Microsoft Excel 5.0'),
+    ('xlm', 'Microsoft Excel 95'),
+    ('xlm', 'Microsoft Excel 97/2000/XP'),
+    ('xls', 'Microsoft Excel 4.0'),
+    ('xls', 'Microsoft Excel 5.0'),
+    ('xls', 'Microsoft Excel 95'),
+    ('xls', 'Microsoft Excel 97/2000/XP'),
+    ('xls', 'Text CSV'),
+    ('xlt', 'Microsoft Excel 5.0 Template'),
     ('xlt', 'Microsoft Excel 95 Template'),
     ('xlt', 'Microsoft Excel 97/2000/XP Template'),
-    ('xlw', 'Microsoft Excel 4.0'), ('xlw', 'Microsoft Excel 5.0'),
-    ('xlw', 'Microsoft Excel 95'), ('xlw', 'Microsoft Excel 97/2000/XP'))
+    ('xlw', 'Microsoft Excel 4.0'),
+    ('xlw', 'Microsoft Excel 5.0'),
+    ('xlw', 'Microsoft Excel 95'),
+    ('xlw', 'Microsoft Excel 97/2000/XP'))
 
-math_expected_tuple = (('smf', 'StarMath 4.0'), ('mml', 'MathML 1.01'),
-    ('pdf', 'PDF - Portable Document Format'), ('smf', 'StarMath 5.0'),
-    ('sxm', 'OpenOffice.org 1.0 Formula'), ('odf', 'ODF Formula'), 
+math_expected_tuple = (('smf', 'StarMath 4.0'),
+    ('mml', 'MathML 1.01'),
+    ('pdf', 'PDF - Portable Document Format'),
+    ('smf', 'StarMath 5.0'),
+    ('sxm', 'OpenOffice.org 1.0 Formula'),
+    ('odf', 'ODF Formula'), 
     ('smf', 'StarMath 3.0'))
 
 chart_expected_tuple = (('sds', 'StarChart 3.0'),
@@ -183,25 +210,6 @@ class TestMimeMapper(CloudoooTestCase):
                                   python_path=self.python_path)
     openoffice.release()
 
-  def testUnoMimemapperPath(self):
-    """Test if the unomimemapper has the path to script"""
-    mimemapper = MimeMapper()
-    openoffice.acquire()
-    hostname, port = openoffice.getAddress()
-    try:
-      mimemapper.loadFilterList(hostname, port)
-    except:
-      self.assertEquals(mimemapper.unomimemapper_bin, "/usr/bin/unomimemapper")
-    finally:
-      openoffice.release()
-    openoffice.acquire()
-    try:
-      mimemapper.loadFilterList(hostname, port, unomimemapper_bin="/x/y/unomimemapper")
-    except NameError:
-      self.assertEquals(mimemapper.unomimemapper_bin, "/x/y/unomimemapper")
-    finally:
-      openoffice.release()
-
   def testGetFilterWhenExtensionNotExist(self):
     """Test the case that the user passes extension which does not exist."""
     empty_list = self.mimemapper.getFilterList('xxx')
@@ -209,6 +217,7 @@ class TestMimeMapper(CloudoooTestCase):
  
   def testIfThereIsDuplicateData(self):
     """Test if there is duplicate data."""
+    # XXX It can not exists multiple keys inside a dictionary
     extension_list = self.mimemapper._doc_type_list_by_extension.keys()
     self.assertEquals(len(extension_list), len(set(extension_list)))
     for type_list in self.mimemapper._doc_type_list_by_extension.values():
@@ -337,6 +346,12 @@ class TestMimeMapper(CloudoooTestCase):
 
   def testGetFilterName(self):
     """Test if passing extension and document_type, the filter is correct."""
+    filtername = self.mimemapper.getFilterName("xls",
+                                            'com.sun.star.sheet.SpreadsheetDocument')
+    self.assertEquals(filtername, "MS Excel 97")
+    filtername = self.mimemapper.getFilterName("sxw",
+                                            'com.sun.star.text.TextDocument')
+    self.assertEquals(filtername, "StarOffice XML (Writer)")
     filtername = self.mimemapper.getFilterName("pdf",
                                             'com.sun.star.text.TextDocument')
     self.assertEquals(filtername, "writer_pdf_Export")
@@ -349,12 +364,12 @@ class TestMimeMapper(CloudoooTestCase):
 
   def testGetMimetype(self):
     """Test get mimetype according to the filter type"""
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer8"),\
-        "application/vnd.oasis.opendocument.text")
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("math8"),\
-        "application/vnd.oasis.opendocument.formula")
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer_MS_Word_97"),\
-        'application/msword')
+    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer8"),
+                      "application/vnd.oasis.opendocument.text")
+    self.assertEquals(self.mimemapper.getMimetypeByFilterType("math8"),
+                      "application/vnd.oasis.opendocument.formula")
+    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer_MS_Word_97"),
+                      'application/msword')
 
 
 def test_suite():
