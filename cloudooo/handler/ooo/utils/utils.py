@@ -57,18 +57,20 @@ def socketStatus(hostname, port):
 def waitStartDaemon(daemon, attempts):
   """Wait a certain time to start the daemon."""
   for num in range(attempts):
-    sleep(1)
     if daemon.status():
       return True
+    elif daemon.pid() is None:
+      return False
+    sleep(1)
   return False
 
 
 def waitStopDaemon(daemon, attempts=5):
   """Wait a certain time to stop the daemon."""
   for num in range(attempts):
-    sleep(1)
     if not daemon.status():
       return True
+    sleep(1)
   return False
 
 
