@@ -104,10 +104,8 @@ class OOHandler:
       monitor_sleeping_time.touch()
     try:
       self._startTimeout()
-      process = Popen(command_list,
-                    stdout=PIPE,
-                    stderr=PIPE,
-                    close_fds=True)
+      process = Popen(command_list, stdout=PIPE, stderr=PIPE, close_fds=True,
+                      env=openoffice.environment_dict.copy())
       stdout, stderr = process.communicate()
     finally:
       self._stopTimeout()
