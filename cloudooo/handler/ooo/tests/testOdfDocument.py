@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 from zipfile import ZipFile
 from lxml import etree
 from cloudoooTestCase import CloudoooTestCase, make_suite
@@ -59,6 +58,7 @@ class TestOdfDocument(CloudoooTestCase):
 
   def testParseContent(self):
     """Test if the _parsed_content attribute is the parsed content.xml"""
+    # XXX not sure it is good to store parsed document everytime
     self.assertTrue(isinstance(self.oodocument.parsed_content, etree._Element))
     self.assertTrue(self.oodocument.parsed_content.tag.endswith(
                     'document-content'))

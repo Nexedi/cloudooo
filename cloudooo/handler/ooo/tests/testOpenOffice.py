@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 from cloudoooTestCase import CloudoooTestCase
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudoooTestCase import make_suite

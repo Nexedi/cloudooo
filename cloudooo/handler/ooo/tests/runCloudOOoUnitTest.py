@@ -5,19 +5,11 @@ import unittest
 from argparse import ArgumentParser
 from time import sleep
 from subprocess import Popen
-from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir, remove
 from psutil import Process
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
-
-
-def wait_liberate_port(hostname, port, timeout_limit=30):
-  for n in range(timeout_limit):
-    if not socketStatus(hostname, port):
-      break
-    sleep(1)
 
 
 def wait_use_port(pid, timeout_limit=30):

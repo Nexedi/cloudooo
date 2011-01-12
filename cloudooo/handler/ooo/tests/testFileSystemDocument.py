@@ -31,8 +31,7 @@ import magic
 from StringIO import StringIO
 from base64 import decodestring
 from os import path
-from os import remove
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudoooTestCase import make_suite
 
