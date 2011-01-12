@@ -8,6 +8,7 @@ from subprocess import Popen
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir, remove
 from psutil import Process
+from signal import SIGQUIT
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
@@ -24,6 +25,7 @@ def wait_use_port(pid, timeout_limit=30):
 def exit(msg):
   sys.stderr.write(msg)
   sys.exit(0) 
+
 
 def run():
   parser = ArgumentParser(description="Unit Test Runner for Cloudooo")
@@ -83,7 +85,8 @@ def run():
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
-      process.terminate()
+      process.send_signal(SIGQUIT)
+      process.wait()
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
