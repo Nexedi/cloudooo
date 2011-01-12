@@ -28,7 +28,6 @@
 
 import pkg_resources
 import psutil
-from os import environ
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
@@ -109,7 +108,6 @@ class OpenOffice(Application):
       self.process = Popen(command,
                            close_fds=True,
                            env=env)
-      returned_code = self.process.poll()
       if not waitStartDaemon(self, self.timeout):
         continue
       if self._testOpenOffice(self.hostname, self.port):
