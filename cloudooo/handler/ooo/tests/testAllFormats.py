@@ -81,8 +81,10 @@ class TestAllFormats(CloudoooTestCase):
         self.assertFalse(magic_result.endswith(": empty"))
       except Fault, err:
         fault_list.append((source_format, extension[0], err.faultString))
-    if fault_list != []:
-      self.fail(fault_list)
+    if fault_list:
+      template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
+      message = '\n'.join([template_message % fault for fault in fault_list])
+      self.fail('Failed Conversions:\n' + message)
 
 
 def test_suite():
