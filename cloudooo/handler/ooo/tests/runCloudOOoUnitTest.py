@@ -7,7 +7,7 @@ from time import sleep
 from subprocess import Popen
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
-from os import chdir, path, environ, curdir
+from os import chdir, path, environ, curdir, remove
 from psutil import Process
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
@@ -79,7 +79,12 @@ def run():
   suite.addTest(module.test_suite())
 
   if DAEMON:
-    command = [paster_path, "serve", server_cloudooo_conf]
+    log_file = '%s/cloudooo_test.log' % config.get('app:main',
+                                                   'working_path')
+    if path.exists(log_file):
+      remove(log_file)
+    command = [paster_path, 'serve', '--log-file', log_file,
+               server_cloudooo_conf]
     process = Popen(command)
     wait_use_port(process.pid)
     chdir(ENVIRONMENT_PATH)
