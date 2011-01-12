@@ -8,7 +8,7 @@ from subprocess import Popen
 from cloudooo.handler.ooo.utils.utils import socketStatus
 from ConfigParser import ConfigParser
 from os import chdir, path, environ, curdir
-import tempfile
+from psutil import Process
 
 ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
@@ -20,11 +20,13 @@ def wait_liberate_port(hostname, port, timeout_limit=30):
     sleep(1)
 
 
-def wait_use_port(hostname, port, timeout_limit=30):
+def wait_use_port(pid, timeout_limit=30):
+  process = Process(pid)
   for n in range(timeout_limit):
-    if socketStatus(hostname, port):
-      break
+    if len(process.get_connections()) > 0:
+      return True
     sleep(1)
+  return False
 
 
 def exit(msg):
@@ -64,13 +66,9 @@ def run():
 
   config = ConfigParser()
   config.read(server_cloudooo_conf)
-  openoffice_port = int(config.get("app:main", "openoffice_port"))
-  hostname = config.get("app:main", "application_hostname")
-  server_port = int(config.get("server:main", "port"))
   module = __import__(test_name)
   if not hasattr(module, "test_suite"):
     exit("No test suite to run, exiting immediately")
-
 
   DAEMON = getattr(module, 'DAEMON', False)
   OPENOFFICE = getattr(module, 'OPENOFFICE', False)
@@ -81,21 +79,14 @@ def run():
   suite.addTest(module.test_suite())
 
   if DAEMON:
-    fd, pid_filename = tempfile.mkstemp()
-    command = [paster_path, "serve", '--daemon', '--pid-file', pid_filename,
-               server_cloudooo_conf]
+    command = [paster_path, "serve", server_cloudooo_conf]
     process = Popen(command)
-    wait_use_port(hostname, openoffice_port)
-    wait_use_port(hostname, server_port)
+    wait_use_port(process.pid)
     chdir(ENVIRONMENT_PATH)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
-      command = [paster_path, 'serve', '--stop-daemon', '--pid-file',
-                 pid_filename]
-      stop_process = Popen(command)
-      stop_process.communicate()
-      # pid file is destroyed by paster
+      process.terminate()
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
     openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
