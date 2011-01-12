@@ -27,7 +27,7 @@
 ##############################################################################
 
 import gc
-from signal import signal, SIGHUP
+from signal import signal, SIGTERM, SIGINT, SIGQUIT, SIGHUP
 from os import path, mkdir
 import os
 
@@ -119,6 +119,9 @@ def application(global_config, **local_config):
             timeout=timeout_response)
 
   # Signal to stop all processes
+  signal(SIGTERM, stopProcesses)
+  signal(SIGINT, stopProcesses)
+  signal(SIGQUIT, stopProcesses)
   signal(SIGHUP, stopProcesses)
 
   # Load all filters
