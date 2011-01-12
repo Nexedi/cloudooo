@@ -40,8 +40,8 @@ from cloudooo.handler.ooo.mimemapper import mimemapper
 
 def stopProcesses(signum, frame):
   monitor.stop()
-  xvfb.stop()
   openoffice.stop()
+  xvfb.stop()
 
 
 def application(global_config, **local_config):
