@@ -115,8 +115,8 @@ def application(global_config, **local_config):
   monitor.load(local_config)
   timeout_response = int(local_config.get('timeout_response'))
   kw = dict(uno_path=local_config.get('uno_path'),
-           office_binary_path=local_config.get('office_binary_path'),
-           timeout=timeout_response)
+            office_binary_path=local_config.get('office_binary_path'),
+            timeout=timeout_response)
 
   # Signal to stop all processes
   signal(SIGHUP, stopProcesses)
