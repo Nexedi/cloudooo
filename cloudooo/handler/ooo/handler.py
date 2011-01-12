@@ -164,8 +164,6 @@ class OOHandler:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
     finally:
       openoffice.release()
-      if self.monitor.is_alive():
-        self._stopTimeout()
     url = stdout.replace('\n', '')
     self.document.reload(url)
     content = self.document.getContent(self.zip)
@@ -188,8 +186,6 @@ class OOHandler:
       stdout, stderr = self._callUnoConverter(*feature_list, **kw)
     finally:
       openoffice.release()
-      if self.monitor.is_alive():
-        self._stopTimeout()
     metadata = json.loads(decodestring(stdout))
     if metadata.get("Data"):
       self.document.reload(metadata['Data'])
@@ -212,8 +208,6 @@ class OOHandler:
       stdout, stderr = self._callUnoConverter(*['setmetadata'], **kw)
     finally:
       openoffice.release()
-      if self.monitor.is_alive():
-        self._stopTimeout()
     doc_loaded = self.document.getContent()
     self.document.trash()
     return doc_loaded
