@@ -29,7 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
 from cloudooo.utils.utils import logger
-from cloudooo.handler.ooo.utils.utils import socketStatus, waitStopDaemon
+from cloudooo.handler.ooo.utils.utils import waitStopDaemon
 from psutil import pid_exists, Process, AccessDenied
 
 
@@ -82,10 +82,10 @@ class Application(object):
   def status(self):
     """Check by socket if the openoffice work."""
     pid = self.pid()
-    if pid is None:
+    if pid is None or not pid_exists(pid):
       return False
+
     process = Process(pid)
-    
     try:
       process.exe
     except AccessDenied:
