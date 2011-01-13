@@ -78,7 +78,7 @@ class TestAllFormats(CloudoooTestCase):
                                              source_format,
                                              extension[0])
         magic_result = file_detector.from_buffer(decodestring(data_output))
-        file_is_empty = not magic_result.endswith(": empty")
+        file_is_empty = magic_result.endswith(": empty")
         if file_is_empty:
           fault_list.append((source_format, extension[0], magic_result))
       except Fault, err:
