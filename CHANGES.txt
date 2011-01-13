@@ -1,4 +1,4 @@
-1.0.10 (2010-01-13)
+1.1.0 (2010-01-13)
 ===================
   - Refactor runCloudOOoUnitTest.py to control better the daemon process
   - Use argparse instead of optparse
