@@ -1,5 +1,9 @@
-1.0.10 (unreleased)
+1.0.10 (2010-01-13)
 ===================
+  - Refactor runCloudOOoUnitTest.py to control better the daemon process
+  - Use argparse instead of optparse
+  - Refactor tests to use boolean asserts to validate True or False.
+  - Use python-magic to validate the output documents according to mimetype.
   - Change folder structure of cloudooo to put handler, mimemapper, helpers
     related to handler in same folder than handler.
   - Refactor code to use json instead of jsonpickle.
