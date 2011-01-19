@@ -73,7 +73,7 @@ class TestOOHandler(CloudoooTestCase):
                         decodestring(data),
                         'odt')
     doc_exported = handler.convert("doc")
-    self._assert_document_output(doc_exported, "application/msword")
+    self._assert_document_output(doc_exported, "application/vnd.ms-office")
 
   def testConvertDocToOdt(self):
     """Test convert DOC to ODT"""
