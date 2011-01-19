@@ -141,7 +141,7 @@ class MimeMapper(object):
       filter_type_dict = type_dict.get(filter_type)
       if not ui_name:
         ui_name = filter_type_dict.get("UIName")
-      filter_extension_list = filter_type_dict.get("Extensions")
+      filter_extension_list = filter_type_dict.get("Extensions")[:1]
       mimetype = filter_type_dict.get("MediaType")
       if not (filter_extension_list and mimetype):
         continue
