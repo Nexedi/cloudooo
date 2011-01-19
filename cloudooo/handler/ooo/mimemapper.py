@@ -100,20 +100,6 @@ class MimeMapper(object):
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
     """
-    # Filters that has flag in bad_flag_list is ignored.
-    # XXX - Is not good way to remove unnecessary filters
-    # XXX - try find a good way to remove filters that are not used for export
-    bad_flag_list = [65, 94217, 536641, 1572929, 268959937,
-                     524373, 85, 524353, 524391]
-    bad_name_list = [
-      'MS Word 97 Vorlage',
-      'draw_pdf_addstream_import',
-      'draw_pdf_import',
-      'impress_pdf_addstream_import',
-      'impress_pdf_import',
-      'writer_pdf_addstream_import',
-      'writer_pdf_import',
-      ]
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
@@ -131,10 +117,13 @@ class MimeMapper(object):
                            close_fds=True).communicate()
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
-      if filter_name in bad_name_list:
-        continue
       flag = value.get("Flags")
-      if flag in bad_flag_list:
+      # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,
+      # OwnTemplate:0x10, Own:0x20, Alien:0x40,
+      # UsesOptions (deprecated):0x80, Default:0x100,
+      # NotInFileDialog:0x1000, NotInChooser:0x2000,
+      # ThirdParty:0x80000, Preferred:0x10000000
+      if not flag & 2:
         continue
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
