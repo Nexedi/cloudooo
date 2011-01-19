@@ -35,7 +35,7 @@ text_expected_tuple = (
     ('doc', 'Microsoft Word 6.0'),
     ('doc', 'Microsoft Word 95'),
     ('doc', 'Microsoft Word 97/2000/XP'),
-    ('htm', 'HTML Document (OpenOffice.org Writer)'),
+    # ('docx', 'Microsoft Word 2007 XML'),
     ('html', 'HTML Document (OpenOffice.org Writer)'),
     ('html', 'XHTML'),
     ('odt', 'ODF Text Document'),
@@ -48,13 +48,11 @@ text_expected_tuple = (
     ('sxw', 'OpenOffice.org 1.0 Text Document'),
     ('txt', 'Text Encoded'),
     ('txt', 'Text'),
-    ('xhtml', 'XHTML'),
     ('pdb', 'AportisDoc (Palm)'),
     ('psw', 'Pocket Word'),
     )
 
 global_expected_tuple = (
-    ('htm', 'HTML (Writer/Global)'),
     ('html', 'HTML (Writer/Global)'),
     ('odm', 'ODF Master Document'),
     ('odt', 'ODF Text Document'),
@@ -62,6 +60,8 @@ global_expected_tuple = (
     ('sdw', 'StarWriter 3.0'),
     ('sdw', 'StarWriter 4.0'),
     ('sdw', 'StarWriter 5.0'),
+    ('sgl', 'StarWriter 5.0 Master Document'),
+    ('sgl', 'StarWriter 4.0 Master Document'),
     ('sxg', 'OpenOffice.org 1.0 Master Document'),
     ('sxw', 'OpenOffice.org 1.0 Text Document'),
     ('txt', 'Text Encoded (OpenOffice.org Master Document)'),
@@ -72,13 +72,8 @@ drawing_expected_tuple = (
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('gif', 'GIF - Graphics Interchange Format'),
-    ('htm', 'HTML Document (OpenOffice.org Draw)'),
     ('html', 'HTML Document (OpenOffice.org Draw)'),
     ('html', 'XHTML'),
-    ('jfif', 'JPEG - Joint Photographic Experts Group'),
-    ('jif', 'JPEG - Joint Photographic Experts Group'),
-    ('jpe', 'JPEG - Joint Photographic Experts Group'),
-    ('jpeg', 'JPEG - Joint Photographic Experts Group'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing'),
@@ -87,7 +82,6 @@ drawing_expected_tuple = (
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
     ('pgm', 'PGM - Portable Graymap'),
-    ('pict', 'PCT - Mac Pict'),
     ('png', 'PNG - Portable Network Graphic'),
     ('ppm', 'PPM - Portable Pixelmap'),
     ('ras', 'RAS - Sun Raster Image'),
@@ -97,13 +91,11 @@ drawing_expected_tuple = (
     ('svm', 'SVM - StarView Metafile'),
     ('sxd', 'OpenOffice.org 1.0 Drawing'),
     ('tif', 'TIFF - Tagged Image File Format'),
-    ('tiff', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xhtml', 'XHTML'), ('xpm', 'XPM - X PixMap'),
+    ('xpm', 'XPM - X PixMap'),
     )
 
 web_expected_tuple = (
-    ('htm', 'HTML Document'),
     ('html', 'HTML Document'),
     ('odt', 'OpenOffice.org Text (OpenOffice.org Writer/Web)'),
     ('pdf', 'PDF - Portable Document Format'),
@@ -120,13 +112,8 @@ presentation_expected_tuple = (
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('gif', 'GIF - Graphics Interchange Format'),
-    ('htm', 'HTML Document (OpenOffice.org Impress)'),
     ('html', 'HTML Document (OpenOffice.org Impress)'),
     ('html', 'XHTML'),
-    ('jfif', 'JPEG - Joint Photographic Experts Group'),
-    ('jif', 'JPEG - Joint Photographic Experts Group'),
-    ('jpe', 'JPEG - Joint Photographic Experts Group'),
-    ('jpeg', 'JPEG - Joint Photographic Experts Group'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing (Impress)'),
@@ -136,11 +123,10 @@ presentation_expected_tuple = (
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
     ('pgm', 'PGM - Portable Graymap'),
-    ('pict', 'PCT - Mac Pict'),
     ('png', 'PNG - Portable Network Graphic'),
     ('pot', 'Microsoft PowerPoint 97/2000/XP Template'),
     ('ppm', 'PPM - Portable Pixelmap'),
-    ('pps', 'Microsoft PowerPoint 97/2000/XP'),
+    # ('pps', 'Microsoft PowerPoint 97/2000/XP'),
     ('ppt', 'Microsoft PowerPoint 97/2000/XP'),
     ('ras', 'RAS - Sun Raster Image'),
     ('sda', 'StarDraw 5.0 (OpenOffice.org Impress)'),
@@ -151,15 +137,12 @@ presentation_expected_tuple = (
     ('sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'),
     ('sxi', 'OpenOffice.org 1.0 Presentation'),
     ('tif', 'TIFF - Tagged Image File Format'),
-    ('tiff', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xhtml', 'XHTML'),
     ('xpm', 'XPM - X PixMap'),
     )
 
 spreadsheet_expected_list = (
     ('csv', 'Text CSV'),
-    ('htm', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'XHTML'),
     ('ods', 'ODF Spreadsheet'),
@@ -169,28 +152,12 @@ spreadsheet_expected_list = (
     ('sdc', 'StarCalc 4.0'),
     ('sdc', 'StarCalc 5.0'),
     ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
-    ('txt', 'Text CSV'),
-    ('xhtml', 'XHTML'),
-    ('xlc', 'Microsoft Excel 4.0'),
-    ('xlc', 'Microsoft Excel 5.0'),
-    ('xlc', 'Microsoft Excel 95'),
-    ('xlc', 'Microsoft Excel 97/2000/XP'),
-    ('xlm', 'Microsoft Excel 4.0'),
-    ('xlm', 'Microsoft Excel 5.0'),
-    ('xlm', 'Microsoft Excel 95'),
-    ('xlm', 'Microsoft Excel 97/2000/XP'),
-    ('xls', 'Microsoft Excel 4.0'),
     ('xls', 'Microsoft Excel 5.0'),
     ('xls', 'Microsoft Excel 95'),
     ('xls', 'Microsoft Excel 97/2000/XP'),
-    ('xls', 'Text CSV'),
     ('xlt', 'Microsoft Excel 5.0 Template'),
     ('xlt', 'Microsoft Excel 95 Template'),
     ('xlt', 'Microsoft Excel 97/2000/XP Template'),
-    ('xlw', 'Microsoft Excel 4.0'),
-    ('xlw', 'Microsoft Excel 5.0'),
-    ('xlw', 'Microsoft Excel 95'),
-    ('xlw', 'Microsoft Excel 97/2000/XP'),
     )
 
 math_expected_tuple = (
@@ -205,9 +172,7 @@ math_expected_tuple = (
 
 chart_expected_tuple = (
     ('odc', 'ODF Chart'),
-    ('sds', 'StarChart 3.0'),
-    ('sds', 'StarChart 4.0'),
-    ('sds', 'StarChart 5.0'),
+    # ('odc', 'OpenOffice.org 1.0 Report Chart'),
     ('sxs', 'OpenOffice.org 1.0 Chart'),
     )
 
@@ -254,7 +219,7 @@ class TestMimeMapper(CloudoooTestCase):
     pdf_filter_list = self.mimemapper.getFilterList('pdf')
     self.assertEquals(len(pdf_filter_list), 7)
     xls_filter_list = self.mimemapper.getFilterList('xls')
-    self.assertEquals(len(xls_filter_list), 5)
+    self.assertEquals(len(xls_filter_list), 3)
     doc_filter_list = self.mimemapper.getFilterList('doc')
     self.assertEquals(len(doc_filter_list), 3)
 
