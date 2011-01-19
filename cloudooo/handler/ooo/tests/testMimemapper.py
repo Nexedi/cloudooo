@@ -53,17 +53,6 @@ text_expected_tuple = (
     )
 
 global_expected_tuple = (
-    ('odm', 'ODF Master Document'),
-    ('odt', 'ODF Text Document'),
-    ('pdf', 'PDF - Portable Document Format'),
-    ('sdw', 'StarWriter 3.0'),
-    ('sdw', 'StarWriter 4.0'),
-    ('sdw', 'StarWriter 5.0'),
-    ('sgl', 'StarWriter 5.0 Master Document'),
-    ('sgl', 'StarWriter 4.0 Master Document'),
-    ('sxg', 'OpenOffice.org 1.0 Master Document'),
-    ('sxw', 'OpenOffice.org 1.0 Text Document'),
-    ('txt', 'Text Encoded (OpenOffice.org Master Document)'),
     )
 
 drawing_expected_tuple = (
@@ -170,7 +159,6 @@ math_expected_tuple = (
     )
 
 chart_expected_tuple = (
-    # ('odc', 'OpenOffice.org 1.0 Report Chart'),
     )
 
 OPENOFFICE = True
@@ -214,7 +202,7 @@ class TestMimeMapper(CloudoooTestCase):
   def testGetFilterByExt(self):
     """Test if passing the extension the filter returns corretcly."""
     pdf_filter_list = self.mimemapper.getFilterList('pdf')
-    self.assertEquals(len(pdf_filter_list), 7)
+    self.assertEquals(len(pdf_filter_list), 5)
     xls_filter_list = self.mimemapper.getFilterList('xls')
     self.assertEquals(len(xls_filter_list), 3)
     doc_filter_list = self.mimemapper.getFilterList('doc')
@@ -348,7 +336,7 @@ class TestMimeMapper(CloudoooTestCase):
     self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer8"),
                       "application/vnd.oasis.opendocument.text")
     self.assertEquals(self.mimemapper.getMimetypeByFilterType("math8"),
-                      "application/vnd.oasis.opendocument.formula")
+                      '')
     self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer_MS_Word_97"),
                       'application/msword')
 
