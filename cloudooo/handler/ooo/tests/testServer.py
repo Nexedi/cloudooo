@@ -453,7 +453,7 @@ class TestServer(CloudoooTestCase):
     data = open(join('data','test.odt'), 'r').read()[:100]
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
-                                      None, 'odt', 'application/pdf')
+                                      None, 'pdf', 'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 402)
     self.assertEquals(type(response_dict), DictType)
