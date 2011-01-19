@@ -277,10 +277,6 @@ class Manager(object):
     try:
       extension_list = self.getAllowedExtensionList({"mimetype": content_type})
       response_dict['response_data'] = extension_list
-      # XXX - procedure to remove duplicate filters
-      for data in response_dict['response_data']:
-        if data[0] == "html":
-          response_dict['response_data'].remove(data)
       return (200, response_dict, '')
     except Exception, e:
       logger.error(e)
