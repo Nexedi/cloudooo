@@ -137,6 +137,12 @@ class MimeMapper(object):
         continue
       preferred = filter_type_dict.get("Preferred")
       document_service_str = value.get('DocumentService')
+      # these document services are not supported for now.
+      if document_service_str in (
+        'com.sun.star.text.GlobalDocument',
+        'com.sun.star.formula.FormulaProperties',
+        'com.sun.star.sdb.OfficeDatabaseDocument'):
+        continue
       sort_index = flag
 
       doc_type = document_service_str.split('.')[-1]
