@@ -53,7 +53,6 @@ text_expected_tuple = (
     )
 
 global_expected_tuple = (
-    ('html', 'HTML (Writer/Global)'),
     ('odm', 'ODF Master Document'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
@@ -171,9 +170,7 @@ math_expected_tuple = (
     )
 
 chart_expected_tuple = (
-    ('odc', 'ODF Chart'),
     # ('odc', 'OpenOffice.org 1.0 Report Chart'),
-    ('sxs', 'OpenOffice.org 1.0 Chart'),
     )
 
 OPENOFFICE = True
@@ -229,7 +226,10 @@ class TestMimeMapper(CloudoooTestCase):
     type = document_type_dict.get("text")
     self.assertEquals(type, 'com.sun.star.text.TextDocument')
     type = document_type_dict.get("chart")
-    self.assertEquals(type, 'com.sun.star.chart2.ChartDocument')
+    # For now, chart document filters are maked as NotInFileDialog and
+    # NotInChooser.
+    # self.assertEquals(type, 'com.sun.star.chart2.ChartDocument')
+    self.assertEquals(type, None)
     type = document_type_dict.get("drawing")
     self.assertEquals(type, 'com.sun.star.drawing.DrawingDocument')
     type = document_type_dict.get("presentation")
