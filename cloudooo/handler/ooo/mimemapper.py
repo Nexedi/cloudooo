@@ -118,6 +118,7 @@ class MimeMapper(object):
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
       flag = value.get("Flags")
+      # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
       # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,
       # OwnTemplate:0x10, Own:0x20, Alien:0x40,
       # UsesOptions (deprecated):0x80, Default:0x100,
