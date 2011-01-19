@@ -56,7 +56,7 @@ class Manager(object):
       zip archive
     """
     if not mimemapper.getFilterList(destination_format):
-      raise ValueError, "This format is not supported or is invalid"
+      raise ValueError, "This format (%s) is not supported or is invalid" % destination_format
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
     document = OOHandler(self._path_tmp_dir,
@@ -243,11 +243,8 @@ class Manager(object):
     try:
       response_dict = {}
       # XXX - use html format instead of xhtml
-      if orig_format in ("presentation", "graphics") and extension == "xhtml":
+      if orig_format in ("presentation", "graphics", "spreadsheet", 'text') and extension == "xhtml":
         extension = 'html'
-      elif orig_format in ("spreadsheet", 'text') and extension in ("html",
-                                                                    "xhtml"):
-        extension = "htm"
       response_dict['data'] = self.convertFile(data,
                                                original_extension,
                                                extension,
