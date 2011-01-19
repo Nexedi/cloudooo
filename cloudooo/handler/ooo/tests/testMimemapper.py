@@ -31,50 +31,55 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudoooTestCase import make_suite
 
-text_expected_tuple = (('doc', 'Microsoft Word 6.0'),
+text_expected_tuple = (
+    ('doc', 'Microsoft Word 6.0'),
     ('doc', 'Microsoft Word 95'),
-    ('doc', 'Microsoft Word 97/2000/XP'), 
+    ('doc', 'Microsoft Word 97/2000/XP'),
     ('htm', 'HTML Document (OpenOffice.org Writer)'),
-    ('html', 'HTML Document (OpenOffice.org Writer)'), 
+    ('html', 'HTML Document (OpenOffice.org Writer)'),
     ('html', 'XHTML'),
-    ('odt', 'ODF Text Document'), 
-    ('ott', 'ODF Text Document Template'), 
-    ('pdf', 'PDF - Portable Document Format'), 
+    ('odt', 'ODF Text Document'),
+    ('ott', 'ODF Text Document Template'),
+    ('pdf', 'PDF - Portable Document Format'),
     ('rtf', 'Rich Text Format'),
     ('sdw', 'StarWriter 3.0'),
     ('sdw', 'StarWriter 4.0'),
-    ('sdw', 'StarWriter 5.0'), 
-    ('sxw', 'OpenOffice.org 1.0 Text Document'),
-    ('txt', 'Text'),
-    ('txt', 'Text Encoded'), 
-    ('xhtml', 'XHTML'),
-    (u'pdb', u'AportisDoc (Palm)'),
-    (u'psw', u'Pocket Word'))
-
-global_expected_tuple = (('sdw', 'StarWriter 3.0'),
-    ('sdw', 'StarWriter 4.0'),
     ('sdw', 'StarWriter 5.0'),
-    ('txt', 'Text Encoded (OpenOffice.org Master Document)'),
     ('sxw', 'OpenOffice.org 1.0 Text Document'),
-    ('sxg', 'OpenOffice.org 1.0 Master Document'),
-    ('pdf', 'PDF - Portable Document Format'),
+    ('txt', 'Text Encoded'),
+    ('txt', 'Text'),
+    ('xhtml', 'XHTML'),
+    ('pdb', 'AportisDoc (Palm)'),
+    ('psw', 'Pocket Word'),
+    )
+
+global_expected_tuple = (
+    ('htm', 'HTML (Writer/Global)'),
+    ('html', 'HTML (Writer/Global)'),
     ('odm', 'ODF Master Document'),
     ('odt', 'ODF Text Document'),
-    ('html', 'HTML (Writer/Global)'),
-    ('htm', 'HTML (Writer/Global)'))
+    ('pdf', 'PDF - Portable Document Format'),
+    ('sdw', 'StarWriter 3.0'),
+    ('sdw', 'StarWriter 4.0'),
+    ('sdw', 'StarWriter 5.0'),
+    ('sxg', 'OpenOffice.org 1.0 Master Document'),
+    ('sxw', 'OpenOffice.org 1.0 Text Document'),
+    ('txt', 'Text Encoded (OpenOffice.org Master Document)'),
+    )
 
-drawing_expected_tuple = (('bmp', 'BMP - Windows Bitmap'), 
-    ('emf', 'EMF - Enhanced Metafile'), 
+drawing_expected_tuple = (
+    ('bmp', 'BMP - Windows Bitmap'),
+    ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
-    ('gif', 'GIF - Graphics Interchange Format'), 
+    ('gif', 'GIF - Graphics Interchange Format'),
     ('htm', 'HTML Document (OpenOffice.org Draw)'),
     ('html', 'HTML Document (OpenOffice.org Draw)'),
-    ('html', 'XHTML'), 
+    ('html', 'XHTML'),
     ('jfif', 'JPEG - Joint Photographic Experts Group'),
     ('jif', 'JPEG - Joint Photographic Experts Group'),
-    ('jpe', 'JPEG - Joint Photographic Experts Group'), 
+    ('jpe', 'JPEG - Joint Photographic Experts Group'),
     ('jpeg', 'JPEG - Joint Photographic Experts Group'),
-    ('jpg', 'JPEG - Joint Photographic Experts Group'), 
+    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing'),
     ('otg', 'ODF Drawing Template'),
@@ -87,27 +92,31 @@ drawing_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('ppm', 'PPM - Portable Pixelmap'),
     ('ras', 'RAS - Sun Raster Image'),
     ('sda', 'StarDraw 5.0'),
-    ('sdd', 'StarDraw 3.0'), 
+    ('sdd', 'StarDraw 3.0'),
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
-    ('sxd', 'OpenOffice.org 1.0 Drawing'), 
+    ('sxd', 'OpenOffice.org 1.0 Drawing'),
     ('tif', 'TIFF - Tagged Image File Format'),
     ('tiff', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xhtml', 'XHTML'), ('xpm', 'XPM - X PixMap'))
+    ('xhtml', 'XHTML'), ('xpm', 'XPM - X PixMap'),
+    )
 
-web_expected_tuple = (('html', 'HTML Document'),
+web_expected_tuple = (
     ('htm', 'HTML Document'),
-    ('txt', 'Text (OpenOffice.org Writer/Web)'), 
-    ('txt', 'Text Encoded (OpenOffice.org Writer/Web)'),
-    ('sxw', 'OpenOffice.org 1.0 Text Document (OpenOffice.org Writer/Web)'),
-    ('pdf', 'PDF - Portable Document Format'),
+    ('html', 'HTML Document'),
     ('odt', 'OpenOffice.org Text (OpenOffice.org Writer/Web)'),
+    ('pdf', 'PDF - Portable Document Format'),
     ('sdw', 'StarWriter 3.0 (OpenOffice.org Writer/Web)'),
     ('sdw', 'StarWriter 4.0 (OpenOffice.org Writer/Web)'),
-    ('sdw', 'StarWriter 5.0 (OpenOffice.org Writer/Web)'))
+    ('sdw', 'StarWriter 5.0 (OpenOffice.org Writer/Web)'),
+    ('sxw', 'OpenOffice.org 1.0 Text Document (OpenOffice.org Writer/Web)'),
+    ('txt', 'Text (OpenOffice.org Writer/Web)'),
+    ('txt', 'Text Encoded (OpenOffice.org Writer/Web)'),
+    )
 
-presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
+presentation_expected_tuple = (
+    ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('gif', 'GIF - Graphics Interchange Format'),
@@ -126,7 +135,7 @@ presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('pbm', 'PBM - Portable Bitmap'),
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('pgm', 'PGM - Portable Graymap'), 
+    ('pgm', 'PGM - Portable Graymap'),
     ('pict', 'PCT - Mac Pict'),
     ('png', 'PNG - Portable Network Graphic'),
     ('pot', 'Microsoft PowerPoint 97/2000/XP Template'),
@@ -141,18 +150,20 @@ presentation_expected_tuple = (('bmp', 'BMP - Windows Bitmap'),
     ('svm', 'SVM - StarView Metafile'),
     ('sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'),
     ('sxi', 'OpenOffice.org 1.0 Presentation'),
-    ('tif', 'TIFF - Tagged Image File Format'), 
+    ('tif', 'TIFF - Tagged Image File Format'),
     ('tiff', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
     ('xhtml', 'XHTML'),
-    ('xpm', 'XPM - X PixMap'))
+    ('xpm', 'XPM - X PixMap'),
+    )
 
-spreadsheet_expected_list = (('csv', 'Text CSV'), 
+spreadsheet_expected_list = (
+    ('csv', 'Text CSV'),
     ('htm', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'HTML Document (OpenOffice.org Calc)'),
     ('html', 'XHTML'),
     ('ods', 'ODF Spreadsheet'),
-    ('ots', 'ODF Spreadsheet Template'), 
+    ('ots', 'ODF Spreadsheet Template'),
     ('pdf', 'PDF - Portable Document Format'),
     ('sdc', 'StarCalc 3.0'),
     ('sdc', 'StarCalc 4.0'),
@@ -179,21 +190,26 @@ spreadsheet_expected_list = (('csv', 'Text CSV'),
     ('xlw', 'Microsoft Excel 4.0'),
     ('xlw', 'Microsoft Excel 5.0'),
     ('xlw', 'Microsoft Excel 95'),
-    ('xlw', 'Microsoft Excel 97/2000/XP'))
+    ('xlw', 'Microsoft Excel 97/2000/XP'),
+    )
 
-math_expected_tuple = (('smf', 'StarMath 4.0'),
+math_expected_tuple = (
     ('mml', 'MathML 1.01'),
+    ('odf', 'ODF Formula'),
     ('pdf', 'PDF - Portable Document Format'),
+    ('smf', 'StarMath 3.0'),
+    ('smf', 'StarMath 4.0'),
     ('smf', 'StarMath 5.0'),
     ('sxm', 'OpenOffice.org 1.0 Formula'),
-    ('odf', 'ODF Formula'), 
-    ('smf', 'StarMath 3.0'))
+    )
 
-chart_expected_tuple = (('sds', 'StarChart 3.0'),
+chart_expected_tuple = (
+    ('odc', 'ODF Chart'),
+    ('sds', 'StarChart 3.0'),
     ('sds', 'StarChart 4.0'),
     ('sds', 'StarChart 5.0'),
     ('sxs', 'OpenOffice.org 1.0 Chart'),
-    ('odc', 'ODF Chart'))
+    )
 
 OPENOFFICE = True
 
@@ -214,7 +230,7 @@ class TestMimeMapper(CloudoooTestCase):
     """Test the case that the user passes extension which does not exist."""
     empty_list = self.mimemapper.getFilterList('xxx')
     self.assertEquals(empty_list, [])
- 
+
   def testIfThereIsDuplicateData(self):
     """Test if there is duplicate data."""
     # XXX It can not exists multiple keys inside a dictionary
@@ -259,21 +275,21 @@ class TestMimeMapper(CloudoooTestCase):
     self.assertEquals(type, 'com.sun.star.text.WebDocument')
 
   def testGetAllowedExtensionListByExtension(self):
-    """Test if function getAllowedExtensionList returns correctly a list with 
+    """Test if function getAllowedExtensionList returns correctly a list with
     extensions that can generate with extension passed."""
     doc_got_list = list(self.mimemapper.getAllowedExtensionList('doc'))
     for arg in doc_got_list:
       self.assertTrue(arg in text_expected_tuple,
               "%s not in %s" % (arg, text_expected_tuple))
     jpeg_got_list = list(self.mimemapper.getAllowedExtensionList('jpeg'))
-    jpeg_expected_list = list(set(presentation_expected_tuple + 
+    jpeg_expected_list = list(set(presentation_expected_tuple +
         drawing_expected_tuple))
     for arg in jpeg_got_list:
       self.assertTrue(arg in jpeg_expected_list,
               "%s not in %s" % (arg, jpeg_expected_list))
     pdf_got_list = list(self.mimemapper.getAllowedExtensionList('pdf'))
     pdf_expected_list = list(set(presentation_expected_tuple +
-      drawing_expected_tuple + web_expected_tuple + global_expected_tuple + 
+      drawing_expected_tuple + web_expected_tuple + global_expected_tuple +
       math_expected_tuple + text_expected_tuple + spreadsheet_expected_list))
     for arg in pdf_got_list:
       self.assertTrue(arg in pdf_expected_list,
@@ -304,7 +320,7 @@ class TestMimeMapper(CloudoooTestCase):
     drawing_expected_list = list(drawing_expected_tuple)
     drawing_expected_list.sort()
     for arg in got_list:
-      self.assertTrue(arg in drawing_expected_list, 
+      self.assertTrue(arg in drawing_expected_list,
           "%s not in %s" % (arg, drawing_expected_list))
 
   def testGetAllAllowedExtensionListForWeb(self):
@@ -324,7 +340,7 @@ class TestMimeMapper(CloudoooTestCase):
     presentation_expected_list = list(presentation_expected_tuple)
     presentation_expected_list.sort()
     for arg in got_list:
-      self.assertTrue(arg in presentation_expected_list, 
+      self.assertTrue(arg in presentation_expected_list,
           "%s not in %s" % (arg, presentation_expected_list))
 
   def testGetAllAllowedExtensionListForSpreadsheet(self):
@@ -332,7 +348,7 @@ class TestMimeMapper(CloudoooTestCase):
     to spreadsheet_expected_list."""
     got_list = self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')
     for arg in got_list:
-      self.assertTrue(arg in spreadsheet_expected_list, 
+      self.assertTrue(arg in spreadsheet_expected_list,
           "%s not in %s" % (arg, spreadsheet_expected_list))
 
   def testGetAllAllowedExtensionListForChart(self):
