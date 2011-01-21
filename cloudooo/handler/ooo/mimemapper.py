@@ -51,11 +51,8 @@ class MimeMapper(object):
     self._filter_by_extension_dict = {}
     self._extension_list_by_type = {}
     self._doc_type_list_by_extension = {}
-    # List of extensions that are ODF
-    self._odf_extension_list = []
     self._mimetype_by_filter_type = {}
     self._document_type_dict = {}
-    self.extension_list = []
 
   def _addFilter(self, filter):
     """Add filter in mimemapper catalog."""
@@ -100,6 +97,9 @@ class MimeMapper(object):
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
     """
+    ignore_filter_list = (
+      'impress8_draw',
+      )
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
@@ -117,6 +117,8 @@ class MimeMapper(object):
                            close_fds=True).communicate()
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
+      if None and filter_name in ignore_filter_list:
+        continue
       flag = value.get("Flags")
       # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
       # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,
@@ -124,14 +126,14 @@ class MimeMapper(object):
       # UsesOptions (deprecated):0x80, Default:0x100,
       # NotInFileDialog:0x1000, NotInChooser:0x2000,
       # ThirdParty:0x80000, Preferred:0x10000000
-      if not flag & 0x02 or flag & 0x08 or flag & 0x1000 or flag & 0x2000:
+      if flag & 0x08 or flag & 0x1000 or flag & 0x2000:
         continue
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
       if not ui_name:
         ui_name = filter_type_dict.get("UIName")
-      filter_extension_list = filter_type_dict.get("Extensions")[:1]
+      filter_extension_list = filter_type_dict.get("Extensions")
       mimetype = filter_type_dict.get("MediaType")
       if not (filter_extension_list and mimetype):
         continue
@@ -155,40 +157,32 @@ class MimeMapper(object):
       if doc_type not in self._document_type_dict:
         self._document_type_dict[doc_type] = document_service_str
 
-      if not self._mimetype_by_filter_type.has_key(filter_type):
-        self._mimetype_by_filter_type[filter_type] = mimetype
-      # Create key with empty list by document_type in dictonary
-      # e.g: {'com.sun.star.text.TextDocument': [] }
-      if not self._extension_list_by_type.has_key(document_service_str):
-        self._extension_list_by_type[document_service_str] = []
+      # for Export filters
+      if flag & 0x02:
+        if not self._mimetype_by_filter_type.has_key(filter_type):
+          self._mimetype_by_filter_type[filter_type] = mimetype
+        # for export filters, one extension is enough.
+        for ext in filter_extension_list[:1]:
+          # Add (extension, ui_name) tuple by document_type.
+          # e.g {'com.sun.star.text.TextDocument': [('txt', 'Text'),]}
+          self._extension_list_by_type.setdefault(document_service_str, [])
+          if not (ext, ui_name) in self._extension_list_by_type[document_service_str]:
+            self._extension_list_by_type[document_service_str].append((ext, ui_name))
+          # register an export filter
+          filter = Filter(ext, filter_name, mimetype, document_service_str,
+                          preferred=preferred, sort_index=sort_index, label=ui_name)
+          self._addFilter(filter)
 
-      for ext in iter(filter_extension_list):
-        # All mimetypes that starts with "application/vnd.oasis.opendocument"
-        # are ODF.
-        if ext not in self.extension_list:
-          self.extension_list.append(ext)
-        if mimetype.startswith("application/vnd.oasis.opendocument"):
-          if not ext in self._odf_extension_list:
-            self._odf_extension_list.append(ext)
-        # Create key with empty list by extension in dictonary
-        # e.g: {'pdf': [] }
-        if not self._doc_type_list_by_extension.has_key(ext):
-          self._doc_type_list_by_extension[ext] = []
-        # Adds a tuple with extension and ui_name in document_type key. If
-        # tuple exists in list is not added.
-        # e.g {'com.sun.star.text.TextDocument': [('txt', 'Text'),]}
-        if not (ext, ui_name) in self._extension_list_by_type[document_service_str]:
-          self._extension_list_by_type[document_service_str].append((ext, ui_name))
-        # Adds a document type in extension key. If document type exists in
-        # list is not added.
-        # e.g {'doc': ['com.sun.star.text.TextDocument']}
-        if not document_service_str in self._doc_type_list_by_extension[ext]:
-          self._doc_type_list_by_extension[ext].append(document_service_str)
-        # Creates a object Filter with all attributes
-        filter = Filter(ext, filter_name, mimetype, document_service_str,
-          preferred=preferred, sort_index=sort_index, label=ui_name)
-        # Adds the object in filter_by_extension_dict
-        self._addFilter(filter)
+      # for Import filters
+      if flag & 0x01:
+        # for import filters, we care all possible extensions.
+        for ext in filter_extension_list:
+          # Add a document type by extension.
+          # e.g {'doc': ['com.sun.star.text.TextDocument']}
+          self._doc_type_list_by_extension.setdefault(ext, [])
+          if not document_service_str in self._doc_type_list_by_extension[ext]:
+            self._doc_type_list_by_extension[ext].append(document_service_str)
+
     # hardcode 'extension -> document type' mappings according to
     # soffice behaviour for extensions having several candidates.
     self._doc_type_list_by_extension.update({
