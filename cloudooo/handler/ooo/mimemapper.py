@@ -189,6 +189,19 @@ class MimeMapper(object):
           preferred=preferred, sort_index=sort_index, label=ui_name)
         # Adds the object in filter_by_extension_dict
         self._addFilter(filter)
+    # hardcode 'extension -> document type' mappings according to
+    # soffice behaviour for extensions having several candidates.
+    self._doc_type_list_by_extension.update({
+      'rtf':['com.sun.star.text.TextDocument'],
+      'sxd':['com.sun.star.drawing.DrawingDocument'],
+      'txt':['com.sun.star.text.TextDocument'],
+      'odg':['com.sun.star.drawing.DrawingDocument'],
+      'html':['com.sun.star.text.WebDocument'],
+      'sda':['com.sun.star.drawing.DrawingDocument'],
+      'sdd':['com.sun.star.drawing.DrawingDocument'],
+      'pdf':['com.sun.star.drawing.DrawingDocument'],
+      'xls':['com.sun.star.sheet.SpreadsheetDocument'],
+      })
     self.document_service_list = self._extension_list_by_type.keys()
     self.extension_list_by_doc_type =\
         dict([(type, [extension[0] for extension in extension_list])\
