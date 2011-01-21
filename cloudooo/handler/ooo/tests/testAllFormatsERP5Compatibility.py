@@ -73,7 +73,7 @@ class TestAllFormatsERP5Compatibility(CloudoooTestCase):
                                               encodestring(data),
                                               None,
                                               extension,
-                                              mime_type)
+                                              mime_type)[1]['data']
         magic_result = file_detector.from_buffer(decodestring(data_output))
         file_is_empty = magic_result.endswith(": empty")
         if file_is_empty:
