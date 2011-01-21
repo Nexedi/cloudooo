@@ -158,7 +158,7 @@ class OOHandler:
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
-    kw['mimemapper'] = self._serializeMimemapper(destination_format)
+    kw['mimemapper'] = self._serializeMimemapper(self.source_format)
     kw['refresh'] = json.dumps(self.refresh)
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
