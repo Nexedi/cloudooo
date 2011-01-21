@@ -43,7 +43,8 @@ class TestAllFormatsERP5Compatibility(CloudoooTestCase):
   def afterSetUp(self):
     """Create connection with cloudooo server"""
     self.proxy = ServerProxy("http://%s:%s/RPC2" % (self.hostname,
-                                                    self.cloudooo_port))
+                                                    self.cloudooo_port),
+                             allow_none=True)
 
   def testTextFormats(self):
     """Test all text formats"""
