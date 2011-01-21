@@ -1,3 +1,7 @@
+1.2.1 (2010-01-21)
+==================
+  - Improve ERP5 compatibility.
+
 1.2.0 (2010-01-19)
 ==================
   - Support LibreOffice3.3rc3.
