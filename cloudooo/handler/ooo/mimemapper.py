@@ -197,16 +197,6 @@ class MimeMapper(object):
               for type, extension_list in self._extension_list_by_type.iteritems()])
     self._loaded = True
 
-  def getMimetypeByFilterType(self, filter_type):
-    """Get Mimetype according to the filter type
-    Keyword arguments:
-    filter_type -- string of OOo filter
-    e.g
-    >>> mimemapper.getMimetypeByFilterType("writer8")
-    'application/vnd.oasis.opendocument.text'
-    """
-    return self._mimetype_by_filter_type.get(filter_type, u'')
-
   def getFilterName(self, extension, document_service):
     """Get filter name according to the parameters passed.
     Keyword arguments:

@@ -331,15 +331,5 @@ class TestMimeMapper(CloudoooTestCase):
                              'com.sun.star.presentation.PresentationDocument')
     self.assertEquals(filtername, "impress_html_Export")
 
-  def testGetMimetype(self):
-    """Test get mimetype according to the filter type"""
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer8"),
-                      "application/vnd.oasis.opendocument.text")
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("math8"),
-                      '')
-    self.assertEquals(self.mimemapper.getMimetypeByFilterType("writer_MS_Word_97"),
-                      'application/msword')
-
-
 def test_suite():
   return make_suite(TestMimeMapper)

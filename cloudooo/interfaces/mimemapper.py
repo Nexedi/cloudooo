@@ -51,6 +51,3 @@ class IMimemapper(Interface):
   def getAllowedExtensionList(document_type, **kwargs):
     """Returns a list with extensions which can be used to export according to
     document type passed."""
-
-  def getMimetypeByFilterType(filter_type):
-    """Returns mimetype according to the filter type passed"""
