@@ -132,18 +132,22 @@ class OOHandler:
 
     return stdout, stderr
 
-  def _serializeMimemapper(self, extension=None):
+  def _serializeMimemapper(self, source_extension=None, destination_extension=None):
     """Serialize parts of mimemapper"""
-    if extension is None:
+    if destination_extension is None:
       return json.dumps(dict(mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
 
     filter_list = []
-    for service_type in mimemapper._doc_type_list_by_extension[extension]:
+    service_type_list = mimemapper._doc_type_list_by_extension.get(
+      source_extension, mimemapper.extension_list_by_doc_type.keys())
+    for service_type in service_type_list:
       for extension in mimemapper.extension_list_by_doc_type[service_type]:
-        filter_list.append((extension,
-                            service_type,
-                            mimemapper.getFilterName(extension,
-                                                     service_type)))
+        if extension == destination_extension:
+          filter_list.append((extension,
+                              service_type,
+                              mimemapper.getFilterName(extension,
+                                                       service_type)))
+    logger.debug("Filter List: %r" % filter_list)
     return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                             filter_list=filter_list,
                             mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
@@ -158,7 +162,8 @@ class OOHandler:
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
-    kw['mimemapper'] = self._serializeMimemapper(self.source_format)
+    kw['mimemapper'] = self._serializeMimemapper(self.source_format,
+                                                 destination_format)
     kw['refresh'] = json.dumps(self.refresh)
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)

@@ -136,15 +136,9 @@ class UnoConverter(object):
     return [property,]
 
   def _getFilterName(self, destination_format, type):
-    document_type_list = mimemapper["doc_type_list_by_extension"].get(destination_format)
-    if type in document_type_list:
-      for filter_tuple in mimemapper["filter_list"]:
-        if destination_format == filter_tuple[0] and filter_tuple[1] == type:
-          return filter_tuple[2]
-    else:
-      for filter_tuple in mimemapper["filter_list"]:
-        if destination_format == filter_tuple[0]:
-          return filter_tuple[2]
+    for filter_tuple in mimemapper["filter_list"]:
+      if destination_format == filter_tuple[0] and filter_tuple[1] == type:
+        return filter_tuple[2]
 
   def _getPropertyToExport(self, destination_format=None):
     """Create the property according to the extension of the file."""
