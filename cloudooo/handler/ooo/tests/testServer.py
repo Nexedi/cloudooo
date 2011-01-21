@@ -505,8 +505,9 @@ class TestServer(CloudoooTestCase):
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    self.assertEquals(len(response_dict['response_data']), 25)
-    self.assertTrue(['html', 'HTML Document'] in response_dict['response_data'])
+    self.assertEquals(len(response_dict['response_data']), 17)
+    self.assertTrue(['html', 'HTML Document (OpenOffice.org Writer)'] in response_dict['response_data'])
+    self.assertFalse(['html', 'HTML Document'] in response_dict['response_data'])
 
 
 def test_suite():
