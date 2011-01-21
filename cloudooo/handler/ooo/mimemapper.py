@@ -97,9 +97,6 @@ class MimeMapper(object):
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
     """
-    ignore_filter_list = (
-      'impress8_draw',
-      )
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
@@ -117,8 +114,6 @@ class MimeMapper(object):
                            close_fds=True).communicate()
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
-      if None and filter_name in ignore_filter_list:
-        continue
       flag = value.get("Flags")
       # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
       # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,
