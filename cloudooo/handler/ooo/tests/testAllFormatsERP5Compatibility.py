@@ -68,9 +68,11 @@ class TestAllFormatsERP5Compatibility(CloudoooTestCase):
     fault_list = []
     for extension, format in extension_list:
       try:
-        data_output = self.proxy.convertFile(encodestring(data),
-                                             source_format,
-                                             extension)
+        data_output = self.proxy.run_generate(filename,
+                                              encodestring(data),
+                                              None,
+                                              extension,
+                                              mime_type)
         magic_result = file_detector.from_buffer(decodestring(data_output))
         file_is_empty = magic_result.endswith(": empty")
         if file_is_empty:
