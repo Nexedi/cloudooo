@@ -122,7 +122,7 @@ class TestInterface(unittest.TestCase):
   def testIMimeMapper(self):
     """Test if Mimemapper implements IMimemapper."""
     method_list = ['getDocumentTypeDict', 'getFilterName', 'loadFilterList',
-        'getFilterList', 'getAllowedExtensionList', 'getMimetypeByFilterType',
+        'getFilterList', 'getAllowedExtensionList',
         'isLoaded']
     for method in method_list:
       self.assertTrue(method in IMimemapper.names())
@@ -136,8 +136,6 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(IMimemapper.get('getDocumentTypeDict').required, ())
     self.assertEquals(IMimemapper.get('getAllowedExtensionList').required,
         ("document_type",))
-    self.assertEquals(IMimemapper.get('getMimetypeByFilterType').required,
-        ('filter_type',))
 
   def testIMonitor(self):
     """Test if Monitors implements IMonitor"""
