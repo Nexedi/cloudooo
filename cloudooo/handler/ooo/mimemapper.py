@@ -124,7 +124,7 @@ class MimeMapper(object):
       # UsesOptions (deprecated):0x80, Default:0x100,
       # NotInFileDialog:0x1000, NotInChooser:0x2000,
       # ThirdParty:0x80000, Preferred:0x10000000
-      if not flag & 0x02 or flag & 0x1000 or flag & 0x2000:
+      if not flag & 0x02 or flag & 0x08 or flag & 0x1000 or flag & 0x2000:
         continue
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
