@@ -49,6 +49,8 @@ class TestServer(CloudoooTestCase):
     self.text_expected_list = [['doc', 'Microsoft Word 6.0'], 
         ['doc', 'Microsoft Word 95'], 
         ['doc', 'Microsoft Word 97/2000/XP'], 
+        ['docx', 'Microsoft Word 2007 XML'],
+        ['docx', 'Office Open XML Text'],
         ['htm', 'HTML Document (OpenOffice.org Writer)'], 
         ['html', 'HTML Document (OpenOffice.org Writer)'], 
         ['html', 'XHTML'], ['odt', 'ODF Text Document'], 
