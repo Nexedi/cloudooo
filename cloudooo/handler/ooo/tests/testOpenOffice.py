@@ -41,7 +41,6 @@ class TestOpenOffice(CloudoooTestCase):
     self.openoffice = OpenOffice()
     self.openoffice.loadSettings("localhost", 4090,
                                 self.working_path,
-                                self.virtual_display_id,
                                 self.office_binary_path,
                                 self.uno_path,
                                 'en')
@@ -93,7 +92,6 @@ class TestOpenOffice(CloudoooTestCase):
     second_openoffice = OpenOffice()
     second_openoffice.loadSettings("localhost", 4090,
                                 self.working_path,
-                                self.virtual_display_id,
                                 self.office_binary_path,
                                 self.uno_path,
                                 'en')
@@ -106,7 +104,6 @@ class TestOpenOffice(CloudoooTestCase):
     second_openoffice = OpenOffice()
     second_openoffice.loadSettings("localhost", 4091,
                                 self.working_path,
-                                self.virtual_display_id,
                                 self.office_binary_path,
                                 self.uno_path,
                                 'en')

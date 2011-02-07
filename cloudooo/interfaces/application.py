@@ -43,7 +43,6 @@ class IApplication(Interface):
 
   def loadSettings(hostname,
                   port,
-                  virtual_display_id,
                   working_path,
                   office_binary_path):
     """Load configuration to control OOo Instances"""
