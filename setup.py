@@ -52,5 +52,6 @@ setup(name='cloudooo',
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
       runCloudOOoUnitTest = cloudooo.handler.ooo.tests.runCloudOOoUnitTest:run
+      runPDFHandlerUnitTest = cloudooo.handler.pdf.tests.runPDFHandlerUnitTest:run
       """,
       )
