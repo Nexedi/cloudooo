@@ -35,7 +35,7 @@ from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudooo.handler.ooo.filter import Filter
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.granulator import OOGranulator
-from cloudooo.interfaces.document import IDocument, IOdfDocument
+from cloudooo.interfaces.file import IFile, IOdfDocument
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.interfaces.manager import IManager
 from cloudooo.interfaces.application import IApplication
@@ -77,9 +77,9 @@ class TestInterface(unittest.TestCase):
     method_list = ['getImageItemList', 'getImage']
     self.assertEquals(IImageGranulator.names(), method_list)
 
-  def testIDocument(self):
-    """Test if FileSystemDocument implements IDocument"""
-    self.assertTrue(IDocument.implementedBy(FileSystemDocument))
+  def testIFile(self):
+    """Test if FileSystemDocument implements IFile"""
+    self.assertTrue(IFile.implementedBy(FileSystemDocument))
 
   def testIOdfDocument(self):
     """Test if OdfDocument implements IOdfDocument"""
@@ -91,7 +91,7 @@ class TestInterface(unittest.TestCase):
     self.assertEquals(IOdfDocument.names(), method_list)
 
   def testIFilter(self):
-    """Test if Filter implements IDocument"""
+    """Test if Filter implements IFile"""
     self.assertTrue(IFilter.implementedBy(Filter))
     self.assertEquals(IFilter.names(), ['getLabel', 'getName', 'getSortIndex',
       'isPreferred', 'getDocumentService', 'getExtension', 'getMimetype'])

@@ -30,7 +30,7 @@ from zope.interface import Interface
 from zope.interface import Attribute
 
 
-class IDocument(Interface):
+class IFile(Interface):
   """Manipulates documents in file system"""
 
   base_folder_url = Attribute("Url of folder that is used to create temporary \
