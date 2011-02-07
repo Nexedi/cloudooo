@@ -33,7 +33,6 @@ from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudooo.manager import Manager
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudooo.handler.ooo.filter import Filter
-from cloudooo.handler.ooo.application.xvfb import Xvfb
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.interfaces.document import IDocument, IOdfDocument
@@ -159,7 +158,6 @@ class TestInterface(unittest.TestCase):
   def testIApplication(self):
     """Test if OpenOffice implements IApplication"""
     self.assertTrue(IApplication.implementedBy(OpenOffice))
-    self.assertTrue(IApplication.implementedBy(Xvfb))
     application_method_list = ["start", "stop", "pid",
                               "status", "restart",
                               "loadSettings", "getAddress"]

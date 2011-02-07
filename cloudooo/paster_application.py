@@ -33,7 +33,6 @@ import os
 
 import cloudooo.handler.ooo.monitor as monitor
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from cloudooo.handler.ooo.application.xvfb import xvfb
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
 from cloudooo.utils.utils import convertStringToBool, configureLogger
 from cloudooo.handler.ooo.mimemapper import mimemapper
@@ -41,8 +40,6 @@ from cloudooo.handler.ooo.mimemapper import mimemapper
 def stopProcesses(signum, frame):
   monitor.stop()
   openoffice.stop()
-  xvfb.stop()
-
 
 def application(global_config, **local_config):
   """Method to load all configuration of cloudooo and start the application.
@@ -52,16 +49,11 @@ def application(global_config, **local_config):
       e.g debug_mode=logging.DEBUG
   working_path -- Full path to create the environment of the processes.
       e.g working_path='/var/run/cloudooo'
-  virtual_display_port -- Port to start the Xvfb.
-  virtual_display_id -- Sets the display.
-      e.g virtual_display_id='99'
-  application_hostname -- Sets the host to Xvfb and Openoffice.
-  virtual_screen -- Use to define the screen to Xvfb
-      e.g virtual_screen='0'
-  office_binary_path -- Full Path of the OOo executable.
-      e.g office_binary_path='/opt/openoffice.org3/program'
-  uno_path -- Full path to pyuno library.
-      e.g uno_path='/opt/openoffice.org/program'
+  application_hostname -- Sets the host to Openoffice.
+  office_binary_path -- Folder where soffice.bin is installed.
+      e.g office_binary_path='/opt/libreoffice/program'
+  uno_path -- Folder where UNO library is installed.
+      e.g uno_path='/opt/libreoffice/basis-link/program/'
   """
   prefix = 'env-'
   environment_dict = {}
@@ -87,23 +79,13 @@ def application(global_config, **local_config):
   cloudooo_path_tmp_dir = path.join(working_path, 'tmp')
   if not path.exists(cloudooo_path_tmp_dir):
     mkdir(cloudooo_path_tmp_dir)
-  # The Xvfb will run in the same local of the OpenOffice
   application_hostname = local_config.get('application_hostname')
   openoffice_port = int(local_config.get('openoffice_port'))
-  # Before start Xvfb, first loads the configuration
-  xvfb.loadSettings(application_hostname,
-                    int(local_config.get('virtual_display_port')),
-                    working_path,
-                    local_config.get('virtual_display_id'),
-                    virtual_screen=local_config.get('virtual_screen'),
-                    start_timeout=local_config.get('start_timeout'))
-  xvfb.start()
 
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname,
                           openoffice_port,
                           working_path,
-                          local_config.get('virtual_display_id'),
                           local_config.get('office_binary_path'),
                           local_config.get('uno_path'),
                           local_config.get('openoffice_user_interface_language',

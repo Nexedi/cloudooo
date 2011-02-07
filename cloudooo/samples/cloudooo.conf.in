@@ -11,9 +11,6 @@ enable_memory_monitor = @ENABLE_MEMORY_MONITOR@
 limit_memory_used = @MAXIMUM_USE_BY_OPENOFFICE@
 application_hostname = @APPLICATION_HOSTNAME@
 openoffice_port = @OPENOFFICE_PORT@
-virtual_display_port = @XVFB_PORT@
-virtual_display_id = @XVFB_DISPLAY_ID@
-virtual_screen = @XVFB_SCREEN_NUMBER@
 
 [server:main]
 use = egg:PasteScript#wsgiutils

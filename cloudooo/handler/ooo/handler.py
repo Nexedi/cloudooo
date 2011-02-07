@@ -33,7 +33,6 @@ from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from cloudooo.handler.ooo.application.xvfb import xvfb
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ooo.mimemapper import mimemapper
@@ -116,7 +115,6 @@ class OOHandler:
   def _callUnoConverter(self, *feature_list, **kw):
     """ """
     if not openoffice.status():
-      xvfb.restart()
       openoffice.start()
     command_list = self._getCommand(*feature_list, **kw)
     stdout, stderr = self._subprocess(command_list)

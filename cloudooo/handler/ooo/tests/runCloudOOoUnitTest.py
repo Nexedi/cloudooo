@@ -66,7 +66,6 @@ def run():
 
   DAEMON = getattr(module, 'DAEMON', False)
   OPENOFFICE = getattr(module, 'OPENOFFICE', False)
-  XVFB = getattr(module, 'XVFB', False)
 
   TestRunner = unittest.TextTestRunner
   suite = unittest.TestSuite()
@@ -89,19 +88,11 @@ def run():
       process.wait()
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
-    openoffice, xvfb = startFakeEnvironment(conf_path=server_cloudooo_conf)
+    openoffice = startFakeEnvironment(conf_path=server_cloudooo_conf)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
       stopFakeEnvironment()
-  elif XVFB:
-    chdir(ENVIRONMENT_PATH)
-    startFakeEnvironment(start_openoffice=False,
-                         conf_path=server_cloudooo_conf)
-    try:
-      TestRunner(verbosity=2).run(suite)
-    finally:
-      stopFakeEnvironment(stop_openoffice=False)
   else:
     chdir(ENVIRONMENT_PATH)
     TestRunner(verbosity=2).run(suite)

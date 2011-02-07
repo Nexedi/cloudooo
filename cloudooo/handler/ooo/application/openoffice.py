@@ -33,7 +33,6 @@ from subprocess import Popen, PIPE
 from threading import Lock
 from zope.interface import implements
 from application import Application
-from cloudooo.handler.ooo.application.xvfb import xvfb
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.utils.utils import logger, convertStringToBool
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
@@ -83,7 +82,7 @@ class OpenOffice(Application):
     """Define request attribute as 0"""
     self.request = 0
 
-  def loadSettings(self, hostname, port, path_run_dir, display_id,
+  def loadSettings(self, hostname, port, path_run_dir,
                    office_binary_path, uno_path, default_language,
                    environment_dict=None, **kw):
     """Method to load the configuratio to control one OpenOffice Instance
@@ -94,7 +93,7 @@ class OpenOffice(Application):
     """
     if environment_dict is None:
       environment_dict = {}
-    Application.loadSettings(self, hostname, port, path_run_dir, display_id)
+    Application.loadSettings(self, hostname, port, path_run_dir)
     self.office_binary_path = office_binary_path
     self.uno_path = uno_path
     self.default_language = default_language
@@ -131,33 +130,28 @@ class OpenOffice(Application):
 
   def start(self):
     """Start Instance."""
-    if not xvfb.status():
-      xvfb.restart()
     self.path_user_installation = join(self.path_run_dir, \
         "cloudooo_instance_%s" % self.port)
     if exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
     self.command = [join(self.office_binary_path, self._bin_soffice),
+         '-headless',
          '-invisible',
          '-nologo',
          '-nodefault',
          '-norestore',
          '-nofirststartwizard',
          '-accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
-         '-display',
-         ':%s' % self.display_id,
          '-env:UserInstallation=file://%s' % self.path_user_installation,
          '-language=%s' % self.default_language,
          ]
-    # To run the instance OOo is need a environment. So, the "DISPLAY" of Xvfb
-    # is passed to env and the environment customized is passed to the process
+    # To run soffice.bin, several environment variables should be set.
     env = self.environment_dict.copy()
     env["LANG"] = "UTF-8"
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
-    env["DISPLAY"] = ":%s" % self.display_id
     self._startProcess(self.command, env)
     self._cleanRequest()
     Application.start(self)

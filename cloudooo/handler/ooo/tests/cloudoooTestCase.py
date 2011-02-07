@@ -31,7 +31,6 @@ import sys
 from ConfigParser import ConfigParser
 from os import path, mkdir
 from os import environ, putenv
-from cloudooo.handler.ooo.application.xvfb import xvfb
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon
 from cloudooo.handler.ooo.mimemapper import mimemapper
@@ -60,9 +59,6 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   config.read(conf_path)
   uno_path = config.get("app:main", "uno_path")
   working_path = config.get("app:main", "working_path")
-  virtual_display_id = int(config.get("app:main", "virtual_display_id"))
-  virtual_display_port_int = int(config.get("app:main",
-                                            "virtual_display_port"))
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
   office_binary_path = config.get("app:main", "office_binary_path")
@@ -82,14 +78,6 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
       not environ.has_key('URE_BOOTSTRAP'):
     putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
-  xvfb.loadSettings(hostname,
-                  virtual_display_port_int,
-                  working_path,
-                  virtual_display_id,
-                  virtual_screen='1')
-  xvfb.start()
-  waitStartDaemon(xvfb, 10)
-
   if start_openoffice:
     default_language = config.get('app:main',
                                   'openoffice_user_interface_language', False,
@@ -97,7 +85,6 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
     openoffice.loadSettings(hostname,
                             openoffice_port,
                             working_path,
-                            virtual_display_id,
                             office_binary_path,
                             uno_path,
                             default_language)
@@ -109,16 +96,12 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
     if not mimemapper.isLoaded():
         mimemapper.loadFilterList(hostname, port, **kw)
     openoffice.release()
-    return openoffice, xvfb
-
-  return xvfb
-
+    return openoffice
 
 def stopFakeEnvironment(stop_openoffice=True):
-  """Stop Openoffice and Xvfb """
+  """Stop Openoffice """
   if stop_openoffice:
     openoffice.stop()
-  xvfb.stop()
   return True
 
 
@@ -140,8 +123,6 @@ class CloudoooTestCase(unittest.TestCase):
     self.tmp_url = path.join(self.working_path, "tmp")
     check_folder(self.working_path, self.tmp_url)
     self.uno_path = config.get("app:main", "uno_path")
-    self.virtual_display_id = config.get("app:main", "virtual_display_id")
-    self.virtual_display_port_int = config.get("app:main", "virtual_display_port")
     self.afterSetUp()
 
   def afterSetUp(self):

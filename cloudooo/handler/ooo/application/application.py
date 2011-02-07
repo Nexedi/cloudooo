@@ -60,18 +60,16 @@ class Application(object):
           Process(process_pid).kill()
       delattr(self, "process")
 
-  def loadSettings(self, hostname, port, path_run_dir, display_id, **kwargs):
+  def loadSettings(self, hostname, port, path_run_dir, **kwargs):
     """Define attributes for application instance
     Keyword arguments:
     hostname -- Host to start the instance.
     port -- Expected a int number.
     path_run_dir -- Full path to create the enviroment.
-    display_id -- Display to open the OpenOffice.
     """
     self.hostname = hostname
     self.port = port
     self.path_run_dir = path_run_dir
-    self.display_id = display_id
     self.timeout = kwargs.get('start_timeout', 20)
 
   def restart(self):
