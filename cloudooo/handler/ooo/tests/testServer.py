@@ -39,33 +39,33 @@ DAEMON = True
 
 class TestServer(CloudoooTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
-  
+
   def afterSetUp(self):
     """Creates a connection with cloudooo server"""
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
 
     # XXX Duplicated list of filters
-    self.text_expected_list = [['doc', 'Microsoft Word 6.0'], 
-        ['doc', 'Microsoft Word 95'], 
-        ['doc', 'Microsoft Word 97/2000/XP'], 
+    self.text_expected_list = [['doc', 'Microsoft Word 6.0'],
+        ['doc', 'Microsoft Word 95'],
+        ['doc', 'Microsoft Word 97/2000/XP'],
         ['docx', 'Microsoft Word 2007 XML'],
         ['docx', 'Office Open XML Text'],
-        ['htm', 'HTML Document (OpenOffice.org Writer)'], 
-        ['html', 'HTML Document (OpenOffice.org Writer)'], 
-        ['html', 'XHTML'], ['odt', 'ODF Text Document'], 
-        ['ott', 'ODF Text Document Template'], 
-        ['pdf', 'PDF - Portable Document Format'], 
-        ['rtf', 'Rich Text Format'], ['sdw', 'StarWriter 3.0'], 
-        ['sdw', 'StarWriter 4.0'], ['sdw', 'StarWriter 5.0'], 
-        ['sxw', 'OpenOffice.org 1.0 Text Document'], 
+        ['htm', 'HTML Document (OpenOffice.org Writer)'],
+        ['html', 'HTML Document (OpenOffice.org Writer)'],
+        ['html', 'XHTML'], ['odt', 'ODF Text Document'],
+        ['ott', 'ODF Text Document Template'],
+        ['pdf', 'PDF - Portable Document Format'],
+        ['rtf', 'Rich Text Format'], ['sdw', 'StarWriter 3.0'],
+        ['sdw', 'StarWriter 4.0'], ['sdw', 'StarWriter 5.0'],
+        ['sxw', 'OpenOffice.org 1.0 Text Document'],
         ['txt', 'Text'], ['txt', 'Text Encoded'],
         ['xhtml', 'XHTML'], ['pdb', 'AportisDoc (Palm)'],
         ['psw', 'Pocket Word']]
 
     self.text_expected_list.sort()
 
-    self.presentation_expected_list = [['bmp', 'BMP - Windows Bitmap'], 
+    self.presentation_expected_list = [['bmp', 'BMP - Windows Bitmap'],
         ['emf', 'EMF - Enhanced Metafile'],
         ['eps', 'EPS - Encapsulated PostScript'],
         ['gif', 'GIF - Graphics Interchange Format'],
@@ -80,7 +80,7 @@ class TestServer(CloudoooTestCase):
         ['odp', 'ODF Presentation'],
         ['otp', 'ODF Presentation Template'],
         ['pbm', 'PBM - Portable Bitmap'], ['pct', 'PCT - Mac Pict'],
-        ['pdf', 'PDF - Portable Document Format'], 
+        ['pdf', 'PDF - Portable Document Format'],
         ['pgm', 'PGM - Portable Graymap'], ['pict', 'PCT - Mac Pict'],
         ['png', 'PNG - Portable Network Graphic'],
         ['pot', 'Microsoft PowerPoint 97/2000/XP Template'],
@@ -91,13 +91,13 @@ class TestServer(CloudoooTestCase):
         ['sda', 'StarDraw 5.0 (OpenOffice.org Impress)'],
         ['sdd', 'StarDraw 3.0 (OpenOffice.org Impress)'],
         ['sdd', 'StarImpress 4.0'], ['sdd', 'StarImpress 5.0'],
-        ['svg', 'SVG - Scalable Vector Graphics'], 
-        ['svm', 'SVM - StarView Metafile'], 
+        ['svg', 'SVG - Scalable Vector Graphics'],
+        ['svm', 'SVM - StarView Metafile'],
         ['sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'],
         ['sxi', 'OpenOffice.org 1.0 Presentation'],
         ['tif', 'TIFF - Tagged Image File Format'],
         ['tiff', 'TIFF - Tagged Image File Format'],
-        ['wmf', 'WMF - Windows Metafile'], 
+        ['wmf', 'WMF - Windows Metafile'],
         ['xhtml', 'XHTML'], ['xpm', 'XPM - X PixMap']]
 
     self.presentation_expected_list.sort()
@@ -126,22 +126,22 @@ class TestServer(CloudoooTestCase):
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     text_allowed_list.sort()
     for arg in text_allowed_list:
-      self.assertTrue(arg in self.text_expected_list, 
+      self.assertTrue(arg in self.text_expected_list,
                     "%s not in %s" % (arg, self.text_expected_list))
     request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     presentation_allowed_list.sort()
     for arg in presentation_allowed_list:
-      self.assertTrue(arg in self.presentation_expected_list, 
+      self.assertTrue(arg in self.presentation_expected_list,
                     "%s not in %s" % (arg, self.presentation_expected_list))
-  
-  def testGetAllowedExtensionListByExtension(self):  
+
+  def testGetAllowedExtensionListByExtension(self):
     """Call getAllowedExtensionList and verify if the returns is a list with
     extension and ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
     doc_allowed_list.sort()
     for arg in doc_allowed_list:
-      self.assertTrue(arg in self.text_expected_list, 
+      self.assertTrue(arg in self.text_expected_list,
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedExtensionListByMimetype(self):
@@ -151,7 +151,7 @@ class TestServer(CloudoooTestCase):
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     msword_allowed_list.sort()
     for arg in msword_allowed_list:
-      self.assertTrue(arg in self.text_expected_list, 
+      self.assertTrue(arg in self.text_expected_list,
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testConvertDocToOdt(self):
@@ -172,7 +172,7 @@ class TestServer(CloudoooTestCase):
 
   def testgetFileMetadataItemListWithoutData(self):
     """Test server using method getFileMetadataItemList. Without data
-    converted""" 
+    converted"""
     data = open(join('data','testMetadata.odt'),'r').read()
     metadata_dict = self.proxy.getFileMetadataItemList(encodestring(data),
                                                       'odt')
@@ -288,7 +288,7 @@ class TestServer(CloudoooTestCase):
                           'png',
                           'svg',
                           'image/svg+xml')
-  
+
   def testConvertPPTXToODP(self):
     """Test export pptx to odp"""
     self._testConvertFile("data/test.pptx",
@@ -304,7 +304,7 @@ class TestServer(CloudoooTestCase):
                           'docx',
                           'odt',
                           'application/vnd.oasis.opendocument.text')
-  
+
   def testConvertPyToPDF(self):
     """Test export python to pdf"""
     self._testConvertFile("cloudoooTestCase.py",
@@ -321,7 +321,7 @@ class TestServer(CloudoooTestCase):
 
     res = self.proxy.getFileMetadataItemList(data, '')
     self.assertEquals(res['MIMEType'], "text/plain")
-    res = decodestring(self.proxy.updateFileMetadata(data, '', 
+    res = decodestring(self.proxy.updateFileMetadata(data, '',
                                          {"Subject": "subject"}))
     self.assertEquals(decodestring(res), '')
 
@@ -358,7 +358,7 @@ class TestServer(CloudoooTestCase):
     self.assertEquals(type(response_dict), DictType)
     self.assertEquals(response_dict, {})
     msg = "This document can not be loaded or is empty\n"
-    self.assertTrue(response_message.endswith(msg), 
+    self.assertTrue(response_message.endswith(msg),
                     "%s != %s" % (response_message, msg))
 
   def testRunGenerateMethod(self):
@@ -404,7 +404,7 @@ class TestServer(CloudoooTestCase):
     data = open(join('data', 'test_png.odp'),'r').read()
     generate_result = self.proxy.run_generate('test_png.odp',
                                       encodestring(data),
-                                      None, 'html', 
+                                      None, 'html',
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
@@ -433,7 +433,7 @@ class TestServer(CloudoooTestCase):
     data = open(join('data','test.odp'),'r').read()
     generate_result = self.proxy.run_generate('test.odp',
                                       encodestring(data),
-                                      None, 'html', 
+                                      None, 'html',
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEquals(response_code, 200)
@@ -467,35 +467,35 @@ class TestServer(CloudoooTestCase):
   def testRunSetMetadata(self):
     """Test run_setmetadata method"""
     data = open(join('data','testMetadata.odt'),'r').read()
-    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
+    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
                           {"Title":"testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     self.assertEquals(response_code, 200)
     self.assertNotEquals(response_dict['data'], '')
-    getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt', 
+    getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt',
                                                   response_dict['data'])
     response_code, response_dict, response_message = getmetadata_result
     self.assertEquals(response_code, 200)
-    self.assertEquals(response_dict['meta']['MIMEType'], 
-                      'application/vnd.oasis.opendocument.text') 
+    self.assertEquals(response_dict['meta']['MIMEType'],
+                      'application/vnd.oasis.opendocument.text')
     self.assertEquals(response_dict['meta']['Description'], "Music")
-    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
+    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
-                          {"Title":"Namie's working record", 
+                          {"Title":"Namie's working record",
                            "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
-    getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt', 
+    getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt',
                                                   response_dict['data'])
     response_code, response_dict, response_message = getmetadata_result
     self.assertEquals(response_code, 200)
-    self.assertEquals(response_dict['meta']['title'], 
-                      "Namie's working record") 
+    self.assertEquals(response_dict['meta']['title'],
+                      "Namie's working record")
 
   def testRunSetMetadataFailResponse(self):
     """Test run_setmetadata method with invalid document"""
     data = open(join('data','testMetadata.odt'),'r').read()[:100]
-    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt', 
+    setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
                           {"Title":"testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result

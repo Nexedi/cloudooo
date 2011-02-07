@@ -32,7 +32,7 @@ from cloudoooTestCase import make_suite
 
 
 class TestApplication(unittest.TestCase):
-  
+
   def setUp(self):
     """Instantiate one application object and load settings on object"""
     self.application = Application()
@@ -44,7 +44,7 @@ class TestApplication(unittest.TestCase):
     self.assertEquals(self.application.port, 9999)
     self.assertEquals(self.application.path_run_dir, '/tmp/')
     self.assertEquals(self.application.display_id, '99')
- 
+
   def testStartTimeout(self):
     """Test if the attribute timeout is defined correctly"""
     self.assertEquals(self.application.timeout, 20)

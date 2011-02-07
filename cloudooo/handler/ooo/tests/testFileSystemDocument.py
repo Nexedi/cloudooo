@@ -99,7 +99,7 @@ class TestFileSystemDocument(unittest.TestCase):
     self.assertEquals(self.fsdocument.getContent(), self.data)
     self.fsdocument.trash()
     self.assertEquals(path.exists(url), False)
-    
+
   def testZipDocumentList(self):
     """Tests if the zip file is returned correctly"""
     open(path.join(self.fsdocument.directory_name, 'document2'), 'w').write('test')

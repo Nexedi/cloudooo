@@ -35,7 +35,7 @@ OPENOFFICE = True
 
 class TestOpenOffice(CloudoooTestCase):
   """Test OpenOffice object and manipulation of OOo Instance"""
-  
+
   def afterSetUp(self):
     """Instantiate one OpenOffice"""
     self.openoffice = OpenOffice()

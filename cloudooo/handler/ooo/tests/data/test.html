@@ -40,7 +40,7 @@ references to <a href="#server">server-side techniques needed</a>,
 <a href="#moz">Mozilla</a>,
 <a href="#opera">Opera</a>,
 <a href="#safari">Safari</a>;
- <a href="#warn">users&#8217; problems with file input</a>;       
+ <a href="#warn">users&#8217; problems with file input</a>;
 <a href="#present">appearance of the Browse button and the filename box</a>
 </li><li><a href="#acc">accessibility problems: file input is a challenge to many users</a>
   </li><li> <a href="#alt">suggestions for allowing
@@ -99,7 +99,7 @@ don&#8217;t even dream about using
 in this context or otherwise!
   </li><li> it has the attribute
 <a href="http://www.cs.tut.fi/%7Ejkorpela/forms/methods.html" title="Methods GET and POST in HTML forms&#8212;what&#8217;s the difference?">
-<code>method="post"</code></a>       
+<code>method="post"</code></a>
   </li><li> it has the attribute
 <code><a href="#enctype">enctype</a>="multipart/form-data"</code>
   </li><li> it contains a field
@@ -126,7 +126,7 @@ box in current browsers is rather narrow for typical filenames.
 <p><small>Minimally, the form needs to contain a
 <a title="Description of INPUT TYPE=SUBMIT in WDG&#8217;s HTML 4.0 reference" href="http://www.htmlhelp.com/reference/html40/forms/input.html#submit">
 a submit element</a> too. It may also contain any other fields you like,
-       and explanatory texts, images, etc.</small></p> 
+       and explanatory texts, images, etc.</small></p>
 
 <p class="warning"><a name="goofs">A common problem with file input
 in forms</a> is that form data gets sent but only the <em>name</em>
@@ -134,7 +134,7 @@ of the file is included. The reason is typically that the <code>form</code>
 element does not contain the attributes mentioned above.</p>
 
 <p>Since <a href="#support">browser support</a> to file input
-is still problematic, consider 
+is still problematic, consider
 <a href="#alt"><strong>providing alternative methods</strong></a>
 of submitting data, too.</p>
 
@@ -368,7 +368,7 @@ file, Opera discards the current selection and replaces it with a <em>range</em>
 </li></ul>
 <p>It isn&#8217;t perfect though. The Browse window is rather small, and it is
 impossible to pick up several ranges, i.e. you must click on the files individually
-unless you want to select just one contiguous range. 
+unless you want to select just one contiguous range.
 And the box for file names is quite small too, and its size is not
 affected by the <code>size</code> attribute.
 See also <a href="#value">notes on setting the default filename</a>.
@@ -432,7 +432,7 @@ the instructions apply to.</small></p>
 <p>The technical problems discussed here are one reason why
 authors should consider providing <em>alternatives</em> to file input.
 There&#8217;s a section on <a href="#acc" title="File input is a challenge to many users">accessibility problems</a> below,
-discussing some additional reasons.</p> 
+discussing some additional reasons.</p>
 
 <h3><a name="present">The appearance of the Browse button and the filename box</a></h3>
 
@@ -511,7 +511,7 @@ increase the font size and set the font to Courier. Specifically,
 this happened on Netscape&nbsp;4 but not on most other browsers.
 (As a side effect, on Netscape&nbsp;4, such
 a font size change affected the dimensions of the Browse
-button but not the font size of the the text &#8220;Browse&#8221;. 
+button but not the font size of the the text &#8220;Browse&#8221;.
 Note that
 if you included a <code>color</code> attribute there,
 Netscape&nbsp; ignored it.)</small></p>
@@ -528,7 +528,7 @@ textual content of the HTML document)
 should be formatted according to the font properties of the
 <code>input</code> element. (For example, IE&nbsp;4 and Mozilla seem to
 apply the font-size property but not the font-family property when
-rendering the button text. IE&nbsp;6 applies font-family too.</p> 
+rendering the button text. IE&nbsp;6 applies font-family too.</p>
 <p>The following example demonstrates how your browser treats a file
 input element where we suggest presentational properties both in HTML
 and in CSS:</p>
@@ -565,7 +565,7 @@ problems in file input. For an overview of what accessibility is and
 why it is important, please refer to the
 <cite><a href="http://web.archive.org/web/20030605114512/http://www.diffuse.org/accessibility.html">Guide to Web Accessibility and Design for All</a></cite>.</p>
 
-<p>It has been reported that some 
+<p>It has been reported that some
 special-purpose browsing software,
 such as some versions of the
 <a href="http://www.freedomscientific.com/fs_products/software_jaws.asp">JAWS</a> screen reader, have serious difficulties in file input.
@@ -575,7 +575,7 @@ is oriented towards visual interaction.</p>
 <p>Even the &#8220;normal&#8221; browsers have serious difficulties in file
 input without using a mouse. (There are different reasons, including
 physiological and neurological problems, why the user may need to work
-without a mouse or other pointing devide.) 
+without a mouse or other pointing devide.)
 In Internet Explorer&nbsp;6, you can select the
 Browse button by tabbing, but if you try to use
 the keyboard to activate it, hitting the Enter key, the browser
@@ -587,16 +587,16 @@ the file selection dialogue.
 Netscape&nbsp;7 skips over the browse button
 entirely when tabbing&#8212;it cannot be selected without a mouse.</p>
 <p><small>Not surprisingly, on Opera things work reasonably.
-The user can 
+The user can
 select the Browse button using the tab key and activate it
 by pressing the enter key, then select a file for upload from the
 file system; you would use the arrow keys move around in the file
-selection.</small></p> 
+selection.</small></p>
 
 <p>On the <a href="http://lynx.browser.org/">Lynx</a>
 text browser, at least on Lynx&nbsp;2.8.4 on Unix,
-there is no Browse button, and there is no dialogue 
-for accessing the computer&#8217;s 
+there is no Browse button, and there is no dialogue
+for accessing the computer&#8217;s
 file system. Thus,  the user needs to know the exact path name and syntax to
 type in the file name for upload, as is apparently also the case for
 IE and Netscape.</p>
@@ -625,14 +625,14 @@ should be submitted.</p>
 <p>For example, the explanation could say: &#8220;Please specify, if possible,
 an image
 file containing your photo in JPEG format.&#8221;
-Such a note may not help much when a user 
-encounters such a field for the first time in his life, 
+Such a note may not help much when a user
+encounters such a field for the first time in his life,
 but it helps him to associate the eventual problems with a concept
 of file input and to explain his problems when seeking for help.
 And if he has tried to use file input before,
 it tells him to stay tuned to something special, and
 perhaps at this point, before entering the file input field, to access the
-file system outside the browser and find the exact path name of the file  
+file system outside the browser and find the exact path name of the file
 he wants to submit.</p>
 
 <h2><a name="alt">How to provide alternatives</a></h2>
@@ -790,7 +790,7 @@ This type was originally defined in
 
 <p><small>Browsers
 may support other values too, but are not required to, and it is
-generally unsafe to use them. 
+generally unsafe to use them.
 Sometimes people use <code>enctype="text/plain"</code>,
 and <code>text/plain</code> is <i>per se</i> a well-defined media type;
 but there is no specification of the exact method of encoding
@@ -865,7 +865,7 @@ must then be somehow prepared to handle zipped files.
 
 <p>The HTML 4.01 specification
 <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.4.1">describes
-the <code>value</code> attribute</a> 
+the <code>value</code> attribute</a>
 for a file input field by saying that browsers (user agents)
 &#8220;may use the value of the <code>value</code>
 attribute as the initial file name.&#8221; This however is
@@ -951,7 +951,7 @@ in the <code>value</code> attribute.
 </p><p>The following form contains a file input field with
 <code>value="C:\.emacs"</code>. Your browser probably just ignores
 that attribute, but some browsers may use it to set the initial
-file name:</p>  
+file name:</p>
 <form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi" enctype="multipart/form-data" method="post">
 <div><input name="datafile" value="C:\.emacs" type="file"></div>
 <div><input value="Send" type="submit"></div>
@@ -1062,7 +1062,7 @@ clicking on it, the browser puts the filename into the filename box,
 and the name is a full pathname which can be quite long.
 It may confuse users if they see the name badly truncated.</p>
 
-<p><a href="http://www.w3.org/TR/REC-html32#input">Definition of 
+<p><a href="http://www.w3.org/TR/REC-html32#input">Definition of
 <code>input type="file"</code> in the HTML 3.2 specification</a>
 said:</p>
 <blockquote>
@@ -1117,7 +1117,7 @@ by ignorance, or by misclicking, or by malevolence.
 See section
 <cite><a href="http://cpan.uwinnipeg.ca/htdocs/CGI.pm/CGI.html#avoiding_denial_of_service_attacks">Avoiding Denial of Service Attacks</a></cite> in the
 <a href="http://theoryx5.uwinnipeg.ca/CPAN/data/CGI.pm/CGI.html">documentation of CGI.pm</a>; even if it isn&#8217;t directly applicable
-to you since you use other techniques than CGI and Perl, it 
+to you since you use other techniques than CGI and Perl, it
 gives some food for thought in general.</p>
 <p>The server-side form handler can be coded to do whatever the
 programmer wants, and imposing <em>some</em> upper limit is clearly a must.
@@ -1143,11 +1143,11 @@ specifications. On the contrary, the
 <a href="http://www.w3.org/TR/REC-html32#input">HTML 3.2 specification says</a> something quite different:
 </p><blockquote>
 You can set an upper limit to the length of file names using the
-<code>maxlength</code> attribute. 
+<code>maxlength</code> attribute.
 </blockquote>
 
 <p>Thus, it is better not to use the <code>maxlength</code> attribute,
-because it currently does nothing and, worse still, 
+because it currently does nothing and, worse still,
 in the future it might be interpreted in two incompatible ways.
 The HTML&nbsp;4 specification takes no position on this: it describes
 <code>maxlength</code> as defined for <code>input type="text"</code>
@@ -1287,7 +1287,7 @@ officially, i.e. to make it explicit that work on HTML specifications
 has been moved from IETF to W3C. It explicitly obsoletes RFC 1867,
 together with some other HTML related RFCs. But note that there is
 very little in HTML specifications by the W3C that defines
-what file input really is; they refer to RFC 1867 instead.</p> 
+what file input really is; they refer to RFC 1867 instead.</p>
 
 <p>RFC 1867 contains much more <strong>detailed</strong> information about
 &#8220;file upload&#8221; than HTML specifications. It explains the original
@@ -1311,5 +1311,5 @@ the free information site
 by
 <a href="http://www.cs.tut.fi/%7Ejkorpela/personal.html" title="Jukka K. Korpela, an IT generalist and specialist (personal home page)"><span lang="fi">Jukka</span> &#8220;Yucca&#8221; <span lang="fi">Korpela</span></a>.
 </div></div>
- 
+
 </body></html>

@@ -42,16 +42,16 @@ usage: unoconverter [options]
 
 Options:
   -h, --help            this help screen
-  
+
   --test                Test if the Openoffice works correctly
-  
+
   --hostname=STRING     OpenOffice Instance address
-  
+
   --port=STRING         OpenOffice Instance port
-  
-  --document_url=STRING_URL 
+
+  --document_url=STRING_URL
                         URL of document to load in OpenOffice
-  
+
   --office_binary_path=STRING_URL
                         Folder path were is the binary openoffice
   --uno_path=STRING_URL
@@ -78,7 +78,7 @@ class UnoConverter(object):
     self.document_dir_path = dirname(document_url)
     self.source_format = kw.get('source_format')
     self.refresh = kw.get('refresh')
-    self._setUpUnoEnvironment(kw.get("uno_path"), 
+    self._setUpUnoEnvironment(kw.get("uno_path"),
                               kw.get("office_binary_path"))
     self._load()
 
@@ -109,7 +109,7 @@ class UnoConverter(object):
     property = PropertyValue()
     property.Name = name
     property.Value = value
-    return property 
+    return property
 
   def _createSpecificProperty(self, filter_name):
     """Creates a property according to the filter"""
@@ -234,7 +234,7 @@ class UnoConverter(object):
 
   def setMetadata(self, metadata):
     """Returns a document with new metadata.
-    
+
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
@@ -270,16 +270,16 @@ def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help", "test",
       "convert", "getmetadata", "setmetadata",
-      "uno_path=", "office_binary_path=", 
+      "uno_path=", "office_binary_path=",
       "hostname=", "port=", "source_format=",
-      "document_url=", "destination_format=", 
+      "document_url=", "destination_format=",
       "mimemapper=", "metadata=", "refresh=",
       "unomimemapper_bin="])
   except GetoptError, msg:
     msg = msg.msg + help_msg
     print >> sys.stderr, msg
     sys.exit(2)
-  
+
   param_list = [tuple[0] for tuple in iter(opt_list)]
 
   try:
@@ -313,19 +313,19 @@ def main():
       metadata = json.loads(arg)
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
-   
+
   kw = {}
   if "uno_path" in locals():
     kw['uno_path'] = uno_path
 
   if "office_binary_path" in locals():
     kw['office_binary_path'] = office_binary_path
- 
+
   if 'source_format' in locals():
     kw['source_format'] = source_format
   if refresh:
     kw['refresh'] = refresh
-  
+
   unoconverter = UnoConverter(hostname, port, document_url, **kw)
   if "--convert" in param_list and not '--getmetadata' in param_list \
       and 'destination_format' not in locals():
@@ -344,6 +344,6 @@ def main():
     output = document_url
 
   print output
-    
+
 if "__main__" == __name__:
   main()

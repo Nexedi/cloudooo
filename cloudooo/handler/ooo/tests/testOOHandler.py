@@ -84,7 +84,7 @@ class TestOOHandler(CloudoooTestCase):
     doc_exported = handler.convert("odt")
     self._assert_document_output(doc_exported,
                           "application/vnd.oasis.opendocument.text")
-    
+
   def testGetMetadata(self):
     """Test getMetadata"""
     data = encodestring(open("data/test.odt").read())
@@ -96,7 +96,7 @@ class TestOOHandler(CloudoooTestCase):
     self.assertTrue(metadata.has_key('Data'))
     self.assertEquals(metadata.get('MIMEType'),
                       'application/vnd.oasis.opendocument.text')
-    handler.document.restoreOriginal() 
+    handler.document.restoreOriginal()
     metadata = handler.getMetadata(True)
     self.assertNotEquals(metadata.get('Data'), '')
 
@@ -132,7 +132,7 @@ class TestOOHandler(CloudoooTestCase):
     doc_exported = handler.convert("odt")
     self._assert_document_output(doc_exported,
                           "application/vnd.oasis.opendocument.text")
-  
+
   def testGetMetadataWithOpenOfficeStopped(self):
     """Test getMetadata with openoffice stopped"""
     openoffice.stop()
@@ -144,7 +144,7 @@ class TestOOHandler(CloudoooTestCase):
     self.assertEquals(metadata.get('Title'), 'title')
     self.assertEquals(metadata.get('MIMEType'),
               'application/vnd.oasis.opendocument.text')
-  
+
   def testSetMetadataWithOpenOfficeStopped(self):
     """Test setMetadata with openoffice stopped"""
     openoffice.stop()

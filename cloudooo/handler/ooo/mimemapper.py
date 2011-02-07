@@ -108,7 +108,7 @@ class MimeMapper(object):
             "--office_binary_path=%s" % office_binary_path,
             "--hostname=%s" % hostname,
             "--port=%s" % port]
-    
+
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            close_fds=True).communicate()

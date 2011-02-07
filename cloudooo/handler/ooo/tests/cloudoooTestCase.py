@@ -88,17 +88,17 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                   virtual_display_id,
                   virtual_screen='1')
   xvfb.start()
-  waitStartDaemon(xvfb, 10) 
+  waitStartDaemon(xvfb, 10)
 
   if start_openoffice:
     default_language = config.get('app:main',
                                   'openoffice_user_interface_language', False,
                                   {'openoffice_user_interface_language': 'en'})
     openoffice.loadSettings(hostname,
-                            openoffice_port, 
+                            openoffice_port,
                             working_path,
                             virtual_display_id,
-                            office_binary_path, 
+                            office_binary_path,
                             uno_path,
                             default_language)
     openoffice.start()
@@ -110,7 +110,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
         mimemapper.loadFilterList(hostname, port, **kw)
     openoffice.release()
     return openoffice, xvfb
-  
+
   return xvfb
 
 
@@ -124,7 +124,7 @@ def stopFakeEnvironment(stop_openoffice=True):
 
 class CloudoooTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""
-  
+
   def setUp(self):
     """Creates a environment to run the tests. Is called always before the
     tests."""

@@ -36,7 +36,7 @@ from time import ctime, time
 from base64 import encodestring
 
 __doc__ = """
-usage: python HighTestLoad.py [options] 
+usage: python HighTestLoad.py [options]
 
 Options:
   -h, --help        this help screen
@@ -72,14 +72,14 @@ class Log(object):
 class Client(Process):
   """Represents a client that sends requests to the server. The log file by
   default is created in current path, but can be created in another path.
-  
+
   In log are stored:
   - Date and time that the client initiated the test;
   - Duration of each request;
   - Total time of all requets;
   - Data and time that the client finished the test;
   """
-  
+
   def __init__(self, address, number_request, folder, **kw):
     """Client constructor
 
@@ -126,7 +126,7 @@ class Client(Process):
 
 
 def main():
-  
+
   help_msg = "\nUse --help or -h"
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "hc:n:f:s:l:", ["help"])
@@ -153,7 +153,7 @@ def main():
 
   client_list = []
   for num in range(number_client):
-    kw['log_filename'] = "client%s.log" % num 
+    kw['log_filename'] = "client%s.log" % num
     client = Client(server_address, number_request, document_folder, **kw)
     client_list.append(client)
     client.start()

@@ -24,7 +24,7 @@ def wait_use_port(pid, timeout_limit=30):
 
 def exit(msg):
   sys.stderr.write(msg)
-  sys.exit(0) 
+  sys.exit(0)
 
 
 def run():
@@ -50,7 +50,7 @@ def run():
   python_extension = '.py'
   if test_name[-3:] == python_extension:
     test_name = test_name[:-3]
-  if not path.exists(path.join(ENVIRONMENT_PATH, 
+  if not path.exists(path.join(ENVIRONMENT_PATH,
                                '%s%s' % (test_name, python_extension))):
     exit("%s not exists\n" % test_name)
 

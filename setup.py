@@ -6,8 +6,8 @@ version = '1.2.1'
 
 folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 
-long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(), 
-                               open(path.join(folder_path, "CHANGES.txt")).read()) 
+long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(),
+                               open(path.join(folder_path, "CHANGES.txt")).read())
 install_require_list = [
           # -*- Extra requirements: -*-
           'zope.interface',

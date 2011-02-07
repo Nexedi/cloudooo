@@ -1,28 +1,28 @@
 Install Cloudooo
 ================
-  
+
   $ python2.6 setup.py install
-  
+
   Warnings:
       - you must have installed setuptools>=0.6c11 in this python.
 
 Install Dependencies in Mandriva
 ================================
-  
+
   $ urpmi xvfb # System Dependencies
 
 Install OpenOffice.org
 ======================
 
   Was used for testing the package's official openoffice.org. Follow these steps to install:
-  
+
   Download Package from the official site
   ---------------------------------------
-  
+
   x86_32
   ----
     $ wget http://download.services.openoffice.org/files/stable/3.2.0/OOo_3.2.0_LinuxIntel_install_wJRE_en-US.tar.gz
-  
+
   x86_64
   ------
     $ wget http://download.services.openoffice.org/files/stable/3.2.0/OOo_3.2.0_LinuxX86-64_install_wJRE_en-US.tar.gz
@@ -32,12 +32,12 @@ Install OpenOffice.org
     $ tar zxvf OOo_3.2.0_LinuxX86-64_install_wJRE_en-US.tar.gz
     $ cd OOO320_m12_native_packed-1_en-US.9483/RPMS
     $ rpm -i *.rpm # install all packages together
-    
+
     The instalation is in /opt
 
 Create Configuration File
 =========================
-  
+
   The configuration file is used to start the application using paster.
   $ cp ./cloudooo/samples/samples.conf . # Copy to current folder
 
@@ -52,9 +52,9 @@ Run Application
   $ paster serve ./cloudooo.conf
 
   or run as a daemon:
-  
+
   $ paster serve ./cloudoo.conf --daemon
-  
+
 
 Stop Application
 ===============
@@ -82,7 +82,7 @@ Xvfb and OpenOffice
  - configure and start Xvfb;
     - Use a single Xvfb;
     - the xvfb will be started with the XMLRPC Server;
-	- When start the Daemon(cloudooo), it configures Xvfb, next opens the openoffice(with pyuno) and start XMLRPC Server; 
+	- When start the Daemon(cloudooo), it configures Xvfb, next opens the openoffice(with pyuno) and start XMLRPC Server;
  - control Xvfb;
  - start openoffice;
    - Pyuno start the openoffice processes and the communication is through sockets;

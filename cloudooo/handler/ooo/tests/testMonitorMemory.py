@@ -39,7 +39,7 @@ OPENOFFICE = True
 class TestMonitorMemory(unittest.TestCase):
   """Test case to see if the MonitorMemory is properly managing the
   openoffice."""
-  
+
   interval = 3
 
   def setUp(self):

@@ -56,14 +56,14 @@ class TestUnoConverter(CloudoooTestCase):
 
   def testUnoConverterOdtToDoc(self):
     """Test script unoconverter"""
-    mimemapper = dict(filter_list=[('doc', 
+    mimemapper = dict(filter_list=[('doc',
                                     'com.sun.star.text.TextDocument',
                                     'MS Word 97')],
                      doc_type_list_by_extension=dict(doc=['com.sun.star.text.TextDocument']))
     mimemapper_pickled = json.dumps(mimemapper)
     python = join(self.office_binary_path, "python")
     command = [exists(python) and python or "python",
-          pkg_resources.resource_filename("cloudooo", 
+          pkg_resources.resource_filename("cloudooo",
                                           "handler/ooo/helper/unoconverter.py"),
           "--convert",
           "--uno_path=%s" % self.uno_path,
@@ -74,7 +74,7 @@ class TestUnoConverter(CloudoooTestCase):
           "--destination_format=%s" % "doc",
           "--source_format=%s" % "odt",
           "--mimemapper=%s" % mimemapper_pickled]
-    stdout, stderr = Popen(command, 
+    stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
     self.assertEquals(stderr, '')

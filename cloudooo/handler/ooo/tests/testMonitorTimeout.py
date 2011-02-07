@@ -36,7 +36,7 @@ OPENOFFICE = True
 
 class TestMonitorTimeout(unittest.TestCase):
   """Test all features of a monitor following the interface"""
-  
+
   def _createMonitor(self, interval):
     """Returns an MonitorTimeout instance"""
     return MonitorTimeout(openoffice, interval)

@@ -6,15 +6,15 @@
   - Removed the configurationmanager.py.
 0.5
 ===
-  - Removed the possibility of infinite loop in getAvailableOO. 
-  - Corrected the problem when the document in file system isn't 
+  - Removed the possibility of infinite loop in getAvailableOO.
+  - Corrected the problem when the document in file system isn't
 found(IllegalArgumentException).
   - Implemented in oohandler to when not exist OOo Instance free. If don't exist,
 the requisition is locked.
 
 0.4
 ===
-  Created class to manipulate the configuration file(ConfigurationManager). 
+  Created class to manipulate the configuration file(ConfigurationManager).
 Now, all paths are taken by this object and in configuration file is possible
 set the number of OOo instance that you want. The OOFactory object was implemented
 to start the max number of OOo instance and get the instance available to use.
@@ -22,7 +22,7 @@ to start the max number of OOo instance and get the instance available to use.
 0.3
 ===
   Split start.py into openoffice.py and xvfb.py. The classes openoffice and xvfb have
-methods to control the process(start,stop and status about the process). Created one class 
+methods to control the process(start,stop and status about the process). Created one class
 and one object for it, for easier reload the configuration.
 
 0.2

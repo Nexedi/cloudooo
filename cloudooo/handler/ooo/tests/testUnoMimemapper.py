@@ -61,7 +61,7 @@ class TestUnoMimeMapper(CloudoooTestCase):
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
-    stdout, stderr = Popen(command, 
+    stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
     self.assertEquals(stderr, '')
@@ -78,7 +78,7 @@ class TestUnoMimeMapper(CloudoooTestCase):
     """ Test call unomimemapper without uno_path and office_binary_path"""
     hostname, host = openoffice.getAddress()
     command = [path.join(self.office_binary_path, "python"),
-            pkg_resources.resource_filename("cloudooo", 
+            pkg_resources.resource_filename("cloudooo",
                                        "handler/ooo/helper/unomimemapper.py"),
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
@@ -102,7 +102,7 @@ class TestUnoMimeMapper(CloudoooTestCase):
     openoffice.stop()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
-            pkg_resources.resource_filename("cloudooo", 
+            pkg_resources.resource_filename("cloudooo",
                                             "handler/ooo/helper/unomimemapper.py"),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path,

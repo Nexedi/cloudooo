@@ -44,9 +44,9 @@ usage: unomimemapper [options]
 Options:
   -h, --help            this help screen
   --hostname=STRING     OpenOffice Instance address
-  
+
   --port=STRING         OpenOffice Instance port
-  
+
   --office_binary_path=STRING_URL
                         Folder path were is the binary openoffice
   --uno_path=STRING_URL
@@ -59,7 +59,7 @@ class UnoMimemapper(object):
 
   def __init__(self, hostname, port, **kw):
     """ Receives hostname and port from openoffice and create a service manager"""
-    self._setUpUnoEnvironment(kw.get("uno_path"), 
+    self._setUpUnoEnvironment(kw.get("uno_path"),
                               kw.get("office_binary_path"))
     self.service_manager = helper_utils.getServiceManager(hostname, port)
 
@@ -128,7 +128,7 @@ def main():
     msg = msg.msg + "\nUse --help or -h"
     print >> sys.stderr, msg
     sys.exit(2)
-  
+
   if not opt_list:
     help()
 
@@ -143,7 +143,7 @@ def main():
       hostname = arg
     elif opt == "--port":
       port = arg
-  
+
   mimemapper = UnoMimemapper(hostname, port, **dict(environ))
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
