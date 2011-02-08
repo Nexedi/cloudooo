@@ -33,7 +33,7 @@ from os import listdir, remove, chdir
 from zope.interface import implements
 from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
-from interfaces.file import IFile
+from cloudooo.interfaces.file import IFile
 
 
 class File(object):
