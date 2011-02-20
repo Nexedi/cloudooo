@@ -28,12 +28,13 @@
 
 from time import sleep
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 
 OPENOFFICE = True
 
-class TestMonitorRequest(CloudoooTestCase):
+class TestMonitorRequest(HandlerTestCase):
   """Test all features of a monitor following the interface"""
 
   def testMonitorTerminate(self):

@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-from cloudoooTestCase import CloudoooTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudoooTestCase import make_suite
@@ -164,7 +164,7 @@ chart_expected_tuple = (
 
 OPENOFFICE = True
 
-class TestMimeMapper(CloudoooTestCase):
+class TestMimeMapper(HandlerTestCase):
   """Test if object load filters correctly of OOo."""
 
   def afterSetUp(self):

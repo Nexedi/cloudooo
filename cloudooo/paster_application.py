@@ -67,7 +67,6 @@ def application(global_config, **local_config):
         if current_value:
           value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
-
   gc.enable()
   debug_mode = convertStringToBool(local_config.get('debug_mode'))
   configureLogger(debug_mode=debug_mode)

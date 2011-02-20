@@ -28,31 +28,37 @@
 
 
 import unittest
-from cloudooo.handler.pdf.handler import PDFHandler
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
-from types import DictType
+from os import environ, path
+from ConfigParser import ConfigParser
+import sys
 
+config = ConfigParser()
 
-class TestPDFHandler(HandlerTestCase):
+def check_folder(working_path, tmp_dir_path):
+  if not path.exists(working_path):
+    mkdir(working_path)
+  if not path.exists(tmp_dir_path):
+    mkdir(tmp_dir_path)
 
-  def testConvertPDFtoText(self):
-    """Test conversion of pdf to txt"""
-    pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf")
-    txt_document = handler.convert("txt")
-    self.assertTrue(txt_document.startswith("UNG Docs Architecture"))
+class HandlerTestCase(unittest.TestCase):
+  """Test Case to load cloudooo conf."""
 
-  def testgetMetadata(self):
-    """Test if the metadata are extracted correctly"""
-    pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf")
-    metadata = handler.getMetadata()
-    self.assertEquals(type(metadata), DictType)
-    self.assertNotEquals(metadata, {})
-    self.assertEquals(metadata["title"], 'Free Cloud Alliance Presentation')
+  def setUp(self):
+    """Creates a environment to run the tests. Is called always before the
+    tests."""
+    server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
+    if server_cloudooo_conf is not None:
+      config.read(server_cloudooo_conf)
+    self.hostname = config.get("server:main", "host")
+    self.cloudooo_port = config.get("server:main", "port")
+    self.openoffice_port = config.get("app:main", "openoffice_port")
+    self.office_binary_path = config.get("app:main", "office_binary_path")
+    self.python_path = sys.executable
+    self.working_path = config.get("app:main", "working_path")
+    self.tmp_url = path.join(self.working_path, "tmp")
+    check_folder(self.working_path, self.tmp_url)
+    self.uno_path = config.get("app:main", "uno_path")
+    self.afterSetUp()
 
-
-def test_suite():
-  suite = unittest.TestSuite() 
-  suite.addTest(unittest.makeSuite(TestPDFHandler))
-  return suite
+  def afterSetUp(self):
+    """ """

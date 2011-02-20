@@ -31,13 +31,14 @@ import magic
 import pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists, join
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.document import FileSystemDocument
 
 OPENOFFICE = True
 
-class TestUnoConverter(CloudoooTestCase):
+class TestUnoConverter(HandlerTestCase):
   """Test case to test all features of the unoconverter script"""
 
   file_msg_list = ["Microsoft Office Document",

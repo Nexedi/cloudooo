@@ -30,14 +30,15 @@ from os.path import join, exists
 from os import remove
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from zipfile import ZipFile, is_zipfile
 from types import DictType
 import magic
 
 DAEMON = True
 
-class TestServer(CloudoooTestCase):
+class TestServer(HandlerTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
   def afterSetUp(self):

@@ -29,7 +29,8 @@
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from multiprocessing import Process, Array
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 import magic
 
 DAEMON = True
@@ -43,7 +44,7 @@ def basicTestToGenerate(id, proxy, data, source_format, destination_format,
   assert mimetype == 'application/pdf'
   result_list[id] = True
 
-class TestHighLoad(CloudoooTestCase):
+class TestHighLoad(HandlerTestCase):
   """Test with many simultaneous connection"""
 
   def afterSetUp(self):

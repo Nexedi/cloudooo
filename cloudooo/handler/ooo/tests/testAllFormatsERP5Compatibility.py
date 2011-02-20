@@ -28,13 +28,14 @@
 
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 import magic
 
 file_detector = magic.Magic()
 DAEMON = True
 
-class TestAllFormatsERP5Compatibility(CloudoooTestCase):
+class TestAllFormatsERP5Compatibility(HandlerTestCase):
   """
   Test XmlRpc Server using ERP5 compatibility API.
   Needs cloudooo server started

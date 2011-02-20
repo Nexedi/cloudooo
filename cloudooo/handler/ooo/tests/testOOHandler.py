@@ -29,7 +29,7 @@
 import magic
 from os import path
 from base64 import encodestring, decodestring
-from cloudoooTestCase import CloudoooTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudoooTestCase import make_suite
@@ -39,7 +39,7 @@ from zipfile import ZipFile
 
 OPENOFFICE = True
 
-class TestOOHandler(CloudoooTestCase):
+class TestOOHandler(HandlerTestCase):
   """Test OOHandler and manipulation of OOo Instance"""
 
   _file_path_list = []
@@ -64,7 +64,7 @@ class TestOOHandler(CloudoooTestCase):
       file_path = self._file_path_list.pop()
       if os.path.exists(file_path):
         os.remove(file_path)
-    CloudoooTestCase.tearDown(self)
+    HandlerTestCase.tearDown(self)
 
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""

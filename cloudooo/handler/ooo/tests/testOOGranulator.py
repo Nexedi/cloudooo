@@ -30,11 +30,12 @@
 from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.granulator import OOGranulator
 
 
-class TestOOGranulator(CloudoooTestCase):
+class TestOOGranulator(HandlerTestCase):
 
   def setUp(self):
     data = open('./data/granulate_test.odt').read()

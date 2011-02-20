@@ -60,10 +60,24 @@ class PDFHandler(object):
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.
-    Keywords Arguments:
-    base_document -- Boolean variable. if true, the document is also returned
     along with the metadata.
     """
+    # XXX - refactor to use the binary provided by erp5 buildout
+    command = ["pdfinfo", self.document.getUrl()]
+    stdout, stderr = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE).communicate()
+    info_list = filter(None, stdout.split("\n"))
+    metadata = {}
+    for info in iter(info_list):
+      if info.count(":") == 1:
+        info_name, info_value = info.split(":")
+      else:
+        info_name, info_value = info.split("  ")
+        info_name = info_name.replace(":", "")
+      info_value = info_value.strip()
+      metadata[info_name.lower()] = info_value
+    return metadata
 
   def setMetadata(self, metadata):
     """Returns a document with new metadata.

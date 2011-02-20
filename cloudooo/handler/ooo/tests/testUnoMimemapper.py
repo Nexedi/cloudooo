@@ -31,11 +31,12 @@ import pkg_resources
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ, path
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 
 OPENOFFICE = True
 
-class TestUnoMimeMapper(CloudoooTestCase):
+class TestUnoMimeMapper(HandlerTestCase):
   """Test Case to test all features of script unomimemapper"""
 
   def afterSetUp(self):

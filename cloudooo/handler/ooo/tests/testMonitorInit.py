@@ -27,13 +27,14 @@
 ##############################################################################
 
 import cloudooo.handler.ooo.monitor as monitor
-from cloudoooTestCase import CloudoooTestCase, make_suite
+from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 
 OPENOFFICE = True
 
-class TestMonitorInit(CloudoooTestCase):
+class TestMonitorInit(HandlerTestCase):
   """Test Case to test if the monitors are controlled correctly"""
 
   def afterSetUp(self):

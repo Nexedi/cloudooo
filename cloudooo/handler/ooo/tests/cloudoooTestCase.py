@@ -28,22 +28,14 @@
 
 import unittest
 import sys
-from ConfigParser import ConfigParser
 from os import path, mkdir
 from os import environ, putenv
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.utils.utils import waitStartDaemon
 from cloudooo.handler.ooo.mimemapper import mimemapper
+from cloudooo.handler.tests.handlerTestCase import config, check_folder
 
-config = ConfigParser()
 testcase_path = path.dirname(__file__)
-
-
-def check_folder(working_path, tmp_dir_path):
-  if not path.exists(working_path):
-    mkdir(working_path)
-  if not path.exists(tmp_dir_path):
-    mkdir(tmp_dir_path)
 
 
 def make_suite(test_case):
@@ -103,27 +95,3 @@ def stopFakeEnvironment(stop_openoffice=True):
   if stop_openoffice:
     openoffice.stop()
   return True
-
-
-class CloudoooTestCase(unittest.TestCase):
-  """Test Case to load cloudooo conf."""
-
-  def setUp(self):
-    """Creates a environment to run the tests. Is called always before the
-    tests."""
-    server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
-    if server_cloudooo_conf is not None:
-      config.read(server_cloudooo_conf)
-    self.hostname = config.get("server:main", "host")
-    self.cloudooo_port = config.get("server:main", "port")
-    self.openoffice_port = config.get("app:main", "openoffice_port")
-    self.office_binary_path = config.get("app:main", "office_binary_path")
-    self.python_path = sys.executable
-    self.working_path = config.get("app:main", "working_path")
-    self.tmp_url = path.join(self.working_path, "tmp")
-    check_folder(self.working_path, self.tmp_url)
-    self.uno_path = config.get("app:main", "uno_path")
-    self.afterSetUp()
-
-  def afterSetUp(self):
-    """ """
