@@ -28,7 +28,7 @@
 
 
 import unittest
-from os import environ, path
+from os import environ, path, mkdir
 from ConfigParser import ConfigParser
 import sys
 
