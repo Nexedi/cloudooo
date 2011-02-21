@@ -63,4 +63,3 @@ class TestApplication(unittest.TestCase):
 
 def test_suite():
   return make_suite(TestApplication)
-

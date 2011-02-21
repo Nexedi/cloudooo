@@ -39,6 +39,7 @@ from zipfile import ZipFile
 
 OPENOFFICE = True
 
+
 class TestOOHandler(HandlerTestCase):
   """Test OOHandler and manipulation of OOo Instance"""
 
@@ -93,7 +94,7 @@ class TestOOHandler(HandlerTestCase):
                         'odt')
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get('Data'), '')
-    self.assertTrue(metadata.has_key('Data'))
+    self.assertTrue('Data' in metadata)
     self.assertEquals(metadata.get('MIMEType'),
                       'application/vnd.oasis.opendocument.text')
     handler.document.restoreOriginal()
@@ -189,6 +190,6 @@ class TestOOHandler(HandlerTestCase):
     self.assertTrue(content_tree.xpath('//text:variable-get[text() = "DISPLAY ME"]',
                                        namespaces=content_tree.nsmap))
 
+
 def test_suite():
   return make_suite(TestOOHandler)
-

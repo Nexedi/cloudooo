@@ -86,7 +86,8 @@ class Application(object):
     process = Process(pid)
     try:
       for connection in process.get_connections():
-        if connection.status == 'LISTEN' and connection.local_address[1] == self.port:
+        if connection.status == 'LISTEN' and \
+            connection.local_address[1] == self.port:
           return True
     except AccessDenied:
       return False

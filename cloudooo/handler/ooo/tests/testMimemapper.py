@@ -164,6 +164,7 @@ chart_expected_tuple = (
 
 OPENOFFICE = True
 
+
 class TestMimeMapper(HandlerTestCase):
   """Test if object load filters correctly of OOo."""
 
@@ -331,6 +332,7 @@ class TestMimeMapper(HandlerTestCase):
     filtername = self.mimemapper.getFilterName("html",
                              'com.sun.star.presentation.PresentationDocument')
     self.assertEquals(filtername, "impress_html_Export")
+
 
 def test_suite():
   return make_suite(TestMimeMapper)

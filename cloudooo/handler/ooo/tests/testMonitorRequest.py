@@ -34,6 +34,7 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 
 OPENOFFICE = True
 
+
 class TestMonitorRequest(HandlerTestCase):
   """Test all features of a monitor following the interface"""
 

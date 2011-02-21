@@ -29,7 +29,7 @@
 from socket import socket, error
 from errno import EADDRINUSE
 from time import sleep
-from os import remove, environ
+from os import remove
 from shutil import rmtree
 from cloudooo.utils.utils import logger
 

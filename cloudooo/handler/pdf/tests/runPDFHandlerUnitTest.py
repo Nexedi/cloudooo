@@ -10,7 +10,8 @@ ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
 
 def exit(msg):
   sys.stderr.write(msg)
-  sys.exit(0) 
+  sys.exit(0)
+
 
 # XXX - Duplicated function. This function must be generic to be used by all handlers
 def run():
@@ -32,7 +33,7 @@ def run():
   python_extension = '.py'
   if test_name[-3:] == python_extension:
     test_name = test_name[:-3]
-  if not path.exists(path.join(ENVIRONMENT_PATH, 
+  if not path.exists(path.join(ENVIRONMENT_PATH,
                                '%s%s' % (test_name, python_extension))):
     exit("%s not exists\n" % test_name)
 

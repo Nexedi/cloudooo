@@ -36,6 +36,7 @@ from cloudoooTestCase import make_suite
 
 OPENOFFICE = True
 
+
 class TestMonitorMemory(unittest.TestCase):
   """Test case to see if the MonitorMemory is properly managing the
   openoffice."""
@@ -108,4 +109,3 @@ class TestMonitorMemory(unittest.TestCase):
 
 def test_suite():
   return make_suite(TestMonitorMemory)
-

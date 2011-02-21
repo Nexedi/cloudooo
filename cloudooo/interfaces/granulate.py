@@ -62,8 +62,8 @@ class ITextGranulator(Interface):
   """Provides methods to granulate a document into chapters and paragraphs."""
 
   def getParagraphItemList():
-    """Returns the list of paragraphs in the form of (id, class) where class may
-    have special meaning to define TOC/TOI."""
+    """Returns the list of paragraphs in the form of (id, class) where class
+    may have special meaning to define TOC/TOI."""
 
   def getParagraphItem(paragraph_id):
     """Returns the paragraph in the form of (text, class)."""

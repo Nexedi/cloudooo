@@ -39,6 +39,7 @@ from cloudooo.handler.ooo.utils.utils import waitStartDaemon, \
                                       removeDirectory, waitStopDaemon, \
                                       socketStatus
 
+
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
 

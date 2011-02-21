@@ -88,7 +88,7 @@ def run():
       process.wait()
   elif OPENOFFICE:
     chdir(ENVIRONMENT_PATH)
-    openoffice = startFakeEnvironment(conf_path=server_cloudooo_conf)
+    startFakeEnvironment(conf_path=server_cloudooo_conf)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:

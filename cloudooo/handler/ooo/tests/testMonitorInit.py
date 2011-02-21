@@ -34,6 +34,7 @@ from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 
 OPENOFFICE = True
 
+
 class TestMonitorInit(HandlerTestCase):
   """Test Case to test if the monitors are controlled correctly"""
 
@@ -74,4 +75,3 @@ class TestMonitorInit(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestMonitorInit)
-

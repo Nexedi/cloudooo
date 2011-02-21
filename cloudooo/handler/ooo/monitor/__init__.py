@@ -7,6 +7,7 @@ monitor_request = None
 monitor_memory = None
 monitor_sleeping_time = None
 
+
 def load(local_config):
   """Start the monitors"""
   monitor_interval = int(local_config.get('monitor_interval'))

@@ -28,10 +28,9 @@
 
 import unittest
 import sys
-from os import path, mkdir
+from os import path
 from os import environ, putenv
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from cloudooo.handler.ooo.utils.utils import waitStartDaemon
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.tests.handlerTestCase import config, check_folder
 
@@ -67,7 +66,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
 
   fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
   if path.exists(fundamentalrc_file) and \
-      not environ.has_key('URE_BOOTSTRAP'):
+      'URE_BOOTSTRAP' not in environ:
     putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   if start_openoffice:
@@ -89,6 +88,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
         mimemapper.loadFilterList(hostname, port, **kw)
     openoffice.release()
     return openoffice
+
 
 def stopFakeEnvironment(stop_openoffice=True):
   """Stop Openoffice """

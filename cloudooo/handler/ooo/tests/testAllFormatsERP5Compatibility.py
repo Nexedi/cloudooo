@@ -35,6 +35,7 @@ import magic
 file_detector = magic.Magic()
 DAEMON = True
 
+
 class TestAllFormatsERP5Compatibility(HandlerTestCase):
   """
   Test XmlRpc Server using ERP5 compatibility API.
@@ -85,6 +86,7 @@ class TestAllFormatsERP5Compatibility(HandlerTestCase):
       template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
       message = '\n'.join([template_message % fault for fault in fault_list])
       self.fail('Failed Conversions:\n' + message)
+
 
 def test_suite():
   return make_suite(TestAllFormatsERP5Compatibility)

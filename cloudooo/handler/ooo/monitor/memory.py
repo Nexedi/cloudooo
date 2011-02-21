@@ -56,7 +56,7 @@ class MonitorMemory(Monitor, Process):
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0
-    except psutil.NoSuchProcess, e:
+    except psutil.NoSuchProcess:
       # Exception raised when a process with a certain PID doesn't or no longer
       # exists (zombie).
       return 0

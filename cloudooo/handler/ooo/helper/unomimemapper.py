@@ -98,8 +98,8 @@ class UnoMimemapper(object):
       sys.path.append(uno_path)
     fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
     if path.exists(fundamentalrc_file) and \
-       not environ.has_key('URE_BOOTSTRAP'):
-      putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
+       'URE_BOOTSTRAP' not in environ:
+      putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   def getFilterDict(self):
     """Return all filters and your properties"""

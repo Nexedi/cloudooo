@@ -38,6 +38,7 @@ import magic
 
 DAEMON = True
 
+
 class TestServer(HandlerTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
@@ -115,7 +116,6 @@ class TestServer(HandlerTestCase):
     content_type = self._getFileType(output_url)
     self.assertEquals(content_type, stdout_msg)
 
-
   def _getFileType(self, output_url):
     mime = magic.Magic(mime=True)
     return mime.from_file(output_url)
@@ -174,7 +174,7 @@ class TestServer(HandlerTestCase):
   def testgetFileMetadataItemListWithoutData(self):
     """Test server using method getFileMetadataItemList. Without data
     converted"""
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     metadata_dict = self.proxy.getFileMetadataItemList(encodestring(data),
                                                       'odt')
     self.assertEquals(metadata_dict.get("Data"), '')
@@ -188,7 +188,7 @@ class TestServer(HandlerTestCase):
   def testgetFileMetadataItemListWithData(self):
     """Test server using method getFileMetadataItemList. With data converted"""
     document_output_url = join(self.tmp_url, "testGetMetadata.odt")
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     metadata_dict = self.proxy.getFileMetadataItemList(encodestring(data),
                                                        "odt",
                                                        True)
@@ -206,9 +206,9 @@ class TestServer(HandlerTestCase):
   def testupdateFileMetadata(self):
     """Test server using method updateFileMetadata"""
     document_output_url = join(self.tmp_url, "testSetMetadata.odt")
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
-        {"Title":"testSetMetadata"})
+        {"Title": "testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
     content_type = self._getFileType(document_output_url)
     self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
@@ -220,11 +220,11 @@ class TestServer(HandlerTestCase):
   def testupdateFileMetadataWithUserMetadata(self):
     """Test server using method updateFileMetadata with unsual metadata"""
     document_output_url = join(self.tmp_url, "testSetMetadata.odt")
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
 
     odf_data = self.proxy.updateFileMetadata(encodestring(data),
-                                              'odt',
-                                              {"Reference":"testSetMetadata"})
+                                             'odt',
+                                             {"Reference": "testSetMetadata"})
     open(document_output_url, 'w').write(decodestring(odf_data))
     content_type = self._getFileType(document_output_url)
     self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
@@ -235,11 +235,11 @@ class TestServer(HandlerTestCase):
     """Test server using method updateFileMetadata when the same metadata is
     updated"""
     document_output_url = join(self.tmp_url, "testSetMetadata.odt")
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
-                        {"Reference":"testSetMetadata", "Something":"ABC"})
+                        {"Reference": "testSetMetadata", "Something": "ABC"})
     new_odf_data = self.proxy.updateFileMetadata(odf_data, 'odt',
-                        {"Reference":"new value", "Something": "ABC"})
+                        {"Reference": "new value", "Something": "ABC"})
     open(document_output_url, 'w').write(decodestring(new_odf_data))
     content_type = self._getFileType(document_output_url)
     self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
@@ -250,13 +250,13 @@ class TestServer(HandlerTestCase):
   def testupdateFileMetadataAlreadyHasMetadata(self):
     """Test document that already has metadata. Check if the metadata is not
     deleted"""
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     metadata_dict = self.proxy.getFileMetadataItemList(encodestring(data), 'odt')
     self.assertEquals(metadata_dict["Description"], "cloudooo Comments")
     self.assertEquals(metadata_dict["Keywords"], "Keywords Test")
     self.assertEquals(metadata_dict["Title"], "cloudooo Test")
     odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
-        {"Title":"cloudooo Title"})
+        {"Title": "cloudooo Title"})
     odf_metadata_dict = self.proxy.getFileMetadataItemList(odf_data, 'odt')
     self.assertEquals(odf_metadata_dict["Description"], "cloudooo Comments")
     self.assertEquals(odf_metadata_dict["Keywords"], "Keywords Test")
@@ -328,17 +328,17 @@ class TestServer(HandlerTestCase):
 
   def testConvertDocumentToInvalidFormat(self):
     """Try convert one document for a invalid format"""
-    data = open(join('data','test.doc'),'r').read()
+    data = open(join('data', 'test.doc'), 'r').read()
     self.assertRaises(Fault, self.proxy.convertFile, (data, 'doc', 'xyz'))
 
   def testConvertDocumentToImpossibleFormat(self):
     """Try convert one document to format not possible"""
-    data = open(join('data','test.odp'),'r').read()
+    data = open(join('data', 'test.odp'), 'r').read()
     self.assertRaises(Fault, self.proxy.convertFile, (data, 'odp', 'doc'))
 
   def testRunConvertMethod(self):
     """Test run_convert method"""
-    data = open(join('data','test.doc'),'r').read()
+    data = open(join('data', 'test.doc'), 'r').read()
     response_code, response_dict, response_message = \
               self.proxy.run_convert('test.doc', encodestring(data))
     self.assertEquals(response_code, 200)
@@ -352,7 +352,7 @@ class TestServer(HandlerTestCase):
 
   def testRunConvertFailResponse(self):
     """Test run_convert method with invalid file"""
-    data = open(join('data', 'test.doc'),'r').read()[:30]
+    data = open(join('data', 'test.doc'), 'r').read()[:30]
     response_code, response_dict, response_message = \
               self.proxy.run_convert('test.doc', encodestring(data))
     self.assertEquals(response_code, 402)
@@ -364,7 +364,7 @@ class TestServer(HandlerTestCase):
 
   def testRunGenerateMethod(self):
     """Test run_generate method"""
-    data = open(join('data', 'test.odt'),'r').read()
+    data = open(join('data', 'test.odt'), 'r').read()
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
                                       None, 'pdf',
@@ -378,7 +378,7 @@ class TestServer(HandlerTestCase):
   def testRunGenerateMethodConvertOdsToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
     html"""
-    data = open(join('data', 'test.ods'),'r').read()
+    data = open(join('data', 'test.ods'), 'r').read()
     generate_result = self.proxy.run_generate('test.ods',
                                       encodestring(data),
                                       None, 'html',
@@ -402,7 +402,7 @@ class TestServer(HandlerTestCase):
 
   def testPNGFileToConvertOdpToHTML(self):
     """Test run_generate method. This test if returns good png files"""
-    data = open(join('data', 'test_png.odp'),'r').read()
+    data = open(join('data', 'test_png.odp'), 'r').read()
     generate_result = self.proxy.run_generate('test_png.odp',
                                       encodestring(data),
                                       None, 'html',
@@ -431,7 +431,7 @@ class TestServer(HandlerTestCase):
   def testRunGenerateMethodConvertOdpToHTML(self):
     """Test run_generate method. This test is to validate a bug convertions to
     html"""
-    data = open(join('data','test.odp'),'r').read()
+    data = open(join('data', 'test.odp'), 'r').read()
     generate_result = self.proxy.run_generate('test.odp',
                                       encodestring(data),
                                       None, 'html',
@@ -455,7 +455,7 @@ class TestServer(HandlerTestCase):
   # document.
   def _testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
-    data = open(join('data','test.odt'), 'r').read()[:100]
+    data = open(join('data', 'test.odt'), 'r').read()[:100]
     generate_result = self.proxy.run_generate('test.odt',
                                       encodestring(data),
                                       None, 'pdf', 'application/vnd.oasis.opendocument.text')
@@ -467,10 +467,10 @@ class TestServer(HandlerTestCase):
 
   def testRunSetMetadata(self):
     """Test run_setmetadata method"""
-    data = open(join('data','testMetadata.odt'),'r').read()
+    data = open(join('data', 'testMetadata.odt'), 'r').read()
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
-                          {"Title":"testSetMetadata", "Description": "Music"})
+                          {"Title": "testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     self.assertEquals(response_code, 200)
     self.assertNotEquals(response_dict['data'], '')
@@ -483,7 +483,7 @@ class TestServer(HandlerTestCase):
     self.assertEquals(response_dict['meta']['Description'], "Music")
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
-                          {"Title":"Namie's working record",
+                          {"Title": "Namie's working record",
                            "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     getmetadata_result = self.proxy.run_getmetadata('testMetadata.odt',
@@ -495,10 +495,10 @@ class TestServer(HandlerTestCase):
 
   def testRunSetMetadataFailResponse(self):
     """Test run_setmetadata method with invalid document"""
-    data = open(join('data','testMetadata.odt'),'r').read()[:100]
+    data = open(join('data', 'testMetadata.odt'), 'r').read()[:100]
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
                           encodestring(data),
-                          {"Title":"testSetMetadata", "Description": "Music"})
+                          {"Title": "testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     self.assertEquals(response_code, 402)
     self.assertEquals(response_dict, {})
@@ -517,4 +517,3 @@ class TestServer(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestServer)
-

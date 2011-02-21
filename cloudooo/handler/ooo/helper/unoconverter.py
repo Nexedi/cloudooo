@@ -100,8 +100,8 @@ class UnoConverter(object):
       sys.path.append(uno_path)
     fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
     if exists(fundamentalrc_file) and \
-       not environ.has_key('URE_BOOTSTRAP'):
-      putenv('URE_BOOTSTRAP','vnd.sun.star.pathname:%s' % fundamentalrc_file)
+       'URE_BOOTSTRAP' not in environ:
+      putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   def _createProperty(self, name, value):
     """Create property"""
@@ -133,7 +133,7 @@ class UnoConverter(object):
     else:
       return []
 
-    return [property,]
+    return [property, ]
 
   def _getFilterName(self, destination_format, type):
     for filter_tuple in mimemapper["filter_list"]:
@@ -164,7 +164,7 @@ class UnoConverter(object):
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
     if not uno_document:
-      raise AttributeError, "This document can not be loaded or is empty"
+      raise AttributeError("This document can not be loaded or is empty")
     if self.refresh:
       # Before converting to expected format, refresh dynamic
       # value inside document.

@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-import unittest 
+import unittest
 import md5
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 
@@ -35,7 +35,8 @@ class TestFFMPEGHandler(unittest.TestCase):
 
   def testConvertVideo(self):
     """Test coversion of diferents formats of video"""
-    input_data = FFMPEGHandler("tests/data", open("tests/data/test.3gp").read())
+    input_data = FFMPEGHandler("tests/data",
+                               open("tests/data/test.3gp").read())
     hash_input = input_data.digest()
     output_data = handler.convert("ogv")
     hash_output = output_data.digest()

@@ -35,6 +35,7 @@ import magic
 file_detector = magic.Magic()
 DAEMON = True
 
+
 class TestAllFormats(HandlerTestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
@@ -92,4 +93,3 @@ class TestAllFormats(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestAllFormats)
-

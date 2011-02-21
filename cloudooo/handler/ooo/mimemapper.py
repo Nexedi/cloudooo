@@ -57,7 +57,7 @@ class MimeMapper(object):
   def _addFilter(self, filter):
     """Add filter in mimemapper catalog."""
     extension = filter.getExtension()
-    if not self._filter_by_extension_dict.has_key(extension):
+    if extension not in self._filter_by_extension_dict:
       self._filter_by_extension_dict[extension] = []
     self._filter_by_extension_dict.get(extension).append(filter)
 
@@ -154,7 +154,7 @@ class MimeMapper(object):
 
       # for Export filters
       if flag & 0x02:
-        if not self._mimetype_by_filter_type.has_key(filter_type):
+        if filter_type not in self._mimetype_by_filter_type:
           self._mimetype_by_filter_type[filter_type] = mimetype
         # for export filters, one extension is enough.
         for ext in filter_extension_list[:1]:
@@ -181,15 +181,15 @@ class MimeMapper(object):
     # hardcode 'extension -> document type' mappings according to
     # soffice behaviour for extensions having several candidates.
     self._doc_type_list_by_extension.update({
-      'rtf':['com.sun.star.text.TextDocument'],
-      'sxd':['com.sun.star.drawing.DrawingDocument'],
-      'txt':['com.sun.star.text.TextDocument'],
-      'odg':['com.sun.star.drawing.DrawingDocument'],
-      'html':['com.sun.star.text.WebDocument'],
-      'sda':['com.sun.star.drawing.DrawingDocument'],
-      'sdd':['com.sun.star.drawing.DrawingDocument'],
-      'pdf':['com.sun.star.drawing.DrawingDocument'],
-      'xls':['com.sun.star.sheet.SpreadsheetDocument'],
+      'rtf': ['com.sun.star.text.TextDocument'],
+      'sxd': ['com.sun.star.drawing.DrawingDocument'],
+      'txt': ['com.sun.star.text.TextDocument'],
+      'odg': ['com.sun.star.drawing.DrawingDocument'],
+      'html': ['com.sun.star.text.WebDocument'],
+      'sda': ['com.sun.star.drawing.DrawingDocument'],
+      'sdd': ['com.sun.star.drawing.DrawingDocument'],
+      'pdf': ['com.sun.star.drawing.DrawingDocument'],
+      'xls': ['com.sun.star.sheet.SpreadsheetDocument'],
       })
     self.document_service_list = self._extension_list_by_type.keys()
     self.extension_list_by_doc_type =\

@@ -37,6 +37,7 @@ from cloudooo.file import File
 class FileSystemDocument(File):
   pass
 
+
 class OdfDocument(object):
   """Manipulates odf documents in memory"""
 

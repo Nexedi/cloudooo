@@ -27,19 +27,20 @@
 ##############################################################################
 
 import gc
-from signal import signal, SIGTERM, SIGINT, SIGQUIT, SIGHUP
+from signal import signal, SIGINT, SIGQUIT, SIGHUP
 from os import path, mkdir
 import os
-
 import cloudooo.handler.ooo.monitor as monitor
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
 from cloudooo.utils.utils import convertStringToBool, configureLogger
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
+
 def stopProcesses(signum, frame):
   monitor.stop()
   openoffice.stop()
+
 
 def application(global_config, **local_config):
   """Method to load all configuration of cloudooo and start the application.
@@ -83,14 +84,14 @@ def application(global_config, **local_config):
 
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname,
-                          openoffice_port,
-                          working_path,
-                          local_config.get('office_binary_path'),
-                          local_config.get('uno_path'),
-                          local_config.get('openoffice_user_interface_language',
-                                           'en'),
-                          environment_dict=environment_dict,
-                          )
+                         openoffice_port,
+                         working_path,
+                         local_config.get('office_binary_path'),
+                         local_config.get('uno_path'),
+                         local_config.get('openoffice_user_interface_language',
+                                          'en'),
+                         environment_dict=environment_dict,
+                         )
   openoffice.start()
 
   monitor.load(local_config)

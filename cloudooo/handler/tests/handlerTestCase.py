@@ -34,11 +34,13 @@ import sys
 
 config = ConfigParser()
 
+
 def check_folder(working_path, tmp_dir_path):
   if not path.exists(working_path):
     mkdir(working_path)
   if not path.exists(tmp_dir_path):
     mkdir(tmp_dir_path)
+
 
 class HandlerTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""

@@ -38,6 +38,7 @@ from cloudooo.handler.ooo.document import FileSystemDocument
 
 OPENOFFICE = True
 
+
 class TestUnoConverter(HandlerTestCase):
   """Test case to test all features of the unoconverter script"""
 

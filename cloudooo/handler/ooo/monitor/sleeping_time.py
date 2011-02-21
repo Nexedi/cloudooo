@@ -28,7 +28,6 @@
 
 from monitor import Monitor
 from threading import Thread
-import psutil
 from cloudooo.utils.utils import logger
 from time import sleep, time
 
@@ -72,4 +71,3 @@ class MonitorSpleepingTime(Monitor, Thread):
         self.openoffice.release()
       sleep(self.interval)
     logger.debug("Stop MonitorSpleepingTime")
-

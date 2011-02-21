@@ -36,6 +36,7 @@ from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 
 OPENOFFICE = True
 
+
 class TestUnoMimeMapper(HandlerTestCase):
   """Test Case to test all features of script unomimemapper"""
 
@@ -119,4 +120,3 @@ class TestUnoMimeMapper(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestUnoMimeMapper)
-

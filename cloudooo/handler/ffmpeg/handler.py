@@ -30,7 +30,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from subprocess import Popen,PIPE
+from subprocess import Popen, PIPE
 
 
 class FFMPEGHandler(object):
@@ -38,7 +38,7 @@ class FFMPEGHandler(object):
 
   implements(IHandler)
 
-  def __init__(self, base_folder_url, data, source_format,**kw):
+  def __init__(self, base_folder_url, data, source_format, **kw):
     """
     base_folder_url(string)
       The requested url for data base folder
@@ -53,12 +53,19 @@ class FFMPEGHandler(object):
   def convert(self, destination_format, **kw):
     """ Convert the inputed video to output as format that were informed """
     # XXX This implementation could use ffmpeg -i pipe:0, but
-    # XXX seems super unreliable currently and it generates currupted files in the end
+    # XXX seems super unreliable currently and it generates currupted files in
+    # the end
     output = File(self.base_folder_url, '', destination_format)
     try:
-      command = [self.ffmpeg_bin, "-i",self.input.getUrl(), "-y", output.getUrl()]
-      stdout, stderr = Popen(command, stdout=PIPE,
-                              stderr=PIPE, close_fds=True).communicate()
+      command = [self.ffmpeg_bin,
+                 "-i",
+                 self.input.getUrl(),
+                 "-y",
+                 output.getUrl()]
+      stdout, stderr = Popen(command,
+                             stdout=PIPE,
+                             stderr=PIPE,
+                             close_fds=True).communicate()
       output.reload()
       return output.getContent()
     finally:

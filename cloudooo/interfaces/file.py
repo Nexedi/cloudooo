@@ -41,7 +41,8 @@ class IFile(Interface):
   original_data = Attribute("Original data")
 
   def load():
-    """From the data creates one archive into file system using original data"""
+    """From the data creates one archive into file system using original data
+    """
 
   def reload(url):
     """In the case of another file with the same content be created, pass the

@@ -126,11 +126,13 @@ class OOHandler:
       command = self._getCommand(*feature_list, **kw)
       stdout, stderr = self._subprocess(command)
       if stderr != "":
-          raise Exception, stderr
+          raise Exception(stderr)
 
     return stdout, stderr
 
-  def _serializeMimemapper(self, source_extension=None, destination_extension=None):
+  def _serializeMimemapper(self,
+                           source_extension=None,
+                           destination_extension=None):
     """Serialize parts of mimemapper"""
     if destination_extension is None:
       return json.dumps(dict(mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))

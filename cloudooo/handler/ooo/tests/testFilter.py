@@ -56,4 +56,3 @@ class TestFilter(unittest.TestCase):
 
 def test_suite():
   return make_suite(TestFilter)
-

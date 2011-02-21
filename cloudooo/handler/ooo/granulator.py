@@ -51,11 +51,13 @@ DRAW_XPATH_QUERY = './/draw:image'
 TABLE_XPATH_QUERY = './/table:table'
 IMAGE_TITLE_XPATH_QUERY = './/../../text() | .//../../*/text()'
 
+
 def getTemplatePath(format):
   """ Get the path of template file. This should goes to
       some utils library.
   """
   return path.join(path.dirname(__file__), 'template.%s' % format)
+
 
 class OOGranulator(object):
   """Granulate an OpenOffice document into tables, images, chapters and
@@ -105,11 +107,12 @@ class OOGranulator(object):
       if len(table_list) == 0:
         return None
       table = table_list[0]
-      # Next line do this <office:content><office:body><office:text><table:table>
+      # Next line do this
+      # <office:content><office:body><office:text><table:table>
       content_xml[-1][0].append(table)
-      # XXX: Next line replace the <office:automatic-styles> tag. This include a
-      #      lot of unused style tags. Will be better detect the used styles and
-      #      include only those.
+      # XXX: Next line replace the <office:automatic-styles> tag. This include
+      # a lot of unused style tags. Will be better detect the used styles and
+      # include only those.
       content_xml.replace(content_xml[-2],
                           self.document.parsed_content[-2])
 
@@ -138,7 +141,6 @@ class OOGranulator(object):
         matrix_row.append(''.join(cell.itertext()))
       matrix.append(matrix_row)
     return matrix
-
 
   def getColumnItemList(self, file, table_id):
     """Return the list of columns in the form of (id, title)."""
@@ -194,7 +196,8 @@ class OOGranulator(object):
     try:
       paragraph = relevant_paragraph_list[paragraph_id]
     except IndexError:
-      logger.error("Unable to find paragraph %s at paragraph list." % paragraph_id)
+      msg = "Unable to find paragraph %s at paragraph list." % paragraph_id
+      logger.error(msg)
       return None
 
     text = ''.join(paragraph.itertext())

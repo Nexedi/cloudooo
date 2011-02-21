@@ -36,6 +36,7 @@ import magic
 DAEMON = True
 mime_decoder = magic.Magic(mime=True)
 
+
 def basicTestToGenerate(id, proxy, data, source_format, destination_format,
                         result_list):
   """Test to use method generate of server"""
@@ -43,6 +44,7 @@ def basicTestToGenerate(id, proxy, data, source_format, destination_format,
   mimetype = mime_decoder.from_buffer(decodestring(document))
   assert mimetype == 'application/pdf'
   result_list[id] = True
+
 
 class TestHighLoad(HandlerTestCase):
   """Test with many simultaneous connection"""
@@ -56,7 +58,7 @@ class TestHighLoad(HandlerTestCase):
     process_list = []
     data = encodestring(open("data/test.doc", 'r').read())
     LOOP = 50
-    result_list = Array('i', [False]*LOOP)
+    result_list = Array('i', [False] * LOOP)
     for id in range(LOOP):
       process = Process(target=basicTestToGenerate, args=(id, self.proxy, data,
                                                           'doc', 'pdf',
@@ -72,4 +74,3 @@ class TestHighLoad(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestHighLoad)
-

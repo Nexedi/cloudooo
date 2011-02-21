@@ -100,7 +100,6 @@ class TestOOGranulator(HandlerTestCase):
 
     self.assertEquals(None, oogranulator.getTableMatrix('Non existent'))
 
-
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
     self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,

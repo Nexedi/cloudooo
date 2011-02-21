@@ -31,7 +31,6 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from subprocess import Popen, PIPE
 from tempfile import mktemp
-from os import path
 
 
 class PDFHandler(object):
@@ -43,6 +42,7 @@ class PDFHandler(object):
     """ Load pdf document """
     self.base_folder_url = base_folder_url
     self.document = File(base_folder_url, data, source_format)
+    self.environment = kw.get("env", {})
 
   def convert(self, destination_format=None, **kw):
     """ Convert a pdf document """
@@ -52,7 +52,8 @@ class PDFHandler(object):
     command = ["pdftotext", self.document.getUrl(), output_url]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           env=self.environment).communicate()
     try:
       return open(output_url).read()
     finally:
@@ -66,7 +67,8 @@ class PDFHandler(object):
     command = ["pdfinfo", self.document.getUrl()]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           env=self.environment).communicate()
     info_list = filter(None, stdout.split("\n"))
     metadata = {}
     for info in iter(info_list):

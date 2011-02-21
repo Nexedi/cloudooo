@@ -32,6 +32,7 @@ from cloudoooTestCase import make_suite
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.document import OdfDocument
 
+
 class TestOdfDocument(HandlerTestCase):
 
   def setUp(self):
@@ -67,4 +68,3 @@ class TestOdfDocument(HandlerTestCase):
 
 def test_suite():
   return make_suite(TestOdfDocument)
-

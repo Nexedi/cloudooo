@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-from os import environ
 import logging
 
 logger = logging.getLogger('Cloudooo')
@@ -72,7 +71,8 @@ def configureLogger(level=None, debug_mode=False):
   ch = logging.StreamHandler()
   ch.setLevel(level)
   # create formatter
-  formatter = logging.Formatter("%(asctime).19s - %(name)s - %(levelname)s - %(message)s")
+  format = "%(asctime).19s - %(name)s - %(levelname)s - %(message)s"
+  formatter = logging.Formatter(format)
   # add formatter to ch
   ch.setFormatter(formatter)
   # add ch to logger
