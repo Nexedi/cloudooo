@@ -1,7 +1,7 @@
 ##############################################################################
 #
 # Copyright (c) 2010 Nexedi SA and Contributors. All Rights Reserved.
-#                    Priscila Manhães  <psilva@iff.edu.br>
+#                    Priscila Manhaes  <psilva@iff.edu.br>
 #
 # WARNING: This program as such is intended to be used by professional
 # programmers who take the whole responsability of assessing all potential
@@ -27,20 +27,28 @@
 ##############################################################################
 
 import unittest
-import md5
+import sha
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 
 
-class TestFFMPEGHandler(unittest.TestCase):
+class TestFFMPEGHandler(HandlerTestCase):
+
+  def setUp(self):
+    self.data = open("./data/test.3gp").read()
+    self.input = FFMPEGHandler("./data", self.data
+                               ,"3gp")
+
 
   def testConvertVideo(self):
-    """Test coversion of diferents formats of video"""
-    input_data = FFMPEGHandler("tests/data",
-                               open("tests/data/test.3gp").read())
+    """Test coversion of video to another format"""
+    # XXX - Hash might use md5, but it does not work for string
+    input_data = sha.new(self.data)
     hash_input = input_data.digest()
-    output_data = handler.convert("ogv")
-    hash_output = output_data.digest()
-    self.assertTrue(hash_input == hash_output)
+    output_data = self.input.convert("ogv")
+    output = sha.new(output_data)
+    hash_output = output.digest()
+    self.assertTrue(hash_input != hash_output)
 
 
 def test_suite():

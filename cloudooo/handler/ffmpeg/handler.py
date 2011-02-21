@@ -27,8 +27,6 @@
 ##############################################################################
 
 
-from zope.interface import implements
-from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from subprocess import Popen, PIPE
 
@@ -36,9 +34,7 @@ from subprocess import Popen, PIPE
 class FFMPEGHandler(object):
   """FFMPEGHandler is used to handler inputed video files"""
 
-  implements(IHandler)
-
-  def __init__(self, base_folder_url, data, source_format, **kw):
+  def __init__(self, base_folder_url, data, source_format):
     """
     base_folder_url(string)
       The requested url for data base folder
@@ -50,7 +46,7 @@ class FFMPEGHandler(object):
     self.input = File(base_folder_url, data, source_format)
     self.ffmpeg_bin = "/usr/bin/ffmpeg"
 
-  def convert(self, destination_format, **kw):
+  def convert(self, destination_format):
     """ Convert the inputed video to output as format that were informed """
     # XXX This implementation could use ffmpeg -i pipe:0, but
     # XXX seems super unreliable currently and it generates currupted files in
