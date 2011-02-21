@@ -35,17 +35,20 @@ from types import DictType
 
 class TestPDFHandler(HandlerTestCase):
 
+  def afterSetUp(self):
+    self.kw = dict(env=dict(PATH=self.env_path))
+
   def testConvertPDFtoText(self):
     """Test conversion of pdf to txt"""
     pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf")
+    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
     txt_document = handler.convert("txt")
     self.assertTrue(txt_document.startswith("UNG Docs Architecture"))
 
   def testgetMetadata(self):
     """Test if the metadata are extracted correctly"""
     pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf")
+    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
     self.assertEquals(type(metadata), DictType)
     self.assertNotEquals(metadata, {})

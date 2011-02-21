@@ -56,6 +56,7 @@ class HandlerTestCase(unittest.TestCase):
     self.openoffice_port = config.get("app:main", "openoffice_port")
     self.office_binary_path = config.get("app:main", "office_binary_path")
     self.python_path = sys.executable
+    self.env_path = config.get("app:main", "env-path")
     self.working_path = config.get("app:main", "working_path")
     self.tmp_url = path.join(self.working_path, "tmp")
     check_folder(self.working_path, self.tmp_url)

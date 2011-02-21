@@ -48,7 +48,6 @@ class PDFHandler(object):
     """ Convert a pdf document """
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.document.directory_name)
-    # XXX - refactor to use the binary provided by erp5 buildout
     command = ["pdftotext", self.document.getUrl(), output_url]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
@@ -63,7 +62,6 @@ class PDFHandler(object):
     """Returns a dictionary with all metadata of document.
     along with the metadata.
     """
-    # XXX - refactor to use the binary provided by erp5 buildout
     command = ["pdfinfo", self.document.getUrl()]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
