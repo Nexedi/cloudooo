@@ -36,9 +36,7 @@ class TestFFMPEGHandler(HandlerTestCase):
 
   def setUp(self):
     self.data = open("./data/test.3gp").read()
-    self.input = FFMPEGHandler("./data", self.data
-                               ,"3gp")
-
+    self.input = FFMPEGHandler("./data", self.data, "3gp")
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
