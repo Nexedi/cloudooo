@@ -34,9 +34,9 @@ from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 
 class TestFFMPEGHandler(HandlerTestCase):
 
-  def setUp(self):
+  def afterSetUp(self):
     self.data = open("./data/test.3gp").read()
-    self.input = FFMPEGHandler("./data", self.data, "3gp")
+    self.input = FFMPEGHandler(self.tmp_url, self.data, "3gp")
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
