@@ -45,8 +45,7 @@ class TestPDFHandler(HandlerTestCase):
   def testgetMetadata(self):
     """Test if the metadata are extracted correctly"""
     pdf_document = open("data/test.pdf").read()
-    kw = dict(env=dict(PATH="/hd/cloudooo_handler_ooo/software/parts/xpdf/bin"))
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **kw)
+    handler = PDFHandler(self.tmp_url, pdf_document, "pdf")
     metadata = handler.getMetadata()
     self.assertEquals(type(metadata), DictType)
     self.assertNotEquals(metadata, {})
