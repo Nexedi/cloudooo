@@ -53,7 +53,7 @@ class TestInterface(unittest.TestCase):
 
   def testITableGranulator(self):
     """Test if OOGranulator implements ITableGranulator"""
-    self.assertTrue(ITableGranulator.implementedBy(OOGranulator))
+    self.assertTrue(ITableGranulator.implementedBy(Manager))
     method_list = ['getLineItemList',
                    'getTableItem',
                    'getTableItemList',
@@ -63,7 +63,7 @@ class TestInterface(unittest.TestCase):
 
   def testITextGranulator(self):
     """Test if OOGranulator implements ITextGranulator"""
-    self.assertTrue(ITextGranulator.implementedBy(OOGranulator))
+    self.assertTrue(ITextGranulator.implementedBy(Manager))
     method_list = ['getChapterItemList',
                    'getParagraphItem',
                    'getChapterItem',
@@ -72,7 +72,7 @@ class TestInterface(unittest.TestCase):
 
   def testIImageGranulator(self):
     """Test if OOGranulator implements IImageGranulator"""
-    self.assertTrue(IImageGranulator.implementedBy(OOGranulator))
+    self.assertTrue(IImageGranulator.implementedBy(Manager))
     method_list = ['getImageItemList', 'getImage']
     self.assertEquals(IImageGranulator.names(), method_list)
 
