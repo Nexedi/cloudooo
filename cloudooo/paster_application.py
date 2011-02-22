@@ -110,6 +110,9 @@ def application(global_config, **local_config):
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port, **kw)
   openoffice.release()
+  kw["mimetype_registry"] = filter(None,
+                            local_config.get("mimetype_registry", "").split("\n"))
+  kw["env"] = environment_dict
   from manager import Manager
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

@@ -32,9 +32,26 @@ from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
 from handler.ooo.handler import OOHandler
+from handler.pdf.handler import PDFHandler
+from handler.ffmpeg.handler import FFMPEGHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
+from fnmatch import fnmatch
+import mimetypes
 
+
+handler_dict = {"pdf": PDFHandler, "ooo": OOHandler, "ffmpeg": FFMPEGHandler}
+
+def getHandlerObject(source_format, destination_format, mimetype_registry):
+  """Select handler according to source_format and destination_format"""
+  source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
+  destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, '*')
+  for pattern in mimetype_registry:
+    registry_list = pattern.split()
+    if fnmatch(source_mimetype, registry_list[0]) and \
+        fnmatch(destination_mimetype, registry_list[1]):
+      return handler_dict[registry_list[2]]
+  return handler_dict["ooo"]
 
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
@@ -44,6 +61,7 @@ class Manager(object):
     """Need pass the path where the temporary document will be created."""
     self._path_tmp_dir = path_tmp_dir
     self.kw = kw
+    self.mimetype_registry = self.kw.pop("mimetype_registry")
 
   def convertFile(self, file, source_format, destination_format, zip=False,
                   refresh=False):
@@ -60,10 +78,13 @@ class Manager(object):
                        "or is invalid" % destination_format)
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
-    document = OOHandler(self._path_tmp_dir,
-                        decodestring(file),
-                        source_format,
-                        **self.kw)
+    handler = getHandlerObject(source_format,
+                               destination_format,
+                               self.mimetype_registry)
+    document = handler(self._path_tmp_dir,
+                       decodestring(file),
+                       source_format,
+                       **self.kw)
     decode_data = document.convert(destination_format)
     return encodestring(decode_data)
 
@@ -100,10 +121,13 @@ class Manager(object):
       {"title":"abc","description":...})
     return encodestring(document_with_metadata)
     """
-    document = OOHandler(self._path_tmp_dir,
-                        decodestring(file),
-                        source_format,
-                        **self.kw)
+    handler = getHandlerObject(source_format,
+                               "*",
+                               self.mimetype_registry)
+    document = handler(self._path_tmp_dir,
+                       decodestring(file),
+                       source_format,
+                       **self.kw)
     metadata_dict = dict([(key.capitalize(), value) \
                         for key, value in metadata_dict.iteritems()])
     decode_data = document.setMetadata(metadata_dict)
@@ -123,12 +147,15 @@ class Manager(object):
 
     Note that all keys of the dictionary have the first word in uppercase.
     """
-    document = OOHandler(self._path_tmp_dir,
-                        decodestring(file),
-                        source_format,
-                        **self.kw)
+    handler = getHandlerObject(source_format,
+                               "*",
+                               self.mimetype_registry)
+    document = handler(self._path_tmp_dir,
+                       decodestring(file),
+                       source_format,
+                       **self.kw)
     metadata_dict = document.getMetadata(base_document)
-    metadata_dict['Data'] = encodestring(metadata_dict['Data'])
+    metadata_dict['Data'] = encodestring(metadata_dict.get('Data', ''))
     return metadata_dict
 
   def getAllowedExtensionList(self, request_dict={}):
