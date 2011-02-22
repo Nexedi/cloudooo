@@ -27,7 +27,7 @@
 ##############################################################################
 
 import unittest
-import sha
+import magic
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
 
@@ -40,13 +40,10 @@ class TestFFMPEGHandler(HandlerTestCase):
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
-    # XXX - Hash might use md5, but it does not work for string
-    input_data = sha.new(self.data)
-    hash_input = input_data.digest()
+    file_detector = magic.Magic()
     output_data = self.input.convert("ogv")
-    output = sha.new(output_data)
-    hash_output = output.digest()
-    self.assertTrue(hash_input != hash_output)
+    file_format = file_detector.from_buffer(output_data)
+    self.assertEqual(file_format, 'Ogg data, Theora video')
 
 
 def test_suite():
