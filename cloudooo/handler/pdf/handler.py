@@ -77,6 +77,7 @@ class PDFHandler(object):
         info_name = info_name.replace(":", "")
       info_value = info_value.strip()
       metadata[info_name.lower()] = info_value
+    self.document.trash()
     return metadata
 
   def setMetadata(self, metadata):
