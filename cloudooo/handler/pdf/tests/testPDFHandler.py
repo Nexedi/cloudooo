@@ -54,6 +54,17 @@ class TestPDFHandler(HandlerTestCase):
     self.assertNotEquals(metadata, {})
     self.assertEquals(metadata["title"], 'Free Cloud Alliance Presentation')
 
+  def testsetMetadata(self):
+    """Test if the metadata is inserted correctly"""
+    pdf_document = open("data/test.pdf").read()
+    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
+    metadata_dict = {"title": "Set Metadata Test", "creator": "gabriel\'@"}
+    new_document = handler.setMetadata(metadata_dict)
+    handler = PDFHandler(self.tmp_url, new_document, "pdf", **self.kw)
+    metadata = handler.getMetadata()
+    self.assertEquals(metadata["title"], 'Set Metadata Test')
+    self.assertEquals(metadata['creator'], 'gabriel\'@')
+
 
 def test_suite():
   suite = unittest.TestSuite()

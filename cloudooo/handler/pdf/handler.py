@@ -85,3 +85,26 @@ class PDFHandler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
+    text_template = "InfoKey: %s\nInfoValue: %s\n"
+    text_list = [text_template % (key.capitalize(), value) \
+                                 for key, value in metadata.iteritems()]
+    metadata_file = File(self.document.directory_name,
+                         "".join(text_list),
+                         "txt")
+    output_url = mktemp(suffix=".pdf",
+                        dir=self.document.directory_name)
+    command = ["pdftk",
+               self.document.getUrl(),
+               "update_info",
+               metadata_file.getUrl(),
+               "output",
+               output_url
+               ]
+    stdout, stderr = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE,
+                           env=self.environment).communicate()
+    try:
+      return open(output_url).read()
+    finally:
+      self.document.trash()
