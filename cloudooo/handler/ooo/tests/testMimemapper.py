@@ -26,10 +26,9 @@
 #
 ##############################################################################
 
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
-from cloudoooTestCase import make_suite
 
 text_expected_tuple = (
     ('doc', 'Microsoft Word 6.0'),

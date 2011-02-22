@@ -28,7 +28,6 @@
 
 import unittest
 from cloudooo.handler.ooo.filter import Filter
-from cloudoooTestCase import make_suite
 
 
 class TestFilter(unittest.TestCase):

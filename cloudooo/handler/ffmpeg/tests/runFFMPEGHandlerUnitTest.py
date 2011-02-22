@@ -1,54 +1,34 @@
 #!/usr/bin/env python
+##############################################################################
+#
+# Copyright (c) 2009-2011 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gabriel@tiolive.com>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
 
-import sys
-import unittest
-from argparse import ArgumentParser
-from os import path, curdir, environ, chdir
-
-ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
+from cloudooo.handler.tests import runHandlerUnitTest
 
 
-def exit(msg):
-  sys.stderr.write(msg)
-  sys.exit(0)
-
-
-# XXX - Duplicated function. This function must be generic to be used by all handlers
 def run():
-  parser = ArgumentParser(description="Unit Test Runner for Cloudooo")
-  parser.add_argument('server_cloudooo_conf')
-  parser.add_argument('test_name')
-  parser.add_argument('--paster_path', dest='paster_path',
-                      default='paster',
-                      help="Path to Paster script")
-  namespace = parser.parse_args()
-
-  server_cloudooo_conf = namespace.server_cloudooo_conf
-  test_name = namespace.test_name
-  if server_cloudooo_conf.startswith(curdir):
-    server_cloudooo_conf = path.join(path.abspath(curdir),
-                                     server_cloudooo_conf)
-  environ['server_cloudooo_conf'] = server_cloudooo_conf
-
-  python_extension = '.py'
-  if test_name[-3:] == python_extension:
-    test_name = test_name[:-3]
-  if not path.exists(path.join(ENVIRONMENT_PATH,
-                               '%s%s' % (test_name, python_extension))):
-    exit("%s not exists\n" % test_name)
-
-  sys.path.append(ENVIRONMENT_PATH)
-
-  module = __import__(test_name)
-  if not hasattr(module, "test_suite"):
-    exit("No test suite to run, exiting immediately")
-
-  TestRunner = unittest.TextTestRunner
-  suite = unittest.TestSuite()
-  suite.addTest(module.test_suite())
-  chdir(ENVIRONMENT_PATH)
-  TestRunner(verbosity=2).run(suite)
-
-
-if __name__ == "__main__":
-  run()
+  runHandlerUnitTest.run("ffmpeg")

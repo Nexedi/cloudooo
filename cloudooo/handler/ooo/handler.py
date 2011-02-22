@@ -195,8 +195,6 @@ class OOHandler:
     if metadata.get("Data"):
       self.document.reload(metadata['Data'])
       metadata['Data'] = self.document.getContent()
-    else:
-      metadata['Data'] = ''
     self.document.trash()
     return metadata
 

@@ -29,10 +29,9 @@
 import magic
 from os import path
 from base64 import encodestring, decodestring
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from cloudoooTestCase import make_suite
 import os
 from lxml import etree
 from zipfile import ZipFile

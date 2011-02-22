@@ -28,8 +28,7 @@
 
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudoooTestCase import make_suite
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 import magic
 
 file_detector = magic.Magic()

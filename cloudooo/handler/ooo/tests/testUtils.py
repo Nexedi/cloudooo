@@ -30,7 +30,7 @@ import unittest
 import logging
 from cloudooo.utils.utils import logger, configureLogger, \
                                             convertStringToBool
-from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import make_suite
 
 
 class TestUtils(unittest.TestCase):

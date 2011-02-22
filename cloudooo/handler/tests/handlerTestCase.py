@@ -28,12 +28,20 @@
 
 
 import unittest
-from os import environ, path, mkdir
-from ConfigParser import ConfigParser
 import sys
+from os import environ, path, mkdir, putenv
+from ConfigParser import ConfigParser
+from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.handler.ooo.mimemapper import mimemapper
 
 config = ConfigParser()
 
+
+def make_suite(test_case):
+  """Function is used to run all tests together"""
+  suite = unittest.TestSuite()
+  suite.addTest(unittest.makeSuite(test_case))
+  return suite
 
 def check_folder(working_path, tmp_dir_path):
   if not path.exists(working_path):
@@ -41,6 +49,58 @@ def check_folder(working_path, tmp_dir_path):
   if not path.exists(tmp_dir_path):
     mkdir(tmp_dir_path)
 
+
+def startFakeEnvironment(start_openoffice=True, conf_path=None):
+  """Create a fake environment"""
+
+  config.read(conf_path)
+  uno_path = config.get("app:main", "uno_path")
+  working_path = config.get("app:main", "working_path")
+  hostname = config.get("server:main", "host")
+  openoffice_port = int(config.get("app:main", "openoffice_port"))
+  office_binary_path = config.get("app:main", "office_binary_path")
+  tmp_dir = path.join(working_path, 'tmp')
+  check_folder(working_path, tmp_dir)
+  if not environ.get('uno_path'):
+    environ['uno_path'] = uno_path
+  office_binary_path = config.get("app:main", "office_binary_path")
+  if not environ.get('office_binary_path'):
+    environ['office_binary_path'] = office_binary_path
+
+  if uno_path not in sys.path:
+    sys.path.append(uno_path)
+
+  fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
+  if path.exists(fundamentalrc_file) and \
+      'URE_BOOTSTRAP' not in environ:
+    putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
+
+  if start_openoffice:
+    default_language = config.get('app:main',
+                                  'openoffice_user_interface_language', False,
+                                  {'openoffice_user_interface_language': 'en'})
+    openoffice.loadSettings(hostname,
+                            openoffice_port,
+                            working_path,
+                            office_binary_path,
+                            uno_path,
+                            default_language)
+    openoffice.start()
+    openoffice.acquire()
+    hostname, port = openoffice.getAddress()
+    kw = dict(uno_path=config.get("app:main", "uno_path"),
+              office_binary_path=config.get("app:main", "office_binary_path"))
+    if not mimemapper.isLoaded():
+        mimemapper.loadFilterList(hostname, port, **kw)
+    openoffice.release()
+    return openoffice
+
+
+def stopFakeEnvironment(stop_openoffice=True):
+  """Stop Openoffice """
+  if stop_openoffice:
+    openoffice.stop()
+  return True
 
 class HandlerTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""

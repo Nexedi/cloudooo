@@ -31,8 +31,7 @@ import magic
 import pkg_resources
 from subprocess import Popen, PIPE
 from os.path import exists, join
-from cloudoooTestCase import make_suite
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.document import FileSystemDocument
 

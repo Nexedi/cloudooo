@@ -28,7 +28,7 @@
 
 import unittest
 from cloudooo.handler.ooo.application.application import Application
-from cloudoooTestCase import make_suite
+from cloudooo.handler.tests.handlerTestCase import make_suite
 
 
 class TestApplication(unittest.TestCase):

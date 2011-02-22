@@ -30,8 +30,7 @@ from os.path import join, exists
 from os import remove
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudoooTestCase import make_suite
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from types import DictType
 import magic
@@ -308,8 +307,8 @@ class TestServer(HandlerTestCase):
 
   def testConvertPyToPDF(self):
     """Test export python to pdf"""
-    self._testConvertFile("cloudoooTestCase.py",
-                          join(self.tmp_url, "cloudoooTestCase.py"),
+    self._testConvertFile(__file__,
+                          join(self.tmp_url, "output.py"),
                           'py',
                           'pdf',
                           'application/pdf')

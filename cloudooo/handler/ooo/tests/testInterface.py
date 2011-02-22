@@ -46,8 +46,7 @@ from cloudooo.interfaces.monitor import IMonitor
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
-from cloudoooTestCase import make_suite
-
+from cloudooo.handler.tests.handlerTestCase import make_suite
 
 class TestInterface(unittest.TestCase):
   """Test All Interfaces"""

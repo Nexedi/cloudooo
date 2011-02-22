@@ -1,101 +1,33 @@
 #!/usr/bin/env python
+##############################################################################
+#
+# Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
+#                    Gabriel M. Monnerat <gabriel@tiolive.com>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
 
-import sys
-import unittest
-from argparse import ArgumentParser
-from time import sleep
-from subprocess import Popen
-from ConfigParser import ConfigParser
-from os import chdir, path, environ, curdir, remove
-from psutil import Process
-from signal import SIGQUIT
-
-ENVIRONMENT_PATH = path.abspath(path.dirname(__file__))
-
-
-def wait_use_port(pid, timeout_limit=30):
-  process = Process(pid)
-  for n in range(timeout_limit):
-    if len(process.get_connections()) > 0:
-      return True
-    sleep(1)
-  return False
-
-
-def exit(msg):
-  sys.stderr.write(msg)
-  sys.exit(0)
-
+from cloudooo.handler.tests import runHandlerUnitTest
 
 def run():
-  parser = ArgumentParser(description="Unit Test Runner for Cloudooo")
-  parser.add_argument('server_cloudooo_conf')
-  parser.add_argument('test_name')
-  parser.add_argument('--timeout_limit', dest='timeout_limit',
-                      type=long, default=30,
-                      help="Timeout to waiting for the cloudooo stop")
-  parser.add_argument('--paster_path', dest='paster_path',
-                      default='paster',
-                      help="Path to Paster script")
-  namespace = parser.parse_args()
-
-  server_cloudooo_conf = namespace.server_cloudooo_conf
-  test_name = namespace.test_name
-  if server_cloudooo_conf.startswith(curdir):
-    server_cloudooo_conf = path.join(path.abspath(curdir),
-                                     server_cloudooo_conf)
-  environ['server_cloudooo_conf'] = server_cloudooo_conf
-  paster_path = namespace.paster_path
-
-  python_extension = '.py'
-  if test_name[-3:] == python_extension:
-    test_name = test_name[:-3]
-  if not path.exists(path.join(ENVIRONMENT_PATH,
-                               '%s%s' % (test_name, python_extension))):
-    exit("%s not exists\n" % test_name)
-
-  from cloudoooTestCase import startFakeEnvironment, stopFakeEnvironment
-
-  sys.path.append(ENVIRONMENT_PATH)
-
-  config = ConfigParser()
-  config.read(server_cloudooo_conf)
-  module = __import__(test_name)
-  if not hasattr(module, "test_suite"):
-    exit("No test suite to run, exiting immediately")
-
-  DAEMON = getattr(module, 'DAEMON', False)
-  OPENOFFICE = getattr(module, 'OPENOFFICE', False)
-
-  TestRunner = unittest.TextTestRunner
-  suite = unittest.TestSuite()
-  suite.addTest(module.test_suite())
-
-  if DAEMON:
-    log_file = '%s/cloudooo_test.log' % config.get('app:main',
-                                                   'working_path')
-    if path.exists(log_file):
-      remove(log_file)
-    command = [paster_path, 'serve', '--log-file', log_file,
-               server_cloudooo_conf]
-    process = Popen(command)
-    wait_use_port(process.pid)
-    chdir(ENVIRONMENT_PATH)
-    try:
-      TestRunner(verbosity=2).run(suite)
-    finally:
-      process.send_signal(SIGQUIT)
-      process.wait()
-  elif OPENOFFICE:
-    chdir(ENVIRONMENT_PATH)
-    startFakeEnvironment(conf_path=server_cloudooo_conf)
-    try:
-      TestRunner(verbosity=2).run(suite)
-    finally:
-      stopFakeEnvironment()
-  else:
-    chdir(ENVIRONMENT_PATH)
-    TestRunner(verbosity=2).run(suite)
-
-if __name__ == "__main__":
-  run()
+  runHandlerUnitTest.run("ooo")
