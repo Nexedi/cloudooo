@@ -42,53 +42,81 @@ class TestAllFormats(HandlerTestCase):
     self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv")
   
   def testAviFormat(self):
-    """Test convert file to avi format"""
+    """Test convert file to avi format the reverse convertion"""
     output_data = self.input.convert("avi")
-    file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, ('RIFF (little-endian) data, AVI, 640 x 352,'
-                                    +' >30 fps, video: FFMpeg MPEG-4, '
-                                    +'audio: MPEG-1 Layer 1 or 2 (mono, '
-                                    +'48000 Hz)'))
+    output_format = file_detector.from_buffer(output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "avi")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format ==('RIFF (little-endian) data, AVI, 640 x 352,'
+                    +' >30 fps, video: FFMpeg MPEG-4, '
+                    +'audio: MPEG-1 Layer 1 or 2 (mono, '
+                    +'48000 Hz)')) and (input_format == 
+                    'Ogg data, Theora video'))
   
   def testMp4Format(self):
-    """Test convert file to mp4 format"""
+    """Test convert file to mp4 format the reverse convertion"""
     output_data = self.input.convert("mp4")
-    file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, 'ISO Media, MPEG v4 system, version 2')
+    output_format = file_detector.from_buffer(output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "mp4")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == 'ISO Media, MPEG v4 system, version 2')
+                    and (input_format == 'Ogg data, Theora video'))
 
   def testWebMFormat(self):
-    """Test convert file to WebM format"""
+    """Test convert file to WebM format and the reverse convertion"""
     output_data = self.input.convert("webm")
     # XXX This might use magic, but it was not able to find witch format
     # this format belongs to
-    file_format = re.findall("webm", output_data)
-    self.assertEqual(file_format, ['webm'])
+    output_format = re.findall("webm", output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "webm")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == ['webm']) and (input_format == 
+                    'Ogg data, Theora video'))
 
   def testFlvFormat(self):
-    """Test convert file to flash format"""
+    """Test convert file to flash format the reverse convertion"""
     output_data = self.input.convert("flv")
-    file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, 'Macromedia Flash Video')
+    output_format = file_detector.from_buffer(output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "flv")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == 'Macromedia Flash Video') and 
+                    (input_format == 'Ogg data, Theora video'))
 
   def testMpegFormat(self):
-    """Test convert file to Mpeg format"""
+    """Test convert file to Mpeg format the reverse convertion"""
     output_data = self.input.convert("mpeg")
-    file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, 'MPEG sequence, v1, system multiplex')
+    output_format = file_detector.from_buffer(output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "mpeg")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == 'MPEG sequence, v1, system multiplex') and 
+                    (input_format == 'Ogg data, Theora video'))
 
   def testMkvFormat(self):
-    """Test convert file to matroska format"""
+    """Test convert file to matroska format the reverse convertion"""
     output_data = self.input.convert("mkv")
     # XXX This might use magic, but it was not able to find witch format
     # this format belongs to
-    file_format = re.findall("matroska", output_data)
-    self.assertEqual(file_format, ['matroska'])
+    output_format = re.findall("matroska", output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "mkv")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == ['matroska']) and (input_format == 
+                    'Ogg data, Theora video'))
 
   def testOggFormat(self):
-    """Test convert file to ogg format"""
+    """Test convert file to ogg format the reverse convertion"""
     output_data = self.input.convert("ogg")
-    file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, 'Ogg data, Theora video')
+    output_format = file_detector.from_buffer(output_data)
+    output = FFMPEGHandler(self.tmp_url, output_data, "ogg")
+    input_data = output.convert("ogv")
+    input_format = file_detector.from_buffer(input_data)
+    self.assertTrue((output_format == 'Ogg data, Theora video') and 
+                    (input_format == 'Ogg data, Theora video'))
 
 
 def test_suite():
