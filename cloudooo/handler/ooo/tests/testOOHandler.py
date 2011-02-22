@@ -92,8 +92,6 @@ class TestOOHandler(HandlerTestCase):
                         decodestring(data),
                         'odt')
     metadata = handler.getMetadata()
-    self.assertEquals(metadata.get('Data'), '')
-    self.assertTrue('Data' in metadata)
     self.assertEquals(metadata.get('MIMEType'),
                       'application/vnd.oasis.opendocument.text')
     handler.document.restoreOriginal()
