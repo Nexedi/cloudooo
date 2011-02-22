@@ -29,7 +29,7 @@
 import unittest
 import magic
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
 class TestFFMPEGHandler(HandlerTestCase):
@@ -47,6 +47,4 @@ class TestFFMPEGHandler(HandlerTestCase):
 
 
 def test_suite():
-  suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(TestFFMPEGHandler))
-  return suite
+  return make_suite(TestFFMPEGHandler)
