@@ -60,6 +60,16 @@ class TestServer(HandlerTestCase):
     self.assertEquals(metadata["title"],
                       'Free Cloud Alliance Presentation')
 
+  def testSetMetadata(self):
+    """Test if metadata is inserted correctly in document"""
+    data = open(join('data', 'test.pdf'), 'r').read()
+    new_data = self.proxy.updateFileMetadata(encodestring(data),
+                                             "pdf",
+                                             {"producer": "Cloudooo"})
+    metadata = self.proxy.getFileMetadataItemList(new_data, "pdf")
+    self.assertEquals(metadata["title"],
+                      'Free Cloud Alliance Presentation')
+    self.assertEquals(metadata["producer"], 'Cloudooo')
 
 
 def test_suite():

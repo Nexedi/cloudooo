@@ -29,7 +29,7 @@
 
 import unittest
 from cloudooo.handler.pdf.handler import PDFHandler
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase
+from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from types import DictType
 
 
@@ -67,6 +67,4 @@ class TestPDFHandler(HandlerTestCase):
 
 
 def test_suite():
-  suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(TestPDFHandler))
-  return suite
+  return make_suite(TestPDFHandler)
