@@ -82,8 +82,14 @@ class TestOOGranulator(HandlerTestCase):
     table_data = oogranulator.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
-  def testGetTableMatrix(self):
-    """Test if getTableMatrix() returns the right matrix"""
+
+  def testGetColumnItemList(self):
+    """Test if getColumnItemList() returns the right table columns list"""
+    self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,
+                                     'table_id')
+
+  def testGetLineItemList(self):
+    """Test if getLineItemList() returns the right table lines list"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
     matrix = [['Name', 'Phone', 'Email'],
@@ -167,15 +173,12 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItemList,
-                                           'file')
+    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItemList)
 
   def testGetChapterItem(self):
     """Test if getChapterItem() returns the right chapter"""
     self.assertRaises(NotImplementedError, self.oogranulator.getChapterItem,
-                                     'file',
                                      'chapter_id')
-
 
 def test_suite():
   return make_suite(TestOOGranulator)
