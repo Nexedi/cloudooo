@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #
 # Copyright (c) 2010 Nexedi SA and Contributors. All Rights Reserved.
 #                    Hugo H. Maia Vieira <hugomaia@tiolive.com>
@@ -33,9 +33,6 @@ from lxml import etree
 from os import path
 from cloudooo.utils.utils import logger
 from cloudooo.handler.ooo.document import OdfDocument
-from cloudooo.interfaces.granulate import ITableGranulator, \
-                                          IImageGranulator, \
-                                          ITextGranulator
 
 # URI Definitions.
 TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
@@ -62,8 +59,6 @@ def getTemplatePath(format):
 class OOGranulator(object):
   """Granulate an OpenOffice document into tables, images, chapters and
   paragraphs."""
-
-  implements(ITableGranulator, IImageGranulator, ITextGranulator)
 
   def __init__(self, file, source_format):
     self.document = OdfDocument(file, source_format)
@@ -126,10 +121,14 @@ class OOGranulator(object):
       logger.error(e)
       return None
 
-  def getTableMatrix(self, id):
-    """Returns the table as a matrix"""
+  def getColumnItemList(self, table_id):
+    """Return the list of columns in the form of (id, title)."""
+    raise NotImplementedError
+
+  def getLineItemList(self, table_id):
+    """Returns the lines of a given table as (key, value) pairs."""
     row_list = self.document.parsed_content.xpath(
-                        '//table:table[@table:name="%s"]/table:table-row' % id,
+                        '//table:table[@table:name="%s"]/table:table-row' % table_id,
                         namespaces=self.document.parsed_content.nsmap)
     if len(row_list) == 0:
       return None
@@ -210,11 +209,11 @@ class OOGranulator(object):
     p_class = paragraph.attrib[TEXT_ATTRIB_STYLENAME]
     return (text, p_class)
 
-  def getChapterItemList(self, file):
+  def getChapterItemList(self):
     """Returns the list of chapters in the form of (id, level)."""
     raise NotImplementedError
 
-  def getChapterItem(self, file, chapter_id):
+  def getChapterItem(self, chapter_id):
     """Return the chapter in the form of (title, level)."""
     raise NotImplementedError
 
