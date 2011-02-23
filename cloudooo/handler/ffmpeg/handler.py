@@ -34,7 +34,7 @@ from subprocess import Popen, PIPE
 class FFMPEGHandler(object):
   """FFMPEGHandler is used to handler inputed video files"""
 
-  def __init__(self, base_folder_url, data, source_format):
+  def __init__(self, base_folder_url, data, source_format, **kw):
     """
     base_folder_url(string)
       The requested url for data base folder
@@ -44,7 +44,7 @@ class FFMPEGHandler(object):
       The source format of the inputed video"""
     self.base_folder_url = base_folder_url
     self.input = File(base_folder_url, data, source_format)
-    self.ffmpeg_bin = "/usr/bin/ffmpeg"
+    self.environment = kw.get("env", {})
 
   def convert(self, destination_format):
     """ Convert the inputed video to output as format that were informed """
@@ -53,7 +53,7 @@ class FFMPEGHandler(object):
     # the end
     output = File(self.base_folder_url, '', destination_format)
     try:
-      command = [self.ffmpeg_bin,
+      command = ["ffmpeg",
                  "-i",
                  self.input.getUrl(),
                  "-y",
@@ -61,7 +61,8 @@ class FFMPEGHandler(object):
       stdout, stderr = Popen(command,
                              stdout=PIPE,
                              stderr=PIPE,
-                             close_fds=True).communicate()
+                             close_fds=True,
+                             env=self.environment).communicate()
       output.reload()
       return output.getContent()
     finally:
