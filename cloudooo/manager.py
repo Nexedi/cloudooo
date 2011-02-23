@@ -31,16 +31,18 @@ from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
-from handler.ooo.handler import OOHandler
-from handler.pdf.handler import PDFHandler
-from handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.ooo.handler import OOHandler
+from cloudooo.handler.pdf.handler import PDFHandler
+from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
 from fnmatch import fnmatch
 import mimetypes
+import pkg_resources
 
 
-handler_dict = {"pdf": PDFHandler, "ooo": OOHandler, "ffmpeg": FFMPEGHandler}
+HANDLER_DICT = {"pdf": PDFHandler, "ooo": OOHandler, "ffmpeg": FFMPEGHandler}
+
 
 def getHandlerObject(source_format, destination_format, mimetype_registry):
   """Select handler according to source_format and destination_format"""
@@ -50,8 +52,9 @@ def getHandlerObject(source_format, destination_format, mimetype_registry):
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
         fnmatch(destination_mimetype, registry_list[1]):
-      return handler_dict[registry_list[2]]
-  return handler_dict["ooo"]
+      return HANDLER_DICT[registry_list[2]]
+  return HANDLER_DICT["ooo"]
+
 
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""

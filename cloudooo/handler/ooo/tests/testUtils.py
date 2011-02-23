@@ -29,9 +29,9 @@
 import unittest
 import logging
 from cloudooo.utils.utils import logger, configureLogger, \
-                                            convertStringToBool
+                                         convertStringToBool, loadMimetypeList
 from cloudooo.handler.tests.handlerTestCase import make_suite
-
+import mimetypes
 
 class TestUtils(unittest.TestCase):
   """Test Utils"""
@@ -52,6 +52,14 @@ class TestUtils(unittest.TestCase):
     self.assertTrue(convertStringToBool('truE'))
     self.assertEquals(convertStringToBool('faLse'), False)
     self.assertEquals(convertStringToBool(''), None)
+
+  def testLoadMimetypelist(self):
+    """Test if the file with mimetypes is loaded correctly"""
+    self.assertEquals(mimetypes.types_map.get(".ogv"), None)
+    self.assertEquals(mimetypes.types_map.get(".3gp"), None)
+    loadMimetypeList()
+    self.assertEquals(mimetypes.types_map.get(".ogv"), "application/ogv")
+    self.assertEquals(mimetypes.types_map.get(".3gp"), "video/3gpp")
 
 
 def test_suite():

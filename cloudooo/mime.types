@@ -1,0 +1,22 @@
+#
+# Video
+#
+application/ogv                                           ogv
+application/ogg                                           ogg
+video/3gpp                                                3gp
+video/avi                                                 avi
+video/mpg                                                 mpg
+video/mpeg                                                mpeg
+video/mp4v-es                                             mp4
+#
+# Text
+#
+application/vnd.oasis.opendocument.presentation           odp
+application/vnd.oasis.opendocument.spreadsheet            ods
+application/vnd.oasis.opendocument.text                   odt
+#
+# Image
+#
+image/gif                                                 gif
+audio/mp4                                                 mp4
+audio/mp3                                                 mp3

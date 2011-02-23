@@ -33,7 +33,7 @@ import os
 import cloudooo.handler.ooo.monitor as monitor
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
-from cloudooo.utils.utils import convertStringToBool, configureLogger
+from cloudooo.utils import utils
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
 
@@ -69,8 +69,8 @@ def application(global_config, **local_config):
           value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
   gc.enable()
-  debug_mode = convertStringToBool(local_config.get('debug_mode'))
-  configureLogger(debug_mode=debug_mode)
+  debug_mode = utils.convertStringToBool(local_config.get('debug_mode'))
+  utils.configureLogger(debug_mode=debug_mode)
   # path of directory to run cloudooo
   working_path = local_config.get('working_path')
   if not path.exists(working_path):
@@ -93,7 +93,7 @@ def application(global_config, **local_config):
                          environment_dict=environment_dict,
                          )
   openoffice.start()
-
+  utils.loadMimetypeList()
   monitor.load(local_config)
   timeout_response = int(local_config.get('timeout_response'))
   kw = dict(uno_path=local_config.get('uno_path'),

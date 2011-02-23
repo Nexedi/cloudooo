@@ -27,6 +27,8 @@
 ##############################################################################
 
 import logging
+import mimetypes
+import pkg_resources
 
 logger = logging.getLogger('Cloudooo')
 
@@ -44,6 +46,12 @@ PYTHON_ENVIRONMENT = [
       'PYTHONUNBUFFERED',
       'PYTHONVERBOSE'
 ]
+
+
+def loadMimetypeList():
+  mime_types_url = pkg_resources.resource_filename("cloudooo",
+                                                   "mime.types")
+  mimetypes.init(files=[mime_types_url,])
 
 
 def configureLogger(level=None, debug_mode=False):
