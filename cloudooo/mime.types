@@ -21,6 +21,27 @@ application/vnd.oasis.opendocument.text                   odt
 # Image
 #
 image/gif                                                 gif
+image/ief                                                 ief
+image/jpeg                                                jpeg
+image/jpeg                                                jpg
+image/bmp                                                 bmp
+image/cis-cod                                             cod
+image/pipeg                                               jfif
+image/png                                                 png
+image/svg+xml                                             svg
+image/tiff                                                tif
+image/tiff                                                tiff
+image/x-cmu-raster                                        ras
+image/x-cmx                                               cmx
+image/x-icon                                              ico
+image/x-portable-anymap                                   pnm
+image/x-portable-bitmap                                   pbm
+image/x-portable-graymap                                  pgm
+image/x-portable-pixmap                                   ppm
+image/x-rgb                                               rgb
+image/x-xbitmap                                           xbm
+image/x-xpixmap                                           xpm
+image/x-xwindowdump                                       xwd
 #
 # Audio
 #
