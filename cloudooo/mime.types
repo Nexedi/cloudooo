@@ -18,5 +18,8 @@ application/vnd.oasis.opendocument.text                   odt
 # Image
 #
 image/gif                                                 gif
+#
+# Audio
+#
 audio/mp4                                                 mp4
 audio/mp3                                                 mp3

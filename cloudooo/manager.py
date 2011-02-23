@@ -34,6 +34,7 @@ from interfaces.manager import IManager, IERP5Compatibility
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.pdf.handler import PDFHandler
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.imagemagick.handler import ImageMagickHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
 from fnmatch import fnmatch
@@ -41,7 +42,10 @@ import mimetypes
 import pkg_resources
 
 
-HANDLER_DICT = {"pdf": PDFHandler, "ooo": OOHandler, "ffmpeg": FFMPEGHandler}
+HANDLER_DICT = {"pdf": PDFHandler,
+                "ooo": OOHandler,
+                "ffmpeg": FFMPEGHandler,
+                "imagemagick": ImageMagickHandler}
 
 
 def getHandlerObject(source_format, destination_format, mimetype_registry):
