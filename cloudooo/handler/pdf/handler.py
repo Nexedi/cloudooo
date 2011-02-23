@@ -53,8 +53,9 @@ class PDFHandler(object):
                            stdout=PIPE,
                            stderr=PIPE,
                            env=self.environment).communicate()
+    self.document.reload(output_url)
     try:
-      return open(output_url).read()
+      return self.document.getContent()
     finally:
       self.document.trash()
 
@@ -104,7 +105,8 @@ class PDFHandler(object):
                            stdout=PIPE,
                            stderr=PIPE,
                            env=self.environment).communicate()
+    self.document.reload(output_url)
     try:
-      return open(output_url).read()
+      return self.document.getContent()
     finally:
       self.document.trash()
