@@ -36,18 +36,9 @@ class TestInterface(unittest.TestCase):
 
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
+    # XXX this might verify FFMPEGHandler methods too
     self.assertTrue(IHandler.implementedBy(FFMPEGHandler))
-    method_list = ['convert', 'getMetadata', 'setMetadata']
-    for method in method_list:
-      self.assertTrue(method in IHandler.names(),
-                            "Method %s is not declared" % method)
-    self.assertEquals(len(method_list), len(IHandler.names()))
-    self.assertEquals(IHandler.get('convert').required, ('destination_format',))
-    self.assertEquals(IHandler.get('getMetadata').required,
-        ('converted_data',))
-    self.assertEquals(IHandler.get('setMetadata').required,
-        ('metadata_dict',))
-        
+
 
 def test_suite():
   return make_suite(TestInterface)
