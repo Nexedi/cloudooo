@@ -29,6 +29,7 @@
 
 from cloudooo.file import File
 from subprocess import Popen, PIPE
+from tempfile import mktemp
 
 
 class FFMPEGHandler(object):
@@ -51,20 +52,20 @@ class FFMPEGHandler(object):
     # XXX This implementation could use ffmpeg -i pipe:0, but
     # XXX seems super unreliable currently and it generates currupted files in
     # the end
-    output = File(self.base_folder_url, '', destination_format)
+    output_url = mktemp(suffix=".%s" % destination_format,
+                        dir=self.input.directory_name)
+    command = ["ffmpeg",
+               "-i",
+               self.input.getUrl(),
+               "-y",
+               output_url]
     try:
-      command = ["ffmpeg",
-                 "-i",
-                 self.input.getUrl(),
-                 "-y",
-                 output.getUrl()]
       stdout, stderr = Popen(command,
                              stdout=PIPE,
                              stderr=PIPE,
                              close_fds=True,
                              env=self.environment).communicate()
-      output.reload()
-      return output.getContent()
+      self.input.reload(output_url)
+      return self.input.getContent()
     finally:
       self.input.trash()
-      output.trash()
