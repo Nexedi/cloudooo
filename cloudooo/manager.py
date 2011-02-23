@@ -80,9 +80,6 @@ class Manager(object):
       zip -- Boolean Attribute. If true, returns the file in the form of a
       zip archive
     """
-    if not mimemapper.getFilterList(destination_format):
-      raise ValueError("This format (%s) is not supported " +
-                       "or is invalid" % destination_format)
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
     handler = getHandlerObject(source_format,
