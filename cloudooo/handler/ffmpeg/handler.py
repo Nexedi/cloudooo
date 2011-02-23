@@ -26,7 +26,8 @@
 #
 ##############################################################################
 
-
+from zope.interface import implements
+from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from subprocess import Popen, PIPE
 from tempfile import mktemp
@@ -34,6 +35,8 @@ from tempfile import mktemp
 
 class FFMPEGHandler(object):
   """FFMPEGHandler is used to handler inputed video files"""
+  
+  implements(IHandler)
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """
@@ -69,3 +72,16 @@ class FFMPEGHandler(object):
       return self.input.getContent()
     finally:
       self.input.trash()
+  
+  def getMetadata(self, base_document=False):
+    """Returns a dictionary with all metadata of the video.
+    Keywords Arguments:
+    base_document -- Boolean variable. if true, the video is also returned
+    along with the metadata."""
+  
+  def setMetadata(self, metadata):
+    """Returns a document with new metadata.
+    Keyword arguments:
+    metadata -- expected an dictionary with metadata.
+    """
+  
