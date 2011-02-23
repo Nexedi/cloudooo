@@ -1,13 +1,16 @@
 #
 # Video
 #
-application/ogv                                           ogv
+application/ogg                                           ogv
 application/ogg                                           ogg
+application/octet-stream                                  webm
+application/x-shockwave-flash                             flv
+application/octet-stream                                  mkv
+application/octet-stream                                  mpg
+application/octet-stream                                  mpeg
 video/3gpp                                                3gp
-video/avi                                                 avi
-video/mpg                                                 mpg
-video/mpeg                                                mpeg
-video/mp4v-es                                             mp4
+video/x-msvideo                                           avi
+video/mp4                                                 mp4
 #
 # Text
 #
