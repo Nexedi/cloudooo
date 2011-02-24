@@ -41,7 +41,7 @@ from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
 from cloudooo.interfaces.handler import IHandler
-from types import ClassType
+from types import TypeType
 
 
 def getHandlerObject(source_format, destination_format, mimetype_registry):
@@ -60,7 +60,7 @@ def getHandlerObject(source_format, destination_format, mimetype_registry):
         if not name.endswith("Handler"):
           continue
         obj = getattr(handler, name)
-        if type(obj) == ClassType and IHandler.implementedBy(obj):
+        if type(obj) == TypeType and IHandler.implementedBy(obj):
           return obj
   raise ValueError("No Handler Enabled for this conversion")
 

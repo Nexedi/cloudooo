@@ -43,7 +43,7 @@ from cloudooo.utils.utils import logger
 from psutil import pid_exists
 
 
-class OOHandler:
+class OOHandler(object):
   """OOHandler is used to access the one Document and OpenOffice.
   For each Document inputed is created on instance of this class to manipulate
   the document. This Document must be able to create and remove a temporary
