@@ -31,16 +31,22 @@ from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
+from handler.ooo.granulator import OOGranulator
+from handler.ooo.handler import OOHandler
+from handler.pdf.handler import PDFHandler
+from handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.pdf.handler import PDFHandler
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.imagemagick.handler import ImageMagickHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
+from cloudooo.interfaces.granulate import ITableGranulator, \
+                                          IImageGranulator, \
+                                          ITextGranulator
 from fnmatch import fnmatch
 import mimetypes
 import pkg_resources
-
 
 HANDLER_DICT = {"pdf": PDFHandler,
                 "ooo": OOHandler,
@@ -62,7 +68,9 @@ def getHandlerObject(source_format, destination_format, mimetype_registry):
 
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
-  implements(IManager, IERP5Compatibility)
+  implements(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
+             ITextGranulator)
+
 
   def __init__(self, path_tmp_dir, **kw):
     """Need pass the path where the temporary document will be created."""
@@ -91,31 +99,6 @@ class Manager(object):
                        **self.kw)
     decode_data = document.convert(destination_format)
     return encodestring(decode_data)
-
-  def granulateFile(self, file, source_format, zip=False):
-    """Returns the parts of an document splited by grains.
-    Keywords arguments:
-      file -- File as string in base64
-      source_format -- Format of original file as string
-      zip -- Boolean Attribute. If true, returns the grains in the form of a
-      zip archive
-    """
-    raise NotImplementedError
-    GRANULATABLE_FORMAT_LIST = ("odt",)
-    if source_format not in GRANULATABLE_FORMAT_LIST:
-      file = self.convertFile(file, source_format,
-                              GRANULATABLE_FORMAT_LIST[0], zip=False)
-    from granulate.oogranulate import OOGranulate
-
-    try:
-      document = OOGranulate(decodestring(file), source_format)
-      grain = document.granulate(zip)
-      if zip:
-        return encodestring(grain)
-      return map(encodestring, grain)
-    finally:
-      document.trash()
-    return None
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
     """Receives the string of document and a dict with metadatas. The metadata
@@ -313,3 +296,69 @@ class Manager(object):
     except Exception, e:
       logger.error(e)
       return (402, {}, e.args[0])
+
+  def _getOOGranulator(self, data, source_format="odt"):
+    """Returns an instance of the handler OOGranulator after convert the
+    data to 'odt'"""
+    GRANULATABLE_FORMAT_LIST = ("odt",)
+    if source_format not in GRANULATABLE_FORMAT_LIST:
+      data = self.convertFile(data, source_format,
+                    GRANULATABLE_FORMAT_LIST[0], zip=False)
+    return OOGranulator(decodestring(data), GRANULATABLE_FORMAT_LIST[0])
+
+  def getTableItemList(self, data, source_format="odt"):
+    """Returns the list of table IDs in the form of (id, title)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getTableItemList()
+
+  def getTableItem(self, data, id, source_format="odt"):
+    """Returns the table into a new 'format' file."""
+    document = self._getOOGranulator(data, source_format)
+    return encodestring(document.getTableItem(id, source_format))
+
+  def getTableMatrix(self, data, table_id, source_format):
+    """Returns the table as a matrix."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getTableMatrix(table_id)
+
+  def getColumnItemList(self, data, table_id, source_format):
+    """Return the list of columns in the form of (id, title)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getColumnItemList(table_id)
+
+  def getLineItemList(self, data, table_id, source_format):
+    """Returns the lines of a given table as (key, value) pairs."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getLineItemList(table_id)
+
+  def getImageItemList(self, data, source_format):
+    """Return the list of images in the form of (id, title)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getImageItemList()
+
+  def getImage(self, data, image_id, source_format, format=None,
+               resolution=None, **kw):
+    """Return the given image."""
+    document = self._getOOGranulator(data, source_format)
+    return encodestring(document.getImage(image_id, format, resolution, **kw))
+
+  def getParagraphItemList(self, data, source_format):
+    """Returns the list of paragraphs in the form of (id, class) where class
+       may have special meaning to define TOC/TOI."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getParagraphItemList()
+
+  def getParagraphItem(self, data, paragraph_id, source_format):
+    """Returns the paragraph in the form of (text, class)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getParagraphItem(paragraph_id)
+
+  def getChapterItemList(self, data, source_format):
+    """Returns the list of chapters in the form of (id, level)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getChapterItemList(data)
+
+  def getChapterItem(self, chapter_id, data, source_format):
+    """Return the chapter in the form of (title, level)."""
+    document = self._getOOGranulator(data, source_format)
+    return document.getChapterItem(data, chapter_id)
