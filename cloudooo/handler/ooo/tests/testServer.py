@@ -591,7 +591,7 @@ class TestServer(HandlerTestCase):
                       'P5'], [15, 'P5'], [16, 'P14'], [17, 'P11'], [18, 'P11'],
                       [19, 'Standard'], [20, 'P2'], [21, 'P2'], [22, 'P2'],
                       [23, 'P2'], [24, 'P2'], [25, 'P2'], [26, 'P2'], [27,
-                      'P2'], [28, 'P2'], [29, 'P2']],paragraph_list)
+                      'P2'], [28, 'P2'], [29, 'P2']], paragraph_list)
 
   def testGetParagraphItem(self):
     """Test if manager can get a paragraph"""
@@ -611,6 +611,7 @@ class TestServer(HandlerTestCase):
     data = encodestring(open("./data/granulate_test.odt").read())
 
     self.assertRaises(Fault, self.proxy.getChapterItem, ("id", data, "odt"))
+
 
 def test_suite():
   return make_suite(TestServer)

@@ -33,12 +33,13 @@ from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 file_detector = Magic(mime=True)
 
+
 class TestAllFormats(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
     self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv")
-  
+
   def testAviFormat(self):
     """Test convert file to avi format the reverse convertion"""
     output_data = self.input.convert("avi")
@@ -46,9 +47,9 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "avi")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format ==('video/avi')) and 
-                    (input_format == 'video/ogg'))
-  
+    self.assertEquals(output_format, 'video/avi')
+    self.assertEquals(input_format, 'video/ogg')
+
   def testMp4Format(self):
     """Test convert file to mp4 format the reverse convertion"""
     output_data = self.input.convert("mp4")
@@ -56,8 +57,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "mp4")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'video/mp4') and
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'video/mp4')
+    self.assertEquals(input_format, 'video/ogg')
 
   def testWebMFormat(self):
     """Test convert file to WebM format and the reverse convertion"""
@@ -66,8 +67,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "webm")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'video/webm') and 
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'video/webm')
+    self.assertEquals(input_format, 'video/ogg')
 
   def testFlvFormat(self):
     """Test convert file to flash format the reverse convertion"""
@@ -76,8 +77,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "flv")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'application/x-shockwave-flash') and 
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'application/x-shockwave-flash')
+    self.assertEquals(input_format, 'video/ogg')
 
   def testMpegFormat(self):
     """Test convert file to Mpeg format the reverse convertion"""
@@ -86,8 +87,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "mpeg")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'video/mpeg') and 
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'video/mpeg')
+    self.assertEquals(input_format, 'video/ogg')
 
   def testMkvFormat(self):
     """Test convert file to matroska format the reverse convertion"""
@@ -96,8 +97,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "mkv")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'video/x-matroska') and 
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'video/x-matroska')
+    self.assertEquals(input_format, 'video/ogg')
 
   def testOggFormat(self):
     """Test convert file to ogg format the reverse convertion"""
@@ -106,8 +107,8 @@ class TestAllFormats(HandlerTestCase):
     output = FFMPEGHandler(self.tmp_url, output_data, "ogg")
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
-    self.assertTrue((output_format == 'aplication/ogg') and 
-                    (input_format == 'video/ogg'))
+    self.assertEquals(output_format, 'application/ogg')
+    self.assertEquals(input_format, 'video/ogg')
 
 
 def test_suite():

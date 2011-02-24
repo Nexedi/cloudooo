@@ -52,7 +52,7 @@ class TestServer(HandlerTestCase):
     mime = Magic(mime=True)
     mimetype = mime.from_buffer(decodestring(document))
     self.assertEquals(mimetype, "image/jpeg")
-  
+
   def testGetMetadataFromPNG(self):
     """test if metadata are extracted correctly"""
     data = open(join('data', 'test.png'), 'r').read()

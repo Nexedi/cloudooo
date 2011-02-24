@@ -48,6 +48,7 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
                                           ITextGranulator
 from cloudooo.handler.tests.handlerTestCase import make_suite
 
+
 class TestInterface(unittest.TestCase):
   """Test All Interfaces"""
 
@@ -172,7 +173,3 @@ class TestInterface(unittest.TestCase):
 
 def test_suite():
   return make_suite(TestInterface)
-
-if __name__ == "__main__":
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestInterface)
-  unittest.TextTestRunner(verbosity=2).run(suite)

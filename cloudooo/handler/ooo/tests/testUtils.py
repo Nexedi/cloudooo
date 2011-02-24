@@ -33,6 +33,7 @@ from cloudooo.utils.utils import logger, configureLogger, \
 from cloudooo.handler.tests.handlerTestCase import make_suite
 import mimetypes
 
+
 class TestUtils(unittest.TestCase):
   """Test Utils"""
 

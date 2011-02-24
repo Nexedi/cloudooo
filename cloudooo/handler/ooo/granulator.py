@@ -144,8 +144,8 @@ class OOGranulator(object):
   def getLineItemList(self, table_id):
     """Returns the lines of a given table as (key, value) pairs."""
     row_list = self.document.parsed_content.xpath(
-                        '//table:table[@table:name="%s"]/table:table-row' % table_id,
-                        namespaces=self.document.parsed_content.nsmap)
+                 '//table:table[@table:name="%s"]/table:table-row' % table_id,
+                 namespaces=self.document.parsed_content.nsmap)
     if len(row_list) == 0:
       return None
 

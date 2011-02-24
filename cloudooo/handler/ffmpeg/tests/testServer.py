@@ -42,7 +42,7 @@ class TestServer(HandlerTestCase):
     """Creates a connection with cloudooo server"""
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
-  
+
   def testConvertPDFtoTxt(self):
     """Converts ogv video to mpeg format"""
     data = open(join('data', 'test.ogv'), 'r').read()
@@ -52,15 +52,13 @@ class TestServer(HandlerTestCase):
     mime = Magic(mime=True)
     mimetype = mime.from_buffer(decodestring(video))
     self.assertEquals(mimetype, 'video/mpeg')
-  
+
   def testGetMetadata(self):
     """test if metadata are extracted correctly"""
-  
+
   def testSetMetadata(self):
     """Test if metadata is inserted correctly"""
 
 
-
 def test_suite():
   return make_suite(TestServer)
-

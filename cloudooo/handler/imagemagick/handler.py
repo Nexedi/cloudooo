@@ -69,7 +69,7 @@ class ImageMagickHandler(object):
                           stdout=PIPE,
                           stderr=PIPE,
                           env=self.environment).communicate()
-    
+
     metadata_dict = {}
     for std in stdout.split("\n"):
       std = std.strip()
@@ -86,4 +86,4 @@ class ImageMagickHandler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    raise NotImplementedError 
+    raise NotImplementedError

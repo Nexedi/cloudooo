@@ -52,7 +52,7 @@ def getHandlerObject(source_format, destination_format, mimetype_registry):
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
         (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
-      handler_name = "cloudooo.handler.%s.handler" %  registry_list[2]
+      handler_name = "cloudooo.handler.%s.handler" % registry_list[2]
       __import__(handler_name)
       handler = sys.modules[handler_name]
       # XXX - Ugly and slow way to find the Handler Object
@@ -69,7 +69,6 @@ class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
   implements(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
              ITextGranulator)
-
 
   def __init__(self, path_tmp_dir, **kw):
     """Need pass the path where the temporary document will be created."""

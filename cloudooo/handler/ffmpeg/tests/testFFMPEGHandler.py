@@ -43,11 +43,11 @@ class TestFFMPEGHandler(HandlerTestCase):
     output_data = self.input.convert("ogg")
     file_format = file_detector.from_buffer(output_data)
     self.assertEqual(file_format, 'Ogg data, Theora video')
-  
+
   def testgetMetadata(self):
     """Test if metadata is extracted from"""
     self.assertRaises(NotImplementedError, self.input.getMetadata)
-  
+
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
     self.assertRaises(NotImplementedError, self.input.setMetadata)

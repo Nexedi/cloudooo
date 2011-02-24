@@ -82,7 +82,6 @@ class TestOOGranulator(HandlerTestCase):
     table_data = oogranulator.getTableItem('NonExistentTable')
     self.assertEquals(table_data, None)
 
-
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
     self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,
@@ -179,6 +178,7 @@ class TestOOGranulator(HandlerTestCase):
     """Test if getChapterItem() returns the right chapter"""
     self.assertRaises(NotImplementedError, self.oogranulator.getChapterItem,
                                      'chapter_id')
+
 
 def test_suite():
   return make_suite(TestOOGranulator)

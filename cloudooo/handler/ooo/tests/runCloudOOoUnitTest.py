@@ -29,5 +29,6 @@
 
 from cloudooo.handler.tests import runHandlerUnitTest
 
+
 def run():
   runHandlerUnitTest.run("ooo")

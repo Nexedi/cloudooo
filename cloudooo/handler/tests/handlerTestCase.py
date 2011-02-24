@@ -43,6 +43,7 @@ def make_suite(test_case):
   suite.addTest(unittest.makeSuite(test_case))
   return suite
 
+
 def check_folder(working_path, tmp_dir_path):
   if not path.exists(working_path):
     mkdir(working_path)
@@ -101,6 +102,7 @@ def stopFakeEnvironment(stop_openoffice=True):
   if stop_openoffice:
     openoffice.stop()
   return True
+
 
 class HandlerTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""
