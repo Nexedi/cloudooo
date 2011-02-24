@@ -28,8 +28,7 @@
 
 import unittest
 import logging
-from cloudooo.utils.utils import logger, configureLogger, \
-                                         convertStringToBool, loadMimetypeList
+from cloudooo.utils import utils
 from cloudooo.handler.tests.handlerTestCase import make_suite
 import mimetypes
 
@@ -39,27 +38,27 @@ class TestUtils(unittest.TestCase):
 
   def testLog(self):
     """Instanciate Log and test __call__ called function log"""
-    configureLogger(logging.DEBUG)
-    logger.info("Test Log")
-    logger.debug("Test Log")
-    configureLogger(logging.INFO)
-    logger.info("Test Log")
-    logger.debug("Test Log")
+    utils.configureLogger(logging.DEBUG)
+    utils.logger.info("Test Log")
+    utils.logger.debug("Test Log")
+    utils.configureLogger(logging.INFO)
+    utils.logger.info("Test Log")
+    utils.logger.debug("Test Log")
 
   def testConversion(self):
     """Test convertion to bool"""
-    self.assertTrue(convertStringToBool('true'))
-    self.assertEquals(convertStringToBool('false'), False)
-    self.assertTrue(convertStringToBool('truE'))
-    self.assertEquals(convertStringToBool('faLse'), False)
-    self.assertEquals(convertStringToBool(''), None)
+    self.assertTrue(utils.convertStringToBool('true'))
+    self.assertEquals(utils.convertStringToBool('false'), False)
+    self.assertTrue(utils.convertStringToBool('truE'))
+    self.assertEquals(utils.convertStringToBool('faLse'), False)
+    self.assertEquals(utils.convertStringToBool(''), None)
 
   def testLoadMimetypelist(self):
     """Test if the file with mimetypes is loaded correctly"""
     self.assertEquals(mimetypes.types_map.get(".ogv"), None)
     self.assertEquals(mimetypes.types_map.get(".3gp"), None)
-    loadMimetypeList()
-    self.assertEquals(mimetypes.types_map.get(".ogv"), "application/ogv")
+    utils.loadMimetypeList()
+    self.assertEquals(mimetypes.types_map.get(".ogv"), "video/ogg")
     self.assertEquals(mimetypes.types_map.get(".3gp"), "video/3gpp")
 
 

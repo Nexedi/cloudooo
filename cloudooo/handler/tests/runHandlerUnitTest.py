@@ -55,8 +55,8 @@ def run(handler_name):
                                '%s%s' % (test_name, python_extension))):
     exit("%s not exists\n" % test_name)
 
-  from cloudooo.handler.tests.handlerTestCase import startFakeEnvironment, \
-                                                     stopFakeEnvironment
+  from cloudooo.handler.tests.handlerTestCase import startFakeEnvironment
+  from cloudooo.handler.tests.handlerTestCase import stopFakeEnvironment
 
   sys.path.append(environment_path)
 
