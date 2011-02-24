@@ -104,18 +104,6 @@ class TestOOGranulator(HandlerTestCase):
 
     self.assertEquals(None, oogranulator.getTableMatrix('Non existent'))
 
-  def testGetColumnItemList(self):
-    """Test if getColumnItemList() returns the right table columns list"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,
-                                     'file',
-                                     'table_id')
-
-  def testGetLineItemList(self):
-    """Test if getLineItemList() returns the right table lines list"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getLineItemList,
-                                     'file',
-                                     'table_id')
-
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
     image_list = self.oogranulator.getImageItemList()
