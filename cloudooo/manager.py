@@ -38,9 +38,9 @@ from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.imagemagick.handler import ImageMagickHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
-from cloudooo.interfaces.granulate import ITableGranulator, \
-                                          IImageGranulator, \
-                                          ITextGranulator
+from cloudooo.interfaces.granulate import ITableGranulator
+from cloudooo.interfaces.granulate import IImageGranulator
+from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
 import mimetypes
 import pkg_resources
