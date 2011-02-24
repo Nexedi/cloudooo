@@ -321,12 +321,7 @@ class TestServer(HandlerTestCase):
     is sent"""
     data = encodestring("")
     self.assertRaises(Fault, self.proxy.convertFile, (data, '', ''))
-
-    res = self.proxy.getFileMetadataItemList(data, '')
-    self.assertEquals(res['MIMEType'], "text/plain")
-    res = decodestring(self.proxy.updateFileMetadata(data, '',
-                                         {"Subject": "subject"}))
-    self.assertEquals(decodestring(res), '')
+    self.assertRaises(Fault, self.proxy.getFileMetadataItemList, (data, ''))
 
   def testConvertDocumentToInvalidFormat(self):
     """Try convert one document for a invalid format"""
