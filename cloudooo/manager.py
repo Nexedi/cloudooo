@@ -32,9 +32,6 @@ from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
 from handler.ooo.granulator import OOGranulator
-from handler.ooo.handler import OOHandler
-from handler.pdf.handler import PDFHandler
-from handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.ooo.handler import OOHandler
 from cloudooo.handler.pdf.handler import PDFHandler
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
