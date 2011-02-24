@@ -27,7 +27,6 @@
 ##############################################################################
 
 
-import unittest
 from cloudooo.handler.pdf.handler import PDFHandler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from types import DictType

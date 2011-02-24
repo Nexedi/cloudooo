@@ -27,7 +27,6 @@
 ##############################################################################
 
 
-import unittest
 import magic
 from cloudooo.handler.imagemagick.handler import ImageMagickHandler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite

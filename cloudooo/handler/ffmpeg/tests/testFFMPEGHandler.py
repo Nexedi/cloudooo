@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 import magic
 from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
