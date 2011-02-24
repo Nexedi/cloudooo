@@ -27,40 +27,42 @@
 #
 ##############################################################################
 
+import sys
+import mimetypes
 from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
 from handler.ooo.granulator import OOGranulator
-from cloudooo.handler.ooo.handler import OOHandler
-from cloudooo.handler.pdf.handler import PDFHandler
-from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
-from cloudooo.handler.imagemagick.handler import ImageMagickHandler
 from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
-import mimetypes
-import pkg_resources
-
-HANDLER_DICT = {"pdf": PDFHandler,
-                "ooo": OOHandler,
-                "ffmpeg": FFMPEGHandler,
-                "imagemagick": ImageMagickHandler}
+from cloudooo.interfaces.handler import IHandler
+from types import ClassType
 
 
 def getHandlerObject(source_format, destination_format, mimetype_registry):
   """Select handler according to source_format and destination_format"""
   source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
-  destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, '*')
+  destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, "*")
   for pattern in mimetype_registry:
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
-        fnmatch(destination_mimetype, registry_list[1]):
-      return HANDLER_DICT[registry_list[2]]
-  return HANDLER_DICT["ooo"]
+        (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
+      handler_name = "cloudooo.handler.%s.handler" %  registry_list[2]
+      __import__(handler_name)
+      handler = sys.modules[handler_name]
+      # XXX - Ugly and slow way to find the Handler Object
+      for name in iter(dir(handler)):
+        if not name.endswith("Handler"):
+          continue
+        obj = getattr(handler, name)
+        if type(obj) == ClassType and IHandler.implementedBy(obj):
+          return obj
+  raise ValueError("No Handler Enabled for this conversion")
 
 
 class Manager(object):
@@ -106,7 +108,7 @@ class Manager(object):
     return encodestring(document_with_metadata)
     """
     handler = getHandlerObject(source_format,
-                               "*",
+                               None,
                                self.mimetype_registry)
     document = handler(self._path_tmp_dir,
                        decodestring(file),
@@ -132,7 +134,7 @@ class Manager(object):
     Note that all keys of the dictionary have the first word in uppercase.
     """
     handler = getHandlerObject(source_format,
-                               "*",
+                               None,
                                self.mimetype_registry)
     document = handler(self._path_tmp_dir,
                        decodestring(file),
