@@ -121,6 +121,22 @@ class OOGranulator(object):
       logger.error(e)
       return None
 
+  def getTableMatrix(self, id):
+    """Returns the table as a matrix"""
+    row_list = self.document.parsed_content.xpath(
+                        '//table:table[@table:name="%s"]/table:table-row' % id,
+                        namespaces=self.document.parsed_content.nsmap)
+    if len(row_list) == 0:
+      return None
+
+    matrix = []
+    for row in row_list:
+      matrix_row = []
+      for cell in row.iterchildren():
+        matrix_row.append(''.join(cell.itertext()))
+      matrix.append(matrix_row)
+    return matrix
+
   def getColumnItemList(self, table_id):
     """Return the list of columns in the form of (id, title)."""
     raise NotImplementedError
