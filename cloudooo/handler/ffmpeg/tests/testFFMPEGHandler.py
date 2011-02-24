@@ -35,15 +35,23 @@ from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 class TestFFMPEGHandler(HandlerTestCase):
 
   def afterSetUp(self):
-    self.data = open("./data/test.3gp").read()
-    self.input = FFMPEGHandler(self.tmp_url, self.data, "3gp")
+    self.data = open("./data/test.ogv").read()
+    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv")
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
     file_detector = magic.Magic()
-    output_data = self.input.convert("ogv")
+    output_data = self.input.convert("ogg")
     file_format = file_detector.from_buffer(output_data)
     self.assertEqual(file_format, 'Ogg data, Theora video')
+  
+  def testgetMetadata(self):
+    """Test if metadata is extracted from"""
+    self.assertRaises(NotImplementedError, self.input.getMetadata)
+  
+  def testsetMetadata(self):
+    """ Test if metadata are inserted correclty """
+    self.assertRaises(NotImplementedError, self.input.setMetadata)
 
 
 def test_suite():

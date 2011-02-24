@@ -78,10 +78,12 @@ class FFMPEGHandler(object):
     Keywords Arguments:
     base_document -- Boolean variable. if true, the video is also returned
     along with the metadata."""
+    raise NotImplementedError
   
-  def setMetadata(self, metadata):
+  def setMetadata(self, metadata={}):
     """Returns a document with new metadata.
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
+    raise NotImplementedError
   
