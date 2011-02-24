@@ -32,8 +32,11 @@ from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
+from StringIO import StringIO
+from lxml import etree
 from types import DictType
 import magic
+
 
 DAEMON = True
 
@@ -513,6 +516,106 @@ class TestServer(HandlerTestCase):
     self.assertTrue(['html', 'HTML Document (OpenOffice.org Writer)'] in response_dict['response_data'])
     self.assertFalse(['html', 'HTML Document'] in response_dict['response_data'])
 
+  def testGetTableItemList(self):
+    """Test if manager can get the table item list"""
+    table_list = [['Developers', ''],
+                  ['Prices', 'Table 1: Prices table from Mon Restaurant'],
+                  ['SoccerTeams', 'Tabela 2: Soccer Teams']]
+
+    data = encodestring(open("data/granulate_table_test.odt").read())
+    granulated_table = self.proxy.getTableItemList(data, "odt")
+
+    self.assertEquals(table_list, granulated_table)
+
+  def testGetTableItem(self):
+    """Test if manager can get a item of some granulated table"""
+    data = encodestring(open("./data/granulate_table_test.odt").read())
+    granulated_table = self.proxy.getTableItemList(data, "odt")
+    table_item = decodestring(self.proxy.getTableItem(data,
+                              granulated_table[1][0], "odt"))
+    content_xml_str = ZipFile(StringIO(table_item)).read('content.xml')
+    content_xml = etree.fromstring(content_xml_str)
+    table_list = content_xml.xpath('//table:table',
+                                   namespaces=content_xml.nsmap)
+    self.assertEquals(1, len(table_list))
+    table = table_list[0]
+    name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
+    self.assertEquals(granulated_table[1][0], table.attrib[name_key])
+
+  def testGetTableMatrix(self):
+    """Test if manager can get the matrix of some granulated table"""
+    matrix = [['Product', 'Price'],
+             ['Pizza', 'R$ 25,00'],
+             ['Petit Gateau', 'R$ 10,00'],
+             ['Feijoada', 'R$ 30,00']]
+    data = encodestring(open("./data/granulate_table_test.odt").read())
+    matrix_table = self.proxy.getTableMatrix(data, "Prices", "odt")
+
+    self.assertEquals(matrix, matrix_table)
+
+  def testGetColumnItemList(self):
+    """Test if manager can get the list of column item"""
+    data = encodestring(open("./data/granulate_table_test.odt").read())
+    self.assertRaises(Fault, self.proxy.getColumnItemList, (data, "id", "odt"))
+
+  def testGetLineItemList(self):
+    """Test if manager can get the list of lines items"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    self.assertRaises(Fault, self.proxy.getLineItemList, (data, "id", "odt"))
+
+  def testGetImageItemList(self):
+    """Test if manager can get the list of images items"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    image_list = self.proxy.getImageItemList(data, "odt")
+    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+                       ['10000201000000C80000004E7B947D46.png', ''],
+                       ['10000201000000C80000004E7B947D46.png',
+                        'Illustration 1: TioLive Logo'],
+                       ['2000004F00004233000013707E7DE37A.svm',
+                        'Figure 1: Python Logo'],
+                       ['10000201000000C80000004E7B947D46.png',
+                        'Illustration 2: Again TioLive Logo']], image_list)
+
+  def testGetImage(self):
+    """Test if manager can get a image"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    zip = ZipFile(StringIO(decodestring(data)))
+    image_id = '10000000000000C80000009C38276C51.jpg'
+    original_image = zip.read('Pictures/%s' % image_id)
+    geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
+    self.assertEquals(original_image, geted_image)
+
+  def testGetParagraphItemList(self):
+    """Test if manager can get the list of paragraphs items"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+
+    paragraph_list = self.proxy.getParagraphItemList(data, "odt")
+    self.assertEquals([[0, 'P3'], [1, 'P1'], [2, 'P12'], [3, 'P6'], [4, 'P7'],
+                      [5, 'P8'], [6, 'P6'], [7, 'P6'], [8, 'P13'], [9, 'P9'],
+                      [10, 'P9'], [11, 'P9'], [12, 'P4'], [13, 'P10'], [14,
+                      'P5'], [15, 'P5'], [16, 'P14'], [17, 'P11'], [18, 'P11'],
+                      [19, 'Standard'], [20, 'P2'], [21, 'P2'], [22, 'P2'],
+                      [23, 'P2'], [24, 'P2'], [25, 'P2'], [26, 'P2'], [27,
+                      'P2'], [28, 'P2'], [29, 'P2']],paragraph_list)
+
+  def testGetParagraphItem(self):
+    """Test if manager can get a paragraph"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+
+    paragraph = self.proxy.getParagraphItem(data, 1, "odt")
+    self.assertEquals(['', 'P1'], paragraph)
+
+  def testGetChapterItemList(self):
+    """Test if manager can get the list of chapters list"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+
+    self.assertRaises(Fault, self.proxy.getChapterItemList, (data, "odt"))
+
+  def testGetChapterItem(self):
+    """Test if manager can get a chapter"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+
+    self.assertRaises(Fault, self.proxy.getChapterItem, ("id", data, "odt"))
 
 def test_suite():
   return make_suite(TestServer)
