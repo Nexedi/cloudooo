@@ -165,14 +165,6 @@ class TestServer(HandlerTestCase):
                           'odt',
                           'application/vnd.oasis.opendocument.text')
 
-  def testconvertDocToPdf(self):
-    """Test Convert Doc -> Pdf"""
-    self._testConvertFile("data/test.doc",
-                          join(self.tmp_url, "document_output.pdf"),
-                          'doc',
-                          'pdf',
-                          'application/pdf')
-
   def testgetFileMetadataItemListWithoutData(self):
     """Test server using method getFileMetadataItemList. Without data
     converted"""
