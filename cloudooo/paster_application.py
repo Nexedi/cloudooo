@@ -111,7 +111,14 @@ def application(global_config, **local_config):
                             openoffice_port, **kw)
   openoffice.release()
   kw["mimetype_registry"] = filter(None,
-                            local_config.get("mimetype_registry", "").split("\n"))
+                            local_config.get("mimetype_registry",
+                                                 "").split("\n"))
+  kw["handler_dict"] = {}
+  handler_mapping_list = local_config.get("handler_mapping", "").split("\n")
+  for line in filter(None, handler_mapping_list):
+    key, value = line.strip().split()
+    kw["handler_dict"][key] = value
+
   kw["env"] = environment_dict
   from manager import Manager
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)

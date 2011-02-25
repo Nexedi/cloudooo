@@ -44,7 +44,8 @@ from cloudooo.interfaces.handler import IHandler
 from types import TypeType
 
 
-def getHandlerObject(source_format, destination_format, mimetype_registry):
+def getHandlerObject(source_format, destination_format,
+                     mimetype_registry, handler_dict):
   """Select handler according to source_format and destination_format"""
   source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
   destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, "*")
@@ -52,17 +53,12 @@ def getHandlerObject(source_format, destination_format, mimetype_registry):
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
         (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
-      handler_name = "cloudooo.handler.%s.handler" % registry_list[2]
-      __import__(handler_name)
-      handler = sys.modules[handler_name]
-      # XXX - Ugly and slow way to find the Handler Object
-      for name in iter(dir(handler)):
-        if not name.endswith("Handler"):
-          continue
-        obj = getattr(handler, name)
-        if type(obj) == TypeType and IHandler.implementedBy(obj):
-          return obj
-  raise ValueError("No Handler Enabled for this conversion")
+      handler_name = registry_list[2]
+      import_name = "cloudooo.handler.%s.handler" % handler_name
+      if import_name not in sys.modules:
+        __import__(import_name)
+      handler = sys.modules[import_name]
+      return getattr(handler, handler_dict[registry_list[2]])
 
 
 class Manager(object):
@@ -75,6 +71,7 @@ class Manager(object):
     self._path_tmp_dir = path_tmp_dir
     self.kw = kw
     self.mimetype_registry = self.kw.pop("mimetype_registry")
+    self.handler_dict = self.kw.pop("handler_dict")
 
   def convertFile(self, file, source_format, destination_format, zip=False,
                   refresh=False):
@@ -90,7 +87,8 @@ class Manager(object):
     self.kw['refresh'] = refresh
     handler = getHandlerObject(source_format,
                                destination_format,
-                               self.mimetype_registry)
+                               self.mimetype_registry,
+                               self.handler_dict)
     document = handler(self._path_tmp_dir,
                        decodestring(file),
                        source_format,
@@ -108,7 +106,8 @@ class Manager(object):
     """
     handler = getHandlerObject(source_format,
                                None,
-                               self.mimetype_registry)
+                               self.mimetype_registry,
+                               self.handler_dict)
     document = handler(self._path_tmp_dir,
                        decodestring(file),
                        source_format,
@@ -134,7 +133,8 @@ class Manager(object):
     """
     handler = getHandlerObject(source_format,
                                None,
-                               self.mimetype_registry)
+                               self.mimetype_registry,
+                               self.handler_dict)
     document = handler(self._path_tmp_dir,
                        decodestring(file),
                        source_format,
