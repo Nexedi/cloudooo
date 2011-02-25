@@ -111,19 +111,17 @@ def application(global_config, **local_config):
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port, **kw)
   openoffice.release()
-  mimetype_registry_str = local_config.get("mimetype_registry")
+  mimetype_registry = local_config.get("mimetype_registry", "")
+  kw["mimetype_registry"] = filter(None, mimetype_registry.split("\n"))
   kw["handler_dict"] = {}
   handler_mapping_list = local_config.get("handler_mapping", "").split("\n")
   for line in filter(None, handler_mapping_list):
     handler_name, object_name = line.strip().split()
     import_name = "cloudooo.handler.%s.handler" % handler_name
-    mimetype_registry_str = mimetype_registry_str.replace(handler_name,
-                                                          import_name)
     if import_name not in sys.modules:
       __import__(import_name)
-    kw["handler_dict"][import_name] = object_name
-
-  kw["mimetype_registry"] = filter(None, mimetype_registry_str.split("\n"))
+    handler = sys.modules[import_name]
+    kw["handler_dict"][handler_name] = getattr(handler, object_name)
 
   kw["env"] = environment_dict
   from manager import Manager

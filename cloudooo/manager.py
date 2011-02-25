@@ -27,7 +27,6 @@
 #
 ##############################################################################
 
-import sys
 import mimetypes
 from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
@@ -52,9 +51,7 @@ def getHandlerObject(source_format, destination_format,
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
         (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
-      handler_name = registry_list[2]
-      handler = sys.modules[handler_name]
-      return getattr(handler, handler_dict[handler_name])
+      return handler_dict[registry_list[2]]
 
 
 class Manager(object):
