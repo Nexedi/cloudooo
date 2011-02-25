@@ -34,7 +34,6 @@ from cloudooo.manager import Manager
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 from cloudooo.handler.ooo.filter import Filter
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
-from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.interfaces.file import IFile, IOdfDocument
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.interfaces.manager import IManager

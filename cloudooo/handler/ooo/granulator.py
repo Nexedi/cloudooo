@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-from zope.interface import implements
 from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree

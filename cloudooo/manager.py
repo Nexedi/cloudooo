@@ -40,8 +40,6 @@ from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
-from cloudooo.interfaces.handler import IHandler
-from types import TypeType
 
 
 def getHandlerObject(source_format, destination_format,
