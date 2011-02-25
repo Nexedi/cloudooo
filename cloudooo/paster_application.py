@@ -30,6 +30,7 @@ import gc
 from signal import signal, SIGINT, SIGQUIT, SIGHUP
 from os import path, mkdir
 import os
+import sys
 import cloudooo.handler.ooo.monitor as monitor
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
@@ -110,14 +111,19 @@ def application(global_config, **local_config):
   mimemapper.loadFilterList(application_hostname,
                             openoffice_port, **kw)
   openoffice.release()
-  kw["mimetype_registry"] = filter(None,
-                            local_config.get("mimetype_registry",
-                                                 "").split("\n"))
+  mimetype_registry_str = local_config.get("mimetype_registry")
   kw["handler_dict"] = {}
   handler_mapping_list = local_config.get("handler_mapping", "").split("\n")
   for line in filter(None, handler_mapping_list):
-    key, value = line.strip().split()
-    kw["handler_dict"][key] = value
+    handler_name, object_name = line.strip().split()
+    import_name = "cloudooo.handler.%s.handler" % handler_name
+    mimetype_registry_str = mimetype_registry_str.replace(handler_name,
+                                                          import_name)
+    if import_name not in sys.modules:
+      __import__(import_name)
+    kw["handler_dict"][import_name] = object_name
+
+  kw["mimetype_registry"] = filter(None, mimetype_registry_str.split("\n"))
 
   kw["env"] = environment_dict
   from manager import Manager

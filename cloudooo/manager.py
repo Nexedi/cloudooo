@@ -47,16 +47,14 @@ def getHandlerObject(source_format, destination_format,
   """Select handler according to source_format and destination_format"""
   source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
   destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, "*")
+  # XXX - Find one way to don't need use iteration to find the handler
   for pattern in mimetype_registry:
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
         (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
       handler_name = registry_list[2]
-      import_name = "cloudooo.handler.%s.handler" % handler_name
-      if import_name not in sys.modules:
-        __import__(import_name)
-      handler = sys.modules[import_name]
-      return getattr(handler, handler_dict[registry_list[2]])
+      handler = sys.modules[handler_name]
+      return getattr(handler, handler_dict[handler_name])
 
 
 class Manager(object):
