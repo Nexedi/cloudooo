@@ -35,7 +35,8 @@ class TestFFMPEGHandler(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
-    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv")
+    kw = dict(env=dict(PATH=self.env_path))
+    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv", **kw)
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
