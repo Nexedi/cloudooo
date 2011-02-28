@@ -43,7 +43,7 @@ class TestServer(HandlerTestCase):
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
 
-  def testConvertPDFtoTxt(self):
+  def testConvertVideo(self):
     """Converts ogv video to mpeg format"""
     data = open(join('data', 'test.ogv'), 'r').read()
     video = self.proxy.convertFile(encodestring(data),

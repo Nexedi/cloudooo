@@ -38,13 +38,14 @@ class TestAllFormats(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
-    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv")
+    self.kw = dict(env=dict(PATH=self.env_path))
+    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv", **self.kw)
 
   def testAviFormat(self):
     """Test convert file to avi format the reverse convertion"""
     output_data = self.input.convert("avi")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "avi")
+    output = FFMPEGHandler(self.tmp_url, output_data, "avi", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'video/avi')
@@ -54,7 +55,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to mp4 format the reverse convertion"""
     output_data = self.input.convert("mp4")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "mp4")
+    output = FFMPEGHandler(self.tmp_url, output_data, "mp4", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'video/mp4')
@@ -64,7 +65,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to WebM format and the reverse convertion"""
     output_data = self.input.convert("webm")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "webm")
+    output = FFMPEGHandler(self.tmp_url, output_data, "webm", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'video/webm')
@@ -74,7 +75,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to flash format the reverse convertion"""
     output_data = self.input.convert("flv")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "flv")
+    output = FFMPEGHandler(self.tmp_url, output_data, "flv", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'application/x-shockwave-flash')
@@ -84,7 +85,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to Mpeg format the reverse convertion"""
     output_data = self.input.convert("mpeg")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "mpeg")
+    output = FFMPEGHandler(self.tmp_url, output_data, "mpeg", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'video/mpeg')
@@ -94,7 +95,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to matroska format the reverse convertion"""
     output_data = self.input.convert("mkv")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "mkv")
+    output = FFMPEGHandler(self.tmp_url, output_data, "mkv", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'video/x-matroska')
@@ -104,7 +105,7 @@ class TestAllFormats(HandlerTestCase):
     """Test convert file to ogg format the reverse convertion"""
     output_data = self.input.convert("ogg")
     output_format = file_detector.from_buffer(output_data)
-    output = FFMPEGHandler(self.tmp_url, output_data, "ogg")
+    output = FFMPEGHandler(self.tmp_url, output_data, "ogg", **self.kw)
     input_data = output.convert("ogv")
     input_format = file_detector.from_buffer(input_data)
     self.assertEquals(output_format, 'application/ogg')

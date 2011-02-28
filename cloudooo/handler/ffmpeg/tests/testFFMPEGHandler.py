@@ -40,10 +40,10 @@ class TestFFMPEGHandler(HandlerTestCase):
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
-    file_detector = magic.Magic()
-    output_data = self.input.convert("ogg")
+    file_detector = magic.Magic(mime=True)
+    output_data = self.input.convert("mpeg")
     file_format = file_detector.from_buffer(output_data)
-    self.assertEqual(file_format, 'Ogg data, Theora video')
+    self.assertEquals(file_format, 'video/mpeg')
 
   def testgetMetadata(self):
     """Test if metadata is extracted from"""
