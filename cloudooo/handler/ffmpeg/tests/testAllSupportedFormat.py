@@ -31,78 +31,76 @@ from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
-file_detector = Magic(mime=True)
-
-
-class TestAllSupportedFormats(HandlerTestCase):
+class TestAllSupportedFormat(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
     self.kw = dict(env=dict(PATH=self.env_path))
     self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv", **self.kw)
+    self.file_detector = Magic(mime=True)
 
-  def afterFormat(self, output_data):
-    output = FFMPEGHandler(self.tmp_url, output_data, "avi", **self.kw)
-    input_data = output.convert("ogv")
-    input_format = file_detector.from_buffer(input_data)
-    return input_format
+  def afterFormat(self, data):
+    ogv_file = FFMPEGHandler(self.tmp_url, data, "avi", **self.kw)
+    ogv_data = ogv_file.convert("ogv")
+    ogv_mimetype = self.file_detector.from_buffer(ogv_data)
+    return ogv_mimetype
 
   def testAviFormat(self):
     """Test convert file to avi format the reverse convertion"""
-    output_data = self.input.convert("avi")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'video/avi')
-    self.assertEquals(input_format, 'video/ogg')
+    avi_data = self.input.convert("avi")
+    avi_mimetype = self.file_detector.from_buffer(avi_data)
+    self.assertEquals(avi_mimetype, 'video/avi')
+    ogv_mimetype = self.afterFormat(avi_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testMp4Format(self):
     """Test convert file to mp4 format the reverse convertion"""
-    output_data = self.input.convert("mp4")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'video/mp4')
-    self.assertEquals(input_format, 'video/ogg')
+    mp4_data = self.input.convert("mp4")
+    mp4_mimetype = self.file_detector.from_buffer(mp4_data)
+    self.assertEquals(mp4_mimetype, 'video/mp4')
+    ogv_mimetype = self.afterFormat(mp4_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testWebMFormat(self):
     """Test convert file to WebM format and the reverse convertion"""
-    output_data = self.input.convert("webm")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'video/webm')
-    self.assertEquals(input_format, 'video/ogg')
+    webm_data = self.input.convert("webm")
+    webm_mimetype = self.file_detector.from_buffer(webm_data)
+    self.assertEquals(webm_mimetype, 'video/webm')
+    ogv_mimetype = self.afterFormat(webm_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testFlvFormat(self):
     """Test convert file to flash format the reverse convertion"""
-    output_data = self.input.convert("flv")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'application/x-shockwave-flash')
-    self.assertEquals(input_format, 'video/ogg')
+    flv_data = self.input.convert("flv")
+    flv_mimetype = self.file_detector.from_buffer(flv_data)
+    self.assertEquals(flv_mimetype, 'application/x-shockwave-flash')
+    ogv_mimetype = self.afterFormat(flv_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testMpegFormat(self):
     """Test convert file to Mpeg format the reverse convertion"""
-    output_data = self.input.convert("mpeg")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'video/mpeg')
-    self.assertEquals(input_format, 'video/ogg')
+    mpeg_data = self.input.convert("mpeg")
+    mpeg_mimetype = self.file_detector.from_buffer(mpeg_data)
+    self.assertEquals(mpeg_mimetype, 'video/mpeg')
+    ogv_mimetype = self.afterFormat(mpeg_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testMkvFormat(self):
     """Test convert file to matroska format the reverse convertion"""
-    output_data = self.input.convert("mkv")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'video/x-matroska')
-    self.assertEquals(input_format, 'video/ogg')
+    mkv_data = self.input.convert("mkv")
+    mkv_mimetype = self.file_detector.from_buffer(mkv_data)
+    self.assertEquals(mkv_mimetype, 'video/x-matroska')
+    ogv_mimetype = self.afterFormat(mkv_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
   def testOggFormat(self):
     """Test convert file to ogg format the reverse convertion"""
-    output_data = self.input.convert("ogg")
-    output_format = file_detector.from_buffer(output_data)
-    input_format = self.afterFormat(output_data)
-    self.assertEquals(output_format, 'application/ogg')
-    self.assertEquals(input_format, 'video/ogg')
+    ogg_data = self.input.convert("ogg")
+    ogg_mimetype = self.file_detector.from_buffer(ogg_data)
+    self.assertEquals(ogg_mimetype, 'application/ogg')
+    ogv_mimetype = self.afterFormat(ogg_data)
+    self.assertEquals(ogv_mimetype, 'video/ogg')
 
 
 def test_suite():
-  return make_suite(TestAllSupportedFormats)
+  return make_suite(TestAllSupportedFormat)
