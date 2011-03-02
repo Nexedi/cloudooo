@@ -589,9 +589,12 @@ class TestServer(HandlerTestCase):
 
   def testGetChapterItemList(self):
     """Test if manager can get the list of chapters list"""
-    data = encodestring(open("./data/granulate_test.odt").read())
-    self.assertRaises(Fault, self.proxy.getChapterItemList, (data, "odt"))
-
+    data = encodestring(open("./data/granulate_chapters_test.odt").read())
+    chapter_list = self.proxy.getChapterItemList(data, "odt")
+    self.assertEquals([[0, 'Title 0'], [1, 'Title 1'], [2, 'Title 2'],
+                       [3, 'Title 3'], [4, 'Title 4'], [5, 'Title 5'],
+                       [6, 'Title 6'], [7, 'Title 7'], [8, 'Title 8'],
+                       [9, 'Title 9'], [10, 'Title 10']] , chapter_list)
   def testGetChapterItem(self):
     """Test if manager can get a chapter"""
     data = encodestring(open("./data/granulate_test.odt").read())
