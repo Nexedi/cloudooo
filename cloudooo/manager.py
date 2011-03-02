@@ -347,9 +347,9 @@ class Manager(object):
   def getChapterItemList(self, data, source_format):
     """Returns the list of chapters in the form of (id, level)."""
     document = self._getOOGranulator(data, source_format)
-    return document.getChapterItemList(data)
+    return document.getChapterItemList()
 
   def getChapterItem(self, chapter_id, data, source_format):
     """Return the chapter in the form of (title, level)."""
     document = self._getOOGranulator(data, source_format)
-    return document.getChapterItem(data, chapter_id)
+    return document.getChapterItem(chapter_id)
