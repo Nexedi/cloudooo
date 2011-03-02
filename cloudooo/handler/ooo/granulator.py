@@ -46,7 +46,7 @@ RELEVANT_PARAGRAPH_XPATH_QUERY = '//text:p[not(ancestor::draw:frame)]'
 DRAW_XPATH_QUERY = './/draw:image'
 TABLE_XPATH_QUERY = './/table:table'
 IMAGE_TITLE_XPATH_QUERY = './/../../text() | .//../../*/text()'
-
+CHAPTER_XPATH_QUERY = '//text:p[@text:style-name="Title"]/text:span/text() | //text:h/text:span/text()'
 
 def getTemplatePath(format):
   """ Get the path of template file. This should goes to
@@ -216,9 +216,26 @@ class OOGranulator(object):
     p_class = paragraph.attrib[TEXT_ATTRIB_STYLENAME]
     return (text, p_class)
 
+  def _getChapterList(self):
+    """ This should use memcache or another cache infrastructure.
+    """
+    RELEVANT_CHAPTER_CACHE = getattr(self, "RELEVANT_CHAPTER_CACHE", None)
+    if RELEVANT_CHAPTER_CACHE is None:
+      relevant_chapter_list = self.document.parsed_content.xpath(
+                                 CHAPTER_XPATH_QUERY,
+                                 namespaces=self.document.parsed_content.nsmap)
+
+      setattr(self, "RELEVANT_CHAPTER_CACHE", relevant_chapter_list)
+    return self.RELEVANT_CHAPTER_CACHE
+
   def getChapterItemList(self):
     """Returns the list of chapters in the form of (id, level)."""
-    raise NotImplementedError
+    id = 0
+    chapter_list = []
+    for chapter in self._getChapterList():
+      chapter_list.append((id, chapter.encode('utf-8')))
+      id += 1
+    return chapter_list
 
   def getChapterItem(self, chapter_id):
     """Return the chapter in the form of (title, level)."""
