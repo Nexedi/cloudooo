@@ -219,14 +219,14 @@ class OOGranulator(object):
   def _getChapterList(self):
     """ This should use memcache or another cache infrastructure.
     """
-    RELEVANT_CHAPTER_CACHE = getattr(self, "RELEVANT_CHAPTER_CACHE", None)
-    if RELEVANT_CHAPTER_CACHE is None:
-      relevant_chapter_list = self.document.parsed_content.xpath(
+    CHAPTER_CACHE = getattr(self, "CHAPTER_CACHE", None)
+    if CHAPTER_CACHE is None:
+      chapter_list = self.document.parsed_content.xpath(
                                  CHAPTER_XPATH_QUERY,
                                  namespaces=self.document.parsed_content.nsmap)
 
-      setattr(self, "RELEVANT_CHAPTER_CACHE", relevant_chapter_list)
-    return self.RELEVANT_CHAPTER_CACHE
+      setattr(self, "CHAPTER_CACHE", chapter_list)
+    return self.CHAPTER_CACHE
 
   def getChapterItemList(self):
     """Returns the list of chapters in the form of (id, level)."""
@@ -239,7 +239,14 @@ class OOGranulator(object):
 
   def getChapterItem(self, chapter_id):
     """Return the chapter in the form of (title, level)."""
-    raise NotImplementedError
+    chapter_list = self._getChapterList()
+    try:
+      chapter = chapter_list[chapter_id].encode('utf-8')
+      return [chapter_id, chapter]
+    except IndexError:
+      msg = "Unable to find chapter %s at chapter list." % chapter_id
+      logger.error(msg)
+      return None
 
   def trash(self):
     """Remove the file in memory."""
