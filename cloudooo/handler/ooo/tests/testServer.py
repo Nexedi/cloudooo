@@ -595,11 +595,12 @@ class TestServer(HandlerTestCase):
                        [3, 'Title 3'], [4, 'Title 4'], [5, 'Title 5'],
                        [6, 'Title 6'], [7, 'Title 7'], [8, 'Title 8'],
                        [9, 'Title 9'], [10, 'Title 10']] , chapter_list)
+
   def testGetChapterItem(self):
     """Test if manager can get a chapter"""
-    data = encodestring(open("./data/granulate_test.odt").read())
-    self.assertRaises(Fault, self.proxy.getChapterItem, ("id", data, "odt"))
-
+    data = encodestring(open("./data/granulate_chapters_test.odt").read())
+    chapter = self.proxy.getChapterItem(1, data, "odt")
+    self.assertEquals([1, 'Title 1'], chapter)
 
 def test_suite():
   return make_suite(TestServer)
