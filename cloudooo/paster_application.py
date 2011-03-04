@@ -113,16 +113,15 @@ def application(global_config, **local_config):
   openoffice.release()
   mimetype_registry = local_config.get("mimetype_registry", "")
   kw["mimetype_registry"] = filter(None, mimetype_registry.split("\n"))
-  kw["handler_dict"] = {}
-  handler_mapping_list = local_config.get("handler_mapping", "").split("\n")
-  for line in filter(None, handler_mapping_list):
-    handler_name, object_name = line.strip().split()
-    import_name = "cloudooo.handler.%s.handler" % handler_name
-    if import_name not in sys.modules:
-      __import__(import_name)
-    handler = sys.modules[import_name]
-    kw["handler_dict"][handler_name] = getattr(handler, object_name)
-
+  handler_dict = {}
+  handler_mapping_list = mimetype_registry.split("\n")
+  for line in handler_mapping_list:
+    input_mimetype, output_mimetype, handler = line.strip().split()
+    if handler not in handler_dict:
+      import_path = "cloudooo.handler.%s.handler" % handler
+      module = __import__(import_path, globals(), locals(), [''])
+      handler_dict[handler] = module.Handler
+  kw['handler_dict'] = handler_dict
   kw["env"] = environment_dict
   from manager import Manager
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
