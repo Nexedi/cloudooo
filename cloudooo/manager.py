@@ -46,7 +46,6 @@ def getHandlerObject(source_format, destination_format,
   """Select handler according to source_format and destination_format"""
   source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
   destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, "*")
-  # XXX - Find one way to don't need use iteration to find the handler
   for pattern in mimetype_registry:
     registry_list = pattern.split()
     if fnmatch(source_mimetype, registry_list[0]) and \
@@ -192,6 +191,7 @@ class Manager(object):
       del response_dict['meta']['Data']
       return (200, response_dict, "")
     except Exception, e:
+      import traceback; traceback.print_exc()
       logger.error(e)
       return (402, {}, e.args[0])
 
