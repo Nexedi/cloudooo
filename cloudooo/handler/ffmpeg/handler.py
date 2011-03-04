@@ -33,8 +33,8 @@ from subprocess import Popen, PIPE
 from tempfile import mktemp
 
 
-class FFMPEGHandler(object):
-  """FFMPEGHandler is used to handler inputed video files"""
+class Handler(object):
+  """FFMPEG Handler is used to handler inputed video files"""
 
   implements(IHandler)
 

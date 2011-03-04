@@ -28,11 +28,11 @@
 
 
 import magic
-from cloudooo.handler.imagemagick.handler import ImageMagickHandler
+from cloudooo.handler.imagemagick.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
-class TestImageMagickHandler(HandlerTestCase):
+class TestHandler(HandlerTestCase):
 
   def afterSetUp(self):
     self.kw = dict(env=dict(PATH=self.env_path))
@@ -40,7 +40,7 @@ class TestImageMagickHandler(HandlerTestCase):
   def testConvertPNGtoJPG(self):
     """Test conversion of png to jpg"""
     png_file = open("data/test.png").read()
-    handler = ImageMagickHandler(self.tmp_url, png_file, "png", **self.kw)
+    handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     jpg_file = handler.convert("jpg")
     mime = magic.Magic(mime=True)
     jpg_mimetype = mime.from_buffer(jpg_file)
@@ -49,7 +49,7 @@ class TestImageMagickHandler(HandlerTestCase):
   def testgetMetadataFromImage(self):
     """Test if metadata is extracted from image correctly"""
     png_file = open("data/test.png").read()
-    handler = ImageMagickHandler(self.tmp_url, png_file, "png", **self.kw)
+    handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get("Compression"), "Zip")
     self.assertEquals(metadata.get("Colorspace"), "RGB")
@@ -57,9 +57,9 @@ class TestImageMagickHandler(HandlerTestCase):
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    handler = ImageMagickHandler(self.tmp_url, "", "png", **self.kw)
+    handler = Handler(self.tmp_url, "", "png", **self.kw)
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
 
 def test_suite():
-  return make_suite(TestImageMagickHandler)
+  return make_suite(TestHandler)

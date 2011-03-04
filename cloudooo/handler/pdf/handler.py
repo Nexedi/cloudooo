@@ -33,8 +33,8 @@ from subprocess import Popen, PIPE
 from tempfile import mktemp
 
 
-class PDFHandler(object):
-  """PDFHandler is used to handler inputed pdf document."""
+class Handler(object):
+  """PDF Handler is used to handler inputed pdf document."""
 
   implements(IHandler)
 

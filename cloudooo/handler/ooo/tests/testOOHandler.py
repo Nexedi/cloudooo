@@ -30,7 +30,7 @@ import magic
 from os import path
 from base64 import encodestring, decodestring
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
-from cloudooo.handler.ooo.handler import OOHandler
+from cloudooo.handler.ooo.handler import Handler
 from cloudooo.handler.ooo.application.openoffice import openoffice
 import os
 from lxml import etree
@@ -39,8 +39,8 @@ from zipfile import ZipFile
 OPENOFFICE = True
 
 
-class TestOOHandler(HandlerTestCase):
-  """Test OOHandler and manipulation of OOo Instance"""
+class TestHandler(HandlerTestCase):
+  """Test OOO Handler and manipulation of OOo Instance"""
 
   _file_path_list = []
 
@@ -69,7 +69,7 @@ class TestOOHandler(HandlerTestCase):
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""
     data = encodestring(open("data/test.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
     doc_exported = handler.convert("doc")
@@ -78,7 +78,7 @@ class TestOOHandler(HandlerTestCase):
   def testConvertDocToOdt(self):
     """Test convert DOC to ODT"""
     data = encodestring(open("data/test.doc").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'doc')
     doc_exported = handler.convert("odt")
@@ -88,7 +88,7 @@ class TestOOHandler(HandlerTestCase):
   def testGetMetadata(self):
     """Test getMetadata"""
     data = encodestring(open("data/test.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
     metadata = handler.getMetadata()
@@ -101,20 +101,20 @@ class TestOOHandler(HandlerTestCase):
   def testSetMetadata(self):
     """Test setMetadata"""
     data = encodestring(open("data/test.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
-    new_handler = OOHandler(self.tmp_url,
+    new_handler = Handler(self.tmp_url,
                             new_data,
                             'odt')
     metadata = new_handler.getMetadata()
     self.assertEquals(metadata.get('Title'), "cloudooo Test -")
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
     new_data = handler.setMetadata({"Title": "Namie's working record"})
-    new_handler = OOHandler(self.tmp_url,
+    new_handler = Handler(self.tmp_url,
                             new_data,
                             'odt')
     metadata = new_handler.getMetadata()
@@ -124,7 +124,7 @@ class TestOOHandler(HandlerTestCase):
     """Test convert with openoffice stopped"""
     openoffice.stop()
     data = encodestring(open("data/test.doc").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'doc')
     doc_exported = handler.convert("odt")
@@ -135,7 +135,7 @@ class TestOOHandler(HandlerTestCase):
     """Test getMetadata with openoffice stopped"""
     openoffice.stop()
     data = encodestring(open("data/test.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
     metadata = handler.getMetadata()
@@ -147,11 +147,11 @@ class TestOOHandler(HandlerTestCase):
     """Test setMetadata with openoffice stopped"""
     openoffice.stop()
     data = encodestring(open("data/test.doc").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'doc')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
-    new_handler = OOHandler(self.tmp_url,
+    new_handler = Handler(self.tmp_url,
                             new_data,
                             'doc')
     metadata = new_handler.getMetadata()
@@ -161,7 +161,7 @@ class TestOOHandler(HandlerTestCase):
     """Test refresh argument"""
     # Check when refreshing is disabled
     data = encodestring(open("data/test_fields.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt',
                         refresh=False)
@@ -175,7 +175,7 @@ class TestOOHandler(HandlerTestCase):
 
     # Check when refreshing is enabled
     data = encodestring(open("data/test_fields.odt").read())
-    handler = OOHandler(self.tmp_url,
+    handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt',
                         refresh=True)
@@ -189,4 +189,4 @@ class TestOOHandler(HandlerTestCase):
 
 
 def test_suite():
-  return make_suite(TestOOHandler)
+  return make_suite(TestHandler)

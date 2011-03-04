@@ -27,12 +27,12 @@
 ##############################################################################
 
 
-from cloudooo.handler.pdf.handler import PDFHandler
+from cloudooo.handler.pdf.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from types import DictType
 
 
-class TestPDFHandler(HandlerTestCase):
+class TestHandler(HandlerTestCase):
 
   def afterSetUp(self):
     self.kw = dict(env=dict(PATH=self.env_path))
@@ -40,14 +40,14 @@ class TestPDFHandler(HandlerTestCase):
   def testConvertPDFtoText(self):
     """Test conversion of pdf to txt"""
     pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
+    handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     txt_document = handler.convert("txt")
     self.assertTrue(txt_document.startswith("UNG Docs Architecture"))
 
   def testgetMetadata(self):
     """Test if the metadata are extracted correctly"""
     pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
+    handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
     self.assertEquals(type(metadata), DictType)
     self.assertNotEquals(metadata, {})
@@ -56,14 +56,14 @@ class TestPDFHandler(HandlerTestCase):
   def testsetMetadata(self):
     """Test if the metadata is inserted correctly"""
     pdf_document = open("data/test.pdf").read()
-    handler = PDFHandler(self.tmp_url, pdf_document, "pdf", **self.kw)
+    handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata_dict = {"title": "Set Metadata Test", "creator": "gabriel\'@"}
     new_document = handler.setMetadata(metadata_dict)
-    handler = PDFHandler(self.tmp_url, new_document, "pdf", **self.kw)
+    handler = Handler(self.tmp_url, new_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
     self.assertEquals(metadata["title"], 'Set Metadata Test')
     self.assertEquals(metadata['creator'], 'gabriel\'@')
 
 
 def test_suite():
-  return make_suite(TestPDFHandler)
+  return make_suite(TestHandler)

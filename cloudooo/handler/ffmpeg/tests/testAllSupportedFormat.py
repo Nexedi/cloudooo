@@ -27,7 +27,7 @@
 ##############################################################################
 
 from magic import Magic
-from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.ffmpeg.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
@@ -36,11 +36,11 @@ class TestAllSupportedFormat(HandlerTestCase):
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
     self.kw = dict(env=dict(PATH=self.env_path))
-    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv", **self.kw)
+    self.input = Handler(self.tmp_url, self.data, "ogv", **self.kw)
     self.file_detector = Magic(mime=True)
 
   def afterFormat(self, data):
-    ogv_file = FFMPEGHandler(self.tmp_url, data, "avi", **self.kw)
+    ogv_file = Handler(self.tmp_url, data, "avi", **self.kw)
     ogv_data = ogv_file.convert("ogv")
     ogv_mimetype = self.file_detector.from_buffer(ogv_data)
     return ogv_mimetype

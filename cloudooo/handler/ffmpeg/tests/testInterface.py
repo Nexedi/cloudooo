@@ -28,7 +28,7 @@
 
 import unittest
 from cloudooo.interfaces.handler import IHandler
-from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.ffmpeg.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import make_suite
 
 
@@ -37,8 +37,8 @@ class TestInterface(unittest.TestCase):
 
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
-    # XXX this might verify FFMPEGHandler methods too
-    self.assertTrue(IHandler.implementedBy(FFMPEGHandler))
+    # XXX this might verify Handler methods too
+    self.assertTrue(IHandler.implementedBy(Handler))
 
 
 def test_suite():

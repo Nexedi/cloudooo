@@ -28,7 +28,7 @@
 
 import unittest
 from cloudooo.handler.ooo.document import FileSystemDocument, OdfDocument
-from cloudooo.handler.ooo.handler import OOHandler
+from cloudooo.handler.ooo.handler import Handler
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
 from cloudooo.manager import Manager
 from cloudooo.handler.ooo.mimemapper import MimeMapper
@@ -142,7 +142,7 @@ class TestInterface(unittest.TestCase):
 
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
-    self.assertTrue(IHandler.implementedBy(OOHandler))
+    self.assertTrue(IHandler.implementedBy(Handler))
     method_list = ['convert', 'getMetadata', 'setMetadata']
     for method in method_list:
       self.assertTrue(method in IHandler.names(),

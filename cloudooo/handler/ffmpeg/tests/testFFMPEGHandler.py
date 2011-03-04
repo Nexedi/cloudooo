@@ -27,16 +27,16 @@
 ##############################################################################
 
 import magic
-from cloudooo.handler.ffmpeg.handler import FFMPEGHandler
+from cloudooo.handler.ffmpeg.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
-class TestFFMPEGHandler(HandlerTestCase):
+class TestHandler(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
     kw = dict(env=dict(PATH=self.env_path))
-    self.input = FFMPEGHandler(self.tmp_url, self.data, "ogv", **kw)
+    self.input = Handler(self.tmp_url, self.data, "ogv", **kw)
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
@@ -55,4 +55,4 @@ class TestFFMPEGHandler(HandlerTestCase):
 
 
 def test_suite():
-  return make_suite(TestFFMPEGHandler)
+  return make_suite(TestHandler)

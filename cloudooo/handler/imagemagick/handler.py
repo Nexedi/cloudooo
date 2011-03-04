@@ -34,8 +34,8 @@ from subprocess import Popen, PIPE
 from tempfile import mktemp
 
 
-class ImageMagickHandler(object):
-  """ImageMagicHandler is used to handler images."""
+class Handler(object):
+  """ImageMagic Handler is used to handler images."""
 
   implements(IHandler)
 
