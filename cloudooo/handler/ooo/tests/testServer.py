@@ -570,7 +570,7 @@ class TestServer(HandlerTestCase):
     self.assertEquals(original_image, geted_image)
 
   def testGetParagraphItemList(self):
-    """Test if manager can get the list of paragraphs items"""
+    """Test if paragraphs are extracted correctly from document"""
     data = encodestring(open("./data/granulate_test.odt").read())
     paragraph_list = self.proxy.getParagraphItemList(data, "odt")
     self.assertEquals([[0, 'P3'], [1, 'P1'], [2, 'P12'], [3, 'P6'], [4, 'P7'],
@@ -588,7 +588,7 @@ class TestServer(HandlerTestCase):
     self.assertEquals(['', 'P1'], paragraph)
 
   def testGetChapterItemList(self):
-    """Test if manager can get the list of chapters list"""
+    """Test if the chapters list is extracted correctly from document"""
     data = encodestring(open("./data/granulate_chapters_test.odt").read())
     chapter_list = self.proxy.getChapterItemList(data, "odt")
     self.assertEquals([[0, 'Title 0'], [1, 'Title 1'], [2, 'Title 2'],
