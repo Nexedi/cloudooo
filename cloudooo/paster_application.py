@@ -116,6 +116,8 @@ def application(global_config, **local_config):
   handler_dict = {}
   handler_mapping_list = mimetype_registry.split("\n")
   for line in handler_mapping_list:
+    if not line:
+      continue
     input_mimetype, output_mimetype, handler = line.strip().split()
     if handler not in handler_dict:
       import_path = "cloudooo.handler.%s.handler" % handler
