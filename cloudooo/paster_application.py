@@ -112,12 +112,10 @@ def application(global_config, **local_config):
                             openoffice_port, **kw)
   openoffice.release()
   mimetype_registry = local_config.get("mimetype_registry", "")
-  kw["mimetype_registry"] = filter(None, mimetype_registry.split("\n"))
+  kw["mimetype_registry"] = handler_mapping_list = \
+                                    filter(None, mimetype_registry.split("\n"))
   handler_dict = {}
-  handler_mapping_list = mimetype_registry.split("\n")
   for line in handler_mapping_list:
-    if not line:
-      continue
     input_mimetype, output_mimetype, handler = line.strip().split()
     if handler not in handler_dict:
       import_path = "cloudooo.handler.%s.handler" % handler
