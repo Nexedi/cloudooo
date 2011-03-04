@@ -40,6 +40,8 @@ from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
 
+class HandlerNotFound(Exception):
+  pass
 
 def getHandlerObject(source_format, destination_format,
                      mimetype_registry, handler_dict):
@@ -51,6 +53,8 @@ def getHandlerObject(source_format, destination_format,
     if fnmatch(source_mimetype, registry_list[0]) and \
         (fnmatch(destination_mimetype, registry_list[1]) or destination_format is None):
       return handler_dict[registry_list[2]]
+  raise HandlerNotFound('No Handler found for %r=>%r' % (source_format,
+                                                         destination_format))
 
 
 class Manager(object):
