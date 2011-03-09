@@ -57,9 +57,9 @@ class TestMonitorMemory(unittest.TestCase):
       self.monitor.terminate()
 
   def testMonitorWithHugeMemoryLimit(self):
-    """Test the monitor with limit of 1Gb to the OpenOffice process"""
+    """Test the monitor with limit of 400Mb to the OpenOffice process"""
     try:
-      self.monitor = MonitorMemory(openoffice, 1, 1000)
+      self.monitor = MonitorMemory(openoffice, 1, 400)
       self.monitor.start()
       sleep(6)
       self.assertTrue(openoffice.status())
@@ -80,7 +80,7 @@ class TestMonitorMemory(unittest.TestCase):
   def testMonitorWithOpenOfficeStopped(self):
     """Tests if the monitor continues to run even with openoffice stopped"""
     openoffice.stop()
-    self.monitor = MonitorMemory(openoffice, 2, 1000)
+    self.monitor = MonitorMemory(openoffice, 2, 400)
     self.monitor.start()
     try:
       sleep(self.interval)
@@ -90,14 +90,14 @@ class TestMonitorMemory(unittest.TestCase):
 
   def testCreateProcess(self):
     """Test if the psutil.Process is create correctly"""
-    self.monitor = MonitorMemory(openoffice, 2, 1000)
+    self.monitor = MonitorMemory(openoffice, 2, 400)
     self.monitor.create_process()
     self.assertTrue(hasattr(self.monitor, 'process'))
     self.assertEquals(type(self.monitor.process), Process)
 
   def testGetMemoryUsage(self):
     """Test memory usage"""
-    self.monitor = MonitorMemory(openoffice, 2, 1000)
+    self.monitor = MonitorMemory(openoffice, 2, 400)
     openoffice.stop()
     memory_usage_int = self.monitor.get_memory_usage()
     self.assertEquals(memory_usage_int, 0)
