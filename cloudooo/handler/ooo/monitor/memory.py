@@ -52,7 +52,7 @@ class MonitorMemory(Monitor, Process):
       if not hasattr(self, 'process') or \
           self.process.pid != int(self.openoffice.pid()):
         self.create_process()
-      return sum(self.process.get_memory_info()) / (1024 * 1024)
+      return self.process.get_memory_info().rss / (1024 * 1024)
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0
