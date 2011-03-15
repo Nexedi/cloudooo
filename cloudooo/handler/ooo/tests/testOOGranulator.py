@@ -160,13 +160,19 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItemList)
+    data = open('./data/granulate_chapters_test.odt').read()
+    oogranulator = OOGranulator(data, 'odt')
+    self.assertEquals([(0, 'Title 0'), (1, 'Title 1'), (2, 'Title 2'),
+                       (3, 'Title 3'), (4, 'Title 4'), (5, 'Title 5'),
+                       (6, 'Title 6'), (7, 'Title 7'), (8, 'Title 8'),
+                       (9, 'Title 9'), (10, 'Title 10')],
+                                          oogranulator.getChapterItemList())
 
   def testGetChapterItem(self):
     """Test if getChapterItem() returns the right chapter"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getChapterItem,
-                                     'chapter_id')
-
+    data = open("./data/granulate_chapters_test.odt").read()
+    oogranulator = OOGranulator(data, 'odt')
+    self.assertEquals(['Title 1', 1], oogranulator.getChapterItem(1))
 
 def test_suite():
   return make_suite(TestOOGranulator)
