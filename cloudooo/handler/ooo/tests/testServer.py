@@ -600,7 +600,7 @@ class TestServer(HandlerTestCase):
     """Test if manager can get a chapter"""
     data = encodestring(open("./data/granulate_chapters_test.odt").read())
     chapter = self.proxy.getChapterItem(1, data, "odt")
-    self.assertEquals([1, 'Title 1'], chapter)
+    self.assertEquals(['Title 1', 1], chapter)
 
 def test_suite():
   return make_suite(TestServer)
