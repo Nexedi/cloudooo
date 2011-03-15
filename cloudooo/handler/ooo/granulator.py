@@ -242,7 +242,7 @@ class OOGranulator(object):
     chapter_list = self._getChapterList()
     try:
       chapter = chapter_list[chapter_id].encode('utf-8')
-      return [chapter_id, chapter]
+      return [chapter, chapter_id]
     except IndexError:
       msg = "Unable to find chapter %s at chapter list." % chapter_id
       logger.error(msg)
