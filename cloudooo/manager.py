@@ -306,15 +306,10 @@ class Manager(object):
     document = self._getOOGranulator(data, source_format)
     return document.getTableItemList()
 
-  def getTableItem(self, data, id, source_format="odt"):
+  def getTable(self, data, id, source_format="odt"):
     """Returns the table into a new 'format' file."""
     document = self._getOOGranulator(data, source_format)
-    return encodestring(document.getTableItem(id, source_format))
-
-  def getTableMatrix(self, data, table_id, source_format):
-    """Returns the table as a matrix."""
-    document = self._getOOGranulator(data, source_format)
-    return document.getTableMatrix(table_id)
+    return encodestring(document.getTable(id, source_format))
 
   def getColumnItemList(self, data, table_id, source_format):
     """Return the list of columns in the form of (id, title)."""
@@ -343,10 +338,10 @@ class Manager(object):
     document = self._getOOGranulator(data, source_format)
     return document.getParagraphItemList()
 
-  def getParagraphItem(self, data, paragraph_id, source_format):
+  def getParagraph(self, data, paragraph_id, source_format):
     """Returns the paragraph in the form of (text, class)."""
     document = self._getOOGranulator(data, source_format)
-    return document.getParagraphItem(paragraph_id)
+    return document.getParagraph(paragraph_id)
 
   def getChapterItemList(self, data, source_format):
     """Returns the list of chapters in the form of (id, level)."""

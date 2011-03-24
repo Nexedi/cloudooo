@@ -35,11 +35,8 @@ class ITableGranulator(Interface):
   def getTableItemList(data, source_format):
     """Returns the list of table IDs in the form of (id, title)."""
 
-  def getTableItem(data, format, table_id, source_format):
+  def getTable(data, table_id, source_format):
     """Returns the table into a new 'format' file."""
-
-  def getTableMatrix(self, table_id, source_format):
-    """Returns the table as a matrix."""
 
   def getColumnItemList(data, table_id, source_format):
     """Return the list of columns in the form of (id, title)."""
@@ -66,7 +63,7 @@ class ITextGranulator(Interface):
     """Returns the list of paragraphs in the form of (id, class) where class
     may have special meaning to define TOC/TOI."""
 
-  def getParagraphItem(data, paragraph_id, source_format):
+  def getParagraph(data, paragraph_id, source_format):
     """Returns the paragraph in the form of (text, class)."""
 
   def getChapterItemList(data, source_format):

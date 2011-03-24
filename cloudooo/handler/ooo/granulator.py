@@ -88,7 +88,7 @@ class OOGranulator(object):
       table_list.append((id, title))
     return table_list
 
-  def getTableItem(self, id, format='odt'):
+  def getTable(self, id, format='odt'):
     """Returns the table into a new 'format' file."""
     try:
       template_path = getTemplatePath(format)
@@ -196,7 +196,7 @@ class OOGranulator(object):
       id += 1
     return paragraph_list
 
-  def getParagraphItem(self, paragraph_id):
+  def getParagraph(self, paragraph_id):
     """Returns the paragraph in the form of (text, class)."""
     relevant_paragraph_list = self._getRelevantParagraphList()
     try:

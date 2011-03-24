@@ -512,12 +512,12 @@ class TestServer(HandlerTestCase):
     granulated_table = self.proxy.getTableItemList(data, "odt")
     self.assertEquals(table_list, granulated_table)
 
-  def testGetTableItem(self):
+  def testGetTable(self):
     """Test if manager can get a item of some granulated table"""
     data = encodestring(open("./data/granulate_table_test.odt").read())
     granulated_table = self.proxy.getTableItemList(data, "odt")
-    table_item = decodestring(self.proxy.getTableItem(data,
-                              granulated_table[1][0], "odt"))
+    table_item = decodestring(self.proxy.getTable(data, granulated_table[1][0],
+                                                      "odt"))
     content_xml_str = ZipFile(StringIO(table_item)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
@@ -526,16 +526,6 @@ class TestServer(HandlerTestCase):
     table = table_list[0]
     name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
     self.assertEquals(granulated_table[1][0], table.attrib[name_key])
-
-  def testGetTableMatrix(self):
-    """Test if manager can get the matrix of some granulated table"""
-    matrix = [['Product', 'Price'],
-             ['Pizza', 'R$ 25,00'],
-             ['Petit Gateau', 'R$ 10,00'],
-             ['Feijoada', 'R$ 30,00']]
-    data = encodestring(open("./data/granulate_table_test.odt").read())
-    matrix_table = self.proxy.getTableMatrix(data, "Prices", "odt")
-    self.assertEquals(matrix, matrix_table)
 
   def testGetColumnItemList(self):
     """Test if manager can get the list of column item"""
@@ -584,7 +574,7 @@ class TestServer(HandlerTestCase):
   def testGetParagraphItem(self):
     """Test if manager can get a paragraph"""
     data = encodestring(open("./data/granulate_test.odt").read())
-    paragraph = self.proxy.getParagraphItem(data, 1, "odt")
+    paragraph = self.proxy.getParagraph(data, 1, "odt")
     self.assertEquals(['', 'P1'], paragraph)
 
   def testGetChapterItemList(self):
