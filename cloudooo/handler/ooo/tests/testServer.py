@@ -530,12 +530,17 @@ class TestServer(HandlerTestCase):
   def testGetColumnItemList(self):
     """Test if manager can get the list of column item"""
     data = encodestring(open("./data/granulate_table_test.odt").read())
-    self.assertRaises(Fault, self.proxy.getColumnItemList, (data, "id", "odt"))
+    columns = self.proxy.getColumnItemList(data, "SoccerTeams", "odt")
+    self.assertEquals([[0, 'Name'], [1, 'Country']], columns)
 
   def testGetLineItemList(self):
     """Test if manager can get the list of lines items"""
-    data = encodestring(open("./data/granulate_test.odt").read())
-    self.assertRaises(Fault, self.proxy.getLineItemList, (data, "id", "odt"))
+    data = encodestring(open("./data/granulate_table_test.odt").read())
+    line_item_list = self.proxy.getLineItemList(data, "Developers", "odt")
+    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
+                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
+                       ['Phone', '+55 (22) 9999-9999'],
+                       ['Email', 'rafael@tiolive.com']], line_item_list)
 
   def testGetImageItemList(self):
     """Test if manager can get the list of images items"""
