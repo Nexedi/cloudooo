@@ -138,22 +138,37 @@ class OOGranulator(object):
 
   def getColumnItemList(self, table_id):
     """Return the list of columns in the form of (id, title)."""
-    raise NotImplementedError
+    row_list = self.document.parsed_content.xpath(
+                 '//table:table[@table:name="%s"]/table:table-row' % table_id,
+                 namespaces=self.document.parsed_content.nsmap)
+
+    if len(row_list) == 0:
+      return None
+    id = 0
+    columns = []
+    for cell in row_list[0].iterchildren():
+      columns.append([id,''.join(cell.itertext())])
+      id+=1
+    return columns
 
   def getLineItemList(self, table_id):
     """Returns the lines of a given table as (key, value) pairs."""
     row_list = self.document.parsed_content.xpath(
                  '//table:table[@table:name="%s"]/table:table-row' % table_id,
                  namespaces=self.document.parsed_content.nsmap)
+
     if len(row_list) == 0:
       return None
 
     matrix = []
-    for row in row_list:
-      matrix_row = []
-      for cell in row.iterchildren():
-        matrix_row.append(''.join(cell.itertext()))
-      matrix.append(matrix_row)
+    fields = []
+    for cell_key in row_list[0].iterchildren():
+      fields.append(''.join(cell_key.itertext()))
+    for row_values in row_list[1::]:
+      for cell in row_values.iterchildren():
+        matrix.append([fields[0], ''.join(cell.itertext())])
+        fields+=[fields[0]]
+        fields.remove(fields[0])
     return matrix
 
   def getImageItemList(self):
