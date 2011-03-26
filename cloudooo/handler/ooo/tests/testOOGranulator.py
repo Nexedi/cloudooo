@@ -61,11 +61,11 @@ class TestOOGranulator(HandlerTestCase):
                   ('SoccerTeams', 'Tabela 2: Soccer Teams')]
     self.assertEquals(table_list, oogranulator.getTableItemList())
 
-  def testGetTableItem(self):
-    """Test if getTableItem() returns on odf file with the right table"""
+  def testGetTable(self):
+    """Test if getTable() returns on odf file with the right table"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
-    table_data_doc = oogranulator.getTableItem('Developers')
+    table_data_doc = oogranulator.getTable('Developers')
     content_xml_str = ZipFile(StringIO(table_data_doc)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
@@ -76,10 +76,10 @@ class TestOOGranulator(HandlerTestCase):
     self.assertEquals('Developers', table.attrib[name_key])
 
   def testGetTableItemWithoutSuccess(self):
-    """Test if getTableItem() returns None for an non existent table name"""
+    """Test if getTable() returns None for an non existent table name"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
-    table_data = oogranulator.getTableItem('NonExistentTable')
+    table_data = oogranulator.getTable('NonExistentTable')
     self.assertEquals(table_data, None)
 
   def testGetColumnItemList(self):
@@ -147,16 +147,16 @@ class TestOOGranulator(HandlerTestCase):
   def testGetParagraphItemSuccessfully(self):
     """Test if getParagraphItem() returns the right paragraph"""
     self.assertEquals(('Some images without title', 'P13'),
-                      self.oogranulator.getParagraphItem(8))
+                      self.oogranulator.getParagraph(8))
 
-    big_paragraph = self.oogranulator.getParagraphItem(5)
+    big_paragraph = self.oogranulator.getParagraph(5)
     self.assertEquals('P8', big_paragraph[1])
     self.assertTrue(big_paragraph[0].startswith(u'A prática cotidiana prova'))
     self.assertTrue(big_paragraph[0].endswith(u'corresponde às necessidades.'))
 
   def testGetParagraphItemWithoutSuccess(self):
     """Test if getParagraphItem() returns None for not existent id"""
-    self.assertEquals(None, self.oogranulator.getParagraphItem(200))
+    self.assertEquals(None, self.oogranulator.getParagraph(200))
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
