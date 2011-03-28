@@ -51,9 +51,10 @@ def run(handler_name):
   python_extension = '.py'
   if test_name[-3:] == python_extension:
     test_name = test_name[:-3]
-  if not path.exists(path.join(environment_path,
-                               '%s%s' % (test_name, python_extension))):
-    exit("%s not exists\n" % test_name)
+  full_path = path.join(environment_path, '%s%s' % (test_name,
+                                                    python_extension))
+  if not path.exists(full_path):
+    exit("%s does not exists\n" % full_path)
 
   from cloudooo.handler.tests.handlerTestCase import startFakeEnvironment
   from cloudooo.handler.tests.handlerTestCase import stopFakeEnvironment
