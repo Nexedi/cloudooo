@@ -55,17 +55,16 @@ class TestInterface(unittest.TestCase):
     """Test if Manager implements ITableGranulator"""
     self.assertTrue(ITableGranulator.implementedBy(Manager))
     method_list = ['getLineItemList',
-                   'getTableItem',
+                   'getTable',
                    'getTableItemList',
-                   'getColumnItemList',
-                   'getTableMatrix']
+                   'getColumnItemList']
     self.assertEquals(sorted(ITableGranulator.names()), sorted(method_list))
 
   def testITextGranulator(self):
     """Test if Manager implements ITextGranulator"""
     self.assertTrue(ITextGranulator.implementedBy(Manager))
     method_list = ['getChapterItemList',
-                   'getParagraphItem',
+                   'getParagraph',
                    'getChapterItem',
                    'getParagraphItemList']
     self.assertEquals(ITextGranulator.names(), method_list)
