@@ -182,12 +182,9 @@ class Manager(object):
       extension = filename.split('.')[-1]
     try:
       response_dict = {}
-      response_dict['meta'] = self.getFileMetadataItemList(data,
-                                                           extension,
-                                                           True)
-      mimetype = self.getFileMetadataItemList(response_dict['meta']['Data'],
-                                              extension)['MIMEType']
-      response_dict['meta']['MIMEType'] = mimetype
+      metadata_dict = self.getFileMetadataItemList(data, extension,
+                                                   base_document=True)
+      response_dict['meta'] = metadata_dict
       # XXX - Backward compatibility: Previous API expects 'mime' now we
       # use 'MIMEType'
       response_dict['meta']['mime'] = response_dict['meta']['MIMEType']
