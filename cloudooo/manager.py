@@ -43,9 +43,10 @@ from fnmatch import fnmatch
 class HandlerNotFound(Exception):
   pass
 
-def getHandlerObject(source_format, destination_format,
-                     mimetype_registry, handler_dict):
-  """Select handler according to source_format and destination_format"""
+def getHandlerClass(source_format, destination_format, mimetype_registry,
+                    handler_dict):
+  """Select handler according to source_format and destination_format
+  """
   source_mimetype = mimetypes.types_map.get('.%s' % source_format, "*")
   destination_mimetype = mimetypes.types_map.get('.%s' % destination_format, "*")
   for pattern in mimetype_registry:
@@ -81,15 +82,15 @@ class Manager(object):
     """
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
-    handler = getHandlerObject(source_format,
-                               destination_format,
-                               self.mimetype_registry,
-                               self.handler_dict)
-    document = handler(self._path_tmp_dir,
-                       decodestring(file),
-                       source_format,
-                       **self.kw)
-    decode_data = document.convert(destination_format)
+    handler_class = getHandlerClass(source_format,
+                                    destination_format,
+                                    self.mimetype_registry,
+                                    self.handler_dict)
+    handler = handler_class(self._path_tmp_dir,
+                            decodestring(file),
+                            source_format,
+                            **self.kw)
+    decode_data = handler.convert(destination_format)
     return encodestring(decode_data)
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
@@ -100,17 +101,17 @@ class Manager(object):
       {"title":"abc","description":...})
     return encodestring(document_with_metadata)
     """
-    handler = getHandlerObject(source_format,
+    handler_class = getHandlerClass(source_format,
                                None,
                                self.mimetype_registry,
                                self.handler_dict)
-    document = handler(self._path_tmp_dir,
-                       decodestring(file),
-                       source_format,
-                       **self.kw)
+    handler = handler_class(self._path_tmp_dir,
+                            decodestring(file),
+                            source_format,
+                            **self.kw)
     metadata_dict = dict([(key.capitalize(), value) \
                         for key, value in metadata_dict.iteritems()])
-    decode_data = document.setMetadata(metadata_dict)
+    decode_data = handler.setMetadata(metadata_dict)
     return encodestring(decode_data)
 
   def getFileMetadataItemList(self, file, source_format, base_document=False):
@@ -127,15 +128,15 @@ class Manager(object):
 
     Note that all keys of the dictionary have the first word in uppercase.
     """
-    handler = getHandlerObject(source_format,
-                               None,
-                               self.mimetype_registry,
-                               self.handler_dict)
-    document = handler(self._path_tmp_dir,
-                       decodestring(file),
-                       source_format,
-                       **self.kw)
-    metadata_dict = document.getMetadata(base_document)
+    handler_class = getHandlerClass(source_format,
+                                    None,
+                                    self.mimetype_registry,
+                                    self.handler_dict)
+    handler = handler_class(self._path_tmp_dir,
+                            decodestring(file),
+                            source_format,
+                            **self.kw)
+    metadata_dict = handler.getMetadata(base_document)
     metadata_dict['Data'] = encodestring(metadata_dict.get('Data', ''))
     return metadata_dict
 
