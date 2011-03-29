@@ -263,14 +263,10 @@ class Manager(object):
       # FIXME: Fast solution to obtain the html or pdf mimetypes
       if zip:
         response_dict['mime'] = "application/zip"
-      elif extension in ("html", "htm", "xhtml"):
+      elif extension == 'xhtml':
         response_dict['mime'] = "text/html"
-      elif extension == "pdf":
-        response_dict['mime'] = "application/pdf"
       else:
-        response_dict['mime'] = self.getFileMetadataItemList(
-                                                         response_dict['data'],
-                                                         extension)['MIMEType']
+        response_dict['mime'] = mimetypes.types_map.get('.%s' % extension)
       return (200, response_dict, "")
     except Exception, e:
       logger.error(e)
