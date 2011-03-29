@@ -335,8 +335,11 @@ def main():
     metadata_dict = unoconverter.getMetadata()
     output = encodestring(json.dumps(metadata_dict))
   elif '--getmetadata' in param_list and '--convert' in param_list:
+    document_url = unoconverter.convert()
+    # Instanciate new UnoConverter instance with new url
+    unoconverter = UnoConverter(hostname, port, document_url, **kw)
     metadata_dict = unoconverter.getMetadata()
-    metadata_dict['document_url'] = unoconverter.convert()
+    metadata_dict['document_url'] = document_url
     output = encodestring(json.dumps(metadata_dict))
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
