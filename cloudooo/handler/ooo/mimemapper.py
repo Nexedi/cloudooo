@@ -57,9 +57,7 @@ class MimeMapper(object):
   def _addFilter(self, filter):
     """Add filter in mimemapper catalog."""
     extension = filter.getExtension()
-    if extension not in self._filter_by_extension_dict:
-      self._filter_by_extension_dict[extension] = []
-    self._filter_by_extension_dict.get(extension).append(filter)
+    self._filter_by_extension_dict.setdefault(extension, []).append(filter)
 
   def _typeToDocumentService(self, document_type):
     """Returns the document service according to document type."""
@@ -160,12 +158,13 @@ class MimeMapper(object):
         for ext in filter_extension_list[:1]:
           # Add (extension, ui_name) tuple by document_type.
           # e.g {'com.sun.star.text.TextDocument': [('txt', 'Text'),]}
-          self._extension_list_by_type.setdefault(document_service_str, [])
-          if not (ext, ui_name) in self._extension_list_by_type[document_service_str]:
-            self._extension_list_by_type[document_service_str].append((ext, ui_name))
+          local_extension_list = self._extension_list_by_type.setdefault(document_service_str, [])
+          if (ext, ui_name) not in local_extension_list:
+            local_extension_list.append((ext, ui_name))
           # register an export filter
           filter = Filter(ext, filter_name, mimetype, document_service_str,
-                          preferred=preferred, sort_index=sort_index, label=ui_name)
+                          preferred=preferred, sort_index=sort_index,
+                          label=ui_name)
           self._addFilter(filter)
 
       # for Import filters
@@ -174,9 +173,9 @@ class MimeMapper(object):
         for ext in filter_extension_list:
           # Add a document type by extension.
           # e.g {'doc': ['com.sun.star.text.TextDocument']}
-          self._doc_type_list_by_extension.setdefault(ext, [])
-          if not document_service_str in self._doc_type_list_by_extension[ext]:
-            self._doc_type_list_by_extension[ext].append(document_service_str)
+          service_list = self._doc_type_list_by_extension.setdefault(ext, [])
+          if document_service_str not in service_list:
+            service_list.append(document_service_str)
 
     # hardcode 'extension -> document type' mappings according to
     # soffice behaviour for extensions having several candidates.
