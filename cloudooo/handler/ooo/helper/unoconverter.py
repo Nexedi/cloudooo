@@ -220,14 +220,13 @@ class UnoConverter(object):
         fieldname = document_info.getUserFieldName(number)
         metadata[fieldname] = field_value_str
     service_manager = helper_utils.getServiceManager(self.hostname, self.port)
+    type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
-    property_list = []
-    property = self._createProperty("InputStream", doc)
-    property_list.append(property)
-    type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
-    filter_name = type_detection.queryTypeByDescriptor(tuple(property_list), \
-        True)[0]
+    input_stream = self._createProperty("InputStream", doc)
+    open_new_view = self._createProperty("OpenNewView", True)
+    filter_name = type_detection.queryTypeByDescriptor((input_stream,
+                                                        open_new_view), True)[0]
     doc.closeInput()
     metadata['MIMEType'] = mimemapper["mimetype_by_filter_type"].get(filter_name)
     return metadata
