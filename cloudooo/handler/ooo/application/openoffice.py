@@ -139,6 +139,7 @@ class OpenOffice(Application):
     self.command = [join(self.office_binary_path, self._bin_soffice),
          '-headless',
          '-invisible',
+         '-nocrashreport',
          '-nologo',
          '-nodefault',
          '-norestore',
