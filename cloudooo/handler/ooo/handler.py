@@ -192,9 +192,10 @@ class Handler(object):
     finally:
       openoffice.release()
     metadata = json.loads(decodestring(stdout))
-    if metadata.get("Data"):
-      self.document.reload(metadata['Data'])
+    if 'document_url' in metadata:
+      self.document.reload(metadata['document_url'])
       metadata['Data'] = self.document.getContent()
+      del metadata['document_url']
     self.document.trash()
     return metadata
 

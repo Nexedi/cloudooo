@@ -337,7 +337,7 @@ def main():
     output = encodestring(json.dumps(metadata_dict))
   elif '--getmetadata' in param_list and '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
-    metadata_dict['Data'] = unoconverter.convert()
+    metadata_dict['document_url'] = unoconverter.convert()
     output = encodestring(json.dumps(metadata_dict))
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
