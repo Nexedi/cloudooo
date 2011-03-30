@@ -34,7 +34,7 @@ from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 class TestAllSupportedFormat(HandlerTestCase):
 
   def afterSetUp(self):
-    self.data = open("./data/test2.ogv").read()
+    self.data = open("./data/test.ogv").read()
     self.kw = dict(env=dict(PATH=self.env_path))
     self.input = Handler(self.tmp_url, self.data, "ogv", **self.kw)
     self.file_detector = Magic(mime=True)
@@ -97,7 +97,8 @@ class TestAllSupportedFormat(HandlerTestCase):
     """Test convert file to matroska format the reverse convertion"""
     mkv_data = self.input.convert("mkv")
     mkv_mimetype = self.file_detector.from_buffer(mkv_data)
-    # XXX This might expect 'video/x-matroska' but magic only got 'application/octet-stream'
+    # XXX This might expect 'video/x-matroska' but magic only got
+    # 'application/octet-stream'
     self.assertEquals(mkv_mimetype, 'application/octet-stream')
     ogv_mimetype = self.afterFormat(mkv_data)
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
