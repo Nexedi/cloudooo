@@ -39,8 +39,8 @@ class TestAllSupportedFormat(HandlerTestCase):
     self.input = Handler(self.tmp_url, self.data, "ogv", **self.kw)
     self.file_detector = Magic(mime=True)
 
-  def afterFormat(self, data):
-    ogv_file = Handler(self.tmp_url, data, "avi", **self.kw)
+  def afterFormat(self, data, source_format):
+    ogv_file = Handler(self.tmp_url, data, source_format, **self.kw)
     ogv_data = ogv_file.convert("ogv")
     ogv_mimetype = self.file_detector.from_buffer(ogv_data)
     return ogv_mimetype
@@ -51,7 +51,7 @@ class TestAllSupportedFormat(HandlerTestCase):
     avi_mimetype = self.file_detector.from_buffer(avi_data)
     # XXX this might expect 'video/avi' but magic only got 'video/x-msvideo'
     self.assertEquals(avi_mimetype, 'video/x-msvideo')
-    ogv_mimetype = self.afterFormat(avi_data)
+    ogv_mimetype = self.afterFormat(avi_data,"avi")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
@@ -60,7 +60,7 @@ class TestAllSupportedFormat(HandlerTestCase):
     mp4_data = self.input.convert("mp4")
     mp4_mimetype = self.file_detector.from_buffer(mp4_data)
     self.assertEquals(mp4_mimetype, 'video/mp4')
-    ogv_mimetype = self.afterFormat(mp4_data)
+    ogv_mimetype = self.afterFormat(mp4_data,"mp4")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
@@ -69,7 +69,7 @@ class TestAllSupportedFormat(HandlerTestCase):
     webm_data = self.input.convert("webm")
     webm_mimetype = self.file_detector.from_buffer(webm_data)
     self.assertEquals(webm_mimetype, 'video/webm')
-    ogv_mimetype = self.afterFormat(webm_data)
+    ogv_mimetype = self.afterFormat(webm_data,"webm")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
@@ -80,7 +80,7 @@ class TestAllSupportedFormat(HandlerTestCase):
     # XXX this might expect 'application/x-shockwave-flash' but magic only got
     # 'video/x-flv'
     self.assertEquals(flv_mimetype, 'video/x-flv')
-    ogv_mimetype = self.afterFormat(flv_data)
+    ogv_mimetype = self.afterFormat(flv_data,"flv")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
@@ -89,7 +89,7 @@ class TestAllSupportedFormat(HandlerTestCase):
     mpeg_data = self.input.convert("mpeg")
     mpeg_mimetype = self.file_detector.from_buffer(mpeg_data)
     self.assertEquals(mpeg_mimetype, 'video/mpeg')
-    ogv_mimetype = self.afterFormat(mpeg_data)
+    ogv_mimetype = self.afterFormat(mpeg_data,"mpeg")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
@@ -100,19 +100,9 @@ class TestAllSupportedFormat(HandlerTestCase):
     # XXX This might expect 'video/x-matroska' but magic only got
     # 'application/octet-stream'
     self.assertEquals(mkv_mimetype, 'application/octet-stream')
-    ogv_mimetype = self.afterFormat(mkv_data)
+    ogv_mimetype = self.afterFormat(mkv_data,"mkv")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
-
-  def testOggFormat(self):
-    """Test convert file to ogg format the reverse convertion"""
-    ogg_data = self.input.convert("ogg")
-    ogg_mimetype = self.file_detector.from_buffer(ogg_data)
-    self.assertEquals(ogg_mimetype, 'application/ogg')
-    ogv_mimetype = self.afterFormat(ogg_data)
-    # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
-    self.assertEquals(ogv_mimetype, 'application/ogg')
-
 
 def test_suite():
   return make_suite(TestAllSupportedFormat)
