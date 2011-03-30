@@ -47,7 +47,8 @@ class TestHandler(HandlerTestCase):
 
   def testgetMetadata(self):
     """Test if metadata is extracted from"""
-    self.assertRaises(NotImplementedError, self.input.getMetadata)
+    output_metadata = self.input.getMetadata()
+    self.assertEquals(output_metadata, {'ENCODER': 'Lavf52.64.2'})
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """

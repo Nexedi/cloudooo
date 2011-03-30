@@ -75,10 +75,21 @@ class Handler(object):
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of the video.
-    Keywords Arguments:
-    base_document -- Boolean variable. if true, the video is also returned
-    along with the metadata."""
-    raise NotImplementedError
+    Keywords Arguments:"""
+    command = ["ffprobe",self.input.getUrl()]
+    stdout, stderr =  Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE,
+                           close_fds=True,
+                           env=self.environment).communicate()
+    metadata = stderr.split('Metadata:')[1].split('\n')
+    metadata_dict = {}
+    for data in metadata:
+      if len(data) != 0:
+        key, value = data.split(':')
+        metadata_dict[key.strip()] = value.strip()
+    self.input.trash()
+    return metadata_dict
 
   def setMetadata(self, metadata={}):
     """Returns a document with new metadata.
