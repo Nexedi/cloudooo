@@ -38,8 +38,8 @@ def run(handler_name):
                       default='paster',
                       help="Path to Paster script")
   namespace = parser.parse_args()
-  environment_path = resource_filename("cloudooo",
-                                       "handler/%s/tests" % handler_name)
+  environment_path = resource_filename("cloudooo.handler.%s" % handler_name,
+                                       "/tests")
   server_cloudooo_conf = namespace.server_cloudooo_conf
   test_name = namespace.test_name
   if server_cloudooo_conf.startswith(curdir):
