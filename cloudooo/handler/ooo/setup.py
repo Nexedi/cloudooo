@@ -35,7 +35,6 @@ setup(
     ],
     packages = find_packages('src'),
     package_dir = {'': 'src'},
-    install_requires = ['setuptools'],
     namespace_packages = ["cloudooo", "cloudooo.handler"],
     install_requires=install_requires,
     entry_points="""
