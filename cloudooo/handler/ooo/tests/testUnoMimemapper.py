@@ -41,6 +41,7 @@ class TestUnoMimeMapper(HandlerTestCase):
 
   def afterSetUp(self):
     """ """
+    self.package_namespace = "cloudooo.handler.ooo"
     environ['uno_path'] = ''
     environ['office_binary_path'] = ''
     openoffice.acquire()
@@ -56,8 +57,8 @@ class TestUnoMimeMapper(HandlerTestCase):
     hostname, host = openoffice.getAddress()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
-            pkg_resources.resource_filename("cloudooo",
-                                       "handler/ooo/helper/unomimemapper.py"),
+            pkg_resources.resource_filename(self.package_namespace,
+                                       "/helper/unomimemapper.py"),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,
@@ -79,8 +80,8 @@ class TestUnoMimeMapper(HandlerTestCase):
     """ Test call unomimemapper without uno_path and office_binary_path"""
     hostname, host = openoffice.getAddress()
     command = [path.join(self.office_binary_path, "python"),
-            pkg_resources.resource_filename("cloudooo",
-                                       "handler/ooo/helper/unomimemapper.py"),
+            pkg_resources.resource_filename(self.package_namespace,
+                                       "/helper/unomimemapper.py"),
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
@@ -103,8 +104,8 @@ class TestUnoMimeMapper(HandlerTestCase):
     openoffice.stop()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
-            pkg_resources.resource_filename("cloudooo",
-                                            "handler/ooo/helper/unomimemapper.py"),
+            pkg_resources.resource_filename(self.package_namespace,
+                                            "/helper/unomimemapper.py"),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,

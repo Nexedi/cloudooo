@@ -64,8 +64,8 @@ class TestUnoConverter(HandlerTestCase):
     mimemapper_pickled = json.dumps(mimemapper)
     python = join(self.office_binary_path, "python")
     command = [exists(python) and python or "python",
-          pkg_resources.resource_filename("cloudooo",
-                                          "handler/ooo/helper/unoconverter.py"),
+          pkg_resources.resource_filename("cloudooo.handler.ooo",
+                                          "/helper/unoconverter.py"),
           "--convert",
           "--uno_path=%s" % self.uno_path,
           "--office_binary_path=%s" % self.office_binary_path,
