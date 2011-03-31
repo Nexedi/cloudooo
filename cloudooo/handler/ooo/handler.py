@@ -215,3 +215,47 @@ class Handler(object):
     doc_loaded = self.document.getContent()
     self.document.trash()
     return doc_loaded
+
+def bootstrapHandler(configuration_dict):
+  # Bootstrap handler
+  from signal import signal, SIGINT, SIGQUIT, SIGHUP
+  from cloudooo.handler.ooo.mimemapper import mimemapper
+  from cloudooo.handler.ooo.application.openoffice import openoffice
+  import cloudooo.handler.ooo.monitor as monitor
+
+  def stopProcesses(signum, frame):
+    monitor.stop()
+    openoffice.stop()
+
+  # Signal to stop all processes
+  signal(SIGINT, stopProcesses)
+  signal(SIGQUIT, stopProcesses)
+  signal(SIGHUP, stopProcesses)
+
+  working_path = configuration_dict.get('working_path')
+  application_hostname = configuration_dict.get('application_hostname')
+  openoffice_port = int(configuration_dict.get('openoffice_port'))
+  environment_dict = configuration_dict['environment_dict']
+  # Loading Configuration to start OOo Instance and control it
+  openoffice.loadSettings(application_hostname,
+                          openoffice_port,
+                          working_path,
+                          configuration_dict.get('office_binary_path'),
+                          configuration_dict.get('uno_path'),
+                          configuration_dict.get('openoffice_user_interface_language',
+                                                 'en'),
+                          environment_dict=environment_dict,
+                          )
+  openoffice.start()
+  monitor.load(configuration_dict)
+
+  timeout_response = int(configuration_dict.get('timeout_response'))
+  kw = dict(uno_path=configuration_dict.get('uno_path'),
+            office_binary_path=configuration_dict.get('office_binary_path'),
+            timeout=timeout_response)
+
+  # Load all filters
+  openoffice.acquire()
+  mimemapper.loadFilterList(application_hostname,
+                            openoffice_port, **kw)
+  openoffice.release()
