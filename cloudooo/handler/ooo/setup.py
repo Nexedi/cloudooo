@@ -18,7 +18,7 @@ install_requires = ["zope.interface",
                     "cloudooo"]
 
 if sys.version_info < (2, 5):
-  install_require_list.append('simplejson')
+  install_requires.append('simplejson')
 
 setup(
     name = name,
