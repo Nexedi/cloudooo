@@ -27,20 +27,12 @@
 ##############################################################################
 
 import gc
-from signal import signal, SIGINT, SIGQUIT, SIGHUP
+
 from os import path, mkdir
 import os
 import sys
-import cloudooo.handler.ooo.monitor as monitor
-from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
 from cloudooo.utils import utils
-from cloudooo.handler.ooo.mimemapper import mimemapper
-
-
-def stopProcesses(signum, frame):
-  monitor.stop()
-  openoffice.stop()
 
 
 def application(global_config, **local_config):
@@ -69,6 +61,9 @@ def application(global_config, **local_config):
         if current_value:
           value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
+
+  local_config['environment_dict'] = environment_dict
+
   gc.enable()
   debug_mode = utils.convertStringToBool(local_config.get('debug_mode'))
   utils.configureLogger(debug_mode=debug_mode)
@@ -80,49 +75,25 @@ def application(global_config, **local_config):
   cloudooo_path_tmp_dir = path.join(working_path, 'tmp')
   if not path.exists(cloudooo_path_tmp_dir):
     mkdir(cloudooo_path_tmp_dir)
-  application_hostname = local_config.get('application_hostname')
-  openoffice_port = int(local_config.get('openoffice_port'))
 
-  # Loading Configuration to start OOo Instance and control it
-  openoffice.loadSettings(application_hostname,
-                         openoffice_port,
-                         working_path,
-                         local_config.get('office_binary_path'),
-                         local_config.get('uno_path'),
-                         local_config.get('openoffice_user_interface_language',
-                                          'en'),
-                         environment_dict=environment_dict,
-                         )
-  openoffice.start()
   utils.loadMimetypeList()
-  monitor.load(local_config)
-  timeout_response = int(local_config.get('timeout_response'))
-  kw = dict(uno_path=local_config.get('uno_path'),
-            office_binary_path=local_config.get('office_binary_path'),
-            timeout=timeout_response)
 
-  # Signal to stop all processes
-  signal(SIGINT, stopProcesses)
-  signal(SIGQUIT, stopProcesses)
-  signal(SIGHUP, stopProcesses)
-
-  # Load all filters
-  openoffice.acquire()
-  mimemapper.loadFilterList(application_hostname,
-                            openoffice_port, **kw)
-  openoffice.release()
   mimetype_registry = local_config.get("mimetype_registry", "")
-  kw["mimetype_registry"] = handler_mapping_list = \
+  local_config["mimetype_registry"] = handler_mapping_list = \
                                     filter(None, mimetype_registry.split("\n"))
   handler_dict = {}
   for line in handler_mapping_list:
     input_mimetype, output_mimetype, handler = line.strip().split()
     if handler not in handler_dict:
       import_path = "cloudooo.handler.%s.handler" % handler
+      # Import Errors are not catched, check your configuration file
       module = __import__(import_path, globals(), locals(), [''])
+      # Call the bootstraping method
+      getattr(module, 'bootstrapHandler', lambda x: None)(local_config)
       handler_dict[handler] = module.Handler
-  kw['handler_dict'] = handler_dict
-  kw["env"] = environment_dict
+
+  local_config['handler_dict'] = handler_dict
+  local_config["env"] = environment_dict
   from manager import Manager
-  cloudooo_manager = Manager(cloudooo_path_tmp_dir, **kw)
+  cloudooo_manager = Manager(cloudooo_path_tmp_dir, **local_config)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)
