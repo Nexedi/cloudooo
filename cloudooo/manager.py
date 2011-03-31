@@ -32,13 +32,15 @@ from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
-from handler.ooo.granulator import OOGranulator
-from handler.ooo.mimemapper import mimemapper
 from utils.utils import logger
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
 from fnmatch import fnmatch
+
+#XXX Must be removed
+from cloudooo.handler.ooo.granulator import OOGranulator
+from cloudooo.handler.ooo.mimemapper import mimemapper
 
 class HandlerNotFound(Exception):
   pass
