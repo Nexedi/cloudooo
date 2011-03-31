@@ -27,11 +27,14 @@ setup(
     author_email = "gabriel@tiolive.com",
     description = "Python Package to handler OpenOffice.org Documents",
     long_description=long_description,
-    license = "GPL",
+    license = "GPLv3",
     keywords = "Python OpenOffice.org",
     classifiers= [
       "Programming Language :: Python :: 2.6",
       "Natural Language :: English",
+      "Topic :: Software Development :: Libraries :: Python Modules",
+      "License :: OSI Approved :: GNU General Public License (GPL)",
+
     ],
     packages = find_packages('src'),
     package_dir = {'': 'src'},

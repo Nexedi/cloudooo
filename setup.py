@@ -15,7 +15,6 @@ install_require_list = [
           'PasteScript',
           'WSGIUtils',
           'psutil>=0.2.0',
-          'lxml',
           'python-magic', # required for unit tests only
       ]
 
@@ -29,7 +28,8 @@ setup(name='cloudooo',
       version=version,
       description="XML-RPC openoffice document convertion server",
       long_description=long_description,
-      classifiers=["Topic :: System :: Networking",
+      classifiers=[
+        "Topic :: System :: Networking",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Programming Language :: Python :: 2.6",
@@ -39,7 +39,7 @@ setup(name='cloudooo',
       author='Gabriel M. Monnerat',
       author_email='gabriel@tiolive.com',
       url='https://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo',
-      license='GPL 2',
+      license='GPLv3',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
@@ -51,8 +51,5 @@ setup(name='cloudooo',
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
-      runCloudOOoUnitTest = cloudooo.handler.ooo.tests.runCloudOOoUnitTest:run
-      runPDFHandlerUnitTest = cloudooo.handler.pdf.tests.runPDFHandlerUnitTest:run
-      runFFMPEGHandlerUnitTest = cloudooo.handler.ffmpeg.tests.runFFMPEGHandlerUnitTest:run
       """,
       )
