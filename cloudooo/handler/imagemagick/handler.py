@@ -42,34 +42,34 @@ class Handler(object):
   def __init__(self, base_folder_url, data, source_format, **kw):
     """ Load pdf document """
     self.base_folder_url = base_folder_url
-    self.document = File(base_folder_url, data, source_format)
+    self.file = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.base_folder_url)
-    command = ["convert", self.document.getUrl(), output_url]
+    command = ["convert", self.file.getUrl(), output_url]
     stdout, stderr = Popen(command,
                           stdout=PIPE,
                           stderr=PIPE,
                           env=self.environment).communicate()
-    self.document.reload(output_url)
+    self.file.reload(output_url)
     try:
-      return self.document.getContent()
+      return self.file.getContent()
     finally:
-      self.document.trash()
+      self.file.trash()
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.
     along with the metadata.
     """
-    command = ["identify", "-verbose", self.document.getUrl()]
+    command = ["identify", "-verbose", self.file.getUrl()]
     stdout, stderr = Popen(command,
                           stdout=PIPE,
                           stderr=PIPE,
                           env=self.environment).communicate()
-
+    self.file.trash()
     metadata_dict = {}
     for std in stdout.split("\n"):
       std = std.strip()
