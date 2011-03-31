@@ -146,6 +146,8 @@ spreadsheet_expected_list = (
     ('xlt', 'Microsoft Excel 5.0 Template'),
     ('xlt', 'Microsoft Excel 95 Template'),
     ('xlt', 'Microsoft Excel 97/2000/XP Template'),
+    ('xlsx', 'Microsoft Excel 2007 XML'),
+    (u'xlsx', u'Office Open XML Spreadsheet'),
     )
 
 math_expected_tuple = (
