@@ -23,10 +23,11 @@ setup(
   version = version,
   author = "Gabriel M. Monnerat",
   author_email = "gabriel@tiolive.com",
-  description = "Python Package to handler OpenOffice.org Documents",
+  description = "Cloudooo plugin to handle Documents with OpenOffice.org"\
+                " or LibreOffice",
   long_description=long_description,
   license = "GPLv3",
-  keywords = "Python OpenOffice.org",
+  keywords = "cloudooo OpenOffice.org LibreOffice",
   classifiers= [
     "Programming Language :: Python :: 2.6",
     "Natural Language :: English",
