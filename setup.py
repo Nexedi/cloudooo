@@ -26,7 +26,7 @@ if sys.version_info < (2, 7):
   install_require_list.append('argparse')
 setup(name='cloudooo',
       version=version,
-      description="XML-RPC openoffice document convertion server",
+      description="XML-RPC document conversion server",
       long_description=long_description,
       classifiers=[
         "Topic :: System :: Networking",
