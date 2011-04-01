@@ -51,8 +51,6 @@ class WSGIXMLRPCApplication(object):
 
             length = int(environ['CONTENT_LENGTH'])
             data = environ['wsgi.input'].read(length)
-            max_chunk_size = 10 * 1024 * 1024
-            size_remaining = length
 
             # In previous versions of SimpleXMLRPCServer, _dispatch
             # could be overridden in this class, instead of in

@@ -28,9 +28,7 @@
 
 import gc
 
-from os import path, mkdir
-import os
-import sys
+from os import path, mkdir, environ
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
 from cloudooo.utils import utils
 
@@ -57,7 +55,7 @@ def application(global_config, **local_config):
       variable_name = parameter_name[len(prefix):]
       if variable_name == 'PATH':
         # merge only for PATH
-        current_value = os.environ.get(variable_name, '')
+        current_value = environ.get(variable_name, '')
         if current_value:
           value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
