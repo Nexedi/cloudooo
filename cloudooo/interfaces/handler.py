@@ -28,16 +28,18 @@
 
 from zope.interface import Interface
 
-
 class IHandler(Interface):
-  """Handles connections with the openoffice by socket"""
+  """Handles communications between manager and specific backends
+  """
 
-  def convert(destination_format):
-    """Convert document to ODF"""
+  def convert(destination_mimetype):
+    """Convert to expected format
+    """
 
-  def getMetadata(converted_data):
-    """Returns a dictionary with all metadata of document. If converted_data is
-    True, the document is added in dictionary."""
+  def getMetadata():
+    """Returns a dictionary with all metadata of document.
+    """
 
   def setMetadata(metadata_dict):
-    """Returns a document with the new metadata"""
+    """Returns a document with the new metadata
+    """

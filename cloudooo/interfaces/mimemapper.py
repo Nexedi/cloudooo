@@ -30,24 +30,24 @@ from zope.interface import Interface
 
 
 class IMimemapper(Interface):
-  """Provide methods to manipulate filters of OOo."""
+  """Provide methods to manipulate conversion abilities of
+  handlers
+  """
 
   def isLoaded():
-    """Returns if the filters were loaded."""
-
-  def getDocumentTypeDict():
-    """Returns document type dict."""
-
-  def getFilterName(extension, document_type):
-    """Returns the name of filter according to parematers passed."""
-
-  def loadFilterList(**kwargs):
-    """Load all filters of openoffice."""
-
-  def getFilterList(extension, **kwargs):
-    """Returns a filter list according to extension or other parameters passed.
+    """Returns if mimemapper is bootstraped
     """
 
-  def getAllowedExtensionList(document_type, **kwargs):
-    """Returns a list with extensions which can be used to export according to
-    document type passed."""
+  def loadMimemapper():
+    """bootstrap mimemapper of handler
+    """
+
+  def getAllowedExtensionInfoList(mimetype):
+    """Return a detailed list of output mimetypes with a list of
+    accepted parameter to perform the conversion:
+      application/pdf: [('text/plain', ()),
+                        ('image/png', ('frame', 'resolution', 'width', 'height',
+                        'colorspace',)),
+                        ...
+                       ]
+    """

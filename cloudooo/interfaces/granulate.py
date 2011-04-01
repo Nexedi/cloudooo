@@ -30,44 +30,57 @@ from zope.interface import Interface
 
 
 class ITableGranulator(Interface):
-  """Provides methods to granulate a document into tables."""
+  """Provides methods to granulate a document into tables.
+  """
 
-  def getTableItemList(data, source_format):
-    """Returns the list of table IDs in the form of (id, title)."""
+  def getTableItemList(content, source_mimetype):
+    """Returns the list of table IDs in the form of (id, title).
+    """
 
-  def getTable(data, table_id, source_format):
-    """Returns the table into a new 'format' file."""
+  def getTable(content, source_mimetype, table_id ):
+    """Returns the table into a new 'format' file.
+    """
 
-  def getColumnItemList(data, table_id, source_format):
-    """Return the list of columns in the form of (id, title)."""
+  def getColumnItemList(content, source_mimetype, table_id):
+    """Return the list of columns in the form of (id, title).
+    """
 
-  def getLineItemList(data, table_id, source_format):
-    """Returns the lines of a given table as (key, value) pairs."""
+  def getLineItemList(content, source_mimetype, table_id):
+    """Returns the lines of a given table as (key, value) pairs.
+    """
 
 
 class IImageGranulator(Interface):
-  """Provides methods to granulate a document into images."""
+  """Provides methods to granulate a document into images.
+  """
 
-  def getImageItemList(data, source_format):
-    """Return the list of images in the form of (id, title)."""
+  def getImageItemList(content, source_mimetype):
+    """Return the list of images in the form of (id, title).
+    """
 
-  def getImage(data, image_id, source_format,
-               format=None, resolution=None, **kw):
-    """Return the given image."""
+  def getImage(content, filename, source_mimetype,
+               destination_mimetype=None, **kw):
+    """Return the given image.
+    """
 
 
 class ITextGranulator(Interface):
-  """Provides methods to granulate a document into chapters and paragraphs."""
+  """Provides methods to granulate a document into chapters and paragraphs.
+  """
 
-  def getParagraphItemList(data, source_format):
+  def getParagraphItemList(content, source_mimetype):
     """Returns the list of paragraphs in the form of (id, class) where class
-    may have special meaning to define TOC/TOI."""
+    may have special meaning to define TOC/TOI.
+    """
 
-  def getParagraph(data, paragraph_id, source_format):
-    """Returns the paragraph in the form of (text, class)."""
+  def getParagraph(content, source_mimetype, paragraph_id):
+    """Returns the paragraph in the form of (text, class).
+    """
 
-  def getChapterItemList(data, source_format):
-    """Returns the list of chapters in the form of (id, level)."""
+  def getChapterItemList(content, source_mimetype):
+    """Returns the list of chapters in the form of (id, level).
+    """
 
-  def getChapterItem(data, chapter_id, source_format):
-    """Return the chapter in the form of (title, level)."""
+  def getChapterItem(content, source_mimetype, chapter_id):
+    """Return the chapter in the form of (title, level).
+    """

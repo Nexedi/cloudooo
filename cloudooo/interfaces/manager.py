@@ -30,33 +30,83 @@ from zope.interface import Interface
 
 
 class IManager(Interface):
-  """Provides method to manipulate documents and metadatas using OOo"""
+  """Provides public method to communicate with Cloudooo clients
+  """
 
-  def convertFile(file, source_format, destination_format, zip, refresh):
+  def convertFile(content, source_mimetype, destination_mimetype, **kw):
     """Returns the converted file in the given format.
 
-    zip parameter can be specified to return the result of conversion
-    in the form of a zip archive (which may contain multiple parts).
-    This can be useful to convert a single ODF file to HTML
-    and png images.
+    content : binary data to convert
+    source_mimetype : mimetype of given content
+    destination_mimetype : expected output conversion mimetype
+
+    **kw holds specific parameters for the conversion
     """
 
-  def getFileMetadataItemList(file, source_format, base_document):
+  def convertBundle(content, filename, source_mimetype, destination_mimetype,
+                    **kw):
+    """The content must be a zip archive with multiples files.
+    filename is the authority file to convert inside archive.
+    All other files are embedded object usefull to perform the conversion
+    like css, images, videos, audio files, ...
+    It returns the converted data.
+
+    content : zip bundle
+    filename: filename of authority file to extract from the bundle.
+    source_mimetype : mimetype of given authority file
+    destination_mimetype : expected output conversion mimetype
+
+    **kw holds specific parameters for the conversion
+    """
+
+  def getFileMetadataItemList(content, source_mimetype):
     """Returns a list key, value pairs representing the
     metadata values for the document. The structure of this
     list is "unpredictable" and follows the convention of each file.
+
+    content : binary data where to reads metadata
+    source_mimetype : mimetype of given content
     """
 
-  def updateFileMetadata(file, source_format, metadata_dict):
-    """Updates the file in the given source_format with provided metadata and
-    return the resulting new file."""
+  def convertFileAndGetMetadataItemList(content, source_mimetype,
+                                            destination_mimetype, **kw):
+    """returns a converted version of provided content plus a
+    dictionary of extracted metadata.
+    signature of method is same as convertFile
 
-  def getAllowedExtensionList(request_dict):
-    """Returns a list extension which can be generated from given extension or
-    document type."""
+    result is a json dictionary with 'conversion' and
+    'metadata' entries.
+    """
 
-  def granulateFile(file, source_format, zip):
-    """Returns a zip file with parts of an document splited by grains."""
+  def updateFileMetadata(content, source_mimetype, metadata_dict):
+    """Updates the content with provided metadata and
+    return the new file.
+
+    content : binary data to convert
+    source_mimetype : mimetype of given content
+    metadata_dict : Metadatas to include in content
+    """
+
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+     ('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+    """
+
+  def getAllowedConversionFormatInfoList(source_mimetype):
+    """Returns a list content_type and list of parameter which are supported
+    by enabled handlers.
+
+    (see IMimemapper.getAllowedExtensionInfoList)
+    """
+
+  def granulateFile(content, source_mimetype):
+    """Returns a zip file with parts of an document splited by grains.
+    """
 
 
 class IERP5Compatibility(Interface):
