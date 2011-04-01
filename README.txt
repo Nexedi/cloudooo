@@ -35,15 +35,15 @@ Run Application
 
 
 Stop Application
-===============
+================
 
   $ kill -1 PASTER_PID
 
   Warning: always use SIGHUP because only with this signal all processes are
-stopped correctly.
+  stopped correctly.
 
 Cloudooo Description
-=====================
+====================
 
 - XMLRPC + WSGI will be one bridge for easy access to LibreOffice / OpenOffice.org. This will implement one XMLRPC server into WSGI (Paster).
 
