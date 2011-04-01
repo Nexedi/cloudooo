@@ -32,7 +32,6 @@ from os import listdir
 from xmlrpclib import ServerProxy
 from os.path import join
 from getopt import getopt, GetoptError
-from time import ctime, time
 from base64 import encodestring
 
 """

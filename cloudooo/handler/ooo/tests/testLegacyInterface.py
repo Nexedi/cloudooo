@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-from xmlrpclib import ServerProxy, Fault
+from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 import magic
