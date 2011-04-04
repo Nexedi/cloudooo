@@ -139,14 +139,11 @@ class Handler(object):
 
     filter_list = []
     service_type_list = mimemapper._doc_type_list_by_extension.get(
-      source_extension, mimemapper.extension_list_by_doc_type.keys())
+      source_extension, mimemapper.document_service_list)
     for service_type in service_type_list:
-      for extension in mimemapper.extension_list_by_doc_type[service_type]:
-        if extension == destination_extension:
-          filter_list.append((extension,
-                              service_type,
-                              mimemapper.getFilterName(extension,
-                                                       service_type)))
+      filter_list.append((destination_extension,
+                          service_type,
+                          mimemapper.getFilterName(destination_extension, service_type)))
     logger.debug("Filter List: %r" % filter_list)
     return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                             filter_list=filter_list,

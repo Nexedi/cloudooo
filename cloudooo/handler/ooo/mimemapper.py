@@ -191,9 +191,6 @@ class MimeMapper(object):
       'xls': ['com.sun.star.sheet.SpreadsheetDocument'],
       })
     self.document_service_list = self._extension_list_by_type.keys()
-    self.extension_list_by_doc_type =\
-        dict([(type, [extension[0] for extension in extension_list])\
-              for type, extension_list in self._extension_list_by_type.iteritems()])
     self._loaded = True
 
   def getFilterName(self, extension, document_service):
@@ -205,22 +202,18 @@ class MimeMapper(object):
     >>> mimemapper.getFilterName("sdw", "com.sun.star.text.TextDocument")
     'StarWriter 3.0'
     """
-    filter_list = [filter for filter in iter(self.getFilterList(extension)) \
+    filter_list = [filter for filter in self.getFilterList(extension) \
         if filter.getDocumentService() == document_service]
     if len(filter_list) > 1:
       for filter in iter(filter_list):
         if filter.isPreferred():
           return filter.getName()
       else:
-        sort_index_list = [filter.getSortIndex() \
-            for filter in iter(filter_list)]
-        num_max_int = max(sort_index_list)
         for filter in iter(filter_list):
           if filter.getName().endswith("Export"):
             return filter.getName()
-        for filter in iter(filter_list):
-          if filter.getSortIndex() == num_max_int:
-            return filter.getName()
+        filter_list.sort(key=lambda x: x.getSortIndex())
+        return filter_list[-1].getName()
     else:
       return filter_list[0].getName()
 
