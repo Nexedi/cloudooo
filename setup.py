@@ -8,17 +8,16 @@ folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 
 long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(),
                                open(path.join(folder_path, "CHANGES.txt")).read())
-install_require_list = [
+install_requires = [
           # -*- Extra requirements: -*-
           'zope.interface',
           'PasteDeploy',
           'PasteScript',
           'WSGIUtils',
           'psutil>=0.2.0',
-          'python-magic', # required for unit tests only
-      ]
+         ]
 
-test_require_list = [
+test_requires = [
     'python-magic',
     ]
 
@@ -38,13 +37,13 @@ setup(name='cloudooo',
       keywords='xmlrpc openoffice wsgi paste python',
       author='Gabriel M. Monnerat',
       author_email='gabriel@tiolive.com',
-      url='https://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo',
+      url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo',
       license='GPLv3',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      packages=find_packages(exclude=['examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=install_require_list,
-      test_requires=test_require_list,
+      install_requires=install_requires,
+      test_requires=test_requires,
       entry_points="""
       [paste.app_factory]
       main = cloudooo.paster_application:application

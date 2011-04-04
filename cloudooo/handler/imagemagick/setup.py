@@ -12,7 +12,9 @@ long_description=(read('README.txt')
                  )
 
 install_requires = ["zope.interface",
-                    "cloudooo"]
+                    "cloudooo",
+                    "python-magic", # required for unit tests only
+                    ]
 
 setup(
     name = name,
@@ -31,6 +33,7 @@ setup(
     ],
     packages = find_packages('src'),
     package_dir = {'': 'src'},
+    url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo.handler.imagemagick',
     install_requires = install_requires,
     namespace_packages = ["cloudooo", "cloudooo.handler"],
     entry_points="""

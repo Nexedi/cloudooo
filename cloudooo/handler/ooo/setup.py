@@ -13,7 +13,10 @@ long_description = (read('README.txt') + '\n' + read('CHANGES.txt'))
 install_requires = ["zope.interface",
                     "psutil>=0.2.0",
                     "lxml",
-                    "cloudooo"]
+                    "cloudooo",
+                    "python-magic", # required for unit tests only
+                   ]
+
 
 if sys.version_info < (2, 5):
   install_requires.append('simplejson')
@@ -36,6 +39,7 @@ setup(
   ],
   packages = find_packages('src'),
   package_dir = {'': 'src'},
+  url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo.handler.ooo',
   namespace_packages = ["cloudooo", "cloudooo.handler"],
   install_requires=install_requires,
   entry_points="""

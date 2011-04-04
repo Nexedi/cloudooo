@@ -12,7 +12,9 @@ long_description=(read('README.txt')
                  )
 
 install_requires = ["zope.interface",
-                    "cloudooo"]
+                    "cloudooo",
+                    "python-magic", # required for unit tests only
+                    ]
 
 setup(
     name = name,
@@ -30,6 +32,7 @@ setup(
       "License :: OSI Approved :: GNU General Public License (GPL)",
     ],
     packages = find_packages('src'),
+    url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo.handler.pdf',
     package_dir = {'': 'src'},
     install_requires = ['setuptools'],
     namespace_packages = ["cloudooo", "cloudooo.handler"],
