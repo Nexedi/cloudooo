@@ -22,7 +22,8 @@ test_requires = [
     ]
 
 if sys.version_info < (2, 7):
-  install_require_list.append('argparse')
+  install_requires.append('argparse')
+
 setup(name='cloudooo',
       version=version,
       description="XML-RPC document conversion server",
