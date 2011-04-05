@@ -155,13 +155,13 @@ class Handler(object):
     destination_format -- extension of document as String
     """
     logger.debug("Convert: %s > %s" % (self.source_format, destination_format))
-    openoffice.acquire()
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
     kw['mimemapper'] = self._serializeMimemapper(self.source_format,
                                                  destination_format)
     kw['refresh'] = json.dumps(self.refresh)
+    openoffice.acquire()
     try:
       stdout, stderr = self._callUnoConverter(*['convert'], **kw)
     finally:
@@ -177,13 +177,13 @@ class Handler(object):
     Keywords Arguments:
     base_document -- Boolean variable. if true, the document is also returned
     along with the metadata."""
-    openoffice.acquire()
     logger.debug("getMetadata")
     kw = dict(mimemapper=self._serializeMimemapper())
     if base_document:
       feature_list = ['getmetadata', 'convert']
     else:
       feature_list = ['getmetadata']
+    openoffice.acquire()
     try:
       stdout, stderr = self._callUnoConverter(*feature_list, **kw)
     finally:
@@ -201,10 +201,10 @@ class Handler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    openoffice.acquire()
     metadata_pickled = json.dumps(metadata)
     logger.debug("setMetadata")
     kw = dict(metadata=encodestring(metadata_pickled))
+    openoffice.acquire()
     try:
       stdout, stderr = self._callUnoConverter(*['setmetadata'], **kw)
     finally:
