@@ -30,6 +30,7 @@ from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 import magic
+from pkg_resources import resource_filename
 
 file_detector = magic.Magic(mime=True)
 DAEMON = True
@@ -45,7 +46,8 @@ class TestLegacyInterface(HandlerTestCase):
   def testHtmlToBaseFormatConversion(self):
     """Check implicit base conversion of HTML documents.
     """
-    filename = 'data/test_failure_conversion.html'
+    filename = resource_filename('cloudooo.handler.ooo.tests.data',
+                                 'test_failure_conversion.html')
     file_object =  open(filename, 'r')
     original_data = file_object.read()
     file_object.close()
@@ -64,7 +66,8 @@ class TestLegacyInterface(HandlerTestCase):
   def testHtmlToOdt(self):
     """Check conversion of HTML to odt
     """
-    filename = 'data/test_failure_conversion.html'
+    filename = resource_filename('cloudooo.handler.ooo.tests.data',
+                                 'test_failure_conversion.html')
     file_object =  open(filename, 'r')
     data = file_object.read()
     file_object.close()
