@@ -37,8 +37,12 @@ class TestInterface(unittest.TestCase):
 
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
-    # XXX this might verify Handler methods too
     self.assertTrue(IHandler.implementedBy(Handler))
+    self.assertEquals(IHandler.get('convert').required, ('destination_format',))
+    self.assertEquals(IHandler.get('getMetadata').required,
+        ('converted_data',))
+    self.assertEquals(IHandler.get('setMetadata').required,
+        ('metadata_dict',))
 
 
 def test_suite():
