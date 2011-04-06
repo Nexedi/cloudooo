@@ -26,10 +26,11 @@
 #
 ##############################################################################
 
-import magic
+from magic import Magic
 from cloudooo.handler.ffmpeg.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
+file_detector = Magic(mime=True)
 
 class TestHandler(HandlerTestCase):
 
@@ -40,7 +41,6 @@ class TestHandler(HandlerTestCase):
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
-    file_detector = magic.Magic(mime=True)
     output_data = self.input.convert("mpeg")
     file_format = file_detector.from_buffer(output_data)
     self.assertEquals(file_format, 'video/mpeg')
@@ -53,6 +53,16 @@ class TestHandler(HandlerTestCase):
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
     self.assertRaises(NotImplementedError, self.input.setMetadata)
+
+  def testConvertAudio(self):
+    """Test coversion of audio to another format"""
+    self.data = open("./data/test.ogg").read()
+    kw = dict(env=dict(PATH=self.env_path))
+    self.input = Handler(self.tmp_url, self.data, "ogg", **kw)
+    output_data = self.input.convert("wav")
+    file_format = file_detector.from_buffer(output_data)
+    # XXX this might expect 'audio/vnd.wave' but magic only got 'audio/x-wav'
+    self.assertEquals(file_format, 'audio/x-wav')
 
 
 def test_suite():

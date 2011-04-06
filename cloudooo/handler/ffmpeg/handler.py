@@ -34,7 +34,7 @@ from tempfile import mktemp
 
 
 class Handler(object):
-  """FFMPEG Handler is used to handler inputed video files"""
+  """FFMPEG Handler is used to handler inputed audio and video files"""
 
   implements(IHandler)
 
@@ -43,15 +43,15 @@ class Handler(object):
     base_folder_url(string)
       The requested url for data base folder
     data(string)
-      The opened and readed video into a string
+      The opened and readed file into a string
     source_format(string)
-      The source format of the inputed video"""
+      The source format of the inputed file"""
     self.base_folder_url = base_folder_url
     self.input = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
 
   def convert(self, destination_format):
-    """ Convert the inputed video to output as format that were informed """
+    """ Convert the inputed file to output as format that were informed """
     # XXX This implementation could use ffmpeg -i pipe:0, but
     # XXX seems super unreliable currently and it generates currupted files in
     # the end
@@ -74,7 +74,7 @@ class Handler(object):
       self.input.trash()
 
   def getMetadata(self, base_document=False):
-    """Returns a dictionary with all metadata of the video.
+    """Returns a dictionary with all metadata of the file.
     Keywords Arguments:"""
     command = ["ffprobe",self.input.getUrl()]
     stdout, stderr =  Popen(command,
@@ -91,7 +91,7 @@ class Handler(object):
     self.input.trash()
     return metadata_dict
 
-  def setMetadata(self, metadata={}):
+  def setMetadata(self, metadata_dict={}):
     """Returns a document with new metadata.
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
