@@ -27,82 +27,82 @@
 ##############################################################################
 
 from magic import Magic
-from cloudooo.handler.ffmpeg.handler import Handler
+from xmlrpclib import ServerProxy
+from os.path import join
+from base64 import encodestring, decodestring
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
+DAEMON = True
 
 class TestAllSupportedFormat(HandlerTestCase):
+  """Test XmlRpc Server. Needs cloudooo server started"""
 
   def afterSetUp(self):
-    self.data = open("./data/test.ogv").read()
-    self.kw = dict(env=dict(PATH=self.env_path))
-    self.input = Handler(self.tmp_url, self.data, "ogv", **self.kw)
     self.file_detector = Magic(mime=True)
-
-  def afterFormat(self, data, source_format):
-    ogv_file = Handler(self.tmp_url, data, source_format, **self.kw)
-    ogv_data = ogv_file.convert("ogv")
-    ogv_mimetype = self.file_detector.from_buffer(ogv_data)
-    return ogv_mimetype
+    self.proxy = ServerProxy("http://%s:%s/RPC2" % \
+        (self.hostname, self.cloudooo_port), allow_none=True)
 
   def testAviFormat(self):
     """Test convert file to avi format the reverse convertion"""
-    avi_data = self.input.convert("avi")
-    avi_mimetype = self.file_detector.from_buffer(avi_data)
+    avi_mimetype, ogv_mimetype = self.runTestForType("avi")
     # XXX this might expect 'video/avi' but magic only got 'video/x-msvideo'
     self.assertEquals(avi_mimetype, 'video/x-msvideo')
-    ogv_mimetype = self.afterFormat(avi_data,"avi")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
   def testMp4Format(self):
     """Test convert file to mp4 format the reverse convertion"""
-    mp4_data = self.input.convert("mp4")
-    mp4_mimetype = self.file_detector.from_buffer(mp4_data)
+    mp4_mimetype, ogv_mimetype = self.runTestForType("mp4")
     self.assertEquals(mp4_mimetype, 'video/mp4')
-    ogv_mimetype = self.afterFormat(mp4_data,"mp4")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
   def testWebMFormat(self):
     """Test convert file to WebM format and the reverse convertion"""
-    webm_data = self.input.convert("webm")
-    webm_mimetype = self.file_detector.from_buffer(webm_data)
-    self.assertEquals(webm_mimetype, 'video/webm')
-    ogv_mimetype = self.afterFormat(webm_data,"webm")
+    webm_mimetype, ogv_mimetype = self.runTestForType("webm")
+    self.assertEquals(webm_data, 'video/webm')
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
   def testFlvFormat(self):
     """Test convert file to flash format the reverse convertion"""
-    flv_data = self.input.convert("flv")
-    flv_mimetype = self.file_detector.from_buffer(flv_data)
+    flv_mimetype, ogv_mimetype = self.runTestForType("flv")
     # XXX this might expect 'application/x-shockwave-flash' but magic only got
     # 'video/x-flv'
     self.assertEquals(flv_mimetype, 'video/x-flv')
-    ogv_mimetype = self.afterFormat(flv_data,"flv")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
   def testMpegFormat(self):
     """Test convert file to Mpeg format the reverse convertion"""
-    mpeg_data = self.input.convert("mpeg")
-    mpeg_mimetype = self.file_detector.from_buffer(mpeg_data)
+    mpeg_mimetype, ogv_mimetype = self.runTestForType("mpeg")
     self.assertEquals(mpeg_mimetype, 'video/mpeg')
-    ogv_mimetype = self.afterFormat(mpeg_data,"mpeg")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
   def testMkvFormat(self):
     """Test convert file to matroska format the reverse convertion"""
-    mkv_data = self.input.convert("mkv")
-    mkv_mimetype = self.file_detector.from_buffer(mkv_data)
+    mkv_mimetype, ogv_mimetype = self.runTestForType("mkv")
     # XXX This might expect 'video/x-matroska' but magic only got
     # 'application/octet-stream'
     self.assertEquals(mkv_mimetype, 'application/octet-stream')
-    ogv_mimetype = self.afterFormat(mkv_data,"mkv")
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
+
+  def runTestForType(self, destination_format):
+    """Converts video files from ogv to destination_format and then to
+    ogv again"""
+    data = open(join('data', 'test.ogv'), 'r').read()
+    converted_data = self.proxy.convertFile(encodestring(data),
+                                      "ogv",
+                                      destination_format)
+    destination_mimetype = self.file_detector.from_buffer(decodestring(
+                                                          converted_data))
+    ogv_data = self.proxy.convertFile(converted_data,
+                                      destination_format,
+                                      "ogv")
+    ogv_mimetype = self.file_detector.from_buffer(decodestring(ogv_data))
+    return (destination_mimetype, ogv_mimetype)
 
 def test_suite():
   return make_suite(TestAllSupportedFormat)
