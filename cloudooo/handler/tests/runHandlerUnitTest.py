@@ -8,17 +8,34 @@ from subprocess import Popen
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
-from psutil import Process
+import psutil
+from cloudooo.handler.ooo.utils.utils import socketStatus
 from signal import SIGQUIT
 
 
 def wait_use_port(pid, timeout_limit=30):
-  process = Process(pid)
+  process = psutil.Process(pid)
   for n in range(timeout_limit):
     if len(process.get_connections()) > 0:
       return True
     sleep(1)
   return False
+
+
+def stopDaemonProcess(port):
+  """
+    Temporary Function to stop the paster daemon. The goals is to stop the
+    server that is running forever using the port.
+  """
+  for process in psutil.process_iter():
+    if process.name == "paster" and "paster serve" in " ".join(process.cmdline):
+      try:
+        connection_list = process.get_connections()
+        for connection in connection_list:
+          if connection.status == "LISTEN" and connection.local_address[1] == port:
+            process.send_signal(SIGQUIT)
+      except psutil.error.AccessDenied, e:
+        pass
 
 
 def exit(msg):
@@ -77,6 +94,10 @@ def run(handler_name):
   if DAEMON:
     log_file = '%s/cloudooo_test.log' % config.get('app:main',
                                                    'working_path')
+    hostname = config.get("server:main", "host")
+    port = int(config.get("server:main", "port"))
+    if socketStatus(hostname, port):
+      stopDaemonProcess(port)
     if path.exists(log_file):
       remove(log_file)
     command = [paster_path, 'serve', '--log-file', log_file,
