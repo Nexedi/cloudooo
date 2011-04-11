@@ -1,31 +1,26 @@
-FFMPEG Handler http://svn.erp5.org/erp5/trunk/utils/cloudooo.handler.ffmpeg/
+FFMPEGHandler
+FFMPEGHandler is a handler of cloudooo for developing GUI convertion applications
+using FFmpeg cross-platform.
 
-There are three binaries available:
+Introduction
+The FFMPEGHandler package defines a single class, Handler, which is interface to
+audio and video convertion into cloudooo.
 
- - ffmpeg
- - ffprobe
- - ffserver
+FFMPEGHandler has been developed with python 2.6 and ffmpeg 0.6.1.
 
-First is used to convert audio and video file to availables codecs into cloudooo
-at the moment( for seeing then use -codecs option).
-Second one is used for seeing file information, like metadata in this.
-Third is only used in case to overwrite ffmpeg server.
+Example
 
-Runnig any of those binaries with -h or --help option will more command line
-help and options.
+Converting file:
 
-Usage Example
--------------
+>>> from cloudooo.handler.ffmpeg import Handler
+>>> handler = Handler('my_path_data', open(test.ogv).read(), 'ogv')
+>>> converted_data = handler.convert('mpeg')
 
-Converting ogv file into mpeg file format:
+Getting information of file:
 
- $ ffmpeg -i test.ogv test.mpeg
+>>> from cloudooo.handler.ffmpeg import Handler
+>>> handler = Handler('my_path_data', open(test.ogv).read(), 'ogv')
+>>> metadata = handler.getMetadata()
+>>> metadata
+{ 'ENCODER': 'Lavf52.64.2'}
 
-Getting file information:
-
- $ ffprobe test.ogv
-
-Inserting metadata into file:
- $ ffmpeg -i test.ogv -metadata string=string -metadata string=string test.mepg
-
-Converting its necessary for insert metadata, but changing format is not.
