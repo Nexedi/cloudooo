@@ -30,29 +30,34 @@ from magic import Magic
 from cloudooo.handler.ffmpeg.handler import Handler
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 
-file_detector = Magic(mime=True)
 
 class TestHandler(HandlerTestCase):
 
   def afterSetUp(self):
     self.data = open("./data/test.ogv").read()
-    kw = dict(env=dict(PATH=self.env_path))
-    self.input = Handler(self.tmp_url, self.data, "ogv", **kw)
+    self.kw = dict(env=dict(PATH=self.env_path))
+    self.input = Handler(self.tmp_url, self.data, "ogv", **self.kw)
+    self.file_detector = Magic(mime=True)
 
   def testConvertVideo(self):
     """Test coversion of video to another format"""
     output_data = self.input.convert("mpeg")
-    file_format = file_detector.from_buffer(output_data)
+    file_format = self.file_detector.from_buffer(output_data)
     self.assertEquals(file_format, 'video/mpeg')
 
   def testgetMetadata(self):
     """Test if metadata is extracted from"""
     output_metadata = self.input.getMetadata()
-    self.assertEquals(output_metadata, {'ENCODER': 'Lavf52.64.2'})
+    self.assertEquals(output_metadata, {'Encoder': 'Lavf52.64.2'})
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    self.assertRaises(NotImplementedError, self.input.setMetadata)
+    metadata_dict = {"title": "Set Metadata Test", "creator": "cloudooo"}
+    output = self.input.setMetadata(metadata_dict)
+    handler = Handler(self.tmp_url, output, "ogv", **self.kw)
+    metadata = handler.getMetadata()
+    self.assertEquals(metadata["Title"], "Set Metadata Test")
+    self.assertEquals(metadata["Creator"], "cloudooo")
 
   def testConvertAudio(self):
     """Test coversion of audio to another format"""
@@ -60,7 +65,7 @@ class TestHandler(HandlerTestCase):
     kw = dict(env=dict(PATH=self.env_path))
     self.input = Handler(self.tmp_url, self.data, "ogg", **kw)
     output_data = self.input.convert("wav")
-    file_format = file_detector.from_buffer(output_data)
+    file_format = self.file_detector.from_buffer(output_data)
     # XXX this might expect 'audio/vnd.wave' but magic only got 'audio/x-wav'
     self.assertEquals(file_format, 'audio/x-wav')
 

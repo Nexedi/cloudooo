@@ -42,11 +42,11 @@ class TestServer(HandlerTestCase):
     """Creates a connection with cloudooo server"""
     self.proxy = ServerProxy("http://%s:%s/RPC2" % \
         (self.hostname, self.cloudooo_port), allow_none=True)
+    self.data = open(join('data', 'test.ogv'), 'r').read()
 
   def testConvertVideo(self):
     """Converts ogv video to mpeg format"""
-    data = open(join('data', 'test.ogv'), 'r').read()
-    video = self.proxy.convertFile(encodestring(data),
+    video = self.proxy.convertFile(encodestring(self.data),
                                       "ogv",
                                       "mpeg")
     mime = Magic(mime=True)
@@ -55,9 +55,17 @@ class TestServer(HandlerTestCase):
 
   def testGetMetadata(self):
     """test if metadata are extracted correctly"""
+    metadata = self.proxy.getFileMetadataItemList(encodestring(self.data), "ogv")
+    self.assertEquals(metadata["Encoder"], 'Lavf52.64.2')
 
   def testSetMetadata(self):
     """Test if metadata is inserted correctly"""
+    new_data = self.proxy.updateFileMetadata(encodestring(self.data),
+                                          "ogv",
+                                          {"title": "Server Set Metadata Test"})
+    metadata = self.proxy.getFileMetadataItemList(new_data, "ogv")
+    self.assertEquals(metadata["Encoder"], 'Lavf52.64.2')
+    self.assertEquals(metadata["Title"], 'Server Set Metadata Test')
 
 
 def test_suite():

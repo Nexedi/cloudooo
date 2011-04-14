@@ -90,7 +90,7 @@ class Handler(object):
     for data in metadata:
       if len(data) != 0:
         key, value = data.split(':')
-        metadata_dict[key.strip()] = value.strip()
+        metadata_dict[key.strip().capitalize()] = value.strip()
     self.input.trash()
     return metadata_dict
 
@@ -99,5 +99,25 @@ class Handler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    raise NotImplementedError
-
+    output_url = mktemp(suffix=".%s" % self.input.source_format,
+                        dir=self.input.directory_name)
+    command = ["ffmpeg",
+               "-i",
+               self.input.getUrl(),
+               "-y",
+               output_url]
+    index = 3
+    for metadata in metadata_dict:
+      command.insert(index, "-metadata")
+      command.insert(index+1, "%s=%s"%(metadata, metadata_dict[metadata]))
+      index += 2
+    try:
+      stdout, stderr = Popen(command,
+                             stdout=PIPE,
+                             stderr=PIPE,
+                             close_fds=True,
+                             env=self.environment).communicate()
+      self.input.reload(output_url)
+      return self.input.getContent()
+    finally:
+      self.input.trash()
