@@ -60,7 +60,7 @@ class TestAllSupportedFormat(HandlerTestCase):
   def testWebMFormat(self):
     """Test convert file to WebM format and the reverse convertion"""
     webm_mimetype, ogv_mimetype = self.runTestForType("webm")
-    self.assertEquals(webm_data, 'video/webm')
+    self.assertEquals(webm_mimetype, 'video/webm')
     # XXX This might expect 'video/ogg' but magic only got 'application/ogg'
     self.assertEquals(ogv_mimetype, 'application/ogg')
 
