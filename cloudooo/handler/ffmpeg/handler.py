@@ -32,7 +32,6 @@ from cloudooo.file import File
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
-
 class Handler(object):
   """FFMPEG Handler is used to handler inputed audio and video files"""
 
@@ -62,6 +61,10 @@ class Handler(object):
                self.input.getUrl(),
                "-y",
                output_url]
+    # XXX ffmpeg has a bug that needs this options to work with webm format
+    if destination_format == "webm":
+      command.insert(3, "-ab")
+      command.insert(4, "32k")
     try:
       stdout, stderr = Popen(command,
                              stdout=PIPE,
@@ -97,3 +100,4 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     raise NotImplementedError
+
