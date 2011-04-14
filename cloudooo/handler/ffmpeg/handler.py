@@ -63,8 +63,8 @@ class Handler(object):
                output_url]
     # XXX ffmpeg has a bug that needs this options to work with webm format
     if destination_format == "webm":
+      command.insert(3, "32k")
       command.insert(3, "-ab")
-      command.insert(4, "32k")
     try:
       stdout, stderr = Popen(command,
                              stdout=PIPE,
@@ -106,11 +106,9 @@ class Handler(object):
                self.input.getUrl(),
                "-y",
                output_url]
-    index = 3
     for metadata in metadata_dict:
-      command.insert(index, "-metadata")
-      command.insert(index+1, "%s=%s"%(metadata, metadata_dict[metadata]))
-      index += 2
+      command.insert(3, "%s=%s"%(metadata, metadata_dict[metadata]))
+      command.insert(3, "-metadata")
     try:
       stdout, stderr = Popen(command,
                              stdout=PIPE,
