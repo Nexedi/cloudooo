@@ -52,12 +52,7 @@ class TestHandler(HandlerTestCase):
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    metadata_dict = {"title": "Set Metadata Test", "creator": "cloudooo"}
-    output = self.input.setMetadata(metadata_dict)
-    handler = Handler(self.tmp_url, output, "ogv", **self.kw)
-    metadata = Handler.getMetadata()
-    self.assertEquals(metadata["title"], "Set Metadata Test")
-    self.assertEquals(metadata["creator"], "cloudooo")
+    self.assertRaises(NotImplementedError, self.input.setMetadata)
 
   def testConvertAudio(self):
     """Test coversion of audio to another format"""
