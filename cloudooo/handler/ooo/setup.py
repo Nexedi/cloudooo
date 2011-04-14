@@ -39,9 +39,9 @@ setup(
   ],
   packages = find_packages('src'),
   package_dir = {'': 'src'},
-  package_data = {'cloudooo.handler.ooo.tests.data': ['*']},
   url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo.handler.ooo',
   namespace_packages = ["cloudooo", "cloudooo.handler"],
+  include_package_data = True,
   install_requires=install_requires,
   entry_points="""
   [console_scripts]

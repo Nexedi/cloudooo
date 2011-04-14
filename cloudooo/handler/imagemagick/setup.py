@@ -35,6 +35,7 @@ setup(
     package_dir = {'': 'src'},
     url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo.handler.imagemagick',
     install_requires = install_requires,
+    include_package_data = True,
     namespace_packages = ["cloudooo", "cloudooo.handler"],
     entry_points="""
     [console_scripts]
