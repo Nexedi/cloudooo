@@ -110,6 +110,8 @@ class TestOpenOffice(HandlerTestCase):
     second_openoffice.start()
     self.assertTrue(self.openoffice.status())
     self.assertTrue(second_openoffice.status())
+    second_openoffice.stop()
+    self.assertFalse(second_openoffice.status())
 
 
 def test_suite():
