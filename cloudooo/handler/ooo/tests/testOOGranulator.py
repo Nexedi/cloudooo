@@ -84,8 +84,10 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
-    self.assertRaises(NotImplementedError, self.oogranulator.getColumnItemList,
-                                     'table_id')
+    data = open('./data/granulate_table_test.odt').read()
+    oogranulator = OOGranulator(data, 'odt')
+    self.assertEquals([[0, 'Name'], [1, 'Country']],
+                      oogranulator.getColumnItemList('SoccerTeams'))
 
   def testGetLineItemList(self):
     """Test if getLineItemList() returns the right table lines list"""
