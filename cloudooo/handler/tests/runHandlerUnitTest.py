@@ -9,7 +9,7 @@ from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
 import psutil
-from cloudooo.handler.ooo.utils.utils import socketStatus
+from cloudooo.handler.ooo.util.util import socketStatus
 from signal import SIGQUIT
 
 

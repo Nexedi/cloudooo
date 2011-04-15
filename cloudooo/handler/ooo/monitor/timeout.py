@@ -29,7 +29,7 @@
 from monitor import Monitor
 from multiprocessing import Process
 from time import sleep
-from cloudooo.utils.utils import logger
+from cloudooo.util.util import logger
 
 
 class MonitorTimeout(Monitor, Process):

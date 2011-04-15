@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import sys
-import helper_utils
+import helper_util
 from getopt import getopt, GetoptError
 from os import environ
 
 
 def test_openoffice(hostname, port):
   try:
-    helper_utils.getServiceManager(hostname, port)
+    helper_util.getServiceManager(hostname, port)
     return True
   except Exception, err:
     print err

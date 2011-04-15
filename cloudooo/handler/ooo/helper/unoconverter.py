@@ -28,7 +28,7 @@
 ##############################################################################
 
 import sys
-import helper_utils
+import helper_util
 from types import UnicodeType, InstanceType
 from os import environ, putenv
 from os.path import dirname, exists
@@ -159,7 +159,7 @@ class UnoConverter(object):
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
     """
-    service_manager = helper_utils.getServiceManager(self.hostname, self.port)
+    service_manager = helper_util.getServiceManager(self.hostname, self.port)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
@@ -219,7 +219,7 @@ class UnoConverter(object):
       if field_value_str:
         fieldname = document_info.getUserFieldName(number)
         metadata[fieldname] = field_value_str
-    service_manager = helper_utils.getServiceManager(self.hostname, self.port)
+    service_manager = helper_util.getServiceManager(self.hostname, self.port)
     type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))

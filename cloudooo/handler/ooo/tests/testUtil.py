@@ -28,43 +28,43 @@
 
 import unittest
 import logging
-from cloudooo.utils import utils
+from cloudooo.util import util
 from cloudooo.handler.tests.handlerTestCase import make_suite
 import mimetypes
 
 
-class TestUtils(unittest.TestCase):
+class TestUtil(unittest.TestCase):
   """Test Utils"""
 
   def testLog(self):
     """Instanciate Log and test __call__ called function log"""
-    utils.configureLogger(logging.DEBUG)
-    utils.logger.info("Test Log")
-    utils.logger.debug("Test Log")
-    utils.configureLogger(logging.INFO)
-    utils.logger.info("Test Log")
-    utils.logger.debug("Test Log")
+    util.configureLogger(logging.DEBUG)
+    util.logger.info("Test Log")
+    util.logger.debug("Test Log")
+    util.configureLogger(logging.INFO)
+    util.logger.info("Test Log")
+    util.logger.debug("Test Log")
 
   def testConversion(self):
     """Test convertion to bool"""
-    self.assertTrue(utils.convertStringToBool('true'))
-    self.assertEquals(utils.convertStringToBool('false'), False)
-    self.assertTrue(utils.convertStringToBool('truE'))
-    self.assertEquals(utils.convertStringToBool('faLse'), False)
-    self.assertEquals(utils.convertStringToBool(''), None)
+    self.assertTrue(util.convertStringToBool('true'))
+    self.assertEquals(util.convertStringToBool('false'), False)
+    self.assertTrue(util.convertStringToBool('truE'))
+    self.assertEquals(util.convertStringToBool('faLse'), False)
+    self.assertEquals(util.convertStringToBool(''), None)
 
   def testLoadMimetypelist(self):
     """Test if the file with mimetypes is loaded correctly"""
     self.assertEquals(mimetypes.types_map.get(".ogv"), None)
     self.assertEquals(mimetypes.types_map.get(".3gp"), None)
-    utils.loadMimetypeList()
+    util.loadMimetypeList()
     self.assertEquals(mimetypes.types_map.get(".ogv"), "video/ogg")
     self.assertEquals(mimetypes.types_map.get(".3gp"), "video/3gpp")
 
 
 def test_suite():
-  return make_suite(TestUtils)
+  return make_suite(TestUtil)
 
 if "__main__" == __name__:
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestUtils)
+  suite = unittest.TestLoader().loadTestsFromTestCase(TestUtil)
   unittest.TextTestRunner(verbosity=2).run(suite)

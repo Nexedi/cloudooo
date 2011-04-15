@@ -32,7 +32,7 @@ try:
   import json
 except ImportError:
   import simplejson as json
-import helper_utils
+import helper_util
 from os import environ, path, putenv
 from getopt import getopt, GetoptError
 from types import InstanceType
@@ -61,7 +61,7 @@ class UnoMimemapper(object):
     """ Receives hostname and port from openoffice and create a service manager"""
     self._setUpUnoEnvironment(kw.get("uno_path"),
                               kw.get("office_binary_path"))
-    self.service_manager = helper_utils.getServiceManager(hostname, port)
+    self.service_manager = helper_util.getServiceManager(hostname, port)
 
   def _getElementNameByService(self, uno_service, ignore_name_list=[]):
     """Returns an dict with elements."""

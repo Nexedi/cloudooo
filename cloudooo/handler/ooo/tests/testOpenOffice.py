@@ -28,7 +28,7 @@
 
 from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
-from cloudooo.handler.ooo.utils.utils import waitStopDaemon
+from cloudooo.handler.ooo.util.util import waitStopDaemon
 
 OPENOFFICE = True
 

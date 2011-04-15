@@ -30,7 +30,7 @@ import gc
 
 from os import path, mkdir, environ
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
-from cloudooo.utils import utils
+from cloudooo.util import util
 
 
 def application(global_config, **local_config):
@@ -63,8 +63,8 @@ def application(global_config, **local_config):
   local_config['environment_dict'] = environment_dict
 
   gc.enable()
-  debug_mode = utils.convertStringToBool(local_config.get('debug_mode'))
-  utils.configureLogger(debug_mode=debug_mode)
+  debug_mode = util.convertStringToBool(local_config.get('debug_mode'))
+  util.configureLogger(debug_mode=debug_mode)
   # path of directory to run cloudooo
   working_path = local_config.get('working_path')
   if not path.exists(working_path):
@@ -74,7 +74,7 @@ def application(global_config, **local_config):
   if not path.exists(cloudooo_path_tmp_dir):
     mkdir(cloudooo_path_tmp_dir)
 
-  utils.loadMimetypeList()
+  util.loadMimetypeList()
 
   mimetype_registry = local_config.get("mimetype_registry", "")
   local_config["mimetype_registry"] = handler_mapping_list = \

@@ -28,8 +28,8 @@
 
 from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
-from cloudooo.utils.utils import logger
-from cloudooo.handler.ooo.utils.utils import waitStopDaemon
+from cloudooo.util.util import logger
+from cloudooo.handler.ooo.util.util import waitStopDaemon
 from psutil import pid_exists, Process, AccessDenied
 
 
