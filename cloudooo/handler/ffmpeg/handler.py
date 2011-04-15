@@ -29,6 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
+from cloudooo.util.util import logger
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
@@ -62,9 +63,9 @@ class Handler(object):
                "-y",
                output_url]
     # XXX ffmpeg has a bug that needs this options to work with webm format
-    if destination_format == "webm":
-      command.insert(3, "32k")
-      command.insert(3, "-ab")
+#    if destination_format == "webm":
+#      command.insert(3, "32k")
+#      command.insert(3, "-ab")
     try:
       stdout, stderr = Popen(command,
                              stdout=PIPE,
@@ -72,6 +73,8 @@ class Handler(object):
                              close_fds=True,
                              env=self.environment).communicate()
       self.input.reload(output_url)
+      if len(self.input.getContent()) == 0:
+        logger.error(stderr.split("\n")[-2])
       return self.input.getContent()
     finally:
       self.input.trash()
