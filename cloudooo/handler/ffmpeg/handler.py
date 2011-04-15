@@ -63,9 +63,9 @@ class Handler(object):
                "-y",
                output_url]
     # XXX ffmpeg has a bug that needs this options to work with webm format
-#    if destination_format == "webm":
-#      command.insert(3, "32k")
-#      command.insert(3, "-ab")
+    if destination_format == "webm":
+      command.insert(3, "32k")
+      command.insert(3, "-ab")
     try:
       stdout, stderr = Popen(command,
                              stdout=PIPE,
