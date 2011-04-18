@@ -109,15 +109,13 @@ class TestOOGranulator(HandlerTestCase):
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
     image_list = self.oogranulator.getImageItemList()
-    self.assertEquals([
-      ('10000000000000C80000009C38276C51.jpg', ''),
-      ('10000201000000C80000004E7B947D46.png', ''),
-      ('10000201000000C80000004E7B947D46.png', 'Illustration 1: TioLive Logo'),
-      # XXX The svg image are stored into odf as svm
-      ('2000004F00004233000013707E7DE37A.svm', 'Figure 1: Python Logo'),
-      ('10000201000000C80000004E7B947D46.png',
-        'Illustration 2: Again TioLive Logo'),
-      ], image_list)
+    self.assertEquals([('10000000000000C80000009C38276C51.jpg', ''),
+                       ('10000201000000C80000004E7B947D46.png', 'TioLive Logo'),
+                       ('10000201000000C80000004E7B947D46.png', ''),
+                       # XXX The svg image are stored into odf as svm
+                       ('2000004F00004233000013707E7DE37A.svm', 'Python Logo'),
+                       ('10000201000000C80000004E7B947D46.png',
+                        'Again TioLive Logo')], image_list)
 
   def testGetImageSuccessfully(self):
     """Test if getImage() returns the right image file successfully"""
