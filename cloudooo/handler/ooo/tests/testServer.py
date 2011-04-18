@@ -511,6 +511,13 @@ class TestServer(HandlerTestCase):
     data = encodestring(open("data/granulate_table_test.odt").read())
     granulated_table = self.proxy.getTableItemList(data, "odt")
     self.assertEquals(table_list, granulated_table)
+    #.doc
+    table_list = [['Table1', ''],
+                  ['Table2', 'Table 1: Prices table from Mon Restaurant'],
+                  ['Table3', 'Tabela 2: Soccer Teams']]
+    data = encodestring(open("data/granulate_table_test.doc").read())
+    granulated_table = self.proxy.getTableItemList(data, "doc")
+    self.assertEquals(table_list, granulated_table)
 
   def testGetTable(self):
     """Test if manager can get a item of some granulated table"""
@@ -526,11 +533,30 @@ class TestServer(HandlerTestCase):
     table = table_list[0]
     name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
     self.assertEquals(granulated_table[1][0], table.attrib[name_key])
+    #.doc
+    data = encodestring(open("./data/granulate_table_test.doc").read())
+    granulated_table = self.proxy.getTableItemList(data, "doc")
+    self.proxy.getTable(data, granulated_table[1][0], "doc")
+    table_item = decodestring(self.proxy.getTable(data, granulated_table[1][0],
+                                                      "doc"))
+    content_xml_str = ZipFile(StringIO(table_item)).read('content.xml')
+    content_xml = etree.fromstring(content_xml_str)
+    table_list = content_xml.xpath('//table:table',
+                                   namespaces=content_xml.nsmap)
+    self.assertEquals(1, len(table_list))
+    table = table_list[0]
+    name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
+    self.assertEquals(granulated_table[1][0], table.attrib[name_key])
 
   def testGetColumnItemList(self):
     """Test if manager can get the list of column item"""
     data = encodestring(open("./data/granulate_table_test.odt").read())
     columns = self.proxy.getColumnItemList(data, "SoccerTeams", "odt")
+    self.assertEquals([[0, 'Name'], [1, 'Country']], columns)
+    #.doc
+    data = encodestring(open("./data/granulate_table_test.doc").read())
+    #in the doc format the tables lose their names
+    columns = self.proxy.getColumnItemList(data, "Table3", "doc")
     self.assertEquals([[0, 'Name'], [1, 'Country']], columns)
 
   def testGetLineItemList(self):
@@ -541,19 +567,35 @@ class TestServer(HandlerTestCase):
                        ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
                        ['Phone', '+55 (22) 9999-9999'],
                        ['Email', 'rafael@tiolive.com']], line_item_list)
+    #.doc
+    data = encodestring(open("./data/granulate_table_test.doc").read())
+    line_item_list = self.proxy.getLineItemList(data, "Table1", "doc")
+    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
+                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
+                       ['Phone', '+55 (22) 9999-9999'],
+                       ['Email', 'rafael@tiolive.com']], line_item_list)
 
   def testGetImageItemList(self):
     """Test if manager can get the list of images items"""
     data = encodestring(open("./data/granulate_test.odt").read())
     image_list = self.proxy.getImageItemList(data, "odt")
     self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
-                       ['10000201000000C80000004E7B947D46.png', ''],
-                       ['10000201000000C80000004E7B947D46.png',
-                        'Illustration 1: TioLive Logo'],
-                       ['2000004F00004233000013707E7DE37A.svm',
-                        'Figure 1: Python Logo'],
-                       ['10000201000000C80000004E7B947D46.png',
-                        'Illustration 2: Again TioLive Logo']], image_list)
+                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
+                      ['10000201000000C80000004E7B947D46.png', ''],
+                      ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
+                      ['10000201000000C80000004E7B947D46.png',
+                                                        'Again TioLive Logo']],
+                                                                    image_list)
+    #.doc
+    data = encodestring(open("./data/granulate_test.doc").read())
+    image_list = self.proxy.getImageItemList(data, "doc")
+    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
+                      ['10000201000000C80000004E7B947D46.png', ''],
+                      ['200003160000423300001370F468B63D.wmf', 'Python Logo'],
+                      ['10000201000000C80000004E7B947D46.png',
+                                                        'Again TioLive Logo']],
+                                                                    image_list)
 
   def testGetImage(self):
     """Test if manager can get a image"""
