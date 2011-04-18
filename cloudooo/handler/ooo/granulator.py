@@ -36,16 +36,20 @@ from cloudooo.handler.ooo.document import OdfDocument
 # URI Definitions.
 TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
 TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:table:1.0'
+DRAWING_URI = 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0'
 
 # Odf Namespaces
 TABLE_ATTRIB_NAME = '{%s}name' % TABLE_URI
 TEXT_ATTRIB_STYLENAME = '{%s}style-name' % TEXT_URI
+DRAWING_ATTRIB_STYLENAME = '{%s}style-name' % DRAWING_URI
+DRAWING_ATTRIB_NAME = '{%s}name' % DRAWING_URI
 
 # XPath queries for ODF format
 RELEVANT_PARAGRAPH_XPATH_QUERY = '//text:p[not(ancestor::draw:frame)]'
 DRAW_XPATH_QUERY = './/draw:image'
 TABLE_XPATH_QUERY = './/table:table'
-IMAGE_TITLE_XPATH_QUERY = './/../../text() | .//../../*/text()'
+IMAGE_TITLE_XPATH_QUERY = '//draw:text-box/text:p/draw:frame[@draw:style-name="%s"][@draw:name="%s"]/draw:image[@xlink:href="Pictures/%s"]/ancestor::draw:frame/following-sibling::text()'
+IMAGE_DRAW_NAME_AND_STYLENAME_XPATH_QUERY = '//draw:text-box/text:p/draw:frame'
 CHAPTER_XPATH_QUERY = '//text:p[@text:style-name="Title"]/text:span/text() | //text:h/text:span/text()'
 
 def getTemplatePath(format):
@@ -84,6 +88,10 @@ class OOGranulator(object):
       title = ''.join(table.xpath('following-sibling::text:p[position()=1] \
                           [starts-with(@text:style-name, "Table")]//text()',
                           namespaces=table.nsmap))
+      if title == '':
+        title = ''.join(table.xpath('following-sibling::text:p[position()=1] \
+                    [starts-with(@text:style-name, "Tabela")]//text()',
+                    namespaces=table.nsmap))
       id = table.attrib[TABLE_ATTRIB_NAME]
       table_list.append((id, title))
     return table_list
@@ -171,17 +179,42 @@ class OOGranulator(object):
         fields.remove(fields[0])
     return matrix
 
+  #this function will be use to pick up the attibutes name and style-name
+  def _getFrameImageList(self):
+    RELEVANT_IMAGE_CACHE = getattr(self, "RELEVANT_PARAGRAPH_CACHE", None)
+    if RELEVANT_IMAGE_CACHE is None:
+      relevant_image_list = self.document.parsed_content.xpath(
+                                 IMAGE_DRAW_NAME_AND_STYLENAME_XPATH_QUERY,
+                                 namespaces=self.document.parsed_content.nsmap)
+      setattr(self, "RELEVANT_IMAGE_CACHE", relevant_image_list)
+
+    return self.RELEVANT_IMAGE_CACHE
+
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
     xml_image_list = self.document.parsed_content.xpath(DRAW_XPATH_QUERY,
                                 namespaces=self.document.parsed_content.nsmap)
+    name_list = []
+    stylename_list = []
+    for i in self._getFrameImageList():
+      name_list.append(i.attrib[DRAWING_ATTRIB_NAME])
+      stylename_list.append(i.attrib[DRAWING_ATTRIB_STYLENAME])
 
     image_list = []
+
     for xml_image in xml_image_list:
-      title = ''.join(xml_image.xpath(IMAGE_TITLE_XPATH_QUERY,
-                                      namespaces=xml_image.nsmap))
       id = xml_image.values()[0].split('/')[-1]
+      title = ''.join(xml_image.xpath(IMAGE_TITLE_XPATH_QUERY%(stylename_list[0], name_list[0], id),
+                                      namespaces=xml_image.nsmap))
+      if title != '':
+        title_list = title.split(':')
+        title = ''.join(title_list[1:])
+        title = title.strip()
+        name_list.pop(0)
+        stylename_list.pop(0)
+
       image_list.append((id, title))
+    
     return image_list
 
   def getImage(self, id, format=None, resolution=None, **kw):
