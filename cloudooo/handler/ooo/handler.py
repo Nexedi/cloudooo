@@ -232,7 +232,7 @@ def bootstrapHandler(configuration_dict):
   working_path = configuration_dict.get('working_path')
   application_hostname = configuration_dict.get('application_hostname')
   openoffice_port = int(configuration_dict.get('openoffice_port'))
-  environment_dict = configuration_dict['environment_dict']
+  environment_dict = configuration_dict['env']
   # Loading Configuration to start OOo Instance and control it
   openoffice.loadSettings(application_hostname,
                           openoffice_port,
