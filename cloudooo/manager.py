@@ -305,7 +305,8 @@ class Manager(object):
   def getTable(self, data, id, source_format="odt"):
     """Returns the table into a new 'format' file."""
     document = self._getOOGranulator(data, source_format)
-    return encodestring(document.getTable(id, source_format))
+    #the file will be convert; so, the source_format will be always 'odt'
+    return encodestring(document.getTable(id, 'odt'))
 
   def getColumnItemList(self, data, table_id, source_format):
     """Return the list of columns in the form of (id, title)."""
@@ -319,6 +320,7 @@ class Manager(object):
 
   def getImageItemList(self, data, source_format):
     """Return the list of images in the form of (id, title)."""
+    data = self.convertFile(data, source_format, 'odt', zip=False)
     document = self._getOOGranulator(data, source_format)
     return document.getImageItemList()
 
