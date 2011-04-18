@@ -605,6 +605,16 @@ class TestServer(HandlerTestCase):
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
     self.assertEquals(original_image, geted_image)
+    #.doc
+    data = encodestring(open("./data/granulate_test.doc").read())
+    #This conversion is necessary to catch the image from the doc file;
+    #so compare with the server return.
+    data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
+    zip = ZipFile(StringIO(decodestring(data_odt)))
+    image_id = '10000000000000C80000009C38276C51.jpg'
+    original_image = zip.read('Pictures/%s' % image_id)
+    geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
+    self.assertEquals(original_image, geted_image)
 
   def testGetParagraphItemList(self):
     """Test if paragraphs are extracted correctly from document"""
