@@ -181,14 +181,11 @@ class OOGranulator(object):
 
   #this function will be use to pick up the attibutes name and style-name
   def _getFrameImageList(self):
-    RELEVANT_IMAGE_CACHE = getattr(self, "RELEVANT_PARAGRAPH_CACHE", None)
-    if RELEVANT_IMAGE_CACHE is None:
-      relevant_image_list = self.document.parsed_content.xpath(
+    relevant_image_list = self.document.parsed_content.xpath(
                                  IMAGE_DRAW_NAME_AND_STYLENAME_XPATH_QUERY,
                                  namespaces=self.document.parsed_content.nsmap)
-      setattr(self, "RELEVANT_IMAGE_CACHE", relevant_image_list)
 
-    return self.RELEVANT_IMAGE_CACHE
+    return relevant_image_list
 
   def getImageItemList(self):
     """Return a list of tuples with the id and title of image files"""
@@ -223,16 +220,11 @@ class OOGranulator(object):
     return self.document.getFile(path)
 
   def _getRelevantParagraphList(self):
-    """ This should use memcache or another cache infrastructure.
-    """
-    RELEVANT_PARAGRAPH_CACHE = getattr(self, "RELEVANT_PARAGRAPH_CACHE", None)
-    if RELEVANT_PARAGRAPH_CACHE is None:
-      relevant_paragraph_list = self.document.parsed_content.xpath(
+    relevant_paragraph_list = self.document.parsed_content.xpath(
                                  RELEVANT_PARAGRAPH_XPATH_QUERY,
                                  namespaces=self.document.parsed_content.nsmap)
-      setattr(self, "RELEVANT_PARAGRAPH_CACHE", relevant_paragraph_list)
 
-    return self.RELEVANT_PARAGRAPH_CACHE
+    return relevant_paragraph_list
 
   def getParagraphItemList(self):
     """Returns the list of paragraphs in the form of (id, class) where class
@@ -265,16 +257,10 @@ class OOGranulator(object):
     return (text, p_class)
 
   def _getChapterList(self):
-    """ This should use memcache or another cache infrastructure.
-    """
-    CHAPTER_CACHE = getattr(self, "CHAPTER_CACHE", None)
-    if CHAPTER_CACHE is None:
-      chapter_list = self.document.parsed_content.xpath(
+    chapter_list = self.document.parsed_content.xpath(
                                  CHAPTER_XPATH_QUERY,
                                  namespaces=self.document.parsed_content.nsmap)
-
-      setattr(self, "CHAPTER_CACHE", chapter_list)
-    return self.CHAPTER_CACHE
+    return chapter_list
 
   def getChapterItemList(self):
     """Returns the list of chapters in the form of (id, level)."""
