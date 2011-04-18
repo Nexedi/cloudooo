@@ -60,7 +60,7 @@ def application(global_config, **local_config):
           value = '%s:%s' % (value, current_value)
       environment_dict[variable_name] = value
 
-  local_config['environment_dict'] = environment_dict
+  local_config["env"] = environment_dict
 
   gc.enable()
   debug_mode = util.convertStringToBool(local_config.get('debug_mode'))
@@ -91,7 +91,6 @@ def application(global_config, **local_config):
       handler_dict[handler] = module.Handler
 
   local_config['handler_dict'] = handler_dict
-  local_config["env"] = environment_dict
   from manager import Manager
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **local_config)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)
