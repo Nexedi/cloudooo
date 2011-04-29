@@ -56,7 +56,7 @@ class TestHighLoad(HandlerTestCase):
     """Sends many request to Server. Calling generate method"""
     process_list = []
     data = encodestring(open("data/test.doc", 'r').read())
-    LOOP = 50
+    LOOP = 100
     result_list = Array('i', [False] * LOOP)
     for id in range(LOOP):
       process = Process(target=basicTestToGenerate, args=(id, self.proxy, data,
