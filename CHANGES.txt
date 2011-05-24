@@ -1,3 +1,7 @@
+1.2.4 (unreleased)
+==================
+  - Move to git and reorganize the code.
+
 1.2.3 (2011-04-01)
 ==================
   - Eggify handlers
