@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from os import path
 import sys
 
-version = '1.2.3'
+version = '1.2.4'
 
 folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
 
@@ -15,6 +15,8 @@ install_requires = [
           'PasteScript',
           'WSGIUtils',
           'psutil>=0.2.0',
+          'lxml'
+
          ]
 
 test_requires = [
@@ -40,7 +42,7 @@ setup(name='cloudooo',
       author_email='gabriel@tiolive.com',
       url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo',
       license='GPLv3',
-      packages=find_packages(exclude=['examples', 'tests']),
+      packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
@@ -51,5 +53,9 @@ setup(name='cloudooo',
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
+      runImageMagickHandlerUnitTest = cloudooo.handler.imagemagick.tests.runImageMagickHandlerUnitTest:run
+      runFFMPEGHandlerUnitTest = cloudooo.handler.ffmpeg.tests.runFFMPEGHandlerUnitTest:run
+      runOOoHandlerUnitTest = cloudooo.handler.ooo.tests.runOOoHandlerUnitTest:run
+      runPDFHandlerUnitTest = cloudooo.handler.pdf.tests.runPDFHandlerUnitTest:run
       """,
       )
