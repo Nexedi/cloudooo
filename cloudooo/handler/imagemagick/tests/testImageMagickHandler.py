@@ -29,7 +29,7 @@
 
 import magic
 from cloudooo.handler.imagemagick.handler import Handler
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
 class TestHandler(HandlerTestCase):

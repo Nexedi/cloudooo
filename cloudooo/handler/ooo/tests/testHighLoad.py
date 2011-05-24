@@ -29,7 +29,7 @@
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from multiprocessing import Process, Array
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 import magic
 
 DAEMON = True

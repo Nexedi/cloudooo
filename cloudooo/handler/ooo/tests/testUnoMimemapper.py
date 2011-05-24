@@ -31,7 +31,7 @@ import pkg_resources
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from subprocess import Popen, PIPE
 from os import environ, path
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
 OPENOFFICE = True
 

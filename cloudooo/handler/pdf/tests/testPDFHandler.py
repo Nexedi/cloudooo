@@ -28,7 +28,7 @@
 
 
 from cloudooo.handler.pdf.handler import Handler
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 from types import DictType
 
 

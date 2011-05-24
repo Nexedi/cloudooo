@@ -27,7 +27,7 @@
 ##############################################################################
 
 import cloudooo.handler.ooo.monitor as monitor
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.monitor.request import MonitorRequest
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 

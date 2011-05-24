@@ -29,7 +29,7 @@
 import unittest
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ffmpeg.handler import Handler
-from cloudooo.handler.tests.handlerTestCase import make_suite
+from cloudooo.tests.handlerTestCase import make_suite
 
 
 class TestInterface(unittest.TestCase):

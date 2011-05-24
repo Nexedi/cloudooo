@@ -28,7 +28,7 @@
 
 from zipfile import ZipFile
 from lxml import etree
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 from cloudooo.handler.ooo.document import OdfDocument
 
 

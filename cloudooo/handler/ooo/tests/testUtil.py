@@ -29,7 +29,7 @@
 import unittest
 import logging
 from cloudooo.util import util
-from cloudooo.handler.tests.handlerTestCase import make_suite
+from cloudooo.tests.handlerTestCase import make_suite
 import mimetypes
 
 

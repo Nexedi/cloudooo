@@ -30,7 +30,7 @@ import unittest
 from time import sleep
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
-from cloudooo.handler.tests.handlerTestCase import make_suite
+from cloudooo.tests.handlerTestCase import make_suite
 
 OPENOFFICE = True
 

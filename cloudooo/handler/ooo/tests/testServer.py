@@ -30,7 +30,7 @@ from os.path import join, exists
 from os import remove
 from xmlrpclib import ServerProxy, Fault
 from base64 import encodestring, decodestring
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 from zipfile import ZipFile, is_zipfile
 from StringIO import StringIO
 from lxml import etree

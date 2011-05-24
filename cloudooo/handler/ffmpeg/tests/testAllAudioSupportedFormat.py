@@ -30,7 +30,7 @@ from magic import Magic
 from xmlrpclib import ServerProxy
 from os.path import join
 from base64 import encodestring, decodestring
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
 DAEMON = True
 

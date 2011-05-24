@@ -28,7 +28,7 @@
 
 from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 import magic
 from pkg_resources import resource_filename
 

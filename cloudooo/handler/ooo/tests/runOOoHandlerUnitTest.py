@@ -27,7 +27,7 @@
 #
 ##############################################################################
 
-from cloudooo.handler.tests import runHandlerUnitTest
+from cloudooo.tests import runHandlerUnitTest
 
 
 def run():

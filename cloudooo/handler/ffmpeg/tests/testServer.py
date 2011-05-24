@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-from cloudooo.handler.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 from xmlrpclib import ServerProxy
 from os.path import join
 from base64 import encodestring, decodestring

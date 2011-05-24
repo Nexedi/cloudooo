@@ -32,7 +32,7 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 from psutil import Process
 from types import IntType
-from cloudooo.handler.tests.handlerTestCase import make_suite
+from cloudooo.tests.handlerTestCase import make_suite
 
 OPENOFFICE = True
 
