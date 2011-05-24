@@ -29,7 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util.util import logger
+from cloudooo.util import logger
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 

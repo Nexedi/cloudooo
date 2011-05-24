@@ -32,7 +32,7 @@ from mimetypes import guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
-from util.util import logger
+from cloudooo.util import logger
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator

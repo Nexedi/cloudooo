@@ -30,7 +30,7 @@ import gc
 
 from os import path, mkdir, environ
 from cloudooo.wsgixmlrpcapplication import WSGIXMLRPCApplication
-from cloudooo.util import util
+from cloudooo import util
 
 
 def application(global_config, **local_config):

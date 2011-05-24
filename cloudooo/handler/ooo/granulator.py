@@ -30,7 +30,7 @@ from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
 from os import path
-from cloudooo.util.util import logger
+from cloudooo.util import logger
 from cloudooo.handler.ooo.document import OdfDocument
 
 # URI Definitions.

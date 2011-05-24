@@ -31,7 +31,7 @@ from errno import EADDRINUSE
 from time import sleep
 from os import remove
 from shutil import rmtree
-from cloudooo.util.util import logger
+from cloudooo.util import logger
 
 
 def removeDirectory(path):
