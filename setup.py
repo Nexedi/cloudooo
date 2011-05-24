@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
-from os import path
 import sys
 
 version = '1.2.4'
 
-folder_path = path.abspath(path.dirname(__file__)) + "/cloudooo"
+def read(name):
+    return open(name).read()
 
-long_description = "%s\n%s" % (open(path.join(folder_path, "README.txt")).read(),
-                               open(path.join(folder_path, "CHANGES.txt")).read())
+long_description = (read('README.txt') + '\n' + read('CHANGES.txt'))
+
 install_requires = [
           # -*- Extra requirements: -*-
           'zope.interface',
@@ -40,7 +40,7 @@ setup(name='cloudooo',
       keywords='xmlrpc openoffice wsgi paste python',
       author='Gabriel M. Monnerat',
       author_email='gabriel@tiolive.com',
-      url = 'http://svn.erp5.org/repos/public/erp5/trunk/utils/cloudooo',
+      url = 'http://git.erp5.org/gitweb/cloudooo.git',
       license='GPLv3',
       packages=find_packages(),
       include_package_data=True,
