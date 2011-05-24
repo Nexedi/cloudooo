@@ -1,22 +1,22 @@
-1.2.3 (2010-04-01)
+1.2.3 (2011-04-01)
 ==================
   - Eggify handlers
   - Configuration file tells to cloudooo which handler must be loaded
   - Update interface (not implemented yet)
 
-1.2.2 (2010-02-07)
+1.2.2 (2011-02-07)
 ==================
   - No longer use Xvfb.
 
-1.2.1 (2010-01-21)
+1.2.1 (2011-01-21)
 ==================
   - Improve ERP5 compatibility.
 
-1.2.0 (2010-01-19)
+1.2.0 (2011-01-19)
 ==================
   - Support LibreOffice3.3rc3.
 
-1.1.0 (2010-01-13)
+1.1.0 (2011-01-13)
 ===================
   - Refactor runCloudOOoUnitTest.py to control better the daemon process
   - Use argparse instead of optparse
