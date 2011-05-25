@@ -57,8 +57,8 @@ def run(handler_name):
   if not path.exists(full_path):
     exit("%s does not exists\n" % full_path)
 
-  from cloudooo.handler.tests.handlerTestCase import startFakeEnvironment
-  from cloudooo.handler.tests.handlerTestCase import stopFakeEnvironment
+  from cloudooo.tests.handlerTestCase import startFakeEnvironment
+  from cloudooo.tests.handlerTestCase import stopFakeEnvironment
 
   sys.path.append(environment_path)
 
