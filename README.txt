@@ -110,3 +110,15 @@ Getting information of file:
 >>> metadata
 { 'ENCODER': 'Lavf52.64.2'}
 
+NOTE
+
+In case of importing FFMPEGHandler library is needed to import its used libraries
+as well and set its enviroment for handler.
+
+Example
+
+>>> from cloudooo.handler.ffmpeg import Handler
+>>> self.kw = dict(env=dict(PATH="../software/parts/ffmpeg/bin"))
+>>> handler = Handler('my_path_data', open(test.ogv).read(), 'ogv', **self.kw)
+>>> converted_data = handler.convert('mpeg')
+
