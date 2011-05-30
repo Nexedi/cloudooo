@@ -32,7 +32,7 @@ from os.path import join
 from base64 import encodestring, decodestring
 from magic import Magic
 
-DAEMON = True
+#DAEMON = True
 
 
 class TestServer(HandlerTestCase):
@@ -67,6 +67,38 @@ class TestServer(HandlerTestCase):
     self.assertEquals(metadata["Encoder"], 'Lavf52.64.2')
     self.assertEquals(metadata["Title"], 'Server Set Metadata Test')
 
+
+#from os.path import join
+#from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+
+#class TestServer(TestCase):
+
+#  def ConversionScenarioList(self):
+#    return [
+#            (join('data', 'test.ogv'), "ogv", "mpeg", "video/mpeg"),
+#            ]
+
+#  def testConvertVideo(self):
+#    self.runConversionList(self.ConversionScenarioList())
+
+#  def GetMetadataScenarioList(self):
+#    return [
+#            (join('data', 'test.ogv'), "ogv", dict(Data='', ENCODER='Lavf52.64'+
+#            '.2')),
+#            ]
+
+#  def testGetMetadata(self):
+#    self.runGetMetadataList(self.GetMetadataScenarioList())
+
+#  def UpdateMetadataScenarioList(self):
+#    return [
+#            (join('data', 'test.ogv'), "ogv", dict(title='Server Set Metadata '+
+#            'Test'), dict(Data='', ENCODER='Lavf52.64.2', title='Server Set Me'+
+#            'tadata Test')),
+#            ]
+
+#  def testSetMetadata(self):
+#    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():
   return make_suite(TestServer)
