@@ -26,59 +26,21 @@
 #
 ##############################################################################
 
-from magic import Magic
-from xmlrpclib import ServerProxy
 from os.path import join
-from base64 import encodestring, decodestring
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
-DAEMON = True
 
-class TestAllSupportedFormat(HandlerTestCase):
+class TestAllSupportedFormat(TestCase):
 
-  def afterSetUp(self):
-    self.file_detector = Magic(mime=True)
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % \
-        (self.hostname, self.cloudooo_port), allow_none=True)
+  def ConversionScenarioList(self):
+    return [# XXX This might expect audio/octet-stream but only got audio/mpeg
+            (join('data', 'test.ogg'), "ogg", "mp3", "audio/mpeg"),
+            (join('data', 'test.ogg'), "ogg", "wav", "audio/x-wav"),
+            (join('data', 'test.ogg'), "ogg", "midi", "audio/rtp-midi"),
+            ]
 
-  def testMP3Format(self):
-    """Test convert file to mp3 format the reverse convertion"""
-    mp3_mimetype, ogg_mimetype = self.runTestForType("mp3")
-    # XXX This might expect 'audio/mpeg' but magic only got
-    # 'application/octet-stream'
-    self.assertEquals(mp3_mimetype, 'application/octet-stream')
-    # XXX This might expect 'audio/ogg' but magic only got 'application/ogg'
-    self.assertEquals(ogg_mimetype, 'application/ogg')
-
-  def testWAVFormat(self):
-    """Test convert file to wav format the reverse convertion"""
-    wav_mimetype, ogg_mimetype = self.runTestForType("wav")
-    # XXX this might expect 'audio/vnd.wave' but magic only got 'audio/x-wav'
-    self.assertEquals(wav_mimetype, 'audio/x-wav')
-    # XXX This might expect 'audio/ogg' but magic only got 'application/ogg'
-    self.assertEquals(ogg_mimetype, 'application/ogg')
-
-  def testMIDFormat(self):
-    """Test convert file to mid format and the reverse convertion"""
-    mid_mimetype, ogg_mimetype = self.runTestForType("mid")
-    self.assertEquals(mid_mimetype, 'audio/rtp-midi')
-    # XXX This might expect 'audio/ogg' but magic only got 'application/ogg'
-    self.assertEquals(ogg_mimetype, 'application/ogg')
-
-  def runTestForType(self, destination_format):
-    """Converts audio files from ogg to destination_format and then to
-    ogg again"""
-    data = open(join('data', 'test.ogg'), 'r').read()
-    converted_data = self.proxy.convertFile(encodestring(data),
-                                      "ogg",
-                                      destination_format)
-    destination_mimetype = self.file_detector.from_buffer(decodestring(
-                                                          converted_data))
-    ogg_data = self.proxy.convertFile(converted_data,
-                                      destination_format,
-                                      "ogg")
-    ogg_mimetype = self.file_detector.from_buffer(decodestring(ogg_data))
-    return (destination_mimetype, ogg_mimetype)
+  def testAllSupportedFormat(self):
+    self.runConversionList(self.ConversionScenarioList())
 
 
 def test_suite():
