@@ -26,79 +26,37 @@
 #
 ##############################################################################
 
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-from xmlrpclib import ServerProxy
 from os.path import join
-from base64 import encodestring, decodestring
-from magic import Magic
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
-#DAEMON = True
+class TestServer(TestCase):
 
-
-class TestServer(HandlerTestCase):
-  """Test XmlRpc Server. Needs cloudooo server started"""
-
-  def afterSetUp(self):
-    """Creates a connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % \
-        (self.hostname, self.cloudooo_port), allow_none=True)
-    self.data = open(join('data', 'test.ogv'), 'r').read()
+  def ConversionScenarioList(self):
+    return [
+            (join('data', 'test.ogv'), "ogv", "mpeg", "video/mpeg"),
+            ]
 
   def testConvertVideo(self):
-    """Converts ogv video to mpeg format"""
-    video = self.proxy.convertFile(encodestring(self.data),
-                                      "ogv",
-                                      "mpeg")
-    mime = Magic(mime=True)
-    mimetype = mime.from_buffer(decodestring(video))
-    self.assertEquals(mimetype, 'video/mpeg')
+    self.runConversionList(self.ConversionScenarioList())
+
+  def GetMetadataScenarioList(self):
+    return [
+            (join('data', 'test.ogv'), "ogv", dict(Data='', ENCODER='Lavf52.64'+
+            '.2')),
+            ]
 
   def testGetMetadata(self):
-    """test if metadata are extracted correctly"""
-    metadata = self.proxy.getFileMetadataItemList(encodestring(self.data), "ogv")
-    self.assertEquals(metadata["Encoder"], 'Lavf52.64.2')
+    self.runGetMetadataList(self.GetMetadataScenarioList())
+
+  def UpdateMetadataScenarioList(self):
+    return [
+            (join('data', 'test.ogv'), "ogv", dict(title='Server Set Metadata '+
+            'Test'), dict(Data='', ENCODER='Lavf52.64.2', title='Server Set Me'+
+            'tadata Test')),
+            ]
 
   def testSetMetadata(self):
-    """Test if metadata is inserted correctly"""
-    new_data = self.proxy.updateFileMetadata(encodestring(self.data),
-                                          "ogv",
-                                          {"title": "Server Set Metadata Test"})
-    metadata = self.proxy.getFileMetadataItemList(new_data, "ogv")
-    self.assertEquals(metadata["Encoder"], 'Lavf52.64.2')
-    self.assertEquals(metadata["Title"], 'Server Set Metadata Test')
-
-
-#from os.path import join
-#from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
-
-#class TestServer(TestCase):
-
-#  def ConversionScenarioList(self):
-#    return [
-#            (join('data', 'test.ogv'), "ogv", "mpeg", "video/mpeg"),
-#            ]
-
-#  def testConvertVideo(self):
-#    self.runConversionList(self.ConversionScenarioList())
-
-#  def GetMetadataScenarioList(self):
-#    return [
-#            (join('data', 'test.ogv'), "ogv", dict(Data='', ENCODER='Lavf52.64'+
-#            '.2')),
-#            ]
-
-#  def testGetMetadata(self):
-#    self.runGetMetadataList(self.GetMetadataScenarioList())
-
-#  def UpdateMetadataScenarioList(self):
-#    return [
-#            (join('data', 'test.ogv'), "ogv", dict(title='Server Set Metadata '+
-#            'Test'), dict(Data='', ENCODER='Lavf52.64.2', title='Server Set Me'+
-#            'tadata Test')),
-#            ]
-
-#  def testSetMetadata(self):
-#    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
+    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():
   return make_suite(TestServer)
