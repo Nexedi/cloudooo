@@ -1,38 +1,55 @@
 import unittest
+import sys
+from os import environ
+from ConfigParser import ConfigParser
 from xmlrpclib import ServerProxy
 from magic import Magic
+from base64 import encodestring, decodestring
+
+config = ConfigParser()
+
+def make_suite(test_case):
+  """Function is used to run all tests together"""
+  suite = unittest.TestSuite()
+  suite.addTest(unittest.makeSuite(test_case))
+  return suite
 
 
 class TestCase(unittest.TestCase):
 
-  def getConnection(self):
-    proxy_address = "http://%s:%s" % (HOSTNAME, PORT)
-    proxy = ServerProxy(proxy_address, allow_none=True)
-    return proxy
+  def setUp(self):
+    server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
+    if server_cloudooo_conf is not None:
+      config.read(server_cloudooo_conf)
+    self.hostname = config.get("server:main", "host")
+    self.port = config.get("server:main", "port")
+    self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
+                allow_none=True)
 
   def _getFileType(self, output_data):
     mime = Magic(mime=True)
     mimetype = mime.from_buffer(decodestring(output_data))
+    return mimetype
 
   def _testConvertFile(self, input_url, source_format, destination_format,
                       destination_mimetype):
     """ Generic test for converting file """
-    output_data = proxy.convertFile(encodestring(open(input_url).read()),
+    output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
                                                       source_format,
                                                       destination_format)
     file_type = self._getFileType(output_data)
-    self.assertEquals(mimetype, destination_mimetype)
+    self.assertEquals(file_type, destination_mimetype)
 
   def _testGetMetadata(self, input_url, source_format, key, value):
     """ Generic tes for getting metadata file"""
-    metadata_dict = proxy.getFileMetadataItemList(
+    metadata_dict = self.proxy.getFileMetadataItemList(
                             encodestring(open(input_url).read()),
                             source_format)
     self.assertEquals(metadata_dict[key], value)
 
   def _testUpdateMetadata(self, input_url, source_format, metadata_dict):
     """ Generic test for setting metadata for file """
-    output_data = proxy.updateFileMetadata(encodestring(open(input_url).read()),
+    output_data = self.proxy.updateFileMetadata(encodestring(open(input_url).read()),
                                             source_format,
                                             metadata_dict)
     new_metadata_dict = proxy.getFileMetadataItemList(
@@ -43,23 +60,23 @@ class TestCase(unittest.TestCase):
     """This method must be overwrited into subclasses"""
     return []
 
-  def getConversionList(self):
-    for scenario in self.getConversionScenarioList():
+  def runConversionList(self, scenarios):
+    for scenario in scenarios:
       self._testConvertFile(*scenario)
 
   def getGetMetadataScenarioList(self):
     """This method must be overwrited into subclasses"""
     return []
 
-  def getGetMetadataList(self):
-    for scenario in self.getGetMetadataScenarioList():
+  def runGetMetadataList(self, scenarios):
+    for scenario in scenarios:
       self._testGetMetadata(*scenario)
 
   def getUpdateMetadataScenarioList(self):
     """This method must be overwrited into subclasses"""
     return []
 
-  def getUpdateMetadataList(self):
-    for scenario in self.getUpdateMetadataScenarioList():
+  def runtUpdateMetadataList(self, scenarios):
+    for scenario in scenarios:
       self._testUpdateMetadata(*scenario)
 
