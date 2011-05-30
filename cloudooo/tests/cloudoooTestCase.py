@@ -23,6 +23,7 @@ class TestCase(unittest.TestCase):
       config.read(server_cloudooo_conf)
     self.hostname = config.get("server:main", "host")
     self.port = config.get("server:main", "port")
+    self.env_path = config.get("app:main", "env-path")
     self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
                 allow_none=True)
 
@@ -40,23 +41,25 @@ class TestCase(unittest.TestCase):
     file_type = self._getFileType(output_data)
     self.assertEquals(file_type, destination_mimetype)
 
-  def _testGetMetadata(self, input_url, source_format, key, value):
+  def _testGetMetadata(self, input_url, source_format, expected_metadata):
     """ Generic tes for getting metadata file"""
     metadata_dict = self.proxy.getFileMetadataItemList(
                             encodestring(open(input_url).read()),
                             source_format)
-    self.assertEquals(metadata_dict[key], value)
+    self.assertEquals(expected_metadata, metadata_dict)
 
-  def _testUpdateMetadata(self, input_url, source_format, metadata_dict):
+  def _testUpdateMetadata(self, input_url, source_format, metadata_dict, 
+                          expected_metadata):
     """ Generic test for setting metadata for file """
     output_data = self.proxy.updateFileMetadata(encodestring(open(input_url).read()),
                                             source_format,
                                             metadata_dict)
-    new_metadata_dict = proxy.getFileMetadataItemList(
+    new_metadata_dict = self.proxy.getFileMetadataItemList(
                             encodestring(output_data),
                             source_format)
+    self.assertEquals(new_metadata_dict, expected_metadata)
 
-  def getConversionScenarioList(self):
+  def ConversionScenarioList(self):
     """This method must be overwrited into subclasses"""
     return []
 
@@ -64,7 +67,7 @@ class TestCase(unittest.TestCase):
     for scenario in scenarios:
       self._testConvertFile(*scenario)
 
-  def getGetMetadataScenarioList(self):
+  def GetMetadataScenarioList(self):
     """This method must be overwrited into subclasses"""
     return []
 
@@ -72,11 +75,11 @@ class TestCase(unittest.TestCase):
     for scenario in scenarios:
       self._testGetMetadata(*scenario)
 
-  def getUpdateMetadataScenarioList(self):
+  def UpdateMetadataScenarioList(self):
     """This method must be overwrited into subclasses"""
     return []
 
-  def runtUpdateMetadataList(self, scenarios):
+  def runUpdateMetadataList(self, scenarios):
     for scenario in scenarios:
       self._testUpdateMetadata(*scenario)
 
