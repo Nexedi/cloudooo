@@ -42,12 +42,15 @@ class TestCase(unittest.TestCase):
     file_type = self._getFileType(output_data)
     self.assertEquals(file_type, destination_mimetype)
 
-  def _testGetMetadata(self, input_url, source_format, expected_metadata):
+  def _testGetMetadata(self, input_url, source_format, expected_metadata,
+                      base_document=False):
     """ Generic tes for getting metadata file"""
     metadata_dict = self.proxy.getFileMetadataItemList(
                             encodestring(open(input_url).read()),
-                            source_format)
-    self.assertEquals(expected_metadata, metadata_dict)
+                            source_format,
+                            base_document)
+    for key,value in expected_metadata.iteritems():
+      self.assertEquals(metadata_dict[key], value)
 
   def _testUpdateMetadata(self, input_url, source_format, metadata_dict, 
                           expected_metadata):
