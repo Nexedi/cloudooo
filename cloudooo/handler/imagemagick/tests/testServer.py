@@ -25,40 +25,30 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ##############################################################################
-
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-from xmlrpclib import ServerProxy
 from os.path import join
-from base64 import encodestring, decodestring
-from magic import Magic
-
-DAEMON = True
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
 
-class TestServer(HandlerTestCase):
+class TestServer(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
-  def afterSetUp(self):
-    """Creates a connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % \
-        (self.hostname, self.cloudooo_port), allow_none=True)
+  def ConversionScenarioList(self):
+    return [
+            (join('data', 'test.png'), "png", "jpg", "image/jpeg"),
+            ]
 
   def testConvertPNGtoJPG(self):
     """Converts png to jpg"""
-    data = open(join('data', 'test.png'), 'r').read()
-    document = self.proxy.convertFile(encodestring(data),
-                                      "png",
-                                      "jpg")
-    mime = Magic(mime=True)
-    mimetype = mime.from_buffer(decodestring(document))
-    self.assertEquals(mimetype, "image/jpeg")
+    self.runConversionList(self.ConversionScenarioList())
+
+  def GetMetadataScenarioList(self):
+    return [
+            (join('data', 'test.png'), "png", dict(Compression='Zip')),
+            ]
 
   def testGetMetadataFromPNG(self):
     """test if metadata are extracted correctly"""
-    data = open(join('data', 'test.png'), 'r').read()
-    metadata = self.proxy.getFileMetadataItemList(encodestring(data), "png")
-    self.assertEquals(metadata["Compression"], 'Zip')
-
+    self.runGetMetadataList(self.GetMetadataScenarioList())
 
 def test_suite():
   return make_suite(TestServer)
