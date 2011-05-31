@@ -26,51 +26,42 @@
 #
 ##############################################################################
 
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-from xmlrpclib import ServerProxy
 from os.path import join
-from base64 import encodestring, decodestring
-from magic import Magic
-
-DAEMON = True
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
 
-class TestServer(HandlerTestCase):
+class TestServer(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
-  def afterSetUp(self):
-    """Creates a connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % \
-        (self.hostname, self.cloudooo_port), allow_none=True)
+  def ConversionScenarioList(self):
+    return [
+            (join('data', 'test.pdf'), "pdf", "txt", "text/plain"),
+            ]
 
   def testConvertPDFtoTxt(self):
     """Converts pdf to txt"""
-    data = open(join('data', 'test.pdf'), 'r').read()
-    document = self.proxy.convertFile(encodestring(data),
-                                      "pdf",
-                                      "txt")
-    mime = Magic(mime=True)
-    mimetype = mime.from_buffer(decodestring(document))
-    self.assertEquals(mimetype, "text/plain")
+    self.runConversionList(self.ConversionScenarioList())
+
+  def GetMetadataScenarioList(self):
+    return [
+            (join('data', 'test.pdf'), "pdf", dict(title='Free Cloud Alliance'+
+            ' Presentation')),
+            ]
 
   def testGetMetadataFromPdf(self):
     """test if metadata are extracted correctly"""
-    data = open(join('data', 'test.pdf'), 'r').read()
-    metadata = self.proxy.getFileMetadataItemList(encodestring(data), "pdf")
-    self.assertEquals(metadata["title"],
-                      'Free Cloud Alliance Presentation')
+    self.runGetMetadataList(self.GetMetadataScenarioList())
+
+  def UpdateMetadataScenarioList(self):
+    return [
+            (join('data', 'test.pdf'), "pdf", dict(producer='Cloudooo'), 
+            dict(title='Free Cloud Alliance Presentation', producer='Cloudooo')
+            ),
+            ]
 
   def testSetMetadata(self):
     """Test if metadata is inserted correctly in document"""
-    data = open(join('data', 'test.pdf'), 'r').read()
-    new_data = self.proxy.updateFileMetadata(encodestring(data),
-                                             "pdf",
-                                             {"producer": "Cloudooo"})
-    metadata = self.proxy.getFileMetadataItemList(new_data, "pdf")
-    self.assertEquals(metadata["title"],
-                      'Free Cloud Alliance Presentation')
-    self.assertEquals(metadata["producer"], 'Cloudooo')
-
+    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():
   return make_suite(TestServer)
