@@ -33,11 +33,12 @@ class TestCase(unittest.TestCase):
     return mimetype
 
   def _testConvertFile(self, input_url, source_format, destination_format,
-                      destination_mimetype):
+                      destination_mimetype, zip=False):
     """ Generic test for converting file """
     output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
                                                       source_format,
-                                                      destination_format)
+                                                      destination_format,
+                                                      zip)
     file_type = self._getFileType(output_data)
     self.assertEquals(file_type, destination_mimetype)
 
