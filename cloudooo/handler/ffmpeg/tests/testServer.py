@@ -30,6 +30,7 @@ from os.path import join
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
 class TestServer(TestCase):
+  """Test XmlRpc Server. Needs cloudooo server started"""
 
   def ConversionScenarioList(self):
     return [
@@ -37,15 +38,17 @@ class TestServer(TestCase):
             ]
 
   def testConvertVideo(self):
+    """Converts ogv video to mpeg format"""
     self.runConversionList(self.ConversionScenarioList())
 
   def GetMetadataScenarioList(self):
     return [
-            (join('data', 'test.ogv'), "ogv", dict(Data='', ENCODER='Lavf52.64'+
+            (join('data', 'test.ogv'), "ogv", dict(Data='', Encoder='Lavf52.64'+
             '.2')),
             ]
 
   def testGetMetadata(self):
+    """test if metadata are extracted correctly"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
 
   def UpdateMetadataScenarioList(self):
@@ -56,6 +59,7 @@ class TestServer(TestCase):
             ]
 
   def testSetMetadata(self):
+    """Test if metadata is inserted correctly"""
     self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():
