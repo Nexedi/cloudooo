@@ -52,8 +52,7 @@ class TestCase(unittest.TestCase):
     for key,value in expected_metadata.iteritems():
       self.assertEquals(metadata_dict[key], value)
 
-  def _testUpdateMetadata(self, input_url, source_format, metadata_dict, 
-                          expected_metadata):
+  def _testUpdateMetadata(self, input_url, source_format, metadata_dict):
     """ Generic test for setting metadata for file """
     output_data = self.proxy.updateFileMetadata(encodestring(open(input_url).read()),
                                             source_format,
@@ -61,7 +60,8 @@ class TestCase(unittest.TestCase):
     new_metadata_dict = self.proxy.getFileMetadataItemList(
                             encodestring(output_data),
                             source_format)
-    self.assertEquals(new_metadata_dict, expected_metadata)
+    for key,value in metadata_dict.iteritems():
+      self.assertEquals(new_metadata_dict[key], value)
 
   def ConversionScenarioList(self):
     """This method must be overwrited into subclasses"""
