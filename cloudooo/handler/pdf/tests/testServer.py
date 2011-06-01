@@ -54,9 +54,7 @@ class TestServer(TestCase):
 
   def UpdateMetadataScenarioList(self):
     return [
-            (join('data', 'test.pdf'), "pdf", dict(producer='Cloudooo'), 
-            dict(title='Free Cloud Alliance Presentation', producer='Cloudooo')
-            ),
+            (join('data', 'test.pdf'), "pdf", dict(producer='Cloudooo')),
             ]
 
   def testSetMetadata(self):
