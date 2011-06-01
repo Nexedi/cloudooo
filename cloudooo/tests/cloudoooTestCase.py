@@ -2,7 +2,7 @@ import unittest
 import sys
 from os import environ
 from ConfigParser import ConfigParser
-from xmlrpclib import ServerProxy
+from xmlrpclib import ServerProxy, Fault
 from magic import Magic
 from base64 import encodestring, decodestring
 
@@ -42,6 +42,12 @@ class TestCase(unittest.TestCase):
     file_type = self._getFileType(output_data)
     self.assertEquals(file_type, destination_mimetype)
 
+  def _testFaultConversion(self, data, source_format, destination_format):
+    """ Generic test for fail converting"""
+    self.assertRaises(Fault, self.proxy.convertFile, (data, 
+                                                      source_format,
+                                                      destination_format))
+
   def _testGetMetadata(self, input_url, source_format, expected_metadata,
                       base_document=False):
     """ Generic tes for getting metadata file"""
@@ -64,7 +70,10 @@ class TestCase(unittest.TestCase):
       self.assertEquals(new_metadata_dict[key], value)
 
   def ConversionScenarioList(self):
-    """This method must be overwrited into subclasses"""
+    """
+    Method used to convert files
+    must be overwrited into subclasses
+    """
     return []
 
   def runConversionList(self, scenarios):
@@ -72,7 +81,10 @@ class TestCase(unittest.TestCase):
       self._testConvertFile(*scenario)
 
   def GetMetadataScenarioList(self):
-    """This method must be overwrited into subclasses"""
+    """
+    Method used to getMetadata from file
+    must be overwrited into subclasses
+    """
     return []
 
   def runGetMetadataList(self, scenarios):
@@ -80,10 +92,24 @@ class TestCase(unittest.TestCase):
       self._testGetMetadata(*scenario)
 
   def UpdateMetadataScenarioList(self):
-    """This method must be overwrited into subclasses"""
+    """
+    Method used to set/updateMetadata from file
+    must be overwrited into subclasses
+    """
     return []
 
   def runUpdateMetadataList(self, scenarios):
     for scenario in scenarios:
       self._testUpdateMetadata(*scenario)
+
+  def FaultConversionScenarioList(self):
+    """
+    Method used to verify fault scenarios
+    must be overwrited into subclasses
+    """
+    return []
+
+  def runFaultConversionList(self, scenarios):
+    for scenario in scenarios:
+      self._testFaultConversion(*scenario)
 
