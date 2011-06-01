@@ -92,6 +92,16 @@ class TestServer(TestCase):
     """test if OOo metadata are extracted correctly"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
 
+  def FaultGetMetadataScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', ''),
+            ]
+
+  def testFaultGetMetadata(self):
+    """getMetadata from invalid OOofiles"""
+    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
+
   def UpdateMetadataScenarioList(self):
     return [
             # Test server using method updateFileMetadata
