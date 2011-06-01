@@ -58,6 +58,11 @@ class TestCase(unittest.TestCase):
     for key,value in expected_metadata.iteritems():
       self.assertEquals(metadata_dict[key], value)
 
+  def _testFaultGetMetadata(self, data, source_format):
+    """ Generic test for fail converting"""
+    self.assertRaises(Fault, self.proxy.getFileMetadataItemList, (data, 
+                                                                  source_format))
+
   def _testUpdateMetadata(self, input_url, source_format, metadata_dict):
     """ Generic test for setting metadata for file """
     output_data = self.proxy.updateFileMetadata(encodestring(open(input_url).read()),
@@ -104,7 +109,7 @@ class TestCase(unittest.TestCase):
 
   def FaultConversionScenarioList(self):
     """
-    Method used to verify fault scenarios
+    Method used to verify fault conversion scenarios
     must be overwrited into subclasses
     """
     return []
@@ -112,4 +117,15 @@ class TestCase(unittest.TestCase):
   def runFaultConversionList(self, scenarios):
     for scenario in scenarios:
       self._testFaultConversion(*scenario)
+
+  def FaultGetMetadataScenarioList(self):
+    """
+    Method used to verify fault getMetadata scenarios
+    must be overwrited into subclasses
+    """
+    return []
+
+  def runFaultGetMetadataList(self, scenarios):
+    for scenario in scenarios:
+      self._testFaultGetMetadata(*scenario)
 
