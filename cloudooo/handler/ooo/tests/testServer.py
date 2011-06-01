@@ -34,44 +34,44 @@ from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 class TestServer(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
-#  def ConversionScenarioList(self):
-#    return [
-#            # Test Convert Doc -> Odt
-#            (join('data', 'test.doc'), "doc", "odt", "application/vnd.oasis."+
-#            "opendocument.text"),
-#            # Test export png to svg
-#            (join('data', 'test.png'), "png", "svg", "image/svg+xml"),
-#            # Test export docx to odt
-#            (join('data', 'test.docx'), "docx", "odt", "application/vnd.oasis."+
-#            "opendocument.text"),
-#            # Test export python to pdf
-#            (__file__, "py", "pdf", "application/pdf"),
-#            # Test if send a zipfile returns a document correctly
-#            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
-#            # Convert compressed html to txt
-#            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
-#            # Test export pptx to odp
-#            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
-#            "opendocument.presentation"),
-#            ]
+  def ConversionScenarioList(self):
+    return [
+            # Test Convert Doc -> Odt
+            (join('data', 'test.doc'), "doc", "odt", "application/vnd.oasis."+
+            "opendocument.text"),
+            # Test export png to svg
+            (join('data', 'test.png'), "png", "svg", "image/svg+xml"),
+            # Test export docx to odt
+            (join('data', 'test.docx'), "docx", "odt", "application/vnd.oasis."+
+            "opendocument.text"),
+            # Test export python to pdf
+            (__file__, "py", "pdf", "application/pdf"),
+            # Test if send a zipfile returns a document correctly
+            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
+            # Convert compressed html to txt
+            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
+            # Test export pptx to odp
+            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
+            "opendocument.presentation"),
+            ]
 
-#  def testConvert(self):
-#    """Convert OOofiles"""
-#    self.runConversionList(self.ConversionScenarioList())
+  def testConvert(self):
+    """Convert OOofiles"""
+    self.runConversionList(self.ConversionScenarioList())
 
-#  def FaultConversionScenarioList(self):
-#    return [
-#            # Test to verify if server fail when a empty string is sent
-#            ('', '', ''),
-#            # Try convert one document for a invalid format
-#            (open(join('data', 'test.doc')).read(), 'doc', 'xyz'),
-#            # Try convert one document to format not possible
-#            (open(join('data', 'test.odp')).read(), 'odp', 'doc'),
-#            ]
+  def FaultConversionScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', '', ''),
+            # Try convert one document for a invalid format
+            (open(join('data', 'test.doc')).read(), 'doc', 'xyz'),
+            # Try convert one document to format not possible
+            (open(join('data', 'test.odp')).read(), 'odp', 'doc'),
+            ]
 
-#  def testFaultConversion(self):
-#    """Convert Invalid OOofiles"""
-#    self.runFaultConversionList(self.FaultConversionScenarioList())
+  def testFaultConversion(self):
+    """Convert Invalid OOofiles"""
+    self.runFaultConversionList(self.FaultConversionScenarioList())
 
   def GetMetadataScenarioList(self):
     return [
@@ -80,12 +80,12 @@ class TestServer(TestCase):
             'udooo Test', Subject='Subject Test', Description='cloudooo Comments',
             Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
             ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test')),
-#            # Test method getFileMetadataItemList. With data converted
-#            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Test',
-#            Subject='Subject Test', Description='cloudooo Comments',
-#            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
-#            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test'), 
-#            True),
+            # Test method getFileMetadataItemList. With data converted
+            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Test',
+            Subject='Subject Test', Description='cloudooo Comments',
+            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
+            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test'), 
+            True),
             ]
 
   def testGetMetadata(self):
@@ -97,11 +97,11 @@ class TestServer(TestCase):
             # Test server using method updateFileMetadata
             (join('data', 'testMetadata.odt'), "odt", dict(Title='testSetMetadata')),
             # Test server using method updateFileMetadata with unsual metadata
-#            (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
-#            'Metadata')),
-#            # Test document that already has metadata. Check if the metadata is
-#            # not deleted, but updated
-#            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Title')),
+            (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
+            'Metadata')),
+            # Test document that already has metadata. Check if the metadata is
+            # not deleted, but updated
+            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Title')),
             ]
 
   def testUpdateMetadata(self):
