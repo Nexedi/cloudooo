@@ -1,6 +1,6 @@
 import unittest
 import sys
-from os import environ
+from os import environ, path
 from ConfigParser import ConfigParser
 from xmlrpclib import ServerProxy, Fault
 from magic import Magic
@@ -25,6 +25,9 @@ class TestCase(unittest.TestCase):
     self.hostname = config.get("server:main", "host")
     self.port = config.get("server:main", "port")
     self.env_path = config.get("app:main", "env-path")
+    #create temporary path for some files
+    self.working_path = config.get("app:main", "working_path")
+    self.tmp_url = path.join(self.working_path, "tmp")
     self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
                 allow_none=True)
     self.afterSetUp()
@@ -97,6 +100,24 @@ class TestCase(unittest.TestCase):
       self.assertEquals(response_message, expected_response_message)
       self.assertEquals(response_dict['meta']['MIMEType'], response_dict_meta)
 
+  def _testRunGenerate(self, filename, data, meta,source_format,
+                      destination_format, expected_response_code,
+                      response_dict_data, response_dict_mime):
+    """Generic test for run_generate"""
+    generate_result = self.proxy.run_generate(filename,
+                                      encodestring(data),
+                                      meta, destination_format,
+                                      source_format)
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, expected_response_code)
+    self.assertEquals(type(response_dict), DictType)
+    if expected_response_code == 402:
+      self.assertEquals(response_dict, {})
+      self.assertTrue(response_message.startswith('Traceback'))
+    else:
+      self.assertNotEquals(response_dict['data'], response_dict_data)
+      self.assertEquals(response_dict['mime'], response_dict_mime)
+
   def ConversionScenarioList(self):
     """
     Method used to convert files
@@ -162,3 +183,14 @@ class TestCase(unittest.TestCase):
   def runConvertScenarioList(self, scenarios):
     for scenario in scenarios:
       self._testRunConvert(*scenario)
+
+  def GenerateScenarioList(self):
+    """
+    Method to verify run_generate
+    must be overwrited into subclasses
+    """
+    return []
+
+  def runGenerateScenarioList(self, scenarios):
+    for scenario in scenarios:
+      self._testRunGenerate(*scenario)
