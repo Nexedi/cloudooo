@@ -28,180 +28,82 @@
 
 from os.path import join
 import datetime
+from base64 import encodestring
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
 
 class TestServer(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
-  def ConversionScenarioList(self):
-    return [
-            # Test Convert Doc -> Odt
-            (join('data', 'test.doc'), "doc", "odt", "application/vnd.oasis."+
-            "opendocument.text"),
-            # Test export png to svg
-            (join('data', 'test.png'), "png", "svg", "image/svg+xml"),
-            # Test export docx to odt
-            (join('data', 'test.docx'), "docx", "odt", "application/vnd.oasis."+
-            "opendocument.text"),
-            # Test export python to pdf
-            (__file__, "py", "pdf", "application/pdf"),
-            # Test if send a zipfile returns a document correctly
-            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
-            # Convert compressed html to txt
-            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
-            # Test export pptx to odp
-            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
-            "opendocument.presentation"),
-            ]
+  def afterSetUp(self):
+    """Set up expected lists for each type """
+    # XXX Duplicated list of filters
+    self.text_expected_list = [['doc', 'Microsoft Word 6.0'],
+        ['doc', 'Microsoft Word 95'],
+        ['doc', 'Microsoft Word 97/2000/XP'],
+        ['docx', 'Microsoft Word 2007 XML'],
+        ['docx', 'Office Open XML Text'],
+        ['html', 'HTML Document (OpenOffice.org Writer)'],
+        ['html', 'HTML Document (Opeself.text_expected_listnOffice.org Writer)'],
+        ['html', 'XHTML'], ['odt', 'ODF Text Document'],
+        ['ott', 'ODF Text Document Template'],
+        ['pdf', 'PDF - Portable Document Format'],
+        ['rtf', 'Rich Text Format'], ['sdw', 'StarWriter 3.0'],
+        ['sdw', 'StarWriter 4.0'], ['sdw', 'StarWriter 5.0'],
+        ['sxw', 'OpenOffice.org 1.0 Text Document'],
+        ['txt', 'Text'], ['txt', 'Text Encoded'],
+        ['xhtml', 'XHTML'], ['pdb', 'AportisDoc (Palm)'],
+        ['psw', 'Pocket Word']]
+    self.presentation_expected_list = [['bmp', 'BMP - Windows Bitmap'],
+        ['emf', 'EMF - Enhanced Metafile'],
+        ['eps', 'EPS - Encapsulated PostScript'],
+        ['gif', 'GIF - Graphics Interchange Format'],
+        ['html', 'HTML Document (OpenOffice.org Impress)'],
+        ['html', 'HTML Document (OpenOffice.org Impress)'],
+        ['html', 'XHTML'], ['jfif', 'JPEG - Joint Photographic Experts Group'],
+        ['jif', 'JPEG - Joint Photographic Experts Group'],
+        ['jpe', 'JPEG - Joint Photographic Experts Group'],
+        ['jpeg', 'JPEG - Joint Photographic Experts Group'],
+        ['jpg', 'JPEG - Joint Photographic Experts Group'],
+        ['met', 'MET - OS/2 Metafile'], ['odg', 'ODF Drawing (Impress)'],
+        ['odp', 'ODF Presentation'],
+        ['otp', 'ODF Presentation Template'],
+        ['pbm', 'PBM - Portable Bitmap'], ['pct', 'PCT - Mac Pict'],
+        ['pdf', 'PDF - Portable Document Format'],
+        ['pgm', 'PGM - Portable Graymap'], ['pict', 'PCT - Mac Pict'],
+        ['png', 'PNG - Portable Network Graphic'],
+        ['pot', 'Microsoft PowerPoint 97/2000/XP Template'],
+        ['ppm', 'PPM - Portable Pixelmap'],
+        ['pps', 'Microsoft PowerPoint 97/2000/XP'],
+        ['ppt', 'Microsoft PowerPoint 97/2000/XP'],
+        ['ras', 'RAS - Sun Raster Image'],
+        ['sda', 'StarDraw 5.0 (OpenOffice.org Impress)'],
+        ['sdd', 'StarDraw 3.0 (OpenOffice.org Impress)'],
+        ['sdd', 'StarImpress 4.0'], ['sdd', 'StarImpress 5.0'],
+        ['svg', 'SVG - Scalable Vector Graphics'],
+        ['svm', 'SVM - StarView Metafile'],
+        ['sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'],
+        ['sxi', 'OpenOffice.org 1.0 Presentation'],
+        ['tif', 'TIFF - Tagged Image File Format'],
+        ['tiff', 'TIFF - Tagged Image File Format'],
+        ['wmf', 'WMF - Windows Metafile'],
+        ['xhtml', 'XHTML'], ['xpm', 'XPM - X PixMap']]
+    self.text_expected_list.sort()
+    self.presentation_expected_list.sort()
 
-  def testConvert(self):
-    """Convert OOofiles"""
-    self.runConversionList(self.ConversionScenarioList())
-
-  def FaultConversionScenarioList(self):
-    return [
-            # Test to verify if server fail when a empty string is sent
-            ('', '', ''),
-            # Try convert one document for a invalid format
-            (open(join('data', 'test.doc')).read(), 'doc', 'xyz'),
-            # Try convert one document to format not possible
-            (open(join('data', 'test.odp')).read(), 'odp', 'doc'),
-            ]
-
-  def testFaultConversion(self):
-    """Convert Invalid OOofiles"""
-    self.runFaultConversionList(self.FaultConversionScenarioList())
-
-  def GetMetadataScenarioList(self):
-    return [
-            # Test method getFileMetadataItemList. Without data converted
-            (join('data', 'testMetadata.odt'), "odt", dict(Data='', Title='clo'+
-            'udooo Test', Subject='Subject Test', Description='cloudooo Comments',
-            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
-            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test')),
-            # Test method getFileMetadataItemList. With data converted
-            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Test',
-            Subject='Subject Test', Description='cloudooo Comments',
-            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
-            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test'), 
-            True),
-            ]
-
-  def testGetMetadata(self):
-    """test if OOo metadata are extracted correctly"""
-    self.runGetMetadataList(self.GetMetadataScenarioList())
-
-  def FaultGetMetadataScenarioList(self):
-    return [
-            # Test to verify if server fail when a empty string is sent
-            ('', ''),
-            ]
-
-  def testFaultGetMetadata(self):
-    """getMetadata from invalid OOofiles"""
-    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
-
-  def UpdateMetadataScenarioList(self):
-    return [
-            # Test server using method updateFileMetadata
-            (join('data', 'testMetadata.odt'), "odt", dict(Title='testSetMetadata')),
-            # Test server using method updateFileMetadata with unsual metadata
-            (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
-            'Metadata')),
-            # Test document that already has metadata. Check if the metadata is
-            # not deleted, but updated
-            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Title')),
-            ]
-
-  def testUpdateMetadata(self):
-    """test if OOo metadata are insert correctly"""
-    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
-
-
-#  def testupdateFileMetadataUpdateSomeMetadata(self):
-#    """Test server using method updateFileMetadata when the same metadata is
-#    updated"""
-#    document_output_url = join(self.tmp_url, "testSetMetadata.odt")
-#    data = open(join('data', 'testMetadata.odt'), 'r').read()
-#    odf_data = self.proxy.updateFileMetadata(encodestring(data), 'odt',
-#                        {"Reference": "testSetMetadata", "Something": "ABC"})
-#    new_odf_data = self.proxy.updateFileMetadata(odf_data, 'odt',
-#                        {"Reference": "new value", "Something": "ABC"})
-#    open(document_output_url, 'w').write(decodestring(new_odf_data))
-#    content_type = self._getFileType(document_output_url)
-#    self.assertEquals(content_type, 'application/vnd.oasis.opendocument.text')
-#    metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
-#    self.assertEquals(metadata_dict.get("Reference"), "new value")
-#    self.assertEquals(metadata_dict.get("Something"), "ABC")
-
-
-#    # XXX Duplicated list of filters
-#    self.text_expected_list = [['doc', 'Microsoft Word 6.0'],
-#        ['doc', 'Microsoft Word 95'],
-#        ['doc', 'Microsoft Word 97/2000/XP'],
-#        ['docx', 'Microsoft Word 2007 XML'],
-#        ['docx', 'Office Open XML Text'],
-#        ['htm', 'HTML Document (OpenOffice.org Writer)'],
-#        ['html', 'HTML Document (OpenOffice.org Writer)'],
-#        ['html', 'XHTML'], ['odt', 'ODF Text Document'],
-#        ['ott', 'ODF Text Document Template'],
-#        ['pdf', 'PDF - Portable Document Format'],
-#        ['rtf', 'Rich Text Format'], ['sdw', 'StarWriter 3.0'],
-#        ['sdw', 'StarWriter 4.0'], ['sdw', 'StarWriter 5.0'],
-#        ['sxw', 'OpenOffice.org 1.0 Text Document'],
-#        ['txt', 'Text'], ['txt', 'Text Encoded'],
-#        ['xhtml', 'XHTML'], ['pdb', 'AportisDoc (Palm)'],
-#        ['psw', 'Pocket Word']]
-
-#    self.text_expected_list.sort()
-
-#    self.presentation_expected_list = [['bmp', 'BMP - Windows Bitmap'],
-#        ['emf', 'EMF - Enhanced Metafile'],
-#        ['eps', 'EPS - Encapsulated PostScript'],
-#        ['gif', 'GIF - Graphics Interchange Format'],
-#        ['htm', 'HTML Document (OpenOffice.org Impress)'],
-#        ['html', 'HTML Document (OpenOffice.org Impress)'],
-#        ['html', 'XHTML'], ['jfif', 'JPEG - Joint Photographic Experts Group'],
-#        ['jif', 'JPEG - Joint Photographic Experts Group'],
-#        ['jpe', 'JPEG - Joint Photographic Experts Group'],
-#        ['jpeg', 'JPEG - Joint Photographic Experts Group'],
-#        ['jpg', 'JPEG - Joint Photographic Experts Group'],
-#        ['met', 'MET - OS/2 Metafile'], ['odg', 'ODF Drawing (Impress)'],
-#        ['odp', 'ODF Presentation'],
-#        ['otp', 'ODF Presentation Template'],
-#        ['pbm', 'PBM - Portable Bitmap'], ['pct', 'PCT - Mac Pict'],
-#        ['pdf', 'PDF - Portable Document Format'],
-#        ['pgm', 'PGM - Portable Graymap'], ['pict', 'PCT - Mac Pict'],
-#        ['png', 'PNG - Portable Network Graphic'],
-#        ['pot', 'Microsoft PowerPoint 97/2000/XP Template'],
-#        ['ppm', 'PPM - Portable Pixelmap'],
-#        ['pps', 'Microsoft PowerPoint 97/2000/XP'],
-#        ['ppt', 'Microsoft PowerPoint 97/2000/XP'],
-#        ['ras', 'RAS - Sun Raster Image'],
-#        ['sda', 'StarDraw 5.0 (OpenOffice.org Impress)'],
-#        ['sdd', 'StarDraw 3.0 (OpenOffice.org Impress)'],
-#        ['sdd', 'StarImpress 4.0'], ['sdd', 'StarImpress 5.0'],
-#        ['svg', 'SVG - Scalable Vector Graphics'],
-#        ['svm', 'SVM - StarView Metafile'],
-#        ['sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'],
-#        ['sxi', 'OpenOffice.org 1.0 Presentation'],
-#        ['tif', 'TIFF - Tagged Image File Format'],
-#        ['tiff', 'TIFF - Tagged Image File Format'],
-#        ['wmf', 'WMF - Windows Metafile'],
-#        ['xhtml', 'XHTML'], ['xpm', 'XPM - X PixMap']]
-
-#    self.presentation_expected_list.sort()
-
-#  def testGetAllowedExtensionListByType(self):
+#  def testGetAllowedTextExtensionListByType(self):
 #    """Call getAllowedExtensionList and verify if the returns is a list with
-#    extension and ui_name. The request is by document type"""
+#    extension and ui_name. The request is by document type as text"""
 #    text_request = {'document_type': "text"}
 #    text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
 #    text_allowed_list.sort()
 #    for arg in text_allowed_list:
 #      self.assertTrue(arg in self.text_expected_list,
 #                    "%s not in %s" % (arg, self.text_expected_list))
+
+#  def testGetAllowedPresentationExtensionListByType(self):
+#    """Call getAllowedExtensionList and verify if the returns is a list with
+#    extension and ui_name. The request is by document type as presentation"""
 #    request_dict = {'document_type': "presentation"}
 #    presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
 #    presentation_allowed_list.sort()
@@ -228,31 +130,121 @@ class TestServer(TestCase):
 #      self.assertTrue(arg in self.text_expected_list,
 #                    "%s not in %s" % (arg, self.text_expected_list))
 
-#  def testRunConvertMethod(self):
-#    """Test run_convert method"""
-#    data = open(join('data', 'test.doc'), 'r').read()
-#    response_code, response_dict, response_message = \
-#              self.proxy.run_convert('test.doc', encodestring(data))
-#    self.assertEquals(response_code, 200)
-#    self.assertEquals(type(response_dict), DictType)
-#    self.assertNotEquals(response_dict['data'], '')
-#    self.assertEquals(sorted(response_dict.keys()),
-#                              ['data', 'meta', 'mime'])
-#    self.assertEquals(response_message, '')
-#    self.assertEquals(response_dict['meta']['MIMEType'],
-#                              'application/vnd.oasis.opendocument.text')
+#  def ConversionScenarioList(self):
+#    return [
+#            # Test Convert Doc -> Odt
+#            (join('data', 'test.doc'), "doc", "odt", "application/vnd.oasis."+
+#            "opendocument.text"),
+#            # Test export png to svg
+#            (join('data', 'test.png'), "png", "svg", "image/svg+xml"),
+#            # Test export docx to odt
+#            (join('data', 'test.docx'), "docx", "odt", "application/vnd.oasis."+
+#            "opendocument.text"),
+#            # Test export python to pdf
+#            (__file__, "py", "pdf", "application/pdf"),
+#            # Test if send a zipfile returns a document correctly
+#            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
+#            # Convert compressed html to txt
+#            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
+#            # Test export pptx to odp
+#            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
+#            "opendocument.presentation"),
+#            ]
 
-#  def testRunConvertFailResponse(self):
-#    """Test run_convert method with invalid file"""
-#    data = open(join('data', 'test.doc'), 'r').read()[:30]
-#    response_code, response_dict, response_message = \
-#              self.proxy.run_convert('test.doc', encodestring(data))
-#    self.assertEquals(response_code, 402)
-#    self.assertEquals(type(response_dict), DictType)
-#    self.assertEquals(response_dict, {})
-#    msg = "This document can not be loaded or is empty\n"
-#    self.assertTrue(response_message.endswith(msg),
-#                    "%s != %s" % (response_message, msg))
+#  def testConvert(self):
+#    """Convert OOofiles"""
+#    self.runConversionList(self.ConversionScenarioList())
+
+#  def FaultConversionScenarioList(self):
+#    return [
+#            # Test to verify if server fail when a empty string is sent
+#            ('', '', ''),
+#            # Try convert one document for a invalid format
+#            (open(join('data', 'test.doc')).read(), 'doc', 'xyz'),
+#            # Try convert one document to format not possible
+#            (open(join('data', 'test.odp')).read(), 'odp', 'doc'),
+#            ]
+
+#  def testFaultConversion(self):
+#    """Convert Invalid OOofiles"""
+#    self.runFaultConversionList(self.FaultConversionScenarioList())
+
+#  def GetMetadataScenarioList(self):
+#    return [
+#            # Test method getFileMetadataItemList. Without data converted
+#            (join('data', 'testMetadata.odt'), "odt", dict(Data='', Title='clo'+
+#            'udooo Test', Subject='Subject Test', Description='cloudooo Comments',
+#            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
+#            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test')),
+#            # Test method getFileMetadataItemList. With data converted
+#            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Test',
+#            Subject='Subject Test', Description='cloudooo Comments',
+#            Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
+#            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test'), 
+#            True),
+#            ]
+
+#  def testGetMetadata(self):
+#    """test if OOo metadata are extracted correctly"""
+#    self.runGetMetadataList(self.GetMetadataScenarioList())
+
+#  def FaultGetMetadataScenarioList(self):
+#    return [
+#            # Test to verify if server fail when a empty string is sent
+#            ('', ''),
+#            ]
+
+#  def testFaultGetMetadata(self):
+#    """getMetadata from invalid OOofiles"""
+#    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
+
+#  def UpdateMetadataScenarioList(self):
+#    return [
+#            # Test server using method updateFileMetadata
+#            (join('data', 'testMetadata.odt'), "odt", dict(Title='testSetMetadata')),
+#            # Test server using method updateFileMetadata with unsual metadata
+#            (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
+#            'Metadata')),
+#            # Test document that already has metadata. Check if the metadata is
+#            # not deleted, but updated
+#            (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Title')),
+#            ]
+
+#  def testUpdateMetadata(self):
+#    """test if OOo metadata are insert correctly"""
+#    self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
+
+#  def testupdateFileMetadataUpdateSomeMetadata(self):
+#    """Test server using method updateFileMetadata when the same metadata is
+#    updated"""
+#    odf_data = self.proxy.updateFileMetadata(encodestring(
+#                open(join('data', 'testMetadata.odt')).read()),
+#                'odt',
+#                dict(Reference="testSetMetadata", Something="ABC"))
+#    new_odf_data = self.proxy.updateFileMetadata(odf_data,
+#                    'odt',
+#                    dict(Reference="new value", Something="ABC"))
+#    self.assertEquals(self._getFileType(new_odf_data), 
+#                      'application/vnd.oasis.opendocument.text')
+#    metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
+#    self.assertEquals(metadata_dict.get("Reference"), "new value")
+#    self.assertEquals(metadata_dict.get("Something"), "ABC")
+
+  def ConvertScenarioList(self):
+    return [
+            # Test run_convert method
+            ('test.doc', open(join('data', 'test.doc')).read(), 200, '',
+            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
+            ),
+            # Test run_convert method with invalid file
+            ('test.doc', open(join('data', 'test.doc')).read()[:30], 402, '',
+            '', ''
+            ),
+            ]
+
+  def testRunConvertMethod(self):
+    """Test run_convert method"""
+    self.runConvertScenarioList(self.ConvertScenarioList())
 
 #  def testRunGenerateMethod(self):
 #    """Test run_generate method"""

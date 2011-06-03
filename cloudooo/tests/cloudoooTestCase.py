@@ -4,6 +4,7 @@ from os import environ
 from ConfigParser import ConfigParser
 from xmlrpclib import ServerProxy, Fault
 from magic import Magic
+from types import DictType
 from base64 import encodestring, decodestring
 
 config = ConfigParser()
@@ -26,6 +27,10 @@ class TestCase(unittest.TestCase):
     self.env_path = config.get("app:main", "env-path")
     self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
                 allow_none=True)
+    self.afterSetUp()
+
+  def afterSetUp(self):
+    """Must be overwrite into subclass in case of need """
 
   def _getFileType(self, output_data):
     mime = Magic(mime=True)
@@ -73,6 +78,24 @@ class TestCase(unittest.TestCase):
                             source_format)
     for key,value in metadata_dict.iteritems():
       self.assertEquals(new_metadata_dict[key], value)
+
+  def _testRunConvert(self, filename, data, expected_response_code,
+                      response_dict_data,response_dict_keys,
+                      expected_response_message, response_dict_meta=None):
+    """Generic test for run_convert"""
+    response_code, response_dict, response_message = \
+              self.proxy.run_convert(filename, encodestring(data))
+    self.assertEquals(response_code, expected_response_code)
+    self.assertEquals(type(response_dict), DictType)
+    if expected_response_code == 402:
+      self.assertEquals(response_dict, {})
+      self.assertTrue(response_message.endswith(expected_response_message),
+                    "%s != %s" % (response_message, expected_response_message))
+    else:
+      self.assertNotEquals(response_dict['data'], response_dict_data)
+      self.assertEquals(sorted(response_dict.keys()), response_dict_keys)
+      self.assertEquals(response_message, expected_response_message)
+      self.assertEquals(response_dict['meta']['MIMEType'], response_dict_meta)
 
   def ConversionScenarioList(self):
     """
@@ -129,3 +152,13 @@ class TestCase(unittest.TestCase):
     for scenario in scenarios:
       self._testFaultGetMetadata(*scenario)
 
+  def ConvertScenarioList(self):
+    """
+    Method to verify run_convert
+    must be overwrited into subclasses
+    """
+    return []
+
+  def runConvertScenarioList(self, scenarios):
+    for scenario in scenarios:
+      self._testRunConvert(*scenario)
