@@ -26,69 +26,42 @@
 #
 ##############################################################################
 
-from xmlrpclib import ServerProxy, Fault
-from base64 import encodestring, decodestring
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-import magic
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 
-file_detector = magic.Magic()
-DAEMON = True
-
-
-class TestAllFormats(HandlerTestCase):
+class TestAllFormats(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
-
-  def afterSetUp(self):
-    """Create connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % (self.hostname,
-                                                    self.cloudooo_port))
 
   def testTextFormats(self):
     """Test all text formats"""
-    self.runTestForType('odt', 'text', 'data/test.odt')
+    self.runTestForType('data/test.odt', 'odt', 'text')
 
   def testPresentationFormats(self):
     """Test all presentation formats"""
-    self.runTestForType('odp', 'presentation', 'data/test.odp')
+    self.runTestForType('data/test.odp', 'odp', 'presentation')
 
   def testDrawingFormats(self):
     """Test all drawing formats"""
-    self.runTestForType('odg', 'drawing', 'data/test.odg')
+    self.runTestForType('data/test.odg', 'odg', 'drawing')
 
   def testSpreadSheetFormats(self):
     """Test all spreadsheet formats"""
-    self.runTestForType('ods', 'spreadsheet', 'data/test.ods')
+    self.runTestForType('data/test.ods', 'ods', 'spreadsheet')
 
   def testWebFormats(self):
     """Test all web formats"""
-    self.runTestForType('html', 'web', 'data/test.html')
+    self.runTestForType('data/test.html', 'html', 'web')
 
   def testGlobalFormats(self):
     """Test all global formats"""
-    self.runTestForType('sxg', 'global', 'data/test.sxg')
+    self.runTestForType('data/test.sxg', 'sxg', 'global')
 
-  def runTestForType(self, source_format, document_type, filename):
-    """Generic test"""
-    data = open(filename, 'r').read()
+  def runTestForType(self, input_url, source_format, document_type):
+    """Generic test for converting all formats"""
     request = {'document_type': document_type}
     extension_list = self.proxy.getAllowedExtensionList(request)
     fault_list = []
     for extension in extension_list:
-      try:
-        data_output = self.proxy.convertFile(encodestring(data),
-                                             source_format,
-                                             extension[0])
-        magic_result = file_detector.from_buffer(decodestring(data_output))
-        file_is_empty = magic_result.endswith(": empty")
-        if file_is_empty:
-          fault_list.append((source_format, extension[0], magic_result))
-      except Fault, err:
-        fault_list.append((source_format, extension[0], err.faultString))
-    if fault_list:
-      template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
-      message = '\n'.join([template_message % fault for fault in fault_list])
-      self.fail('Failed Conversions:\n' + message)
-
+        self._testConvertFile(input_url, source_format, extension[0], None)
 
 def test_suite():
   return make_suite(TestAllFormats)
