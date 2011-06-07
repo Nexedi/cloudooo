@@ -43,12 +43,24 @@ class TestCase(unittest.TestCase):
   def _testConvertFile(self, input_url, source_format, destination_format,
                       destination_mimetype, zip=False):
     """ Generic test for converting file """
-    output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
-                                                      source_format,
-                                                      destination_format,
-                                                      zip)
-    file_type = self._getFileType(output_data)
-    self.assertEquals(file_type, destination_mimetype)
+    fault_list = []
+    try:
+      output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
+                                                        source_format,
+                                                        destination_format,
+                                                        zip)
+      file_type = self._getFileType(output_data)
+      if destination_mimetype != None:
+        self.assertEquals(file_type, destination_mimetype)
+      else:
+        if file_type.endswith(": empty"):
+          fault_list.append((source_format, destination_format, file_type))
+    except Fault, err:
+      fault_list.append((source_format, destination_format, err.faultString))
+    if fault_list:
+      template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
+      message = '\n'.join([template_message % fault for fault in fault_list])
+      self.fail('Failed Conversions:\n' + message)
 
   def _testFaultConversion(self, data, source_format, destination_format):
     """ Generic test for fail converting"""
