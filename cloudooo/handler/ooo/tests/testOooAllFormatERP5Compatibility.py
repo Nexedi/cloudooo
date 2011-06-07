@@ -26,59 +26,47 @@
 #
 ##############################################################################
 
-from xmlrpclib import ServerProxy, Fault
-from base64 import encodestring, decodestring
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-import magic
+from xmlrpclib import Fault
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from base64 import encodestring
 
-file_detector = magic.Magic()
-DAEMON = True
-
-
-class TestAllFormatsERP5Compatibility(HandlerTestCase):
+class TestAllFormatsERP5Compatibility(TestCase):
   """
   Test XmlRpc Server using ERP5 compatibility API.
   Needs cloudooo server started
   """
 
-  def afterSetUp(self):
-    """Create connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % (self.hostname,
-                                                    self.cloudooo_port),
-                             allow_none=True)
-
   def testTextFormats(self):
     """Test all text formats"""
-    self.runTestForType('odt', 'application/vnd.oasis.opendocument.text', 'data/test.odt')
+    self.runTestForType('data/test.odt', 'odt', 'application/vnd.oasis.opendocument.text')
 
   def testPresentationFormats(self):
     """Test all presentation formats"""
-    self.runTestForType('odp', 'application/vnd.oasis.opendocument.presentation', 'data/test.odp')
+    self.runTestForType('data/test.odp', 'odp', 'application/vnd.oasis.opendocument.presentation')
 
   def testDrawingFormats(self):
     """Test all drawing formats"""
-    self.runTestForType('odg', 'application/vnd.oasis.opendocument.graphics', 'data/test.odg')
+    self.runTestForType('data/test.odg', 'odg', 'application/vnd.oasis.opendocument.graphics')
 
   def testSpreadSheetFormats(self):
     """Test all spreadsheet formats"""
-    self.runTestForType('ods', 'application/vnd.oasis.opendocument.spreadsheet', 'data/test.ods')
+    self.runTestForType('data/test.ods', 'ods', 'application/vnd.oasis.opendocument.spreadsheet')
 
-  def runTestForType(self, source_format, mime_type, filename):
+  def runTestForType(self, filename, source_format, source_mimetype):
     """Generic test"""
-    data = open(filename, 'r').read()
-    extension_list = self.proxy.getAllowedTargetItemList(mime_type)[1]['response_data']
+    extension_list = self.proxy.getAllowedTargetItemList(source_mimetype)[1]['response_data']
     fault_list = []
     for extension, format in extension_list:
       try:
         data_output = self.proxy.run_generate(filename,
-                                              encodestring(data),
+                                              encodestring(
+                                              open(filename).read()),
                                               None,
                                               extension,
-                                              mime_type)[1]['data']
-        magic_result = file_detector.from_buffer(decodestring(data_output))
-        file_is_empty = magic_result.endswith(": empty")
-        if file_is_empty:
-          fault_list.append((source_format, extension, magic_result))
+                                              source_mimetype)[1]['data']
+        file_type = self._getFileType(data_output)
+        if file_type.endswith(": empty"):
+          fault_list.append((source_format, extension, file_type))
       except Fault, err:
         fault_list.append((source_format, extension, err.faultString))
     if fault_list:
