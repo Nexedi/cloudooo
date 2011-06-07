@@ -29,6 +29,8 @@
 from os.path import join, exists
 from os import remove
 from base64 import encodestring, decodestring
+from StringIO import StringIO
+from lxml import etree
 from types import DictType
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
@@ -46,7 +48,7 @@ class TestServer(TestCase):
         ['docx', 'Microsoft Word 2007 XML'],
         ['docx', 'Office Open XML Text'],
         ['htm', 'HTML Document (OpenOffice.org Writer)'],
-        ['html', 'HTML Document (Opeself.text_expected_listnOffice.org Writer)'],
+        ['html', 'HTML Document (OpenOffice.org Writer)'],
         ['html', 'XHTML'], ['odt', 'ODF Text Document'],
         ['ott', 'ODF Text Document Template'],
         ['pdf', 'PDF - Portable Document Format'],
@@ -94,8 +96,8 @@ class TestServer(TestCase):
     self.presentation_expected_list.sort()
 
   def testGetAllowedTextExtensionListByType(self):
-    """Call getAllowedExtensionList and verify if the returns is a list with
-    extension and ui_name. The request is by document type as text"""
+    """Verify if getAllowedExtensionList returns is a list with extension and 
+    ui_name. The request is by document type as text"""
     text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     text_allowed_list.sort()
@@ -104,8 +106,8 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedPresentationExtensionListByType(self):
-    """Call getAllowedExtensionList and verify if the returns is a list with
-    extension and ui_name. The request is by document type as presentation"""
+    """Verify if getAllowedExtensionList returns is a list with extension and 
+    ui_name. The request is by document type as presentation"""
     request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     presentation_allowed_list.sort()
@@ -114,8 +116,8 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.presentation_expected_list))
 
   def testGetAllowedExtensionListByExtension(self):
-    """Call getAllowedExtensionList and verify if the returns is a list with
-    extension and ui_name. The request is by extension"""
+    """Verify if getAllowedExtensionList returns is a list with extension and 
+    ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
     doc_allowed_list.sort()
     for arg in doc_allowed_list:
@@ -123,8 +125,8 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedExtensionListByMimetype(self):
-    """Call getAllowedExtensionList and verify if the returns is a list with
-    extension and ui_name. The request is by mimetype"""
+    """Verify if getAllowedExtensionList returns is a list with extension and 
+    ui_name. The request is by mimetype"""
     request_dict = {"mimetype": "application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     msword_allowed_list.sort()
@@ -154,7 +156,7 @@ class TestServer(TestCase):
             ]
 
   def testConvert(self):
-    """Convert OOofiles"""
+    """Test convertion of OOofiles"""
     self.runConversionList(self.ConversionScenarioList())
 
   def FaultConversionScenarioList(self):
@@ -168,7 +170,7 @@ class TestServer(TestCase):
             ]
 
   def testFaultConversion(self):
-    """Convert Invalid OOofiles"""
+    """Test fail convertion of Invalid OOofiles"""
     self.runFaultConversionList(self.FaultConversionScenarioList())
 
   def GetMetadataScenarioList(self):
@@ -197,7 +199,7 @@ class TestServer(TestCase):
             ]
 
   def testFaultGetMetadata(self):
-    """getMetadata from invalid OOofiles"""
+    """Test getMetadata from invalid OOofiles"""
     self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
 
   def UpdateMetadataScenarioList(self):
@@ -248,26 +250,26 @@ class TestServer(TestCase):
     """Test run_convert method"""
     self.runConvertScenarioList(self.ConvertScenarioList())
 
-  def GenerateScenarioList(self):
-    return [
-            # Test run_generate method with odt to pdf document
-            ('test.odt', open(join('data', 'test.odt')).read(), None,
-            'application/vnd.oasis.opendocument.text', 'pdf', 200, '',
-            'application/pdf'),
-            # XXX disable this test because LibreOffice 3.3 can open such a
-            # broken document
-            # Test run_generate method with invalid document
-            ('test.odt', open(join('data', 'test.odt')).read()[:100], None,
-            'application/vnd.oasis.opendocument.text', 'pdf', 402, '', None),
-            ]
-
+  # XXX: This is a test for ERP5 Backward compatibility,
+  # and the support to this kind of tests will be dropped.
   def testRunGenerateMethod(self):
-    """Test run_generate method with ooo documents"""
-    self.runGenerateScenarioList(self.GenerateScenarioList())
+    """Test run_generate method"""
+    data = open(join('data', 'test.odt'), 'r').read()
+    generate_result = self.proxy.run_generate('test.odt',
+                                      encodestring(data),
+                                      None, 'pdf',
+                                      'application/vnd.oasis.opendocument.text')
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertNotEquals(response_dict['data'], '')
+    self.assertEquals(response_dict['mime'], 'application/pdf')
 
+  # XXX: This is a test for ERP5 Backward compatibility,
+  # and the support to this kind of tests will be dropped.
   def testRunGenerateMethodConvertOdsToHTML(self):
-    """Test run_generate method. This test is to validate a bug convertions to
-    html"""
+    """Test run_generate method from ods to html. This test is to validate
+     a bug convertions to html"""
     generate_result = self.proxy.run_generate('test.ods',
                                       encodestring(
                                       open(join('data', 'test.ods')).read()),
@@ -290,8 +292,11 @@ class TestServer(TestCase):
     if exists(output_url):
       remove(output_url)
 
+  # XXX: This is a test for ERP5 Backward compatibility,
+  # and the support to this kind of tests will be dropped.
   def testPNGFileToConvertOdpToHTML(self):
-    """Test run_generate method. This test if returns good png files"""
+    """Test run_generate method from odp with png to html.
+     This test if returns good png files"""
     generate_result = self.proxy.run_generate('test_png.odp',
                                       encodestring(
                                       open(join('data', 'test_png.odp')).read()),
@@ -318,9 +323,11 @@ class TestServer(TestCase):
     if exists(output_url):
       remove(output_url)
 
+  # XXX: This is a test for ERP5 Backward compatibility,
+  # and the support to this kind of tests will be dropped.
   def testRunGenerateMethodConvertOdpToHTML(self):
-    """Test run_generate method. This test is to validate a bug convertions to
-    html"""
+    """Test run_generate method from odp to html. This test is to validate
+     a bug convertions to html"""
     generate_result = self.proxy.run_generate('test.odp',
                                       encodestring(
                                       open(join('data', 'test.odp')).read()),
@@ -342,6 +349,22 @@ class TestServer(TestCase):
       self.fail("Not exists one file with 'impr.html' format")
     if exists(output_url):
       remove(output_url)
+
+  # XXX: This is a test for ERP5 Backward compatibility,
+  # and the support to this kind of tests will be dropped.
+  # XXX disable this test because LibreOffice 3.3 can open such a broken
+  # document.
+  def testRunGenerateMethodFailResponse(self):
+    """Test run_generate method with invalid document"""
+    data = open(join('data', 'test.odt'), 'r').read()[:100]
+    generate_result = self.proxy.run_generate('test.odt',
+                                      encodestring(data),
+                                      None, 'pdf', 'application/vnd.oasis.opendocument.text')
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 402)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertEquals(response_dict, {})
+    self.assertTrue(response_message.startswith('Traceback'))
 
   def testRunSetMetadata(self):
     """Test run_setmetadata method, updating the same metadata"""
@@ -394,7 +417,7 @@ class TestServer(TestCase):
     self.assertFalse(['html', 'HTML Document'] in response_dict['response_data'])
 
   def testGetTableItemListFromOdt(self):
-    """Test if manager can get the table item list from odt file"""
+    """Test if getTableItemList can get the table item list from odt file"""
     table_list = [['Developers', ''],
                   ['Prices', 'Table 1: Prices table from Mon Restaurant'],
                   ['SoccerTeams', 'Tabela 2: Soccer Teams']]
@@ -404,7 +427,7 @@ class TestServer(TestCase):
     self.assertEquals(table_list, granulated_table)
 
   def testGetTableItemListFromDoc(self):
-    """Test if manager can get the table item list from doc file"""
+    """Test if getTableItemList can get the table item list from doc file"""
     table_list = [['Table1', ''],
                   ['Table2', 'Table 1: Prices table from Mon Restaurant'],
                   ['Table3', 'Tabela 2: Soccer Teams']]
@@ -414,7 +437,7 @@ class TestServer(TestCase):
     self.assertEquals(table_list, granulated_table)
 
   def testGetTableFromOdt(self):
-    """Test if manager can get a item of some granulated table from odt file"""
+    """Test if getTableItemList can get a item of some granulated table from odt file"""
     data = encodestring(open("./data/granulate_table_test.odt").read())
     granulated_table = self.proxy.getTableItemList(data, "odt")
     table_item = decodestring(self.proxy.getTable(data, granulated_table[1][0],
@@ -429,7 +452,7 @@ class TestServer(TestCase):
     self.assertEquals(granulated_table[1][0], table.attrib[name_key])
 
   def testGetTableFromDoc(self):
-    """Test if manager can get a item of some granulated table from doc file"""
+    """Test if getTableItemList can get a item of some granulated table from doc file"""
     data = encodestring(open("./data/granulate_table_test.doc").read())
     granulated_table = self.proxy.getTableItemList(data, "doc")
     self.proxy.getTable(data, granulated_table[1][0], "doc")
@@ -445,7 +468,7 @@ class TestServer(TestCase):
     self.assertEquals(granulated_table[1][0], table.attrib[name_key])
 
   def testGetColumnItemListFromOdt(self):
-    """Test if manager can get the list of column item from odt file"""
+    """Test if getColumnItemList can get the list of column item from odt file"""
     columns = self.proxy.getColumnItemList(
                 encodestring(open("./data/granulate_table_test.odt").read()),
                 "SoccerTeams",
@@ -453,7 +476,7 @@ class TestServer(TestCase):
     self.assertEquals([[0, 'Name'], [1, 'Country']], columns)
 
   def testGetColumnItemListFromDoc(self):
-    """Test if manager can get the list of column item from doc file"""
+    """Test if getColumnItemList can get the list of column item from doc file"""
     #in the doc format the tables lose their names
     columns = self.proxy.getColumnItemList(
               encodestring(open("./data/granulate_table_test.doc").read()),
@@ -461,95 +484,101 @@ class TestServer(TestCase):
               "doc")
     self.assertEquals([[0, 'Name'], [1, 'Country']], columns)
 
-#  def testGetLineItemList(self):
-#    """Test if manager can get the list of lines items"""
-#    data = encodestring(open("./data/granulate_table_test.odt").read())
-#    line_item_list = self.proxy.getLineItemList(data, "Developers", "odt")
-#    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
-#                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
-#                       ['Phone', '+55 (22) 9999-9999'],
-#                       ['Email', 'rafael@tiolive.com']], line_item_list)
-#    #.doc
-#    data = encodestring(open("./data/granulate_table_test.doc").read())
-#    line_item_list = self.proxy.getLineItemList(data, "Table1", "doc")
-#    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
-#                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
-#                       ['Phone', '+55 (22) 9999-9999'],
-#                       ['Email', 'rafael@tiolive.com']], line_item_list)
+  def testGetLineItemListFromOdt(self):
+    """Test if getLineItemList can get the list of lines items from odt file"""
+    data = encodestring(open("./data/granulate_table_test.odt").read())
+    line_item_list = self.proxy.getLineItemList(data, "Developers", "odt")
+    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
+                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
+                       ['Phone', '+55 (22) 9999-9999'],
+                       ['Email', 'rafael@tiolive.com']], line_item_list)
 
-#  def testGetImageItemList(self):
-#    """Test if manager can get the list of images items"""
-#    data = encodestring(open("./data/granulate_test.odt").read())
-#    image_list = self.proxy.getImageItemList(data, "odt")
-#    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
-#                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
-#                      ['10000201000000C80000004E7B947D46.png', ''],
-#                      ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
-#                      ['10000201000000C80000004E7B947D46.png',
-#                                                        'Again TioLive Logo']],
-#                                                                    image_list)
-#    #.doc
-#    data = encodestring(open("./data/granulate_test.doc").read())
-#    image_list = self.proxy.getImageItemList(data, "doc")
-#    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
-#                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
-#                      ['10000201000000C80000004E7B947D46.png', ''],
-#                      ['200003160000423300001370F468B63D.wmf', 'Python Logo'],
-#                      ['10000201000000C80000004E7B947D46.png',
-#                                                        'Again TioLive Logo']],
-#                                                                    image_list)
+  def testGetLineItemListFromDoc(self):
+    """Test if getLineItemList can get the list of lines items from doc file"""
+    data = encodestring(open("./data/granulate_table_test.doc").read())
+    line_item_list = self.proxy.getLineItemList(data, "Table1", "doc")
+    self.assertEquals([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
+                       ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
+                       ['Phone', '+55 (22) 9999-9999'],
+                       ['Email', 'rafael@tiolive.com']], line_item_list)
 
-#  def testGetImage(self):
-#    """Test if manager can get a image"""
-#    data = encodestring(open("./data/granulate_test.odt").read())
-#    zip = ZipFile(StringIO(decodestring(data)))
-#    image_id = '10000000000000C80000009C38276C51.jpg'
-#    original_image = zip.read('Pictures/%s' % image_id)
-#    geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
-#    self.assertEquals(original_image, geted_image)
-#    #.doc
-#    data = encodestring(open("./data/granulate_test.doc").read())
-#    #This conversion is necessary to catch the image from the doc file;
-#    #so compare with the server return.
-#    data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
-#    zip = ZipFile(StringIO(decodestring(data_odt)))
-#    image_id = '10000000000000C80000009C38276C51.jpg'
-#    original_image = zip.read('Pictures/%s' % image_id)
-#    geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
-#    self.assertEquals(original_image, geted_image)
+  def testGetImageItemListFromOdt(self):
+    """Test if getImageItemList can get the list of images items from odt file"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    image_list = self.proxy.getImageItemList(data, "odt")
+    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
+                      ['10000201000000C80000004E7B947D46.png', ''],
+                      ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
+                      ['10000201000000C80000004E7B947D46.png',
+                                                        'Again TioLive Logo']],
+                                                                    image_list)
 
-#  def testGetParagraphItemList(self):
-#    """Test if paragraphs are extracted correctly from document"""
-#    data = encodestring(open("./data/granulate_test.odt").read())
-#    paragraph_list = self.proxy.getParagraphItemList(data, "odt")
-#    self.assertEquals([[0, 'P3'], [1, 'P1'], [2, 'P12'], [3, 'P6'], [4, 'P7'],
-#                      [5, 'P8'], [6, 'P6'], [7, 'P6'], [8, 'P13'], [9, 'P9'],
-#                      [10, 'P9'], [11, 'P9'], [12, 'P4'], [13, 'P10'], [14,
-#                      'P5'], [15, 'P5'], [16, 'P14'], [17, 'P11'], [18, 'P11'],
-#                      [19, 'Standard'], [20, 'P2'], [21, 'P2'], [22, 'P2'],
-#                      [23, 'P2'], [24, 'P2'], [25, 'P2'], [26, 'P2'], [27,
-#                      'P2'], [28, 'P2'], [29, 'P2']], paragraph_list)
+  def testGetImageItemListFromDoc(self):
+    """Test if getImageItemList can get the list of images items from doc file"""
+    data = encodestring(open("./data/granulate_test.doc").read())
+    image_list = self.proxy.getImageItemList(data, "doc")
+    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+                      ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
+                      ['10000201000000C80000004E7B947D46.png', ''],
+                      ['200003160000423300001370F468B63D.wmf', 'Python Logo'],
+                      ['10000201000000C80000004E7B947D46.png',
+                                                        'Again TioLive Logo']],
+                                                                    image_list)
 
-#  def testGetParagraphItem(self):
-#    """Test if manager can get a paragraph"""
-#    data = encodestring(open("./data/granulate_test.odt").read())
-#    paragraph = self.proxy.getParagraph(data, 1, "odt")
-#    self.assertEquals(['', 'P1'], paragraph)
+  def testGetImageFromOdt(self):
+    """Test if getImage can get a image from odt file after zip"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    zip = ZipFile(StringIO(decodestring(data)))
+    image_id = '10000000000000C80000009C38276C51.jpg'
+    original_image = zip.read('Pictures/%s' % image_id)
+    geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
+    self.assertEquals(original_image, geted_image)
 
-#  def testGetChapterItemList(self):
-#    """Test if the chapters list is extracted correctly from document"""
-#    data = encodestring(open("./data/granulate_chapters_test.odt").read())
-#    chapter_list = self.proxy.getChapterItemList(data, "odt")
-#    self.assertEquals([[0, 'Title 0'], [1, 'Title 1'], [2, 'Title 2'],
-#                       [3, 'Title 3'], [4, 'Title 4'], [5, 'Title 5'],
-#                       [6, 'Title 6'], [7, 'Title 7'], [8, 'Title 8'],
-#                       [9, 'Title 9'], [10, 'Title 10']] , chapter_list)
+  def testGetImageFromDoc(self):
+    """Test if getImage can get a image from doc file after zip"""
+    data = encodestring(open("./data/granulate_test.doc").read())
+    #This conversion is necessary to catch the image from the doc file;
+    #so compare with the server return.
+    data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
+    zip = ZipFile(StringIO(decodestring(data_odt)))
+    image_id = '10000000000000C80000009C38276C51.jpg'
+    original_image = zip.read('Pictures/%s' % image_id)
+    geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
+    self.assertEquals(original_image, geted_image)
 
-#  def testGetChapterItem(self):
-#    """Test if manager can get a chapter"""
-#    data = encodestring(open("./data/granulate_chapters_test.odt").read())
-#    chapter = self.proxy.getChapterItem(1, data, "odt")
-#    self.assertEquals(['Title 1', 1], chapter)
+  def testGetParagraphItemList(self):
+    """Test if getParagraphItemList can get paragraphs correctly from document"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    paragraph_list = self.proxy.getParagraphItemList(data, "odt")
+    self.assertEquals([[0, 'P3'], [1, 'P1'], [2, 'P12'], [3, 'P6'], [4, 'P7'],
+                      [5, 'P8'], [6, 'P6'], [7, 'P6'], [8, 'P13'], [9, 'P9'],
+                      [10, 'P9'], [11, 'P9'], [12, 'P4'], [13, 'P10'], [14,
+                      'P5'], [15, 'P5'], [16, 'P14'], [17, 'P11'], [18, 'P11'],
+                      [19, 'Standard'], [20, 'P2'], [21, 'P2'], [22, 'P2'],
+                      [23, 'P2'], [24, 'P2'], [25, 'P2'], [26, 'P2'], [27,
+                      'P2'], [28, 'P2'], [29, 'P2']], paragraph_list)
+
+  def testGetParagraphItem(self):
+    """Test if getParagraph can get a paragraph"""
+    data = encodestring(open("./data/granulate_test.odt").read())
+    paragraph = self.proxy.getParagraph(data, 1, "odt")
+    self.assertEquals(['', 'P1'], paragraph)
+
+  def testGetChapterItemList(self):
+    """Test if getChapterItemList can get the chapters list correctly from document"""
+    data = encodestring(open("./data/granulate_chapters_test.odt").read())
+    chapter_list = self.proxy.getChapterItemList(data, "odt")
+    self.assertEquals([[0, 'Title 0'], [1, 'Title 1'], [2, 'Title 2'],
+                       [3, 'Title 3'], [4, 'Title 4'], [5, 'Title 5'],
+                       [6, 'Title 6'], [7, 'Title 7'], [8, 'Title 8'],
+                       [9, 'Title 9'], [10, 'Title 10']] , chapter_list)
+
+  def testGetChapterItem(self):
+    """Test if getChapterItem can get a chapter"""
+    data = encodestring(open("./data/granulate_chapters_test.odt").read())
+    chapter = self.proxy.getChapterItem(1, data, "odt")
+    self.assertEquals(['Title 1', 1], chapter)
 
 def test_suite():
   return make_suite(TestServer)
