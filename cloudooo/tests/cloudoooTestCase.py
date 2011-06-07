@@ -100,24 +100,6 @@ class TestCase(unittest.TestCase):
       self.assertEquals(response_message, expected_response_message)
       self.assertEquals(response_dict['meta']['MIMEType'], response_dict_meta)
 
-  def _testRunGenerate(self, filename, data, meta,source_format,
-                      destination_format, expected_response_code,
-                      response_dict_data, response_dict_mime):
-    """Generic test for run_generate"""
-    generate_result = self.proxy.run_generate(filename,
-                                      encodestring(data),
-                                      meta, destination_format,
-                                      source_format)
-    response_code, response_dict, response_message = generate_result
-    self.assertEquals(response_code, expected_response_code)
-    self.assertEquals(type(response_dict), DictType)
-    if expected_response_code == 402:
-      self.assertEquals(response_dict, {})
-      self.assertTrue(response_message.startswith('Traceback'))
-    else:
-      self.assertNotEquals(response_dict['data'], response_dict_data)
-      self.assertEquals(response_dict['mime'], response_dict_mime)
-
   def ConversionScenarioList(self):
     """
     Method used to convert files
@@ -184,13 +166,3 @@ class TestCase(unittest.TestCase):
     for scenario in scenarios:
       self._testRunConvert(*scenario)
 
-  def GenerateScenarioList(self):
-    """
-    Method to verify run_generate
-    must be overwrited into subclasses
-    """
-    return []
-
-  def runGenerateScenarioList(self, scenarios):
-    for scenario in scenarios:
-      self._testRunGenerate(*scenario)
