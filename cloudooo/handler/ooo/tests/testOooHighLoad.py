@@ -26,37 +26,31 @@
 #
 ##############################################################################
 
-from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
 from multiprocessing import Process, Array
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 import magic
 
-DAEMON = True
 mime_decoder = magic.Magic(mime=True)
 
 
 def basicTestToGenerate(id, proxy, data, source_format, destination_format,
                         result_list):
   """Test to use method generate of server"""
-  document = proxy.convertFile(data, source_format, destination_format)
+  document = proxy.convertFile(encodestring(data), source_format, destination_format)
   mimetype = mime_decoder.from_buffer(decodestring(document))
   assert mimetype == 'application/pdf'
   result_list[id] = True
 
 
-class TestHighLoad(HandlerTestCase):
+class TestHighLoad(TestCase):
   """Test with many simultaneous connection"""
-
-  def afterSetUp(self):
-    """Creates connection with cloudooo Server"""
-    self.proxy = ServerProxy("http://%s:%s" % (self.hostname, self.cloudooo_port))
 
   def testGenerateHighLoad(self):
     """Sends many request to Server. Calling generate method"""
     process_list = []
-    data = encodestring(open("data/test.doc", 'r').read())
-    LOOP = 100
+    data = open("data/test.doc", 'r').read()
+    LOOP = 2
     result_list = Array('i', [False] * LOOP)
     for id in range(LOOP):
       process = Process(target=basicTestToGenerate, args=(id, self.proxy, data,
