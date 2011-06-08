@@ -62,8 +62,7 @@ class TestHandler(HandlerTestCase):
   def testConvertAudio(self):
     """Test coversion of audio to another format"""
     self.data = open("./data/test.ogg").read()
-    kw = dict(env=dict(PATH=self.env_path))
-    self.input = Handler(self.tmp_url, self.data, "ogg", **kw)
+    self.input = Handler(self.tmp_url, self.data, "ogg", **self.kw)
     output_data = self.input.convert("wav")
     file_format = self.file_detector.from_buffer(output_data)
     # XXX this might expect 'audio/vnd.wave' but magic only got 'audio/x-wav'
