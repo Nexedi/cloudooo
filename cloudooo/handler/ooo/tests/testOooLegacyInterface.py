@@ -26,61 +26,41 @@
 #
 ##############################################################################
 
-from xmlrpclib import ServerProxy
 from base64 import encodestring, decodestring
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
-import magic
+from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 from pkg_resources import resource_filename
 
-file_detector = magic.Magic(mime=True)
-DAEMON = True
 
-class TestLegacyInterface(HandlerTestCase):
-
-  def afterSetUp(self):
-    """Create connection with cloudooo server"""
-    self.proxy = ServerProxy("http://%s:%s/RPC2" % (self.hostname,
-                                                    self.cloudooo_port),
-                             allow_none=True)
+class TestLegacyInterface(TestCase):
 
   def testHtmlToBaseFormatConversion(self):
-    """Check implicit base conversion of HTML documents.
-    """
+    """Check implicit base conversion of HTML documents."""
     filename = resource_filename('cloudooo.handler.ooo.tests.data',
                                  'test_failure_conversion.html')
-    file_object =  open(filename, 'r')
-    original_data = file_object.read()
-    file_object.close()
+    data =  open(filename, 'r').read()
     status, response_dict, message = self.proxy.run_convert(
                                                   filename,
-                                                  encodestring(original_data),
+                                                  encodestring(data),
                                                   None,
                                                   None,
                                                   'text/html')
-    converted_data = response_dict['data']
-    mimetype = response_dict['mime']
-    self.assertEquals(file_detector.from_buffer(decodestring(converted_data)),
+    self.assertEquals(self._getFileType(decodestring(response_dict['data'])),
                       'text/html')
-    self.assertEquals(mimetype, 'text/html')
+    self.assertEquals(response_dict['mime'], 'text/html')
 
   def testHtmlToOdt(self):
-    """Check conversion of HTML to odt
-    """
+    """Check conversion of HTML to odt"""
     filename = resource_filename('cloudooo.handler.ooo.tests.data',
                                  'test_failure_conversion.html')
-    file_object =  open(filename, 'r')
-    data = file_object.read()
-    file_object.close()
+    data =  open(filename, 'r').read()
     status, response_dict, message = self.proxy.run_generate(filename,
                                                              encodestring(data),
                                                              None,
                                                              'odt',
                                                              'text/html')
-    data = response_dict['data']
-    mimetype = response_dict['mime']
-    self.assertEquals(file_detector.from_buffer(decodestring(data)),
+    self.assertEquals(self._getFileType(decodestring(response_dict['data'])),
                       'application/vnd.oasis.opendocument.text')
-    self.assertEquals(mimetype, 'application/vnd.oasis.opendocument.text')
+    self.assertEquals(response_dict['mime'], 'application/vnd.oasis.opendocument.text')
 
 def test_suite():
   return make_suite(TestLegacyInterface)
