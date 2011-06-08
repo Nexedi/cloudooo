@@ -8,6 +8,7 @@ from subprocess import Popen
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
+from glob import glob
 import psutil
 from cloudooo.handler.ooo.util import socketStatus
 from signal import SIGQUIT
@@ -38,12 +39,9 @@ def run():
   parser.add_argument('--paster_path', dest='paster_path',
                       default='paster',
                       help="Path to Paster script")
-  parser.add_argument('--handler', dest='handler',
-                      type=str,
-                      help="Cloudooo's Handler'")
   namespace = parser.parse_args()
-  environment_path = resource_filename("cloudooo.handler.%s" % namespace.handler,
-                                       "/tests")
+  environment_path = glob(path.join(resource_filename("cloudooo", "handler"), '*', 'tests'))
+  sys.path.extend(environment_path)
   server_cloudooo_conf = namespace.server_cloudooo_conf
   test_name = namespace.test_name
   if server_cloudooo_conf.startswith(curdir):
@@ -55,15 +53,17 @@ def run():
   python_extension = '.py'
   if test_name[-3:] == python_extension:
     test_name = test_name[:-3]
-  full_path = path.join(environment_path, '%s%s' % (test_name,
+  for env_handler_path in environment_path:
+    full_path = path.join(env_handler_path, '%s%s' % (test_name,
                                                     python_extension))
-  if not path.exists(full_path):
-    exit("%s does not exists\n" % full_path)
+    if path.exists(full_path):
+      handler_path = env_handler_path
+      break
+    else:
+      exit("%s does not exists\n" % full_path)
 
   from cloudooo.tests.handlerTestCase import startFakeEnvironment
   from cloudooo.tests.handlerTestCase import stopFakeEnvironment
-
-  sys.path.append(environment_path)
 
   config = ConfigParser()
   config.read(server_cloudooo_conf)
@@ -87,19 +87,19 @@ def run():
                server_cloudooo_conf]
     process = Popen(command)
     wait_use_port(process.pid)
-    chdir(environment_path)
+    chdir(handler_path)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
       process.send_signal(SIGQUIT)
       process.wait()
   elif OPENOFFICE:
-    chdir(environment_path)
+    chdir(handler_path)
     startFakeEnvironment(conf_path=server_cloudooo_conf)
     try:
       TestRunner(verbosity=2).run(suite)
     finally:
       stopFakeEnvironment()
   else:
-    chdir(environment_path)
+    chdir(handler_path)
     TestRunner(verbosity=2).run(suite)
