@@ -53,9 +53,6 @@ setup(name='cloudooo',
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
-      runImageMagickHandlerUnitTest = cloudooo.handler.imagemagick.tests.runImageMagickHandlerUnitTest:run
-      runFFMPEGHandlerUnitTest = cloudooo.handler.ffmpeg.tests.runFFMPEGHandlerUnitTest:run
-      runOOoHandlerUnitTest = cloudooo.handler.ooo.tests.runOOoHandlerUnitTest:run
-      runPDFHandlerUnitTest = cloudooo.handler.pdf.tests.runPDFHandlerUnitTest:run
+      runUnitTest = cloudooo.tests.runHandlerUnitTest:run
       """,
       )

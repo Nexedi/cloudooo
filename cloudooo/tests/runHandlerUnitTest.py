@@ -27,8 +27,8 @@ def exit(msg):
   sys.exit(0)
 
 
-def run(handler_name):
-  description = "Unit Test Runner for %s Handler" % handler_name.capitalize()
+def run():
+  description = "Unit Test Runner for Handlers"
   parser = ArgumentParser(description=description)
   parser.add_argument('server_cloudooo_conf')
   parser.add_argument('test_name')
@@ -38,8 +38,11 @@ def run(handler_name):
   parser.add_argument('--paster_path', dest='paster_path',
                       default='paster',
                       help="Path to Paster script")
+  parser.add_argument('--handler', dest='handler',
+                      type=str,
+                      help="Cloudooo's Handler'")
   namespace = parser.parse_args()
-  environment_path = resource_filename("cloudooo.handler.%s" % handler_name,
+  environment_path = resource_filename("cloudooo.handler.%s" % namespace.handler,
                                        "/tests")
   server_cloudooo_conf = namespace.server_cloudooo_conf
   test_name = namespace.test_name
