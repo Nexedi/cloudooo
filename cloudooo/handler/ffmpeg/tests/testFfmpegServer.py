@@ -53,7 +53,7 @@ class TestServer(TestCase):
 
   def UpdateMetadataScenarioList(self):
     return [
-            (join('data', 'test.ogv'), "ogv", dict(title='Server Set Metadata '+
+            (join('data', 'test.ogv'), "ogv", dict(Title='Server Set Metadata '+
             'Test')),
             ]
 
