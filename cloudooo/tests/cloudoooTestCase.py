@@ -89,8 +89,9 @@ class TestCase(unittest.TestCase):
                                             source_format,
                                             metadata_dict)
     new_metadata_dict = self.proxy.getFileMetadataItemList(
-                            encodestring(output_data),
-                            source_format)
+                            output_data,
+                            source_format,
+                            False)
     for key,value in metadata_dict.iteritems():
       self.assertEquals(new_metadata_dict[key], value)
 
