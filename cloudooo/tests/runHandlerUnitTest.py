@@ -53,13 +53,15 @@ def run():
   python_extension = '.py'
   if test_name[-3:] == python_extension:
     test_name = test_name[:-3]
+  handler_path = None
   for env_handler_path in environment_path:
     full_path = path.join(env_handler_path, '%s%s' % (test_name,
                                                     python_extension))
     if path.exists(full_path):
       handler_path = env_handler_path
       break
-    else:
+  
+  if handler_path is None:
       exit("%s does not exists\n" % full_path)
 
   from cloudooo.tests.handlerTestCase import startFakeEnvironment
