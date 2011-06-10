@@ -412,9 +412,31 @@ class TestServer(TestCase):
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    self.assertEquals(len(response_dict['response_data']), 17)
-    self.assertTrue(['html', 'HTML Document (OpenOffice.org Writer)'] in response_dict['response_data'])
-    self.assertFalse(['html', 'HTML Document'] in response_dict['response_data'])
+    list_for_mimetype = [['html', 'HTML Document (OpenOffice.org Writer)'],
+                          ['txt', 'Text'],
+                          ['doc', 'Microsoft Word 6.0'],
+                          ['sdw', 'StarWriter 3.0'],
+                          ['sdw', 'StarWriter 5.0'],
+                          ['doc', 'Microsoft Word 95'],
+                          ['doc', 'Microsoft Word 97/2000/XP'],
+                          ['ott', 'ODF Text Document Template'],
+                          ['sdw', 'StarWriter 4.0'],
+                          ['rtf', 'Rich Text Format'],
+                          ['docx', 'Microsoft Word 2007 XML'],
+                          ['sxw', 'OpenOffice.org 1.0 Text Document'],
+                          ['txt', 'Text Encoded'],
+                          ['docx', 'Office Open XML Text'],
+                          ['odt', 'ODF Text Document'],
+                          ['pdf', 'PDF - Portable Document Format']
+                          ]
+    # Verify if all expected types are in response list
+    for arg in list_for_mimetype:
+      self.assertTrue(arg in response_dict['response_data'],
+                    "%s not in %s" % (arg, response_dict['response_data']))
+    # Verify if all types in response list are expected
+    for arg in response_dict['response_data']:
+      self.assertTrue(arg in list_for_mimetype,
+                    "%s not in %s" % (arg, list_for_mimetype))
 
   def testGetTableItemListFromOdt(self):
     """Test if getTableItemList can get the table item list from odt file"""
