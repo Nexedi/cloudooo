@@ -16,12 +16,9 @@ install_requires = [
           'WSGIUtils',
           'psutil>=0.2.0',
           'lxml'
-
+          'python-magic'
          ]
 
-test_requires = [
-    'python-magic',
-    ]
 
 if sys.version_info < (2, 7):
   install_requires.append('argparse')
@@ -46,7 +43,6 @@ setup(name='cloudooo',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
-      test_requires=test_requires,
       entry_points="""
       [paste.app_factory]
       main = cloudooo.paster_application:application
