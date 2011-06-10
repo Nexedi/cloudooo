@@ -15,7 +15,7 @@ install_requires = [
           'PasteScript',
           'WSGIUtils',
           'psutil>=0.2.0',
-          'lxml'
+          'lxml',
           'python-magic'
          ]
 
