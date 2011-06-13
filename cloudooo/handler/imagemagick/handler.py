@@ -30,6 +30,7 @@ import re
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
+from cloudooo.util import logger
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
@@ -47,6 +48,7 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
+    logger.debug("ImageMagickConvert: %s > %s" % (self.source_format, destination_format))
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.base_folder_url)
     command = ["convert", self.file.getUrl(), output_url]
