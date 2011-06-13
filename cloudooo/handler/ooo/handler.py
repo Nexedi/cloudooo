@@ -154,7 +154,7 @@ class Handler(object):
     Keyword Arguments:
     destination_format -- extension of document as String
     """
-    logger.debug("Convert: %s > %s" % (self.source_format, destination_format))
+    logger.debug("OooConvert: %s > %s" % (self.source_format, destination_format))
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
