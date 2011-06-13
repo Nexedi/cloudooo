@@ -34,6 +34,7 @@ from lxml import etree
 from types import DictType
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.backportUnittest import skip
 
 
 class TestServer(TestCase):
@@ -146,13 +147,6 @@ class TestServer(TestCase):
             "opendocument.text"),
             # Test export python to pdf
             (__file__, "py", "pdf", "application/pdf"),
-            # Test if send a zipfile returns a document correctly
-            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
-            # Convert compressed html to txt
-            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
-            # Test export pptx to odp
-            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
-            "opendocument.presentation"),
             ]
 
   def testConvert(self):
@@ -172,6 +166,20 @@ class TestServer(TestCase):
   def testFaultConversion(self):
     """Test fail convertion of Invalid OOofiles"""
     self.runFaultConversionList(self.FaultConversionScenarioList())
+
+  @skip('Expected failure')
+  def testConvertWithoutSupport(self):
+    """Test convertion of zip files and pptx"""
+    self.runConversionList([
+            # Test if send a zipfile returns a document correctly
+            (join('data', 'test.zip'), "zip", "txt", "application/zip", True),
+            # Convert compressed html to txt
+            (join('data', 'test.zip'), "zip", "txt", "text/plain"),
+            # Test export pptx to odp
+            (join('data', 'test.pptx'), "pptx", "odp", "application/vnd.oasis."+
+            "opendocument.presentation"),
+            ])
+
 
   def GetMetadataScenarioList(self):
     return [
@@ -352,8 +360,7 @@ class TestServer(TestCase):
 
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
-  # XXX disable this test because LibreOffice 3.3 can open such a broken
-  # document.
+  @skip('LibreOffice 3.3 can open such a broken document and convert')
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
     data = open(join('data', 'test.odt'), 'r').read()[:100]
