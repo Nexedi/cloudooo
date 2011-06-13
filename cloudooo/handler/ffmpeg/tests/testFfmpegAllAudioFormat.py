@@ -28,6 +28,7 @@
 
 from os.path import join
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.backportUnittest import skip
 
 
 class TestAllSupportedFormat(TestCase):
@@ -36,12 +37,16 @@ class TestAllSupportedFormat(TestCase):
     return [# XXX This might expect audio/octet-stream but only got audio/mpeg
             (join('data', 'test.ogg'), "ogg", "mp3", "audio/mpeg"),
             (join('data', 'test.ogg'), "ogg", "wav", "audio/x-wav"),
-            (join('data', 'test.ogg'), "ogg", "midi", "audio/rtp-midi"),
             ]
 
   def testAllSupportedFormat(self):
+    """Test all audio types supported by ffmpeg"""
     self.runConversionList(self.ConversionScenarioList())
 
+  @skip('FFMPEG does not support midi files anymore')
+  def testMidi(self):
+    """Tests if ffmpeg convets midi file"""
+    self.runConversionList(join('data', 'test.ogg'), "ogg", "midi", "audio/rtp-midi")
 
 def test_suite():
   return make_suite(TestAllSupportedFormat)
