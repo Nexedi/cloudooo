@@ -55,6 +55,7 @@ class Handler(object):
     # XXX This implementation could use ffmpeg -i pipe:0, but
     # XXX seems super unreliable currently and it generates currupted files in
     # the end
+    logger.debug("FfmpegConvert: %s > %s" % (self.source_format, destination_format))
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.input.directory_name)
     command = ["ffmpeg",
