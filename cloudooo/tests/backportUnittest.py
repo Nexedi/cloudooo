@@ -113,7 +113,6 @@ class TestCase(unittest.TestCase):
       _testMethodDoc = property(lambda self: self.__testMethodDoc)
 
     def run(self, result=None):
-        orig_result = result
         if result is None:
             result = self.defaultTestResult()
             # BACK: Not necessary for Python < 2.7:

@@ -59,7 +59,6 @@ class TestAllFormats(TestCase):
     """Generic test for converting all formats"""
     request = {'document_type': document_type}
     extension_list = self.proxy.getAllowedExtensionList(request)
-    fault_list = []
     for extension in extension_list:
         self._testConvertFile(input_url, source_format, extension[0], None)
 

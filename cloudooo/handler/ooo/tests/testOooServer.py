@@ -35,6 +35,7 @@ from types import DictType
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 from cloudooo.tests.backportUnittest import skip
+import magic
 
 
 class TestServer(TestCase):

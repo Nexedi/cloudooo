@@ -10,7 +10,6 @@ from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
 from glob import glob
 import psutil
-from cloudooo.handler.ooo.util import socketStatus
 from signal import SIGQUIT
 
 

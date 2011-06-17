@@ -27,7 +27,6 @@
 ##############################################################################
 
 import unittest
-import sys
 from os import environ, path
 from ConfigParser import ConfigParser
 from xmlrpclib import ServerProxy, Fault
