@@ -122,6 +122,17 @@ class MimeMapper(object):
       if flag & 0x08 or flag & 0x1000 or flag & 0x2000:
         continue
       ui_name = value.get('UIName')
+      # Hardcode blacklisted filters
+      # XXX It should be done in configuration file instead
+      if value.get('Name') in [
+        # Use 'Text (encoded)' instead
+        'Text',
+        'XHTML Calc File',
+        'XHTML Impress File',
+        'XHTML Writer File',
+        'XHTML Draw File',
+        ]:
+        continue
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
       if not ui_name:
