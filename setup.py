@@ -49,6 +49,6 @@ setup(name='cloudooo',
       [console_scripts]
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
-      runUnitTest = cloudooo.tests.runHandlerUnitTest:run
+      runCloudoooUnitTest = cloudooo.tests.runHandlerUnitTest:run
       """,
       )
