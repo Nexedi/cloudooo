@@ -16,12 +16,9 @@ install_requires = [
           'WSGIUtils',
           'psutil>=0.2.0',
           'lxml',
-          'python-magic'
-         ]
-
-
-if sys.version_info < (2, 7):
-  install_requires.append('argparse')
+          'python-magic',
+          'argparse'
+          ]
 
 setup(name='cloudooo',
       version=version,
