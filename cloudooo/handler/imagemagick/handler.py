@@ -48,7 +48,7 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
-    logger.debug("ImageMagickConvert: %s > %s" % (self.source_format, destination_format))
+    logger.debug("ImageMagickConvert: %s > %s" % (self.file.source_format, destination_format))
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.base_folder_url)
     command = ["convert", self.file.getUrl(), output_url]

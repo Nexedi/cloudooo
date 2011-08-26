@@ -47,7 +47,7 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """ Convert a pdf document """
-    logger.debug("PDFConvert: %s > %s" % (self.source_format, destination_format))
+    logger.debug("PDFConvert: %s > %s" % (self.document.source_format, destination_format))
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.document.directory_name)
     command = ["pdftotext", self.document.getUrl(), output_url]
