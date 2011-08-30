@@ -323,7 +323,7 @@ class TestServer(TestCase):
     try:
       png_path = join(self.tmp_url, "img0.png")
       zipfile.extractall(self.tmp_url)
-      content_type = self._getFileType(png_path)
+      content_type = self._getFileType(encodestring(open(png_path).read()))
       self.assertEquals(content_type, 'image/png')
       m = magic.Magic()
       self.assertTrue("8-bit/color RGB" in m.from_file(png_path))
