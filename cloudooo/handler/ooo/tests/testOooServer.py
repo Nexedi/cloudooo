@@ -421,7 +421,7 @@ class TestServer(TestCase):
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
     list_for_mimetype = [['html', 'HTML Document (OpenOffice.org Writer)'],
-                          ['txt', 'Text'],
+                          ['txt', 'Text Encoded'],
                           ['doc', 'Microsoft Word 6.0'],
                           ['sdw', 'StarWriter 3.0'],
                           ['sdw', 'StarWriter 5.0'],
