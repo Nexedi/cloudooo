@@ -60,7 +60,7 @@ class TestServer(TestCase):
             ]
 
   def testGetMetadataFromPNG(self):
-    """test if metadata are extracted correctly"""
+    """test if metadata are extracted correctly from png image file"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
 
   def FaultGetMetadataScenarioList(self):

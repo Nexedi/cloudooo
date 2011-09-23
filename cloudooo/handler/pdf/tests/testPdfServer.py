@@ -64,7 +64,7 @@ class TestServer(TestCase):
             ]
 
   def testGetMetadataFromPdf(self):
-    """test if metadata are extracted correctly"""
+    """test if metadata are extracted correctly from pdf files"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
 
   def FaultGetMetadataScenarioList(self):
@@ -83,7 +83,7 @@ class TestServer(TestCase):
             ]
 
   def testSetMetadata(self):
-    """Test if metadata is inserted correctly in document"""
+    """Test if metadata is inserted correctly in pdf file"""
     self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():

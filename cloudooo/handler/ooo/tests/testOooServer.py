@@ -168,7 +168,7 @@ class TestServer(TestCase):
     """Test fail convertion of Invalid OOofiles"""
     self.runFaultConversionList(self.FaultConversionScenarioList())
 
-  @skip('Expected failure')
+  @skip('Expected failure cause zip and pptx files are not supported')
   def testConvertWithoutSupport(self):
     """Test convertion of zip files and pptx"""
     self.runConversionList([

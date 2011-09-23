@@ -62,7 +62,7 @@ class TestServer(TestCase):
             ]
 
   def testGetMetadata(self):
-    """test if metadata are extracted correctly"""
+    """test if metadata are extracted correctly from video file"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
 
   def FaultGetMetadataScenarioList(self):
@@ -83,7 +83,7 @@ class TestServer(TestCase):
             ]
 
   def testSetMetadata(self):
-    """Test if metadata is inserted correctly"""
+    """Test if metadata is inserted correctly into video files"""
     self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
 def test_suite():
