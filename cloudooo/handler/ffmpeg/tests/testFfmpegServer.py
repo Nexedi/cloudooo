@@ -41,6 +41,20 @@ class TestServer(TestCase):
     """Converts ogv video to mpeg format"""
     self.runConversionList(self.ConversionScenarioList())
 
+  def FaultConversionScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', '', ''),
+            # Try convert one video for a invalid format
+            (open(join('data', 'test.ogv')).read(), 'ogv', 'xyz'),
+            # Try convert one video to format not possible
+            (open(join('data', 'test.ogv')).read(), 'ogv', 'moov'),
+            ]
+
+  def testFaultConversion(self):
+    """Test fail convertion of Invalid video files"""
+    self.runFaultConversionList(self.FaultConversionScenarioList())
+
   def GetMetadataScenarioList(self):
     return [
             (join('data', 'test.ogv'), "ogv", dict(Data='', Encoder='Lavf52.64'+
@@ -50,6 +64,17 @@ class TestServer(TestCase):
   def testGetMetadata(self):
     """test if metadata are extracted correctly"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
+
+  def FaultGetMetadataScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', ''),
+            ]
+
+  def testFaultGetMetadata(self):
+    """Test getMetadata from invalid video files"""
+    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
+
 
   def UpdateMetadataScenarioList(self):
     return [

@@ -41,6 +41,19 @@ class TestServer(TestCase):
     """Converts png to jpg"""
     self.runConversionList(self.ConversionScenarioList())
 
+  def FaultConversionScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', '', ''),
+            # Try convert one video for a invalid format
+            (open(join('data', 'test.png')).read(), 'png', 'xyz'),
+            # Try convert one video to format not possible
+            (open(join('data', 'test.png')).read(), 'png', '8bim'),
+            ]
+
+  def testFaultConversion(self):
+    """Test fail convertion of Invalid image files"""
+
   def GetMetadataScenarioList(self):
     return [
             (join('data', 'test.png'), "png", dict(Compression='Zip')),
@@ -49,6 +62,17 @@ class TestServer(TestCase):
   def testGetMetadataFromPNG(self):
     """test if metadata are extracted correctly"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
+
+  def FaultGetMetadataScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', ''),
+            ]
+
+  def testFaultGetMetadata(self):
+    """Test getMetadata from invalid image file"""
+    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
+
 
 def test_suite():
   return make_suite(TestServer)

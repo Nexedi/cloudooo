@@ -42,6 +42,21 @@ class TestServer(TestCase):
     """Converts pdf to txt"""
     self.runConversionList(self.ConversionScenarioList())
 
+  def FaultConversionScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', '', ''),
+            # Try convert one video for a invalid format
+            (open(join('data', 'test.pdf')).read(), 'pdf', 'xyz'),
+            # Try convert one video to format not possible
+            (open(join('data', 'test.pdf')).read(), 'pdf', 'ogv'),
+            ]
+
+  def testFaultConversion(self):
+    """Test fail convertion of Invalid pdf files"""
+    self.runFaultConversionList(self.FaultConversionScenarioList())
+
+
   def GetMetadataScenarioList(self):
     return [
             (join('data', 'test.pdf'), "pdf", dict(title='Free Cloud Alliance'+
@@ -51,6 +66,16 @@ class TestServer(TestCase):
   def testGetMetadataFromPdf(self):
     """test if metadata are extracted correctly"""
     self.runGetMetadataList(self.GetMetadataScenarioList())
+
+  def FaultGetMetadataScenarioList(self):
+    return [
+            # Test to verify if server fail when a empty string is sent
+            ('', ''),
+            ]
+
+  def testFaultGetMetadata(self):
+    """Test getMetadata from invalid pdf file"""
+    self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
 
   def UpdateMetadataScenarioList(self):
     return [
