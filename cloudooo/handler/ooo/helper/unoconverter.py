@@ -70,38 +70,18 @@ Options:
 class UnoConverter(object):
   """A module to easily work with OpenOffice.org."""
 
-  def __init__(self, hostname, port, document_url, **kw):
+  def __init__(self, hostname, port, document_url, source_format, uno_path,
+               office_binary_path, refresh=None,):
     """ """
     self.hostname = hostname
     self.port = port
     self.document_url = document_url
     self.document_dir_path = dirname(document_url)
-    self.source_format = kw.get('source_format')
-    self.refresh = kw.get('refresh')
-    self._setUpUnoEnvironment(kw.get("uno_path"),
-                              kw.get("office_binary_path"))
+    self.source_format = source_format
+    self.refresh = refresh
+    self.uno_path = uno_path
+    self.office_binary_path = office_binary_path
     self._load()
-
-  def _setUpUnoEnvironment(self, uno_path=None, office_binary_path=None):
-    """Set up the environment to use the uno library and connect with the
-    openoffice by socket"""
-    if uno_path is not None:
-      environ['uno_path'] = uno_path
-    else:
-      uno_path = environ.get('uno_path')
-
-    if office_binary_path is not None:
-      environ['office_binary_path'] = office_binary_path
-    else:
-      office_binary_path = environ.get('office_binary_path')
-
-    # Add in sys.path the path of pyuno
-    if uno_path not in sys.path:
-      sys.path.append(uno_path)
-    fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
-    if exists(fundamentalrc_file) and \
-       'URE_BOOTSTRAP' not in environ:
-      putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   def _createProperty(self, name, value):
     """Create property"""
@@ -159,7 +139,9 @@ class UnoConverter(object):
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
     """
-    service_manager = helper_util.getServiceManager(self.hostname, self.port)
+    service_manager = helper_util.getServiceManager(self.hostname, self.port,
+                                                    self.uno_path,
+                                                    self.office_binary_path)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
@@ -219,7 +201,9 @@ class UnoConverter(object):
       if field_value_str:
         fieldname = document_info.getUserFieldName(number)
         metadata[fieldname] = field_value_str
-    service_manager = helper_util.getServiceManager(self.hostname, self.port)
+    service_manager = helper_util.getServiceManager(self.hostname, self.port,
+                                                    self.uno_path,
+                                                    self.office_binary_path)
     type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))

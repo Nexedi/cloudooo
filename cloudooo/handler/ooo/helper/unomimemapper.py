@@ -33,7 +33,6 @@ try:
 except ImportError:
   import simplejson as json
 import helper_util
-from os import environ, path, putenv
 from getopt import getopt, GetoptError
 from types import InstanceType
 
@@ -57,11 +56,11 @@ Options:
 class UnoMimemapper(object):
   """ """
 
-  def __init__(self, hostname, port, **kw):
+  def __init__(self, hostname, port, uno_path=None, office_binary_path=None):
     """ Receives hostname and port from openoffice and create a service manager"""
-    self._setUpUnoEnvironment(kw.get("uno_path"),
-                              kw.get("office_binary_path"))
-    self.service_manager = helper_util.getServiceManager(hostname, port)
+    self.service_manager = helper_util.getServiceManager(hostname, port,
+                                                         uno_path,
+                                                         office_binary_path)
 
   def _getElementNameByService(self, uno_service, ignore_name_list=[]):
     """Returns an dict with elements."""
@@ -79,27 +78,6 @@ class UnoMimemapper(object):
             service_dict[name] = element_dict
 
     return service_dict
-
-  def _setUpUnoEnvironment(self, uno_path=None, office_binary_path=None):
-    """Set up the environment to use the uno library and connect with the
-    openoffice by socket"""
-    if uno_path is not None:
-      environ['uno_path'] = uno_path
-    else:
-      uno_path = environ.get('uno_path')
-
-    if office_binary_path is not None:
-      environ['office_binary_path'] = office_binary_path
-    else:
-      office_binary_path = environ.get('office_binary_path')
-
-    # Add in sys.path the path of pyuno
-    if uno_path not in sys.path:
-      sys.path.append(uno_path)
-    fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
-    if path.exists(fundamentalrc_file) and \
-       'URE_BOOTSTRAP' not in environ:
-      putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   def getFilterDict(self):
     """Return all filters and your properties"""
@@ -132,19 +110,20 @@ def main():
   if not opt_list:
     help()
 
+  port = hostname = uno_path = office_binary_path = None
   for opt, arg in opt_list:
     if opt in ("-h", "--help"):
       help()
     if opt == "--uno_path":
-      environ['uno_path'] = arg
+      uno_path = arg
     elif opt == "--office_binary_path":
-      environ['office_binary_path'] = arg
+      office_binary_path = arg
     elif opt == '--hostname':
       hostname = arg
     elif opt == "--port":
       port = arg
 
-  mimemapper = UnoMimemapper(hostname, port, **dict(environ))
+  mimemapper = UnoMimemapper(hostname, port, uno_path, office_binary_path)
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
 
