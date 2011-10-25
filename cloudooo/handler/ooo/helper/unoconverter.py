@@ -71,7 +71,7 @@ class UnoConverter(object):
   """A module to easily work with OpenOffice.org."""
 
   def __init__(self, hostname, port, document_url, source_format, uno_path,
-               office_binary_path, refresh=None,):
+               office_binary_path, refresh):
     """ """
     self.hostname = hostname
     self.port = port
@@ -270,6 +270,8 @@ def main():
   except ImportError:
     import simplejson as json
   refresh = None
+  hostname = port = document_url = office_binary_path = uno_path =\
+  destination_format = source_format = refresh = metadata = mimemapper = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
@@ -280,10 +282,8 @@ def main():
     elif opt == '--document_url':
       document_url = arg
     elif opt == '--office_binary_path':
-      environ['office_binary_path'] = arg
       office_binary_path = arg
     elif opt == '--uno_path':
-      environ['uno_path'] = arg
       uno_path = arg
     elif opt == '--destination_format':
       destination_format = arg
@@ -297,23 +297,13 @@ def main():
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
 
-  kw = {}
-  if "uno_path" in locals():
-    kw['uno_path'] = uno_path
 
-  if "office_binary_path" in locals():
-    kw['office_binary_path'] = office_binary_path
-
-  if 'source_format' in locals():
-    kw['source_format'] = source_format
-  if refresh:
-    kw['refresh'] = refresh
-
-  unoconverter = UnoConverter(hostname, port, document_url, **kw)
+  unoconverter = UnoConverter(hostname, port, document_url,  source_format,
+                              uno_path, office_binary_path, refresh)
   if "--convert" in param_list and not '--getmetadata' in param_list \
-      and 'destination_format' not in locals():
+      and not destination_format:
     output = unoconverter.convert()
-  elif '--convert' in param_list and 'destination_format' in locals():
+  elif '--convert' in param_list and destination_format:
     output = unoconverter.convert(destination_format)
   elif '--getmetadata' in param_list and not '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
@@ -321,7 +311,8 @@ def main():
   elif '--getmetadata' in param_list and '--convert' in param_list:
     document_url = unoconverter.convert()
     # Instanciate new UnoConverter instance with new url
-    unoconverter = UnoConverter(hostname, port, document_url, **kw)
+    unoconverter = UnoConverter(hostname, port, document_url, source_format,
+                                uno_path, office_binary_path, refresh)
     metadata_dict = unoconverter.getMetadata()
     metadata_dict['document_url'] = document_url
     output = encodestring(json.dumps(metadata_dict))
