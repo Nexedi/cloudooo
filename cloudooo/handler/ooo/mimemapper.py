@@ -29,6 +29,7 @@
 import pkg_resources
 from re import findall
 from subprocess import Popen, PIPE
+from subprocess import STDOUT
 from zope.interface import implements
 from filter import Filter
 from os import environ, path
@@ -107,9 +108,10 @@ class MimeMapper(object):
             "--hostname=%s" % hostname,
             "--port=%s" % port]
 
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           close_fds=True).communicate()
+    process = Popen(command, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    stdout, stderr = process.communicate()
+    if process.returncode:
+      raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)
     for filter_name, value in filter_dict.iteritems():
       flag = value.get("Flags")
