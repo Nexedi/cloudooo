@@ -99,6 +99,7 @@ class UnoConverter(object):
       property = PropertyValue('FilterData', 0,
                         uno.Any('[]com.sun.star.beans.PropertyValue',
                         (PropertyValue('IsExportNotes', 0, True, 0),
+                        PropertyValue('Width', 0, 640, 0),
                         PropertyValue('Format', 0, 2, 0),),), 0)
     elif filter_name == "impress_pdf_Export":
       property = PropertyValue('FilterData', 0,
