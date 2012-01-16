@@ -250,8 +250,8 @@ class Manager(object):
       zip = True
     else:
       zip = False
-    response_dict = dict(mime=mimetypes.types_map.get('.%s' % extension))
     try:
+      response_dict = {}
       # XXX - use html format instead of xhtml
       if orig_format in ("presentation",
                          "graphics",
@@ -267,6 +267,8 @@ class Manager(object):
         response_dict['mime'] = "application/zip"
       elif extension == 'xhtml':
         response_dict['mime'] = "text/html"
+      else:
+        response_dict['mime'] = mimetypes.types_map.get('.%s' % extension)
       return (200, response_dict, "")
     except Exception, e:
       logger.error(e)
