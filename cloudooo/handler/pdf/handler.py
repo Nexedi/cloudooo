@@ -54,6 +54,7 @@ class Handler(object):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE,
+                           close_fds=True,
                            env=self.environment).communicate()
     self.document.reload(output_url)
     try:
@@ -69,6 +70,7 @@ class Handler(object):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE,
+                           close_fds=True,
                            env=self.environment).communicate()
     info_list = filter(None, stdout.split("\n"))
     metadata = {}
@@ -106,6 +108,7 @@ class Handler(object):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE,
+                           close_fds=True,
                            env=self.environment).communicate()
     self.document.reload(output_url)
     try:

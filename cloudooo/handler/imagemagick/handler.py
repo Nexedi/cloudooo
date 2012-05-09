@@ -55,6 +55,7 @@ class Handler(object):
     stdout, stderr = Popen(command,
                           stdout=PIPE,
                           stderr=PIPE,
+                          close_fds=True,
                           env=self.environment).communicate()
     self.file.reload(output_url)
     try:
@@ -70,6 +71,7 @@ class Handler(object):
     stdout, stderr = Popen(command,
                           stdout=PIPE,
                           stderr=PIPE,
+                          close_fds=True,
                           env=self.environment).communicate()
     self.file.trash()
     metadata_dict = {}
