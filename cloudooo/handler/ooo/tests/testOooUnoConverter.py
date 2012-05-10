@@ -82,7 +82,7 @@ class TestUnoConverter(HandlerTestCase):
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
     mime = magic.Magic(mime=True)
-    self.assertEquals(mime.from_file(output_url), 'application/vnd.ms-office')
+    self.assertEquals(mime.from_file(output_url), 'application/msword')
     self.document.trash()
     self.assertEquals(exists(output_url), False)
 

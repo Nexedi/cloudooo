@@ -73,7 +73,7 @@ class TestHandler(HandlerTestCase):
                         decodestring(data),
                         'odt')
     doc_exported = handler.convert("doc")
-    self._assert_document_output(doc_exported, "application/vnd.ms-office")
+    self._assert_document_output(doc_exported, "application/msword")
 
   def testConvertDocToOdt(self):
     """Test convert DOC to ODT"""
