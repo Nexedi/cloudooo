@@ -34,7 +34,7 @@ from lxml import etree
 from types import DictType
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
-from cloudooo.tests.backportUnittest import skip
+from cloudooo.tests.backportUnittest import expectedFailure
 import magic
 
 
@@ -168,7 +168,8 @@ class TestServer(TestCase):
     """Test fail convertion of Invalid OOofiles"""
     self.runFaultConversionList(self.FaultConversionScenarioList())
 
-  @skip('Expected failure cause zip and pptx files are not supported')
+  # Expected failure cause zip and pptx files are not supported
+  @expectedFailure
   def testConvertWithoutSupport(self):
     """Test convertion of zip files and pptx"""
     self.runConversionList([
@@ -361,7 +362,8 @@ class TestServer(TestCase):
 
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
-  @skip('LibreOffice 3.3 can open such a broken document and convert')
+  # XXX LibreOffice 3.3 can open such a broken document and convert
+  @expectedFailure
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
     data = open(join('data', 'test.odt'), 'r').read()[:100]
