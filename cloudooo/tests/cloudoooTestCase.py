@@ -33,6 +33,7 @@ from xmlrpclib import ServerProxy, Fault
 from magic import Magic
 from types import DictType
 from base64 import encodestring, decodestring
+from cloudooo.tests import backportUnittest
 
 config = ConfigParser()
 
@@ -43,7 +44,7 @@ def make_suite(test_case):
   return suite
 
 
-class TestCase(unittest.TestCase):
+class TestCase(backportUnittest.TestCase):
 
   def setUp(self):
     server_cloudooo_conf = environ.get("server_cloudooo_conf", None)

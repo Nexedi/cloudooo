@@ -8,6 +8,7 @@ from subprocess import Popen
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
+from cloudooo.tests import backportUnittest
 from glob import glob
 import psutil
 from signal import SIGQUIT
@@ -75,7 +76,7 @@ def run():
   DAEMON = getattr(module, 'DAEMON', False)
   OPENOFFICE = getattr(module, 'OPENOFFICE', False)
 
-  TestRunner = unittest.TextTestRunner
+  TestRunner = backportUnittest.TextTestRunner
   suite = unittest.TestSuite()
   suite.addTest(module.test_suite())
 
