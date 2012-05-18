@@ -52,7 +52,7 @@ class TestHandler(HandlerTestCase):
     handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     metadata = handler.getMetadata()
     self.assertEquals(metadata.get("Compression"), "Zip")
-    self.assertEquals(metadata.get("Colorspace"), "RGB")
+    self.assertEquals(metadata.get("Colorspace"), "sRGB")
     self.assertEquals(metadata.get("Matte color"), "grey74")
 
   def testsetMetadata(self):

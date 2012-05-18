@@ -46,8 +46,8 @@ class TestServer(TestCase):
     # XXX Duplicated list of filters
     self.text_expected_list = [['doc', 'Microsoft Word 6.0'],
         ['doc', 'Microsoft Word 95'],
-        ['doc', 'Microsoft Word 97/2000/XP'],
-        ['docx', 'Microsoft Word 2007 XML'],
+        ['doc', 'Microsoft Word 97/2000/XP/2003'],
+        ['docx', 'Microsoft Word 2007/2010 XML'],
         ['docx', 'Office Open XML Text'],
         ['htm', 'HTML Document (OpenOffice.org Writer)'],
         ['html', 'HTML Document (OpenOffice.org Writer)'],
@@ -78,10 +78,11 @@ class TestServer(TestCase):
         ['pdf', 'PDF - Portable Document Format'],
         ['pgm', 'PGM - Portable Graymap'], ['pict', 'PCT - Mac Pict'],
         ['png', 'PNG - Portable Network Graphic'],
-        ['pot', 'Microsoft PowerPoint 97/2000/XP Template'],
+        ['pot', 'Microsoft PowerPoint 97/2000/XP/2003 Template'],
         ['ppm', 'PPM - Portable Pixelmap'],
         ['pps', 'Microsoft PowerPoint 97/2000/XP'],
-        ['ppt', 'Microsoft PowerPoint 97/2000/XP'],
+        ['ppt', 'Microsoft PowerPoint 97/2000/XP/2003'],
+        ['pps', 'Microsoft PowerPoint 97/2000/XP/2003 AutoPlay'],
         ['ras', 'RAS - Sun Raster Image'],
         ['sda', 'StarDraw 5.0 (OpenOffice.org Impress)'],
         ['sdd', 'StarDraw 3.0 (OpenOffice.org Impress)'],
@@ -189,12 +190,12 @@ class TestServer(TestCase):
             (join('data', 'testMetadata.odt'), "odt", dict(Data='', Title='clo'+
             'udooo Test', Subject='Subject Test', Description='cloudooo Comments',
             Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
-            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test')),
+            Keywords='Keywords Test')),
             # Test method getFileMetadataItemList. With data converted
             (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Test',
             Subject='Subject Test', Description='cloudooo Comments',
             Type='Text', MIMEType='application/vnd.oasis.opendocument.text',
-            ModifyDate='2/8/2010 9:57:3', Keywords='Keywords Test'), 
+            Keywords='Keywords Test'), 
             True),
             ]
 
@@ -425,14 +426,11 @@ class TestServer(TestCase):
     list_for_mimetype = [['html', 'HTML Document (OpenOffice.org Writer)'],
                           ['txt', 'Text Encoded'],
                           ['doc', 'Microsoft Word 6.0'],
-                          ['sdw', 'StarWriter 3.0'],
-                          ['sdw', 'StarWriter 5.0'],
                           ['doc', 'Microsoft Word 95'],
-                          ['doc', 'Microsoft Word 97/2000/XP'],
+                          ['doc', 'Microsoft Word 97/2000/XP/2003'],
                           ['ott', 'ODF Text Document Template'],
-                          ['sdw', 'StarWriter 4.0'],
                           ['rtf', 'Rich Text Format'],
-                          ['docx', 'Microsoft Word 2007 XML'],
+                          ['docx', 'Microsoft Word 2007/2010 XML'],
                           ['sxw', 'OpenOffice.org 1.0 Text Document'],
                           ['txt', 'Text Encoded'],
                           ['docx', 'Office Open XML Text'],
@@ -538,10 +536,10 @@ class TestServer(TestCase):
     """Test if getImageItemList can get the list of images items from odt file"""
     data = encodestring(open("./data/granulate_test.odt").read())
     image_list = self.proxy.getImageItemList(data, "odt")
-    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+    self.assertEquals([['10000000000000C80000009CA3D5C3B7.jpg', ''],
                       ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
                       ['10000201000000C80000004E7B947D46.png', ''],
-                      ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
+                      ['2000004F0000423300001370A30E6D5A.svm', 'Python Logo'],
                       ['10000201000000C80000004E7B947D46.png',
                                                         'Again TioLive Logo']],
                                                                     image_list)
@@ -550,7 +548,7 @@ class TestServer(TestCase):
     """Test if getImageItemList can get the list of images items from doc file"""
     data = encodestring(open("./data/granulate_test.doc").read())
     image_list = self.proxy.getImageItemList(data, "doc")
-    self.assertEquals([['10000000000000C80000009C38276C51.jpg', ''],
+    self.assertEquals([['10000000000000C80000009CA3D5C3B7.jpg', ''],
                       ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
                       ['10000201000000C80000004E7B947D46.png', ''],
                       ['200003160000423300001370F468B63D.wmf', 'Python Logo'],
@@ -562,7 +560,7 @@ class TestServer(TestCase):
     """Test if getImage can get a image from odt file after zip"""
     data = encodestring(open("./data/granulate_test.odt").read())
     zip = ZipFile(StringIO(decodestring(data)))
-    image_id = '10000000000000C80000009C38276C51.jpg'
+    image_id = '10000201000000C80000004E7B947D46.png'
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
     self.assertEquals(original_image, geted_image)
@@ -574,7 +572,7 @@ class TestServer(TestCase):
     #so compare with the server return.
     data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
     zip = ZipFile(StringIO(decodestring(data_odt)))
-    image_id = '10000000000000C80000009C38276C51.jpg'
+    image_id = '10000000000000C80000009CA3D5C3B7.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
     self.assertEquals(original_image, geted_image)
