@@ -62,7 +62,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   office_binary_path = config.get("app:main", "office_binary_path")
   environment_dict = {}
   for item in config.options("app:main"):
-    if item.startswitc("env-"):
+    if item.startswith("env-"):
       environment_dict[item[4:].upper()] = config.get("app:main", item)
   tmp_dir = path.join(working_path, 'tmp')
   check_folder(working_path, tmp_dir)
