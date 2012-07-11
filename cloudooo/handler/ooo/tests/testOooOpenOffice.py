@@ -43,7 +43,8 @@ class TestOpenOffice(HandlerTestCase):
                                 self.working_path,
                                 self.office_binary_path,
                                 self.uno_path,
-                                'en')
+                                'en',
+                                self.environment_dict)
     self.openoffice.start()
 
   def tearDown(self):
@@ -94,7 +95,8 @@ class TestOpenOffice(HandlerTestCase):
                                 self.working_path,
                                 self.office_binary_path,
                                 self.uno_path,
-                                'en')
+                                'en',
+                                self.environment_dict)
     second_openoffice.start()
     self.assertEquals(self.openoffice.status(), False)
     self.assertTrue(second_openoffice.status())
@@ -106,7 +108,8 @@ class TestOpenOffice(HandlerTestCase):
                                 self.working_path,
                                 self.office_binary_path,
                                 self.uno_path,
-                                'en')
+                                'en',
+                                self.environment_dict)
     second_openoffice.start()
     self.assertTrue(self.openoffice.status())
     self.assertTrue(second_openoffice.status())

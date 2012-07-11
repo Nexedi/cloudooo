@@ -128,6 +128,10 @@ class HandlerTestCase(unittest.TestCase):
     self.tmp_url = path.join(self.working_path, "tmp")
     check_folder(self.working_path, self.tmp_url)
     self.uno_path = config.get("app:main", "uno_path")
+    self.environment_dict = {}
+    for item in config.options("app:main"):
+      if item.startswith("env-"):
+        self.environment_dict[item[4:].upper()] = config.get("app:main", item)
     self.afterSetUp()
 
   def afterSetUp(self):
