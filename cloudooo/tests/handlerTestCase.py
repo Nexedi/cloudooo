@@ -60,6 +60,10 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port"))
   office_binary_path = config.get("app:main", "office_binary_path")
+  environment_dict = {}
+  for item in config.options("app:main"):
+    if item.startswitc("env-"):
+      environment_dict[item[4:].upper()] = config.get("app:main", item)
   tmp_dir = path.join(working_path, 'tmp')
   check_folder(working_path, tmp_dir)
   if not environ.get('uno_path'):
@@ -85,7 +89,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                             working_path,
                             office_binary_path,
                             uno_path,
-                            default_language)
+                            default_language, 
+                            environment_dict)
     openoffice.start()
     openoffice.acquire()
     hostname, port = openoffice.getAddress()
