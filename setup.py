@@ -17,7 +17,8 @@ install_requires = [
           'psutil>=0.2.0',
           'lxml',
           'python-magic',
-          'argparse'
+          'argparse',
+          'erp5.util'
           ]
 
 setup(name='cloudooo',

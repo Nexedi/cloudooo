@@ -1,51 +1,86 @@
+##############################################################################
+#
+# Copyright (c) 2011 Nexedi SA and Contributors. All Rights Reserved.
+#                    Rafael Monnerat  <rafael@nexedi.com>
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsability of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# garantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
 
 import cloudooo
-from CloudoooTestSuite import CloudoooTestSuite 
+import argparse
+import sys
+import glob
+import os
+import shlex
+from erp5.util.testsuite import TestSuite as BaseTestSuite
+from erp5.util.testsuite import SubprocessError
+from erp5.util import taskdistribution
 
-import glob, sys, time, argparse, xmlrpclib, pprint, socket
-import threading
+def _parsingErrorHandler(data, _):
+  print >> sys.stderr, 'Error parsing data:', repr(data)
+taskdistribution.patchRPCParser(_parsingErrorHandler)
 
-class DummyTaskDistributionTool(object):
+class TestSuite(BaseTestSuite):
 
-  def __init__(self):
-    self.lock = threading.Lock()
+  def run(self, test):
+    return self.runUnitTest(test)
 
-  def createTestResult(self, name, revision, test_name_list, allow_restart,
-      *args):
-    self.test_name_list = list(test_name_list)
-    return None, revision
-
-  def updateTestResult(self, name, revision, test_name_list):
-    self.test_name_list = list(test_name_list)
-    return None, revision
-
-  def startUnitTest(self, test_result_path, exclude_list=()):
-    with self.lock:
-      for i, test in enumerate(self.test_name_list):
-        if test not in exclude_list:
-          del self.test_name_list[i]
-          return None, test
-
-  def stopUnitTest(self, test_path, status_dict):
-    pass
-
-def safeRpcCall(function, *args):
-  retry = 64
-  xmlrpc_arg_list = []
-  for argument in args:
-    if isinstance(argument, dict):
-      argument = dict([(x, isinstance(y,str) and xmlrpclib.Binary(y) or y) \
-           for (x,y) in argument.iteritems()])
-    xmlrpc_arg_list.append(argument)
-  while True:
+  def runUnitTest(self, *args, **kw):
     try:
-      return function(*xmlrpc_arg_list)
-    except (socket.error, xmlrpclib.ProtocolError, xmlrpclib.Fault), e:
-      print >>sys.stderr, e
-      pprint.pprint(args, file(function._Method__name, 'w'))
-      time.sleep(retry)
-      retry += retry >> 1
- 
+      runUnitTest = os.environ.get('RUN_UNIT_TEST',
+                                   'runUnitTest')
+      args = tuple(shlex.split(runUnitTest)) + args
+      status_dict = self.spawn(*args, **kw)
+    except SubprocessError, e:
+      status_dict = e.status_dict
+    test_log = status_dict['stderr']
+    search = self.RUN_RE.search(test_log)
+    if search:
+      groupdict = search.groupdict()
+      status_dict.update(duration=float(groupdict['seconds']),
+                         test_count=int(groupdict['all_tests']))
+    search = self.STATUS_RE.search(test_log)
+    if search:
+      groupdict = search.groupdict()
+      status_dict.update(
+        error_count=int(groupdict['errors'] or 0),
+        failure_count=int(groupdict['failures'] or 0)
+                     +int(groupdict['unexpected_successes'] or 0),
+        skip_count=int(groupdict['skips'] or 0)
+                  +int(groupdict['expected_failures'] or 0))
+    return status_dict
+
+  def getTestList(self):
+    test_list = []
+    for test_path in glob.glob('/%s/handler/*/tests/test*.py' %
+                                  "/".join(cloudooo.__file__.split('/')[:-1])):
+      test_case = test_path.split(os.sep)[-1][:-3] # remove .py
+      # testOooMonitorRequest is making testsuite stall.
+      if test_case not in ['testOooHighLoad', 'testOooMonitorRequest'] and \
+         not test_case.startswith("testFfmpeg"):
+        test_list.append(test_case)
+    return test_list
+
 def run():
   parser = argparse.ArgumentParser(description='Run a test suite.')
   parser.add_argument('--test_suite', help='The test suite name')
@@ -65,35 +100,22 @@ def run():
 
 
   args = parser.parse_args()
-
-  if args.master_url is not None:
-    master_url = args.master_url
-    if master_url[-1] != '/':
-      master_url += '/'
-    master = xmlrpclib.ServerProxy("%s%s" %
-              (master_url, 'portal_task_distribution'),
-              allow_none=1)
-    assert master.getProtocolRevision() == 1
-  else:
-    master = DummyTaskDistributionTool()
-
+  master = taskdistribution.TaskDistributionTool(args.master_url)
   test_suite_title = args.test_suite_title or args.test_suite
   revision = args.revision
-  suite = CloudoooTestSuite(1, test_suite=args.test_suite,
-                            node_quantity=args.node_quantity,
-                            revision=revision)
+  suite = TestSuite(1, test_suite=args.test_suite,
+                    node_quantity=args.node_quantity,
+                    revision=revision)
 
-  test_result = safeRpcCall(master.createTestResult,
-    args.test_suite, revision, suite.getTestList(),
-    suite.allow_restart, test_suite_title, args.test_node_title,
+  test_result = master.createTestResult(revision, suite.getTestList(),
+    args.test_node_title, suite.allow_restart, test_suite_title,
     args.project_title)
-  if test_result:
-    test_result_path, test_revision = test_result
+  if test_result is not None:
+    assert revision == test_result.revision, (revision, test_result.revision)
     while suite.acquire():
-      test = safeRpcCall(master.startUnitTest, test_result_path,
-                          suite.running.keys())
-      if test:
-        suite.start(test[1], lambda status_dict, __test_path=test[0]:
-          safeRpcCall(master.stopUnitTest, __test_path, status_dict))
+      test = test_result.start(suite.running.keys())
+      if test is not None:
+        suite.start(test.name, lambda status_dict, __test=test:
+          __test.stop(**status_dict))
       elif not suite.running:
         break
