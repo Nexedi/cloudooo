@@ -26,7 +26,7 @@
 #
 ##############################################################################
 
-from base64 import encodestring, decodestring
+from base64 import encodestring
 from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
 from pkg_resources import resource_filename
 

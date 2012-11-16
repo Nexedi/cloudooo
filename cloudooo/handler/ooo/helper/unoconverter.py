@@ -30,8 +30,7 @@
 import sys
 import helper_util
 from types import UnicodeType, InstanceType
-from os import environ, putenv
-from os.path import dirname, exists
+from os.path import dirname
 from tempfile import mktemp
 from base64 import decodestring, encodestring
 from getopt import getopt, GetoptError

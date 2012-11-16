@@ -2,7 +2,6 @@
 import sys
 import helper_util
 from getopt import getopt, GetoptError
-from os import environ
 
 
 def test_openoffice(hostname, port):

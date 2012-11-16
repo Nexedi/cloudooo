@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-import unittest
 from cloudooo.handler.ooo.document import FileSystemDocument, OdfDocument
 from cloudooo.handler.ooo.handler import Handler
 from cloudooo.handler.ooo.application.openoffice import OpenOffice
