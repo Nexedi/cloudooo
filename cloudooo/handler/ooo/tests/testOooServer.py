@@ -252,8 +252,8 @@ class TestServer(TestCase):
             ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
             ),
             # Test run_convert method with invalid file
-            ('test.doc', open(join('data', 'test.doc')).read()[:30], 402, '',
-            '', ''
+            ('test.doc', open(join('data', 'test.doc')).read()[:30], 200, '',
+            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
             ),
             ]
 
