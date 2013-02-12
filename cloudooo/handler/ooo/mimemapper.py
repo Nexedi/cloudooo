@@ -168,7 +168,9 @@ class MimeMapper(object):
         if filter_type not in self._mimetype_by_filter_type:
           self._mimetype_by_filter_type[filter_type] = mimetype
         # for export filters, one extension is enough.
-        for ext in filter_extension_list[:1]:
+        # In LibreOffice 3.6, ExportExtension is available.
+        export_extension = value.get('ExportExtension', filter_extension_list[0])
+        for ext in [export_extension,]:
           # Add (extension, ui_name) tuple by document_type.
           # e.g {'com.sun.star.text.TextDocument': [('txt', 'Text'),]}
           local_extension_list = self._extension_list_by_type.setdefault(document_service_str, [])
