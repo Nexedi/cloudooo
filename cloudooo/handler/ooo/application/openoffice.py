@@ -150,7 +150,7 @@ class OpenOffice(Application):
          ]
     # To run soffice.bin, several environment variables should be set.
     env = self.environment_dict.copy()
-    env["LANG"] = "UTF-8"
+    env.setdefault("LANG", "en_US.UTF-8")
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
