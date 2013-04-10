@@ -97,6 +97,19 @@ class MimeMapper(object):
       office_binary_path -- full path to openoffice binary
       ooo_disable_filter_name_list -- a list of filter names which are disabled
     """
+    alternative_extension_dict = {
+      'Microsoft Excel 2007/2010 XML':'ms.xlsx',
+      'Microsoft Excel 5.0 Template':'5.xlt',
+      'Microsoft Excel 5.0':'5.xls',
+      'Microsoft Excel 95 Template':'95.xlt',
+      'Microsoft Excel 95':'95.xls',
+      'Microsoft PowerPoint 2007/2010 XML AutoPlay':'ms.ppsx',
+      'Microsoft PowerPoint 2007/2010 XML Template':'ms.potm',
+      'Microsoft PowerPoint 2007/2010 XML':'ms.pptx',
+      'Microsoft Word 2007/2010 XML':'ms.docx',
+      'Microsoft Word 6.0':'6.doc',
+      'Microsoft Word 95':'95.doc',
+      }
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
                                 environ.get('office_binary_path'))
@@ -132,8 +145,8 @@ class MimeMapper(object):
       # Hardcode blacklisted filters
       # XXX It should be done in configuration file instead
       if value.get('Name') in [
-        # Use 'Text (encoded)' instead
-        'Text',
+        'Text', # Use 'Text Encoded' instead
+        'Text (Writer/Web)', # Use 'Text Encoded (Writer/Web)' instead
         'XHTML Calc File',
         'XHTML Impress File',
         'XHTML Writer File',
@@ -176,6 +189,7 @@ class MimeMapper(object):
         # In LibreOffice 3.6, ExportExtension is available.
         export_extension = value.get('ExportExtension', filter_extension_list[0])
         for ext in [export_extension,]:
+          ext = alternative_extension_dict.get(ui_name, ext)
           # Add (extension, ui_name) tuple by document_type.
           # e.g {'com.sun.star.text.TextDocument': [('txt', 'Text'),]}
           local_extension_list = self._extension_list_by_type.setdefault(document_service_str, [])
