@@ -95,6 +95,7 @@ class MimeMapper(object):
     **kw:
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
+      ooo_disable_filter_name_list -- a list of filter names which are disabled
     """
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
@@ -113,7 +114,11 @@ class MimeMapper(object):
     if process.returncode:
       raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)
+
+    ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or ()
     for filter_name, value in filter_dict.iteritems():
+      if filter_name in ooo_disable_filter_name_list:
+        continue
       flag = value.get("Flags")
       # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
       # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,

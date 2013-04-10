@@ -249,7 +249,8 @@ def bootstrapHandler(configuration_dict):
   timeout_response = int(configuration_dict.get('timeout_response'))
   kw = dict(uno_path=configuration_dict.get('uno_path'),
             office_binary_path=configuration_dict.get('office_binary_path'),
-            timeout=timeout_response)
+            timeout=timeout_response,
+            ooo_disable_filter_name_list=configuration_dict.get('ooo_disable_filter_name_list'))
 
   # Load all filters
   openoffice.acquire()
