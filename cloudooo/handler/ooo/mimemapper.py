@@ -132,6 +132,12 @@ class MimeMapper(object):
     for filter_name, value in filter_dict.iteritems():
       if filter_name in ooo_disable_filter_name_list:
         continue
+      # Hardcode blacklisted filters
+      if filter_name in [
+        'Text', # Use 'Text  (encoded)' instead
+        'Text (StarWriter/Web)', # Use 'Text (encoded) (StarWriter/Web)' instead
+        ]:
+        continue
       flag = value.get("Flags")
       # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
       # Import:0x01, Export:0x02, Template:0x04, Internal:0x08,
@@ -142,17 +148,6 @@ class MimeMapper(object):
       if flag & 0x08 or flag & 0x1000 or flag & 0x2000:
         continue
       ui_name = value.get('UIName')
-      # Hardcode blacklisted filters
-      # XXX It should be done in configuration file instead
-      if value.get('Name') in [
-        'Text', # Use 'Text Encoded' instead
-        'Text (Writer/Web)', # Use 'Text Encoded (Writer/Web)' instead
-        'XHTML Calc File',
-        'XHTML Impress File',
-        'XHTML Writer File',
-        'XHTML Draw File',
-        ]:
-        continue
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
       if not ui_name:
