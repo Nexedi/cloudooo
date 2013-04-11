@@ -99,12 +99,9 @@ class MimeMapper(object):
     """
     alternative_extension_dict = {
       'Microsoft Excel 2007/2010 XML':'ms.xlsx',
-      'Microsoft Excel 5.0 Template':'5.xlt',
       'Microsoft Excel 5.0':'5.xls',
-      'Microsoft Excel 95 Template':'95.xlt',
       'Microsoft Excel 95':'95.xls',
       'Microsoft PowerPoint 2007/2010 XML AutoPlay':'ms.ppsx',
-      'Microsoft PowerPoint 2007/2010 XML Template':'ms.potm',
       'Microsoft PowerPoint 2007/2010 XML':'ms.pptx',
       'Microsoft Word 2007/2010 XML':'ms.docx',
       'Microsoft Word 6.0':'6.doc',
@@ -128,15 +125,17 @@ class MimeMapper(object):
       raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)
 
-    ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or ()
+    ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
+        'Text', # Use 'Text Encoded' instead
+        'Text (StarWriter/Web)', # Use 'Text Encoded (Writer/Web)' instead
+    ]
     for filter_name, value in filter_dict.iteritems():
-      if filter_name in ooo_disable_filter_name_list:
-        continue
-      # Hardcode blacklisted filters
-      if filter_name in [
-        'Text', # Use 'Text  (encoded)' instead
-        'Text (StarWriter/Web)', # Use 'Text (encoded) (StarWriter/Web)' instead
-        ]:
+      ui_name = value.get('UIName')
+      filter_type = value.get('Type')
+      filter_type_dict = type_dict.get(filter_type)
+      if not ui_name:
+        ui_name = filter_type_dict.get("UIName")
+      if ui_name in ooo_disable_filter_name_list or 'Template' in ui_name:
         continue
       flag = value.get("Flags")
       # http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_2_4_2_10_Properties_of_a_Filter
@@ -147,11 +146,6 @@ class MimeMapper(object):
       # ThirdParty:0x80000, Preferred:0x10000000
       if flag & 0x08 or flag & 0x1000 or flag & 0x2000:
         continue
-      ui_name = value.get('UIName')
-      filter_type = value.get('Type')
-      filter_type_dict = type_dict.get(filter_type)
-      if not ui_name:
-        ui_name = filter_type_dict.get("UIName")
       filter_extension_list = filter_type_dict.get("Extensions")
       mimetype = filter_type_dict.get("MediaType")
       if not (filter_extension_list and mimetype):
