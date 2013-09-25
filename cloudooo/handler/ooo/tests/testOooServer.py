@@ -99,7 +99,7 @@ class TestServer(TestCase):
     self.presentation_expected_list.sort()
 
   def testGetAllowedTextExtensionListByType(self):
-    """Verify if getAllowedExtensionList returns is a list with extension and 
+    """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by document type as text"""
     text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
@@ -109,7 +109,7 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedPresentationExtensionListByType(self):
-    """Verify if getAllowedExtensionList returns is a list with extension and 
+    """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by document type as presentation"""
     request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
@@ -119,7 +119,7 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.presentation_expected_list))
 
   def testGetAllowedExtensionListByExtension(self):
-    """Verify if getAllowedExtensionList returns is a list with extension and 
+    """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
     doc_allowed_list.sort()
@@ -128,7 +128,7 @@ class TestServer(TestCase):
                     "%s not in %s" % (arg, self.text_expected_list))
 
   def testGetAllowedExtensionListByMimetype(self):
-    """Verify if getAllowedExtensionList returns is a list with extension and 
+    """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by mimetype"""
     request_dict = {"mimetype": "application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
