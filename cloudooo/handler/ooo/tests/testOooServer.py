@@ -303,6 +303,20 @@ class TestServer(TestCase):
     if exists(output_url):
       remove(output_url)
 
+  def testRunGenerateMethodConvertOdsToMsXslx(self):
+    """Test run_generate method from ods to ms.xlsx. This test is to validate
+     a bug convertions to html"""
+    generate_result = self.proxy.run_generate('test.ods',
+                                      encodestring(
+                                      open(join('data', 'test.ods')).read()),
+                                      None, 'ms.xlsx',
+                                      "application/vnd.oasis.opendocument.spreadsheet")
+    response_code, response_dict, response_message = generate_result
+    self.assertEquals(response_code, 200)
+    self.assertEquals(type(response_dict), DictType)
+    self.assertNotEquals(response_dict['data'], '')
+    self.assertEquals(response_dict['mime'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
   def testPNGFileToConvertOdpToHTML(self):

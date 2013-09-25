@@ -268,7 +268,8 @@ class Manager(object):
       elif extension == 'xhtml':
         response_dict['mime'] = "text/html"
       else:
-        response_dict['mime'] = mimetypes.types_map.get('.%s' % extension)
+        response_dict['mime'] = mimetypes.types_map.get('.%s' % extension,
+            mimetypes.types_map.get('.%s' % extension.split('.')[-1]))
       return (200, response_dict, "")
     except Exception, e:
       logger.error(e)
