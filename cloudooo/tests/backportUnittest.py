@@ -91,28 +91,14 @@ def expectedFailure(func):
     wrapper.__doc__ = func.__doc__
     return wrapper
 
-try:
-    BaseException
-except NameError:
-    # BACK: python < 2.5
-    BaseException = Exception
-
 class TestCase(unittest.TestCase):
     """We redefine here the run() method, and add a skipTest() method.
-
-    We also provide forward-compatible ._testMethodName and ._testMethodDoc
-    properties smooth over differences between Python 2.4 and 2.5+.
     """
 
     failureException = AssertionError
 
-    if sys.version_info < (2, 5):
-      # BACK: in Python 2.5, __testMethodName becomes _testMethodName.
-      # Same for __testMethodDoc
-      _testMethodName = property(lambda self: self.__testMethodName)
-      _testMethodDoc = property(lambda self: self.__testMethodDoc)
-
     def run(self, result=None):
+        orig_result = result
         if result is None:
             result = self.defaultTestResult()
             # BACK: Not necessary for Python < 2.7:
@@ -190,12 +176,12 @@ class TestCase(unittest.TestCase):
         """Skip this test."""
         raise SkipTest(reason)
 
-    def defaultTestResult(self):
-        return TestResult()
+if not hasattr(unittest.TestResult, 'addSkip'): # BBB: Python < 2.7
 
-class TestResult(unittest.TestResult):
+    unittest.TestResult._orig_init__ = unittest.TestResult.__init__.im_func
+
     def __init__(self):
-        super(TestResult, self).__init__()
+        self._orig_init__()
         self.skipped = []
         self.expectedFailures = []
         self.unexpectedSuccesses = []
@@ -203,26 +189,6 @@ class TestResult(unittest.TestResult):
     def addSkip(self, test, reason):
         """Called when a test is skipped."""
         self.skipped.append((test, reason))
-
-    def addExpectedFailure(self, test, err):
-        """Called when an expected failure/error occured."""
-        self.expectedFailures.append(
-            (test, self._exc_info_to_string(err, test)))
-
-    def addUnexpectedSuccess(self, test):
-        """Called when a test was expected to fail, but succeed."""
-        self.unexpectedSuccesses.append(test)
-
-
-class _TextTestResult(unittest._TextTestResult, TestResult):
-    def __init__(self, stream, descriptions, verbosity):
-        # BACK: nice diamond!
-        #   unittest.TestResult.__init__ is called twice here
-        unittest._TextTestResult.__init__(self, stream, descriptions, verbosity)
-        TestResult.__init__(self)
-
-    def addSkip(self, test, reason):
-        super(_TextTestResult, self).addSkip(test, reason)
         if self.showAll:
             self.stream.writeln("skipped %s" % repr(reason))
         elif self.dots:
@@ -230,7 +196,9 @@ class _TextTestResult(unittest._TextTestResult, TestResult):
             self.stream.flush()
 
     def addExpectedFailure(self, test, err):
-        super(_TextTestResult, self).addExpectedFailure(test, err)
+        """Called when an expected failure/error occured."""
+        self.expectedFailures.append(
+            (test, self._exc_info_to_string(err, test)))
         if self.showAll:
             self.stream.writeln("expected failure")
         elif self.dots:
@@ -238,12 +206,31 @@ class _TextTestResult(unittest._TextTestResult, TestResult):
             self.stream.flush()
 
     def addUnexpectedSuccess(self, test):
-        super(_TextTestResult, self).addUnexpectedSuccess(test)
+        """Called when a test was expected to fail, but succeed."""
+        self.unexpectedSuccesses.append(test)
         if self.showAll:
             self.stream.writeln("unexpected success")
         elif self.dots:
             self.stream.write("u")
             self.stream.flush()
+
+    for f in __init__, addSkip, addExpectedFailure, addUnexpectedSuccess:
+        setattr(unittest.TestResult, f.__name__, f)
+
+    def getDescription(self, test):
+        doc_first_line = test.shortDescription()
+        if self.descriptions and doc_first_line:
+            return '\n'.join((str(test), doc_first_line))
+        else:
+            return str(test)
+
+    unittest._TextTestResult.getDescription = getDescription
+
+class _TextTestResult(unittest._TextTestResult):
+
+    def wasSuccessful(self):
+        "Tells whether or not this result was a success"
+        return not (self.failures or self.errors or self.unexpectedSuccesses)
 
     def printErrors(self):
         if self.dots or self.showAll:
