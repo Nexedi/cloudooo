@@ -69,8 +69,11 @@ class MonitorMemory(Monitor, Process):
     self.status_flag = True
     logger.debug("Start MonitorMemory")
     while self.status_flag:
-      if self.get_memory_usage() > self.limit:
-        logger.debug("Stopping OpenOffice")
+      memory_usage = self.get_memory_usage()
+      if memory_usage > self.limit:
+        logger.debug("OpenOffice memory consumption limit has been "
+            "reached: Current usage: %sMB, limit: %sMB. Stopping OpenOffice."
+            % (memory_usage, self.limit))
         self.openoffice.stop()
       sleep(self.interval)
     logger.debug("Stop MonitorMemory")
