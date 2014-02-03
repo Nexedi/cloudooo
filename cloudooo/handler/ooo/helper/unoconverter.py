@@ -29,11 +29,15 @@
 
 import sys
 import helper_util
-from types import UnicodeType, InstanceType
 from os.path import dirname
 from tempfile import mktemp
 from base64 import decodestring, encodestring
 from getopt import getopt, GetoptError
+
+try:
+  unicode
+except NameError:
+  unicode = str
 
 __doc__ = """
 
@@ -184,23 +188,28 @@ class UnoConverter(object):
   def getMetadata(self):
     """Extract all metadata of the document"""
     metadata = {}
-    document_info = self.document_loaded.getDocumentInfo()
-    property_list = [prop.Name for prop in document_info.getPropertyValues() \
-        if prop.Value]
-    for property_name in iter(property_list):
-      property = document_info.getPropertyValue(property_name)
-      if type(property) == UnicodeType:
-          metadata[property_name] = property
-      elif type(property) == InstanceType:
-        if property.typeName == 'com.sun.star.util.DateTime':
-          datetime = "%s/%s/%s %s:%s:%s" % (property.Day, property.Month,
-              property.Year, property.Hours, property.Minutes, property.Seconds)
-          metadata[property_name] = datetime
-    for number in range(document_info.getUserFieldCount()):
-      field_value_str = document_info.getUserFieldValue(number)
-      if field_value_str:
-        fieldname = document_info.getUserFieldName(number)
-        metadata[fieldname] = field_value_str
+    document_properties = self.document_loaded.getDocumentProperties()
+    user_defined_properties = document_properties.getUserDefinedProperties()
+    for container in [document_properties, user_defined_properties]:
+      for property_name in dir(container):
+        if property_name in ('SupportedServiceNames',):
+          continue
+        property_value = getattr(container, property_name, '')
+        if property_value:
+          if isinstance(property_value, unicode):
+            metadata[property_name] = property_value
+          elif isinstance(property_value, tuple) and isinstance(property_value[0], unicode):
+            metadata[property_name] = property_value
+          else:
+            try:
+              if property_value.typeName == 'com.sun.star.util.DateTime':
+                # It is a local time and we have no timezone information.
+                datetime = "%02d/%02d/%04d %02d:%02d:%02d" % (property_value.Day, property_value.Month,
+                    property_value.Year, property_value.Hours, property_value.Minutes, property_value.Seconds)
+                metadata[property_name] = datetime
+            except AttributeError:
+              pass
+
     service_manager = helper_util.getServiceManager(self.hostname, self.port,
                                                     self.uno_path,
                                                     self.office_binary_path)
@@ -221,35 +230,26 @@ class UnoConverter(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    doc_info = self.document_loaded.getDocumentInfo()
-    prop_name_list = [prop.Name for prop in doc_info.getPropertyValues()]
-    user_info_counter = 0
-    for prop, value in metadata.iteritems():
-      if prop in prop_name_list:
-        doc_info.setPropertyValue(prop, value)
-      else:
-        max_index = doc_info.getUserFieldCount()
-        for index in range(max_index):
-          if doc_info.getUserFieldName(index).lower() == prop.lower():
-            doc_info.setUserFieldValue(index, value)
-            break
-        else:
-          doc_info.setUserFieldName(user_info_counter, prop)
-          doc_info.setUserFieldValue(user_info_counter, value)
-        user_info_counter += 1
+    document_properties = self.document_loaded.getDocumentProperties()
+    user_defined_properties = document_properties.getUserDefinedProperties()
+    for prop, value in metadata.items():
+      for container in [document_properties, user_defined_properties]:
+        if getattr(container, prop, None) is not None:
+          setattr(container, prop, value)
+          container
     self.document_loaded.store()
     self.document_loaded.dispose()
 
 
 def help():
-  print >> sys.stderr, __doc__
+  sys.stderr.write(__doc__)
   sys.exit(1)
 
 
 def main():
   global mimemapper
 
-  help_msg = "\nUse --help or -h"
+  help_msg = "\nUse --help or -h\n"
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help", "test",
       "convert", "getmetadata", "setmetadata",
@@ -258,9 +258,9 @@ def main():
       "document_url=", "destination_format=",
       "mimemapper=", "metadata=", "refresh=",
       "unomimemapper_bin="])
-  except GetoptError, msg:
+  except GetoptError as msg:
     msg = msg.msg + help_msg
-    print >> sys.stderr, msg
+    sys.stderr.write(msg)
     sys.exit(2)
 
   param_list = [tuple[0] for tuple in iter(opt_list)]
@@ -292,7 +292,7 @@ def main():
     elif opt == '--refresh':
       refresh = json.loads(arg)
     elif opt == '--metadata':
-      arg = decodestring(arg)
+      arg = decodestring(arg.encode('ascii')).decode('utf-8')
       metadata = json.loads(arg)
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
@@ -307,7 +307,7 @@ def main():
     output = unoconverter.convert(destination_format)
   elif '--getmetadata' in param_list and not '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
-    output = encodestring(json.dumps(metadata_dict))
+    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
   elif '--getmetadata' in param_list and '--convert' in param_list:
     document_url = unoconverter.convert()
     # Instanciate new UnoConverter instance with new url
@@ -315,12 +315,12 @@ def main():
                                 uno_path, office_binary_path, refresh)
     metadata_dict = unoconverter.getMetadata()
     metadata_dict['document_url'] = document_url
-    output = encodestring(json.dumps(metadata_dict))
+    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
     output = document_url
 
-  print output
+  sys.stdout.write(output)
 
 if "__main__" == __name__:
   main()

@@ -34,7 +34,6 @@ except ImportError:
   import simplejson as json
 import helper_util
 from getopt import getopt, GetoptError
-from types import InstanceType
 
 __doc__ = """
 
@@ -72,7 +71,7 @@ class UnoMimemapper(object):
         for obj in iter(element_list):
             if obj.Name in ignore_name_list:
               continue
-            elif type(obj.Value) == InstanceType:
+            if not isinstance(obj.Value, (bool, int, str, tuple)):
               continue
             element_dict[obj.Name] = obj.Value
             service_dict[name] = element_dict
@@ -93,7 +92,7 @@ class UnoMimemapper(object):
 
 
 def help():
-  print >> sys.stderr, __doc__
+  sys.stderr.write(__doc__)
   sys.exit(1)
 
 
@@ -102,9 +101,9 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help",
       "uno_path=", "office_binary_path=",
       "hostname=", "port="])
-  except GetoptError, msg:
-    msg = msg.msg + "\nUse --help or -h"
-    print >> sys.stderr, msg
+  except GetoptError as msg:
+    msg = msg.msg + "\nUse --help or -h\n"
+    sys.stderr.write(msg)
     sys.exit(2)
 
   if not opt_list:
@@ -127,7 +126,7 @@ def main():
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
 
-  print json.dumps((filter_dict, type_dict))
+  sys.stdout.write(json.dumps((filter_dict, type_dict)))
 
 if "__main__" == __name__:
   main()
