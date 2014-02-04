@@ -32,7 +32,7 @@ from cloudooo.handler.ooo.mimemapper import MimeMapper
 
 text_expected_tuple = (
     ('doc', 'Microsoft Word 97/2000/XP/2003'),
-    ('docx', 'Microsoft Word 2007/2010/2013 XML'),
+    ('ms.docx', 'Microsoft Word 2007/2010/2013 XML'),
     ('docx', 'Office Open XML Text'),
     ('html', 'HTML Document (Writer)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
@@ -97,10 +97,10 @@ presentation_expected_tuple = (
     ('png', 'PNG - Portable Network Graphic'),
     ('ppm', 'PPM - Portable Pixelmap'),
     ('pps', 'Microsoft PowerPoint 97/2000/XP/2003 AutoPlay'),
-    ('ppsx', 'Microsoft PowerPoint 2007/2010/2013 XML AutoPlay'),
+    ('ms.ppsx', 'Microsoft PowerPoint 2007/2010/2013 XML AutoPlay'),
     ('ppsx', 'Office Open XML Presentation AutoPlay'),
     ('ppt', 'Microsoft PowerPoint 97/2000/XP/2003'),
-    ('pptx', 'Microsoft PowerPoint 2007/2010/2013 XML'),
+    ('ms.pptx', 'Microsoft PowerPoint 2007/2010/2013 XML'),
     ('pptx', 'Office Open XML Presentation'),
     ('ras', 'RAS - Sun Raster Image'),
     ('svg', 'SVG - Scalable Vector Graphics'),
@@ -120,7 +120,7 @@ spreadsheet_expected_list = (
     ('slk', 'SYLK'),
     ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
     ('xls', 'Microsoft Excel 97/2000/XP/2003'),
-    ('xlsx', 'Microsoft Excel 2007/2010/2013 XML'),
+    ('ms.xlsx', 'Microsoft Excel 2007/2010/2013 XML'),
     ('xlsx', 'Office Open XML Spreadsheet'),
     )
 
