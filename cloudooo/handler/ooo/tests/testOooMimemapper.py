@@ -31,26 +31,17 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 
 text_expected_tuple = (
-    ('doc', 'Microsoft Word 6.0'),
-    ('doc', 'Microsoft Word 95'),
     ('doc', 'Microsoft Word 97/2000/XP/2003'),
-    ('docx', 'Microsoft Word 2007 XML'),
+    ('docx', 'Microsoft Word 2007/2010/2013 XML'),
     ('docx', 'Office Open XML Text'),
-    ('docx', 'Microsoft Word 2007/2010 XML'),
-    ('html', 'HTML Document (OpenOffice.org Writer)'),
-    ('html', 'XHTML'),
+    ('html', 'HTML Document (Writer)'),
+    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'ODF Text Document'),
-    ('ott', 'ODF Text Document Template'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('rtf', 'Rich Text Format'),
-    ('sdw', 'StarWriter 3.0'),
-    ('sdw', 'StarWriter 4.0'),
-    ('sdw', 'StarWriter 5.0'),
+    ('png', 'PNG - Portable Network Graphic'),
+    ('rtf', 'Rich Text'),
     ('sxw', 'OpenOffice.org 1.0 Text Document'),
     ('txt', 'Text Encoded'),
-    ('txt', 'Text'),
-    ('pdb', 'AportisDoc (Palm)'),
-    ('psw', 'Pocket Word'),
     )
 
 global_expected_tuple = (
@@ -61,12 +52,10 @@ drawing_expected_tuple = (
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('gif', 'GIF - Graphics Interchange Format'),
-    ('html', 'HTML Document (OpenOffice.org Draw)'),
-    ('html', 'XHTML'),
+    ('html', 'HTML Document (Draw)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing'),
-    ('otg', 'ODF Drawing Template'),
     ('pbm', 'PBM - Portable Bitmap'),
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
@@ -74,8 +63,6 @@ drawing_expected_tuple = (
     ('png', 'PNG - Portable Network Graphic'),
     ('ppm', 'PPM - Portable Pixelmap'),
     ('ras', 'RAS - Sun Raster Image'),
-    ('sda', 'StarDraw 5.0'),
-    ('sdd', 'StarDraw 3.0'),
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
     ('sxd', 'OpenOffice.org 1.0 Drawing'),
@@ -86,11 +73,11 @@ drawing_expected_tuple = (
 
 web_expected_tuple = (
     ('html', 'HTML Document'),
-    ('odt', 'OpenOffice.org Text (OpenOffice.org Writer/Web)'),
+    ('odt', 'Text (Writer/Web)'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('sxw', 'OpenOffice.org 1.0 Text Document (OpenOffice.org Writer/Web)'),
-    ('txt', 'Text (OpenOffice.org Writer/Web)'),
-    ('txt', 'Text Encoded (OpenOffice.org Writer/Web)'),
+    ('sxw', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
+    ('txt', 'Text (Writer/Web)'),
+    ('txt', 'Text Encoded (Writer/Web)'),
     )
 
 presentation_expected_tuple = (
@@ -98,30 +85,27 @@ presentation_expected_tuple = (
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('gif', 'GIF - Graphics Interchange Format'),
-    ('html', 'HTML Document (OpenOffice.org Impress)'),
-    ('html', 'XHTML'),
+    ('html', 'HTML Document (Impress)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing (Impress)'),
     ('odp', 'ODF Presentation'),
-    ('otp', 'ODF Presentation Template'),
     ('pbm', 'PBM - Portable Bitmap'),
     ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
     ('pgm', 'PGM - Portable Graymap'),
     ('png', 'PNG - Portable Network Graphic'),
-    ('pot', 'Microsoft PowerPoint 97/2000/XP/2003 Template'),
     ('ppm', 'PPM - Portable Pixelmap'),
-    ('pps', 'Microsoft PowerPoint 97/2000/XP/2003'),
     ('pps', 'Microsoft PowerPoint 97/2000/XP/2003 AutoPlay'),
+    ('ppsx', 'Microsoft PowerPoint 2007/2010/2013 XML AutoPlay'),
+    ('ppsx', 'Office Open XML Presentation AutoPlay'),
     ('ppt', 'Microsoft PowerPoint 97/2000/XP/2003'),
+    ('pptx', 'Microsoft PowerPoint 2007/2010/2013 XML'),
+    ('pptx', 'Office Open XML Presentation'),
     ('ras', 'RAS - Sun Raster Image'),
-    ('sda', 'StarDraw 5.0 (OpenOffice.org Impress)'),
-    ('sdd', 'StarDraw 3.0 (OpenOffice.org Impress)'),
-    ('sdd', 'StarImpress 4.0'), ('sdd', 'StarImpress 5.0'),
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
-    ('sxd', 'OpenOffice.org 1.0 Drawing (OpenOffice.org Impress)'),
+    ('sxd', 'OpenOffice.org 1.0 Drawing (Impress)'),
     ('sxi', 'OpenOffice.org 1.0 Presentation'),
     ('tif', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
@@ -130,23 +114,13 @@ presentation_expected_tuple = (
 
 spreadsheet_expected_list = (
     ('csv', 'Text CSV'),
-    ('html', 'HTML Document (OpenOffice.org Calc)'),
-    ('html', 'XHTML'),
+    ('html', 'HTML Document (Calc)'),
     ('ods', 'ODF Spreadsheet'),
-    ('ots', 'ODF Spreadsheet Template'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('sdc', 'StarCalc 3.0'),
-    ('sdc', 'StarCalc 4.0'),
-    ('sdc', 'StarCalc 5.0'),
     ('slk', 'SYLK'),
     ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
-    ('xls', 'Microsoft Excel 5.0'),
-    ('xls', 'Microsoft Excel 95'),
     ('xls', 'Microsoft Excel 97/2000/XP/2003'),
-    ('xlt', 'Microsoft Excel 5.0 Template'),
-    ('xlt', 'Microsoft Excel 95 Template'),
-    ('xlt', 'Microsoft Excel 97/2000/XP/2003 Template'),
-    ('xlsx', 'Microsoft Excel 2007/2010 XML'),
+    ('xlsx', 'Microsoft Excel 2007/2010/2013 XML'),
     ('xlsx', 'Office Open XML Spreadsheet'),
     )
 
@@ -161,6 +135,7 @@ math_expected_tuple = (
     )
 
 chart_expected_tuple = (
+    ('odc', 'ODF Chart'),
     )
 
 OPENOFFICE = True
@@ -207,9 +182,9 @@ class TestMimeMapper(HandlerTestCase):
     pdf_filter_list = self.mimemapper.getFilterList('pdf')
     self.assertEquals(len(pdf_filter_list), 5)
     xls_filter_list = self.mimemapper.getFilterList('xls')
-    self.assertEquals(len(xls_filter_list), 3)
+    self.assertEquals(len(xls_filter_list), 1)
     doc_filter_list = self.mimemapper.getFilterList('doc')
-    self.assertEquals(len(doc_filter_list), 3)
+    self.assertEquals(len(doc_filter_list), 1)
 
   def testGetDocumentTypeDict(self):
     """Test if dictonary document type returns type correctly."""
@@ -217,10 +192,7 @@ class TestMimeMapper(HandlerTestCase):
     type = document_type_dict.get("text")
     self.assertEquals(type, 'com.sun.star.text.TextDocument')
     type = document_type_dict.get("chart")
-    # For now, chart document filters are maked as NotInFileDialog and
-    # NotInChooser.
-    # self.assertEquals(type, 'com.sun.star.chart2.ChartDocument')
-    self.assertEquals(type, None)
+    self.assertEquals(type, 'com.sun.star.chart2.ChartDocument')
     type = document_type_dict.get("drawing")
     self.assertEquals(type, 'com.sun.star.drawing.DrawingDocument')
     type = document_type_dict.get("presentation")
