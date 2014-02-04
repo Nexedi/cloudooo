@@ -161,10 +161,9 @@ class TestServer(TestCase):
     return [
             # Test server using method updateFileMetadata
             (join('data', 'testMetadata.odt'), "odt", dict(Title='testSetMetadata')),
-            # XXX adding a custom metadata is not yet supported
-            # # Test server using method updateFileMetadata with unsual metadata
-            # (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
-            # 'Metadata')),
+            # Test server using method updateFileMetadata with unsual metadata
+            (join('data', 'testMetadata.odt'), "odt", dict(Reference='testSet'+
+            'Metadata')),
             # Test document that already has metadata. Check if the metadata is
             # not deleted, but updated
             (join('data', 'testMetadata.odt'), "odt", dict(Title='cloudooo Title')),
@@ -187,9 +186,8 @@ class TestServer(TestCase):
     self.assertEquals(self._getFileType(new_odf_data), 
                       'application/vnd.oasis.opendocument.text')
     metadata_dict = self.proxy.getFileMetadataItemList(new_odf_data, 'odt')
-    # XXX adding a custom metadata is not yet supported
-    # self.assertEquals(metadata_dict.get("Reference"), "new value")
-    # self.assertEquals(metadata_dict.get("Something"), "ABC")
+    self.assertEquals(metadata_dict.get("Reference"), "new value")
+    self.assertEquals(metadata_dict.get("Something"), "ABC")
 
   def ConvertScenarioList(self):
     return [

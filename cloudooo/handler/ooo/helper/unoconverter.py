@@ -232,11 +232,18 @@ class UnoConverter(object):
     """
     document_properties = self.document_loaded.getDocumentProperties()
     user_defined_properties = document_properties.getUserDefinedProperties()
+    new_properties = []
     for prop, value in metadata.items():
       for container in [document_properties, user_defined_properties]:
         if getattr(container, prop, None) is not None:
           setattr(container, prop, value)
-          container
+          break
+      else:
+        new_properties.append([prop, value])
+    for prop, value in new_properties:
+      if isinstance(value, unicode):
+        user_defined_properties.addProperty(prop, 0, '')
+        user_defined_properties.setPropertyValue(prop, value)
     self.document_loaded.store()
     self.document_loaded.dispose()
 
