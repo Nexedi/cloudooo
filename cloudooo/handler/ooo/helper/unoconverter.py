@@ -244,7 +244,8 @@ class UnoConverter(object):
               # BBB: old ERP5 code sends Keywords as a string
               # separated by a whitespace.
               value = tuple(value.split(' '))
-          setattr(container, prop, value)
+          if isinstance(value, type(current_value)):
+            setattr(container, prop, value)
           break
       else:
         new_properties.append([prop, value])
