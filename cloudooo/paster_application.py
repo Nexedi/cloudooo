@@ -80,6 +80,13 @@ def application(global_config, **local_config):
   local_config["mimetype_registry"] = handler_mapping_list = \
                                     filter(None, mimetype_registry.split("\n"))
 
+  ooo_disable_filter_list = []
+  for filter_name in local_config.get("ooo_disable_filter_list", "").split("\n"):
+    filter_name = filter_name.strip()
+    if filter_name and not filter_name in ooo_disable_filter_list:
+      ooo_disable_filter_list.append(filter_name)
+  local_config["ooo_disable_filter_list"] = ooo_disable_filter_list
+
   ooo_disable_filter_name_list = []
   for filter_name in local_config.get("ooo_disable_filter_name_list", "").split("\n"):
     filter_name = filter_name.strip()

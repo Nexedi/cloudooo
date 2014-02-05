@@ -95,7 +95,8 @@ class MimeMapper(object):
     **kw:
       uno_path -- full path to uno library
       office_binary_path -- full path to openoffice binary
-      ooo_disable_filter_name_list -- a list of filter names which are disabled
+      ooo_disable_filter_list -- a list of filters by Name which are disabled
+      ooo_disable_filter_name_list -- a list of filters by UI Name which are disabled
     """
     alternative_extension_dict = {
       'Microsoft Excel 2007 XML':'ms.xlsx',
@@ -133,11 +134,17 @@ class MimeMapper(object):
       raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)
 
+    ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
+        'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.2.0.4.
+        'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.2.0.4.
+    ]
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
         'Text', # Use 'Text Encoded' instead
         'Text (StarWriter/Web)', # Use 'Text Encoded (Writer/Web)' instead
     ]
     for filter_name, value in filter_dict.iteritems():
+      if filter_name in ooo_disable_filter_list:
+        continue
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
