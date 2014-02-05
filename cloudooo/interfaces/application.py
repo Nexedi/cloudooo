@@ -32,7 +32,7 @@ from zope.interface import Interface
 class IApplication(Interface):
   """Controls and monitors an application"""
 
-  def start():
+  def start(init=True):
     """Start the application"""
 
   def stop():

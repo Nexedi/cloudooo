@@ -41,7 +41,7 @@ class Application(object):
 
   name = "application"
 
-  def start(self):
+  def start(self, init=True):
     """Start Application"""
     logger.debug("Process Started %s, Port %s. Pid %s" % (self.name,
                                                     self.getAddress()[-1],
@@ -75,7 +75,7 @@ class Application(object):
   def restart(self):
     """Start and Stop the process"""
     self.stop()
-    self.start()
+    self.start(init=False)
 
   def status(self):
     """Check by socket if the openoffice work."""

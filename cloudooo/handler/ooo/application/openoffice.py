@@ -130,11 +130,11 @@ class OpenOffice(Application):
       except NotImplementedError, e:
         logger.error("lsof isn't installed on this machine: " + str(e))
 
-  def start(self):
+  def start(self, init=True):
     """Start Instance."""
     self.path_user_installation = join(self.path_run_dir, \
         "cloudooo_instance_%s" % self.port)
-    if exists(self.path_user_installation):
+    if init and exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
     self.command = [join(self.office_binary_path, self._bin_soffice),
