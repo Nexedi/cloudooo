@@ -235,7 +235,15 @@ class UnoConverter(object):
     new_properties = []
     for prop, value in metadata.items():
       for container in [document_properties, user_defined_properties]:
-        if getattr(container, prop, None) is not None:
+        current_value = getattr(container, prop, None)
+        if current_value is not None:
+          if isinstance(current_value, tuple):
+            if isinstance(value, list):
+              value = tuple(value)
+            elif isinstance(value, basestring):
+              # BBB: old ERP5 code sends Keywords as a string
+              # separated by a whitespace.
+              value = tuple(value.split(' '))
           setattr(container, prop, value)
           break
       else:
