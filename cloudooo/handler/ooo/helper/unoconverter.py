@@ -35,9 +35,9 @@ from base64 import decodestring, encodestring
 from getopt import getopt, GetoptError
 
 try:
-  unicode
+  basestring
 except NameError:
-  unicode = str
+  basestring = str
 
 __doc__ = """
 
@@ -196,9 +196,9 @@ class UnoConverter(object):
           continue
         property_value = getattr(container, property_name, '')
         if property_value:
-          if isinstance(property_value, unicode):
+          if isinstance(property_value, basestring):
             metadata[property_name] = property_value
-          elif isinstance(property_value, tuple) and isinstance(property_value[0], unicode):
+          elif isinstance(property_value, tuple) and isinstance(property_value[0], basestring):
             metadata[property_name] = property_value
           else:
             try:
@@ -241,7 +241,7 @@ class UnoConverter(object):
       else:
         new_properties.append([prop, value])
     for prop, value in new_properties:
-      if isinstance(value, unicode):
+      if isinstance(value, basestring):
         user_defined_properties.addProperty(prop, 0, '')
         user_defined_properties.setPropertyValue(prop, value)
     self.document_loaded.store()
