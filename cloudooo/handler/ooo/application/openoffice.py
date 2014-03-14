@@ -28,7 +28,7 @@
 
 import pkg_resources
 import psutil
-from psutil import error
+from psutil import AccessDenied
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
@@ -122,7 +122,7 @@ class OpenOffice(Application):
             if connection.status == "LISTEN" and \
                 connection.local_address[1] == self.port:
               process.terminate()
-      except error.AccessDenied, e:
+      except AccessDenied, e:
         pass
       except TypeError, e:
         # exception to prevent one psutil issue with zombie processes
