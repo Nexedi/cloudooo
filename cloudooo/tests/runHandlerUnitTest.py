@@ -17,7 +17,7 @@ from signal import SIGQUIT
 def wait_use_port(pid, timeout_limit=30):
   process = psutil.Process(pid)
   for n in range(timeout_limit):
-    if len(process.get_connections()) > 0:
+    if len(process.connections()) > 0:
       return True
     sleep(1)
   return False
