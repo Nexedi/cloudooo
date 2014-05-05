@@ -85,7 +85,7 @@ class Application(object):
 
     process = Process(pid)
     try:
-      for connection in process.get_connections():
+      for connection in process.connections():
         if connection.status == 'LISTEN' and \
             connection.local_address[1] == self.port:
           return True

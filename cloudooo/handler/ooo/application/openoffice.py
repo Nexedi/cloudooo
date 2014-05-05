@@ -117,8 +117,8 @@ class OpenOffice(Application):
   def _releaseOpenOfficePort(self):
     for process in psutil.process_iter():
       try:
-        if process.exe == join(self.office_binary_path, self._bin_soffice):
-          for connection in process.get_connections():
+        if process.exe() == join(self.office_binary_path, self._bin_soffice):
+          for connection in process.connections():
             if connection.status == "LISTEN" and \
                 connection.local_address[1] == self.port:
               process.terminate()
