@@ -131,7 +131,8 @@ def main():
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
 
-  sys.stdout.write(json.dumps((filter_dict, type_dict)))
+  sys.stdout.write(json.dumps((filter_dict, type_dict),
+                              sort_keys=True, indent=2, separators=(',', ':')))
 
 if "__main__" == __name__:
   main()
