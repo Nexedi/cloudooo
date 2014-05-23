@@ -40,7 +40,6 @@ text_expected_tuple = (
     ('pdf', 'PDF - Portable Document Format'),
 #    ('png', 'PNG - Portable Network Graphic'),
     ('rtf', 'Rich Text'),
-    ('sxw', 'OpenOffice.org 1.0 Text Document'),
     ('txt', 'Text Encoded'),
     )
 
@@ -65,7 +64,6 @@ drawing_expected_tuple = (
     ('ras', 'RAS - Sun Raster Image'),
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
-    ('sxd', 'OpenOffice.org 1.0 Drawing'),
     ('tif', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
     ('xpm', 'XPM - X PixMap'),
@@ -105,20 +103,17 @@ presentation_expected_tuple = (
     ('ras', 'RAS - Sun Raster Image'),
     ('svg', 'SVG - Scalable Vector Graphics'),
     ('svm', 'SVM - StarView Metafile'),
-    ('sxd', 'OpenOffice.org 1.0 Drawing (Impress)'),
-    ('sxi', 'OpenOffice.org 1.0 Presentation'),
     ('tif', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
     ('xpm', 'XPM - X PixMap'),
     )
 
-spreadsheet_expected_list = (
+spreadsheet_expected_tuple = (
     ('csv', 'Text CSV'),
     ('html', 'HTML Document (Calc)'),
     ('ods', 'ODF Spreadsheet'),
     ('pdf', 'PDF - Portable Document Format'),
     ('slk', 'SYLK'),
-    ('sxc', 'OpenOffice.org 1.0 Spreadsheet'),
     ('xls', 'Microsoft Excel 97/2000/XP/2003'),
     ('ms.xlsx', 'Microsoft Excel 2007/2010/2013 XML'),
     ('xlsx', 'Office Open XML Spreadsheet'),
@@ -131,7 +126,6 @@ math_expected_tuple = (
     ('smf', 'StarMath 3.0'),
     ('smf', 'StarMath 4.0'),
     ('smf', 'StarMath 5.0'),
-    ('sxm', 'OpenOffice.org 1.0 Formula'),
     )
 
 chart_expected_tuple = (
@@ -218,7 +212,7 @@ class TestMimeMapper(HandlerTestCase):
     pdf_got_list = list(self.mimemapper.getAllowedExtensionList('pdf'))
     pdf_expected_list = list(set(presentation_expected_tuple +
       drawing_expected_tuple + web_expected_tuple + global_expected_tuple +
-      math_expected_tuple + text_expected_tuple + spreadsheet_expected_list))
+      math_expected_tuple + text_expected_tuple + spreadsheet_expected_tuple))
     for arg in pdf_got_list:
       self.assertTrue(arg in pdf_expected_list,
               "%s not in %s" % (arg, pdf_expected_list))
@@ -273,11 +267,11 @@ class TestMimeMapper(HandlerTestCase):
 
   def testGetAllAllowedExtensionListForSpreadsheet(self):
     """Passing document_type equal to 'spreadsheet', the return must be equal
-    to spreadsheet_expected_list."""
+    to spreadsheet_expected_tuple."""
     got_list = self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')
     for arg in got_list:
-      self.assertTrue(arg in spreadsheet_expected_list,
-          "%s not in %s" % (arg, spreadsheet_expected_list))
+      self.assertTrue(arg in spreadsheet_expected_tuple,
+          "%s not in %s" % (arg, spreadsheet_expected_tuple))
 
   def testGetAllAllowedExtensionListForChart(self):
     """Passing document_type equal to 'chart', the return must be equal
@@ -293,9 +287,6 @@ class TestMimeMapper(HandlerTestCase):
     filtername = self.mimemapper.getFilterName("xls",
                                             'com.sun.star.sheet.SpreadsheetDocument')
     self.assertEquals(filtername, "MS Excel 97")
-    filtername = self.mimemapper.getFilterName("sxw",
-                                            'com.sun.star.text.TextDocument')
-    self.assertEquals(filtername, "StarOffice XML (Writer)")
     filtername = self.mimemapper.getFilterName("pdf",
                                             'com.sun.star.text.TextDocument')
     self.assertEquals(filtername, "writer_pdf_Export")
