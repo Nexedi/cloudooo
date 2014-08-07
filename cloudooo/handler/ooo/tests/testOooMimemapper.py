@@ -34,14 +34,14 @@ text_expected_tuple = (
     ('doc', 'Microsoft Word 97/2000/XP/2003'),
     ('ms.docx', 'Microsoft Word 2007/2010/2013 XML'),
     ('docx', 'Office Open XML Text'),
-    ('fodt', 'OpenDocument Text (Flat XML)'),
+    ('fodt', 'Flat XML ODF Text Document'),
     ('html', 'HTML Document (Writer)'),
-#    ('jpg', 'JPEG - Joint Photographic Experts Group'),
+    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
-#    ('png', 'PNG - Portable Network Graphic'),
+    ('png', 'PNG - Portable Network Graphic'),
     ('rtf', 'Rich Text'),
-    ('txt', 'Text Encoded'),
+    ('txt', 'Text - Choose Encoding'),
     )
 
 global_expected_tuple = (
@@ -51,7 +51,7 @@ drawing_expected_tuple = (
     ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
-    ('fodg', 'OpenDocument Drawing (Flat XML)'),
+    ('fodg', 'Flat XML ODF Drawing'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Draw)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
@@ -77,14 +77,14 @@ web_expected_tuple = (
     ('pdf', 'PDF - Portable Document Format'),
     ('sxw', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
     ('txt', 'Text (Writer/Web)'),
-    ('txt', 'Text Encoded (Writer/Web)'),
+    ('txt', 'Text - Choose Encoding (Writer/Web)'),
     )
 
 presentation_expected_tuple = (
     ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
-    ('fodp', 'OpenDocument Presentation (Flat XML)'),
+    ('fodp', 'Flat XML ODF Presentation'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Impress)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
@@ -113,8 +113,8 @@ presentation_expected_tuple = (
 
 spreadsheet_expected_tuple = (
     ('csv', 'Text CSV'),
+    ('fods', 'Flat XML ODF Spreadsheet'),
     ('html', 'HTML Document (Calc)'),
-    ('fods', 'OpenDocument Spreadsheet (Flat XML)'),
     ('ods', 'ODF Spreadsheet'),
     ('pdf', 'PDF - Portable Document Format'),
     ('slk', 'SYLK'),
