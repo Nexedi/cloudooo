@@ -119,10 +119,17 @@ class MimeMapper(object):
             "--hostname=%s" % hostname,
             "--port=%s" % port]
 
-    process = Popen(command, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    stdout, stderr = process.communicate()
-    if process.returncode:
+    import time
+    for _ in range(20):
+      process = Popen(command, stdout=PIPE, stderr=STDOUT, close_fds=True)
+      stdout, stderr = process.communicate()
+      if process.returncode == 0:
+        break
+
+      time.sleep(2)
+    else:
       raise ValueError(stdout)
+
     filter_dict, type_dict = json.loads(stdout)
 
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
