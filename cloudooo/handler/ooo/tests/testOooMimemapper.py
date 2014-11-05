@@ -36,7 +36,7 @@ text_expected_tuple = (
     ('docx', 'Office Open XML Text'),
     ('fodt', 'Flat XML ODF Text Document'),
     ('html', 'HTML Document (Writer)'),
-    ('jpg', 'JPEG - Joint Photographic Experts Group'),
+#    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
     ('png', 'PNG - Portable Network Graphic'),
