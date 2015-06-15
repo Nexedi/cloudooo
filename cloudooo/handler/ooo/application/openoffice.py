@@ -120,7 +120,7 @@ class OpenOffice(Application):
         if process.exe() == join(self.office_binary_path, self._bin_soffice):
           for connection in process.connections():
             if connection.status == "LISTEN" and \
-                connection.local_address[1] == self.port:
+                connection.laddr[1] == self.port:
               process.terminate()
       except AccessDenied, e:
         pass

@@ -87,7 +87,7 @@ class Application(object):
     try:
       for connection in process.connections():
         if connection.status == 'LISTEN' and \
-            connection.local_address[1] == self.port:
+            connection.laddr[1] == self.port:
           return True
     except AccessDenied:
       return False
