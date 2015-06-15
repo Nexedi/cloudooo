@@ -14,7 +14,7 @@ install_requires = [
           'PasteDeploy',
           'PasteScript',
           'WSGIUtils',
-          'psutil>=2.0.0',
+          'psutil>=3.0.0',
           'lxml',
           'python-magic',
           'argparse',
