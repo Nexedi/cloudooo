@@ -31,15 +31,15 @@ from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 
 text_expected_tuple = (
-    ('doc', 'Microsoft Word 97/2000/XP/2003'),
-    ('ms.docx', 'Microsoft Word 2007/2010/2013 XML'),
+    ('doc', 'Microsoft Word 97-2003'),
+    ('ms.docx', 'Microsoft Word 2007-2013 XML'),
     ('docx', 'Office Open XML Text'),
     ('fodt', 'Flat XML ODF Text Document'),
     ('html', 'HTML Document (Writer)'),
 #    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
-#    ('png', 'PNG - Portable Network Graphic'),
+    ('png', 'PNG - Portable Network Graphic'),
     ('rtf', 'Rich Text'),
     ('txt', 'Text - Choose Encoding'),
     )
@@ -50,7 +50,7 @@ global_expected_tuple = (
 drawing_expected_tuple = (
     ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
-    ('eps', 'EPS - Encapsulated PostScript'),
+#    ('eps', 'EPS - Encapsulated PostScript'),
     ('fodg', 'Flat XML ODF Drawing'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Draw)'),
@@ -83,7 +83,7 @@ web_expected_tuple = (
 presentation_expected_tuple = (
     ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
-    ('eps', 'EPS - Encapsulated PostScript'),
+#    ('eps', 'EPS - Encapsulated PostScript'),
     ('fodp', 'Flat XML ODF Presentation'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Impress)'),
@@ -97,11 +97,11 @@ presentation_expected_tuple = (
     ('pgm', 'PGM - Portable Graymap'),
     ('png', 'PNG - Portable Network Graphic'),
     ('ppm', 'PPM - Portable Pixelmap'),
-    ('pps', 'Microsoft PowerPoint 97/2000/XP/2003 AutoPlay'),
-    ('ms.ppsx', 'Microsoft PowerPoint 2007/2010/2013 XML AutoPlay'),
+    ('pps', 'Microsoft PowerPoint 97-2003 AutoPlay'),
+    ('ms.ppsx', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
     ('ppsx', 'Office Open XML Presentation AutoPlay'),
-    ('ppt', 'Microsoft PowerPoint 97/2000/XP/2003'),
-    ('ms.pptx', 'Microsoft PowerPoint 2007/2010/2013 XML'),
+    ('ppt', 'Microsoft PowerPoint 97-2003'),
+    ('ms.pptx', 'Microsoft PowerPoint 2007-2013 XML'),
     ('pptx', 'Office Open XML Presentation'),
     ('ras', 'RAS - Sun Raster Image'),
     ('svg', 'SVG - Scalable Vector Graphics'),
@@ -118,8 +118,8 @@ spreadsheet_expected_tuple = (
     ('ods', 'ODF Spreadsheet'),
     ('pdf', 'PDF - Portable Document Format'),
     ('slk', 'SYLK'),
-    ('xls', 'Microsoft Excel 97/2000/XP/2003'),
-    ('ms.xlsx', 'Microsoft Excel 2007/2010/2013 XML'),
+    ('xls', 'Microsoft Excel 97-2003'),
+    ('ms.xlsx', 'Microsoft Excel 2007-2013 XML'),
     ('xlsx', 'Office Open XML Spreadsheet'),
     )
 

@@ -100,19 +100,15 @@ class MimeMapper(object):
     """
     alternative_extension_dict = {
       'Microsoft Excel 2007 XML':'ms.xlsx',
-      'Microsoft Excel 2007/2010 XML':'ms.xlsx',
-      'Microsoft Excel 2007/2010/2013 XML':'ms.xlsx',
+      'Microsoft Excel 2007-2013 XML':'ms.xlsx',
       'Microsoft Excel 5.0':'5.xls',
       'Microsoft Excel 95':'95.xls',
       'Microsoft PowerPoint 2007 XML AutoPlay':'ms.ppsx',
-      'Microsoft PowerPoint 2007/2010 XML AutoPlay':'ms.ppsx',
-      'Microsoft PowerPoint 2007/2010/2013 XML AutoPlay':'ms.ppsx',
+      'Microsoft PowerPoint 2007-2013 XML AutoPlay':'ms.ppsx',
       'Microsoft PowerPoint 2007 XML':'ms.pptx',
-      'Microsoft PowerPoint 2007/2010 XML':'ms.pptx',
-      'Microsoft PowerPoint 2007/2010/2013 XML':'ms.pptx',
+      'Microsoft PowerPoint 2007-2013 XML':'ms.pptx',
       'Microsoft Word 2007 XML':'ms.docx',
-      'Microsoft Word 2007/2010 XML':'ms.docx',
-      'Microsoft Word 2007/2010/2013 XML':'ms.docx',
+      'Microsoft Word 2007-2013 XML':'ms.docx',
       'Microsoft Word 6.0':'6.doc',
       'Microsoft Word 95':'95.doc',
       }
@@ -136,7 +132,8 @@ class MimeMapper(object):
 
     ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
         'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-        'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
+        'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
+        'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
     ]
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
         'Text', # Use 'Text - Choose Encoding' instead
