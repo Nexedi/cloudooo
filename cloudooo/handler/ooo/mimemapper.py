@@ -132,6 +132,7 @@ class MimeMapper(object):
 
     ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
         'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
+        'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
         'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
         'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
     ]
