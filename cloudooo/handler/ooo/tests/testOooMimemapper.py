@@ -42,6 +42,7 @@ text_expected_tuple = (
 #    ('png', 'PNG - Portable Network Graphic'),
     ('rtf', 'Rich Text'),
     ('txt', 'Text - Choose Encoding'),
+    ('docy', 'Docy'),
     )
 
 global_expected_tuple = (
@@ -109,6 +110,7 @@ presentation_expected_tuple = (
     ('tif', 'TIFF - Tagged Image File Format'),
     ('wmf', 'WMF - Windows Metafile'),
     ('xpm', 'XPM - X PixMap'),
+    ('ppty', 'Ppty'),
     )
 
 spreadsheet_expected_tuple = (
@@ -121,6 +123,7 @@ spreadsheet_expected_tuple = (
     ('xls', 'Microsoft Excel 97-2003'),
     ('ms.xlsx', 'Microsoft Excel 2007-2013 XML'),
     ('xlsx', 'Office Open XML Spreadsheet'),
+    ('xlsy', 'Xlsy'),
     )
 
 math_expected_tuple = (

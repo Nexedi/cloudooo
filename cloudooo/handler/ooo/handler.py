@@ -42,6 +42,11 @@ from cloudooo.handler.ooo.monitor import monitor_sleeping_time
 from cloudooo.util import logger
 from psutil import pid_exists
 
+try:
+  from cloudooo.handler.yformat.handler import Handler as YformatHandler
+  from cloudooo.handler.yformat.handler import yformat_map
+except ImportError:
+  yformat_map = None
 
 class Handler(object):
   """OOO Handler is used to access the one Document and OpenOffice.
@@ -53,6 +58,13 @@ class Handler(object):
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """Creates document in file system and loads it in OOo."""
+    if yformat_map:
+      if source_format in yformat_map:
+        logger.debug("OooConvert: xlsy > xlsx")
+        yformat = YformatHandler(base_folder_url, data, source_format, **kw)
+        destination_format = yformat_map[source_format]
+        data = yformat.convert(destination_format=destination_format)
+        source_format = destination_format
     self.document = FileSystemDocument(base_folder_url,
                                       data,
                                       source_format)
@@ -154,6 +166,11 @@ class Handler(object):
     Keyword Arguments:
     destination_format -- extension of document as String
     """
+    yformat = False
+    if yformat_map:
+      if destination_format in yformat_map:
+        yformat = destination_format
+        destination_format = yformat_map[destination_format]
     logger.debug("OooConvert: %s > %s" % (self.source_format, destination_format))
     kw['source_format'] = self.source_format
     if destination_format:
@@ -170,6 +187,14 @@ class Handler(object):
     self.document.reload(url)
     content = self.document.getContent(self.zip)
     self.document.trash()
+
+    if yformat:
+      logger.debug("OooConvert: xlsx > xlsy")
+      source_format = destination_format
+      kw['destination_format'] = yformat
+      yformat = YformatHandler(self.document.base_folder_url,
+                               content, source_format)
+      content = yformat.convert(**kw)
     return content
 
   def getMetadata(self, base_document=False):

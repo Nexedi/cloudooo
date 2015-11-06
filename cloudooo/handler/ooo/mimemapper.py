@@ -37,6 +37,11 @@ from cloudooo.interfaces.mimemapper import IMimemapper
 from types import InstanceType
 import json
 
+try:
+  from cloudooo.handler.yformat.handler import yformat_service_map
+except ImportError:
+  yformat_service_map = {}
+
 
 class MimeMapper(object):
   """Load all filters from OOo. You can get the filter you want or all
@@ -226,6 +231,9 @@ class MimeMapper(object):
       'pdf': ['com.sun.star.drawing.DrawingDocument'],
       'xls': ['com.sun.star.sheet.SpreadsheetDocument'],
       })
+    self._doc_type_list_by_extension.update((ext, [service, ]) for ext, service in yformat_service_map.iteritems())
+    for ext, service in yformat_service_map.iteritems():
+      self._extension_list_by_type[service].append((ext, ext.capitalize()))
     self.document_service_list = self._extension_list_by_type.keys()
     self._loaded = True
 
