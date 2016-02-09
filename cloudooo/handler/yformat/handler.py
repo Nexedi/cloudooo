@@ -62,9 +62,13 @@ Ext2Formats = {
 }
 
 dir_name = dirname(realpath(sys.argv[0]))
-#dir_name = join(dirname(realpath(__file__)), 'bin')
+# dir_name = join(dirname(realpath(__file__)), 'bin')
 converter_bin = join(dir_name, 'x2t')
 converter_lib_dirname = join(dir_name, 'lib')
+converter_command = [
+  join(converter_lib_dirname, 'ld-linux-x86-64.so.2'),
+  converter_bin,
+]
 
 yformat_map = {
   'docy': 'docx',
@@ -123,7 +127,7 @@ class Handler(object):
         ElementTree.ElementTree(root).write(temp_xml, encoding='utf-8', xml_declaration=True, default_namespace=None,
                                             method="xml")
         temp_xml.flush()
-        p = Popen([converter_bin, temp_xml.name],
+        p = Popen(converter_command + [temp_xml.name, ],
                   env=self.environment,
                   stdout=PIPE,
                   stderr=PIPE,
