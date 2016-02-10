@@ -131,14 +131,18 @@ class Handler(object):
                   env=self.environment,
                   stdout=PIPE,
                   stderr=PIPE,
+                  close_fds=True,
                   )
-        # stdout, stderr = p.communicate()
-        ret = p.wait()
-        # logger.debug(stdout)
-        # logger.debug(stderr)
-        logger.debug("yformat convert x2t return:{}".format(ret))
+        stdout, stderr = p.communicate()
+        file_content = open(output_file.name).read()
+        return_code_msg = "yformat convert x2t return:{}".format(p.returncode)
+        if p.returncode != 0 or not file_content:
+          raise Exception(return_code_msg + '\n' + stderr)
+      logger.debug(stdout)
+      logger.debug(stderr)
+      logger.debug("yformat convert x2t return:{}".format(p.returncode))
       self.file.trash()
-      return open(output_file.name).read()
+      return file_content
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.
