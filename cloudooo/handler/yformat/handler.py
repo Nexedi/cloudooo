@@ -130,7 +130,8 @@ class Handler(object):
                   close_fds=True,
                   )
         stdout, stderr = p.communicate()
-        file_content = open(output_file.name).read()
+        with open(output_file.name) as output_file1:
+          file_content = output_file1.read()
         return_code_msg = "yformat convert x2t return:{}".format(p.returncode)
         if p.returncode != 0 or not file_content:
           raise Exception(return_code_msg + '\n' + stderr)
