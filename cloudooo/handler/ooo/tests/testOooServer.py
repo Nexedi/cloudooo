@@ -480,25 +480,23 @@ class TestServer(TestCase):
     """Test if getImageItemList can get the list of images items from odt file"""
     data = encodestring(open("./data/granulate_test.odt").read())
     image_list = self.proxy.getImageItemList(data, "odt")
-    self.assertEquals([['10000000000000C80000009C76245A92.jpg', ''],
-                      ['10000201000000C80000004EE2BCEED0.png', 'TioLive Logo'],
-                      ['10000201000000C80000004EE2BCEED0.png', ''],
-                      ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
-                      ['10000201000000C80000004EE2BCEED0.png',
-                                                        'Again TioLive Logo']],
-                                                                    image_list)
+    self.assertEquals([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', 'TioLive Logo'],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', ''],
+                       ['2000004F0000423300001370ADF6545B2997B448.svm', 'Python Logo'],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', 'Again TioLive Logo']],
+                      image_list)
 
   def testGetImageItemListFromDoc(self):
     """Test if getImageItemList can get the list of images items from doc file"""
     data = encodestring(open("./data/granulate_test.doc").read())
     image_list = self.proxy.getImageItemList(data, "doc")
-    self.assertEquals([['10000000000000C80000009C76245A92.jpg', ''],
-                      ['10000201000000C80000004EE2BCEED0.png', 'TioLive Logo'],
-                      ['10000201000000C80000004EE2BCEED0.png', ''],
-                      ['2000031600004233000013706A5EA1C8.wmf', 'Python Logo'],
-                      ['10000201000000C80000004EE2BCEED0.png',
-                                                        'Again TioLive Logo']],
-                                                                    image_list)
+    self.assertEquals([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', 'TioLive Logo'],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', ''],
+                       ['2000031600004233000013702113A0E70B910778.wmf', 'Python Logo'],
+                       ['10000201000000C80000004EF26C99A54A61B987.png', 'Again TioLive Logo']],
+                      image_list)
 
   def testGetImageFromOdt(self):
     """Test if getImage can get a image from odt file after zip"""
@@ -516,7 +514,7 @@ class TestServer(TestCase):
     #so compare with the server return.
     data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
     zip = ZipFile(StringIO(decodestring(data_odt)))
-    image_id = '10000000000000C80000009C76245A92.jpg'
+    image_id = '10000000000000C80000009CBF079A6E41EE290C.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
     self.assertEquals(original_image, geted_image)
