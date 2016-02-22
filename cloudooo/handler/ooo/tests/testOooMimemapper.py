@@ -39,7 +39,7 @@ text_expected_tuple = (
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
-#    ('png', 'PNG - Portable Network Graphic'),
+    ('png', 'PNG - Portable Network Graphic'),
     ('rtf', 'Rich Text'),
     ('txt', 'Text - Choose Encoding'),
     )
