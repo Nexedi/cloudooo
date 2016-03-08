@@ -6,7 +6,7 @@ version = '1.2.5-dev'
 def read(name):
     return open(name).read()
 
-long_description = (read('README.txt') + '\n' + read('CHANGES.txt'))
+long_description = (read('README.rst') + '\n' + read('CHANGELOG.rst'))
 
 install_requires = [
           # -*- Extra requirements: -*-
