@@ -140,7 +140,6 @@ class UnoConverter(object):
       property = self._createProperty("FilterName", filter_name)
       property_list.append(property)
       property_list.extend(self._createSpecificProperty(filter_name))
-
       return property_list
     else:
       return ()
