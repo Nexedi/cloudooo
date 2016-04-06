@@ -76,7 +76,7 @@ class UnoMimemapper(object):
         for obj in iter(element_list):
             if obj.Name in ignore_name_list:
               continue
-            if not isinstance(obj.Value, (bool, int, basestring, tuple)):
+            if not isinstance(obj.Value, (bool, int, long, basestring, tuple)):
               continue
             element_dict[obj.Name] = obj.Value
             service_dict[name] = element_dict
