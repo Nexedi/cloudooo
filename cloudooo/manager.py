@@ -73,7 +73,7 @@ class Manager(object):
     self.handler_dict = self.kw.pop("handler_dict")
 
   def convertFile(self, file, source_format, destination_format, zip=False,
-                  refresh=False):
+                  refresh=False, convertion_kw={}):
     """Returns the converted file in the given format.
     Keywords arguments:
       file -- File as string in base64
@@ -92,7 +92,7 @@ class Manager(object):
                             decodestring(file),
                             source_format,
                             **self.kw)
-    decode_data = handler.convert(destination_format)
+    decode_data = handler.convert(destination_format, **convertion_kw)
     return encodestring(decode_data)
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
