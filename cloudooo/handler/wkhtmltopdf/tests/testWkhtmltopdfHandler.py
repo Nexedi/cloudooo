@@ -25,6 +25,7 @@
 #
 ##############################################################################
 
+from base64 import b64encode
 
 import magic
 from cloudooo.handler.wkhtmltopdf.handler import Handler
@@ -55,6 +56,20 @@ class TestHandler(HandlerTestCase):
     self.assertEquals("application/pdf", pdf_mimetype)
 
   # TODO: def testConvertHtmlWithHeaderAndFooter(self):
+
+  def testConvertHtmlWithTableOfContent(self):
+    """Test conversion of html with an additional table of content"""
+    html_file = open("data/test_with_toc.html").read()
+    handler = Handler(self.tmp_url, html_file, "html", **self.kw)
+    pdf_file = handler.convert(
+      "pdf",
+      toc=True,
+      xsl_style_sheet_data=b64encode(open("data/test_toc.xsl").read()),
+    )
+    mime = magic.Magic(mime=True)
+    pdf_mimetype = mime.from_buffer(pdf_file)
+    self.assertEquals("application/pdf", pdf_mimetype)
+    # XXX how to check for table of content presence ?
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
