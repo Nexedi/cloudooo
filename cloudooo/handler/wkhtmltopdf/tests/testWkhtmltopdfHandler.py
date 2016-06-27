@@ -53,6 +53,14 @@ class TestHandler(HandlerTestCase):
     """Test conversion of html with script to pdf"""
     self._testBase("data/test_with_script.html")
 
+  def testConvertHtmlWithOpacityStyleToPdf(self):
+    """Test conversion of html with opacity style to pdf
+
+    Opacity style in a web pages causes Segmentation Fault only if wkhtmltopdf
+    is not connected to a graphical service like Xorg.
+    """
+    self._testBase("data/test_with_opacity_style.html")
+
   # TODO: def testConvertHtmlWithHeaderAndFooter(self):
 
   def testConvertHtmlWithTableOfContent(self):
