@@ -37,38 +37,31 @@ class TestHandler(HandlerTestCase):
   def afterSetUp(self):
     self.kw = dict(env=dict(PATH=self.env_path))
 
-  def testConvertHtmlWithPngDataUrlToPdf(self):
-    """Test conversion of html with png data url to pdf"""
-    html_file = open("data/test_with_png_dataurl.html").read()
+  def _testBase(self, html_path, **conversion_kw):
+    html_file = open(html_path).read()
     handler = Handler(self.tmp_url, html_file, "html", **self.kw)
-    pdf_file = handler.convert("pdf")
+    pdf_file = handler.convert("pdf", **conversion_kw)
     mime = magic.Magic(mime=True)
     pdf_mimetype = mime.from_buffer(pdf_file)
     self.assertEquals("application/pdf", pdf_mimetype)
 
+  def testConvertHtmlWithPngDataUrlToPdf(self):
+    """Test conversion of html with png data url to pdf"""
+    self._testBase("data/test_with_png_dataurl.html")
+
   def testConvertHtmlWithScriptToPdf(self):
     """Test conversion of html with script to pdf"""
-    html_file = open("data/test_with_script.html").read()
-    handler = Handler(self.tmp_url, html_file, "html", **self.kw)
-    pdf_file = handler.convert("pdf")
-    mime = magic.Magic(mime=True)
-    pdf_mimetype = mime.from_buffer(pdf_file)
-    self.assertEquals("application/pdf", pdf_mimetype)
+    self._testBase("data/test_with_script.html")
 
   # TODO: def testConvertHtmlWithHeaderAndFooter(self):
 
   def testConvertHtmlWithTableOfContent(self):
     """Test conversion of html with an additional table of content"""
-    html_file = open("data/test_with_toc.html").read()
-    handler = Handler(self.tmp_url, html_file, "html", **self.kw)
-    pdf_file = handler.convert(
-      "pdf",
+    self._testBase(
+      "data/test_with_toc.html",
       toc=True,
       xsl_style_sheet_data=b64encode(open("data/test_toc.xsl").read()),
     )
-    mime = magic.Magic(mime=True)
-    pdf_mimetype = mime.from_buffer(pdf_file)
-    self.assertEquals("application/pdf", pdf_mimetype)
     # XXX how to check for table of content presence ?
 
   def testsetMetadata(self):
