@@ -89,7 +89,7 @@ class Handler(object):
     kw['hostname'] = hostname
     kw['port'] = port
     python = path.join(self.office_binary_path, "python")
-    command_list = [path.exists(python) and python or "python",
+    command_list = [path.exists(python) and python or "python3",
                     pkg_resources.resource_filename(__name__,
                                  path.join("helper", "unoconverter.py")),
                     "--uno_path=%s" % self.uno_path,

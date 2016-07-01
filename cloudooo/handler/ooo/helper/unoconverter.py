@@ -35,7 +35,7 @@ import codecs
 import helper_util
 from os.path import dirname, splitext
 from tempfile import mktemp
-from base64 import decodestring, encodestring
+from base64 import b64encode, b64decode
 from getopt import getopt, GetoptError
 
 try:
@@ -342,7 +342,7 @@ def main():
     elif opt == '--refresh':
       refresh = json.loads(arg)
     elif opt == '--metadata':
-      arg = decodestring(arg.encode('ascii')).decode('utf-8')
+      arg = b64decode(arg).decode('utf-8')
       metadata = json.loads(arg)
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
@@ -357,7 +357,7 @@ def main():
     output = unoconverter.convert(destination_format)
   elif '--getmetadata' in param_list and not '--convert' in param_list:
     metadata_dict = unoconverter.getMetadata()
-    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
+    output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()
   elif '--getmetadata' in param_list and '--convert' in param_list:
     document_url = unoconverter.convert()
     # Instanciate new UnoConverter instance with new url
@@ -365,7 +365,7 @@ def main():
                                 uno_path, office_binary_path, refresh)
     metadata_dict = unoconverter.getMetadata()
     metadata_dict['document_url'] = document_url
-    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
+    output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()
   elif '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
     output = document_url
