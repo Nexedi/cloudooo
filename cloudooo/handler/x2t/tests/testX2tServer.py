@@ -33,7 +33,7 @@ class TestServer(TestCase):
 
   def ConversionScenarioList(self):
     return [
-      (join('data', 'test.xlsx'), "xlsx", "xlsy", "text/plain"),  # XXX no mime mapping for xlsy ?
+      (join('data', 'test.xlsx'), "xlsx", "xlsy", "application/zip"),
       (join('data', 'test.xlsy'), "xlsy", "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     ]
 
