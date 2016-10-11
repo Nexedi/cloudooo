@@ -29,6 +29,8 @@
 
 import magic
 import os.path
+from zipfile import ZipFile
+from cStringIO import StringIO
 from cloudooo.handler.x2t.handler import Handler
 from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
@@ -40,7 +42,8 @@ class TestHandler(HandlerTestCase):
   def testConvertXlsx(self):
     """Test conversion of xlsx to xlsy and back"""
     y_data = Handler(self.tmp_url, open("data/test.xlsx").read(), "xlsx", **self.kw).convert("xlsy")
-    self.assertTrue(y_data.startswith("XLSY;v2;5883;"), "%r... does not start with 'XLSY;v2;5883;'" % (y_data[:20],))
+    y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
+    self.assertTrue(y_body_data.startswith("XLSY;v2;5883;"), "%r... does not start with 'XLSY;v2;5883;'" % (y_body_data[:20],))
 
     x_data = Handler(self.tmp_url, y_data, "xlsy", **self.kw).convert("xlsx")
     # magic inspired by https://github.com/minad/mimemagic/pull/19/files
@@ -52,7 +55,8 @@ class TestHandler(HandlerTestCase):
     self.assertIn("xl/", x_data[:2000])
 
     y_data = Handler(self.tmp_url, x_data, "xlsx", **self.kw).convert("xlsy")
-    self.assertTrue(y_data.startswith("XLSY;v2;10579;"), "%r... does not start with 'XLSY;v2;10579;'" % (y_data[:20],))
+    y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
+    self.assertTrue(y_body_data.startswith("XLSY;v2;10579;"), "%r... does not start with 'XLSY;v2;10579;'" % (y_body_data[:20],))
 
   def testgetMetadataFromImage(self):
     """Test getMetadata not implemented form yformats"""
