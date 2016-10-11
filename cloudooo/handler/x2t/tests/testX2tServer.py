@@ -35,10 +35,14 @@ class TestServer(TestCase):
     return [
       (join('data', 'test.xlsx'), "xlsx", "xlsy", "application/zip"),
       (join('data', 'test.xlsy'), "xlsy", "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+      (join('data', 'test_with_image.docx'), "docx", "docy", "application/zip"),
+      # Here, the content type should be application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      # but "magic" seems to not detect it correctly. However, the document can be read correctly by LibreOffice.
+      (join('data', 'test_with_image.docy'), "docy", "docx", "application/octet-stream"),
     ]
 
   def testConvertHtmltoPdf(self):
-    """Converts xlsx to xlsy and xlsy to xlsx"""
+    """Converts xlsx,docx to their y format and y to x"""
     self.runConversionList(self.ConversionScenarioList())
 
   def FaultConversionScenarioList(self):
