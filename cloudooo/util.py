@@ -29,6 +29,8 @@
 import logging
 import mimetypes
 import pkg_resources
+import os
+from zipfile import ZipFile, ZIP_DEFLATED
 
 logger = logging.getLogger('Cloudooo')
 
@@ -98,3 +100,36 @@ def convertStringToBool(string):
     return False
   else:
     return None
+
+def zipTree(destination, *tree_path_list):
+  """
+    destination may be a path or a StringIO
+
+    tree_path_list is a list that may contain a path or a couple(path, archive_root)
+  """
+  def archive(arg, archive_root):
+    archive_name = os.path.join(archive_root, os.path.basename(arg))
+    if os.path.islink(arg):
+      pass  # XXX logger.warn("zipTree: symlink %r ignored\n" % arg)
+    elif os.path.isdir(arg):
+      for r, _, ff in os.walk(arg):
+        zfile.write(r, archive_name)
+        for f in ff:
+          archive(os.path.join(r, f), archive_name)
+    elif os.path.isfile(arg):
+      zfile.write(arg, archive_name)
+    else:
+      pass  # XXX logger.warn("zipTree: unknown %r ignored\n" % arg)
+  zfile = ZipFile(destination, "w", ZIP_DEFLATED)
+  for tree_path in tree_path_list:
+    if isinstance(tree_path, tuple):
+      archive(*tree_path)
+    else:
+      archive(tree_path, os.path.dirname(tree_path))
+  zfile.close()
+  return destination
+
+def unzip(source, destination):
+  zipfile = ZipFile(source)
+  zipfile.extractall(destination)
+  zipfile.close()

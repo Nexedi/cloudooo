@@ -29,12 +29,13 @@ from xml.etree import ElementTree
 from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile, mktemp
 import sys
+import os
 
 from zope.interface import implements
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger
+from cloudooo.util import logger, zipTree, unzip
 
 AVS_OFFICESTUDIO_FILE_UNKNOWN = "0"
 AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = "65"
@@ -60,6 +61,7 @@ format_code_map = {
   "pptx": AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTX,
 }
 
+yformat_tuple = ("docy", "xlsy", "ppty")
 
 class Handler(object):
   """ImageMagic Handler is used to handler images."""
@@ -78,23 +80,39 @@ class Handler(object):
     self.base_folder_url = base_folder_url
     self.file = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
-    #self.environment['LD_LIBRARY_PATH'] = converter_lib_dirname
 
   def convert(self, destination_format=None, **kw):
     """ Convert the inputed file to output as format that were informed """
-    logger.debug("x2t convert: %s > %s" % (self.file.source_format, destination_format))
+    source_format = self.file.source_format
+    logger.debug("x2t convert: %s > %s" % (source_format, destination_format))
 
-    in_format = format_code_map[self.file.source_format]
+    # init vars and xml configuration file
+    in_format = format_code_map[source_format]
     out_format = format_code_map[destination_format]
+    root_dir = self.file.directory_name
+    input_dir = os.path.join(root_dir, "input");
+    output_dir = os.path.join(root_dir, "output");
+    final_file_name = os.path.join(root_dir, "document.%s" % destination_format)
+    input_file_name = self.file.getUrl()
+    output_file_name = final_file_name
+    config_file_name = os.path.join(root_dir, "config.xml")
 
-    # create files in folder which will be trashed
-    output_file_name = mktemp(suffix=".%s" % destination_format, dir=self.file.directory_name)
-    temp_xml = NamedTemporaryFile(suffix=".xml", dir=self.file.directory_name, delete=False)
+    if source_format in yformat_tuple:
+      os.mkdir(input_dir)
+      unzip(self.file.getUrl(), input_dir)
+      for _, _, files in os.walk(input_dir):
+        input_file_name, = files
+        break
+      input_file_name = os.path.join(input_dir, input_file_name)
+    if destination_format in yformat_tuple:
+      os.mkdir(output_dir)
+      output_file_name = os.path.join(output_dir, "body.txt")
 
-    # write xml configuration file
+    config_file = open(config_file_name, "w")
+
     config = {
       # 'm_sKey': 'from',
-      'm_sFileFrom': self.file.getUrl(),
+      'm_sFileFrom': input_file_name,
       'm_nFormatFrom': in_format,
       'm_sFileTo': output_file_name,
       'm_nFormatTo': out_format,
@@ -107,12 +125,12 @@ class Handler(object):
     root = ElementTree.Element('root')
     for key, value in config.items():
       ElementTree.SubElement(root, key).text = value
-    ElementTree.ElementTree(root).write(temp_xml, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
-    temp_xml.close()
+    ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
+    config_file.close()
 
     # run convertion binary
     p = Popen(
-      ["x2t", temp_xml.name],
+      ["x2t", config_file.name],
       stdout=PIPE,
       stderr=PIPE,
       close_fds=True,
@@ -120,9 +138,16 @@ class Handler(object):
     )
     stdout, stderr = p.communicate()
     if p.returncode != 0:
-      raise RuntimeError("x2t: exit code %d != 0\n+ %s\n> stdout: %s\n> stderr: %s@ x2t xml:\n%s" % (p.returncode, " ".join(["x2t", temp_xml.name]), stdout, stderr, "  " + open(temp_xml.name).read().replace("\n", "\n  ")))
+      raise RuntimeError("x2t: exit code %d != 0\n+ %s\n> stdout: %s\n> stderr: %s@ x2t xml:\n%s" % (p.returncode, " ".join(["x2t", config_file.name]), stdout, stderr, "  " + open(config_file.name).read().replace("\n", "\n  ")))
 
-    self.file.reload(output_file_name)
+    if destination_format in yformat_tuple:
+      zipTree(
+        final_file_name,
+        (output_file_name, ""),
+        (os.path.join(os.path.dirname(output_file_name), "media"), ""),
+      )
+
+    self.file.reload(final_file_name)
     try:
       return self.file.getContent()
     finally:
