@@ -64,7 +64,10 @@ format_code_map = {
 yformat_tuple = ("docy", "xlsy", "ppty")
 
 class Handler(object):
-  """ImageMagic Handler is used to handler images."""
+  """
+  X2T Handler is used to convert Microsoft Office 2007 documents to OnlyOffice
+  documents.
+  """
 
   implements(IHandler)
 
