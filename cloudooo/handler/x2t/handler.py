@@ -36,6 +36,7 @@ from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger, zipTree, unzip, parseContentType
+from cloudooo.handler.ooo.handler import Handler as OOoHandler
 
 AVS_OFFICESTUDIO_FILE_UNKNOWN = "0"
 AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = "65"
@@ -81,6 +82,9 @@ class Handler(object):
       The source format of the inputed file
     """
     self.base_folder_url = base_folder_url
+    self._data = data
+    self._source_format = source_format
+    self._init_kw = kw
     self.file = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
 
@@ -160,6 +164,16 @@ class Handler(object):
     """Returns a dictionary with all metadata of document.
     along with the metadata.
     """
+    # XXX Cloudooo takes the first handler that can "handle" source_mimetype.
+    #     However, docx documents metadata can only be "handled" by the ooo handler.
+    #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
+    #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
+    if self._source_format in (
+          "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ):
+      return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).getMetadata(base_document)
     raise NotImplementedError
 
   def setMetadata(self, metadata={}):
@@ -167,6 +181,16 @@ class Handler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
+    # XXX Cloudooo takes the first handler that can "handle" source_mimetype.
+    #     However, docx documents metadata can only be "handled" by the ooo handler.
+    #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
+    #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
+    if self._source_format in (
+          "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ):
+      return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).setMetadata(metadata)
     raise NotImplementedError
 
   @staticmethod
