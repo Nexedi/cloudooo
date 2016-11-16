@@ -35,7 +35,7 @@ from zope.interface import implements
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger, zipTree, unzip
+from cloudooo.util import logger, zipTree, unzip, parseContentType
 
 AVS_OFFICESTUDIO_FILE_UNKNOWN = "0"
 AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = "65"
@@ -168,3 +168,27 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     raise NotImplementedError
+
+  @staticmethod
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/x-asc-text', 'OnlyOffice Text Document'),
+     ...
+    ]
+    """
+    source_mimetype = parseContentType(source_mimetype).gettype()
+    if source_mimetype in ("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
+      return [("application/x-asc-text", "OnlyOffice Text Document")]
+    if source_mimetype in ("docy", "application/x-asc-text"):
+      return [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")]
+    if source_mimetype in ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+      return [("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet")]
+    if source_mimetype in ("xlsy", "application/x-asc-spreadsheet"):
+      return [("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet")]
+    if source_mimetype in ("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"):
+      return [("application/x-asc-presentation", "OnlyOffice Presentation")]
+    if source_mimetype in ("ppty", "application/x-asc-presentation"):
+      return [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")]
+    return []

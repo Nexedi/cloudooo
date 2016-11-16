@@ -91,3 +91,16 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     raise NotImplementedError
+
+  @staticmethod
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('image/jpeg', 'Jpeg Image File Format'),
+     ('image/png', 'Png Image File Format'),
+     ...
+    ]
+    """
+    # XXX NotImplemented
+    return []
