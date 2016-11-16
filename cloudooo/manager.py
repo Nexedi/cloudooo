@@ -173,6 +173,42 @@ class Manager(object):
     else:
       return [('', '')]
 
+  def getAllowedConversionFormatList(self, source_mimetype):
+    r"""Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+     ('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+
+    This methods gets handler conversion mimetype availability according
+    to Cloudooo's mimetype registry.
+
+    /!\ unlike `self.getAllowedExtensionList`, it may return empty list
+        instead of `[('', '')]`.
+
+    /!\ the returned list may have the same mimetype twice with different title.
+    """
+    handler_dict = {}  # handler_dict["ooo"] = ["text/*", "application/*"]
+    for entry in self.mimetype_registry:
+      split_entry = entry.split()
+      if fnmatch(source_mimetype, split_entry[0]):
+        if split_entry[2] in handler_dict:
+          handler_dict[split_entry[2]].append(split_entry[1])
+        else:
+          handler_dict[split_entry[2]] = [split_entry[1]]
+
+    output_mimetype_set = set()
+    for handler, mimetype_filter_list in handler_dict.items():
+      for output_mimetype in self.handler_dict[handler].getAllowedConversionFormatList(source_mimetype):
+        for mimetype_filter in mimetype_filter_list:
+          if fnmatch(output_mimetype[1], mimetype_filter):
+            output_mimetype_set.add(output_mimetype)
+            break
+
+    return list(output_mimetype_set)
+
   def run_convert(self, filename='', data=None, meta=None, extension=None,
                   orig_format=None):
     """Method to support the old API. Wrapper getFileMetadataItemList but

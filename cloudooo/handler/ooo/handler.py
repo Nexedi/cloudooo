@@ -29,6 +29,7 @@
 import json
 import re
 import pkg_resources
+import mimetypes
 from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
@@ -212,6 +213,27 @@ class Handler(object):
     doc_loaded = self.document.getContent()
     self.document.trash()
     return doc_loaded
+
+  def getAllowedConversionFormatList(self, source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+     ('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+    """
+    output_set = set()
+    if "/" in source_mimetype:
+      extension_list = mimetypes.guess_all_extensions(source_mimetype)  # XXX never guess
+    else:
+      extension_list = [source_mimetype]
+
+    for ext in extension_list:
+      for ext, title in mimemapper.getAllowedExtensionList(extension=ext.replace(".", "")):
+        if ext:
+          output_set.add((mimetypes.guess_type(ext), title))  # XXX never guess
+    return list(output_set)
 
 def bootstrapHandler(configuration_dict):
   # Bootstrap handler

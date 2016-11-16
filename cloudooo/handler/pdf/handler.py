@@ -29,7 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger
+from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
@@ -115,3 +115,16 @@ class Handler(object):
       return self.document.getContent()
     finally:
       self.document.trash()
+
+  def getAllowedConversionFormatList(self, source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('text/plain', 'Plain Text'),
+     ...
+    ]
+    """
+    source_mimetype = parseContentType(source_mimetype).gettype()
+    if source_mimetype in ("application/pdf", "pdf"):
+      return [("text/plain", "Plain Text")]
+    return []

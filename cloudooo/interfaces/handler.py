@@ -43,3 +43,13 @@ class IHandler(Interface):
   def setMetadata(metadata_dict):
     """Returns a document with the new metadata
     """
+
+  def getAllowedConversionFormatList(self, source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+     ('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+    """
