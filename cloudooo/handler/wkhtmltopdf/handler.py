@@ -28,7 +28,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger
+from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 from os.path import basename
@@ -95,6 +95,20 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     raise NotImplementedError
+
+  @staticmethod
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+    """
+    source_mimetype = parseContentType(source_mimetype).gettype()
+    if source_mimetype in ("text/html", "htm", "html"):
+      return [("application/pdf", "PDF - Portable Document Format")]
+    return []
 
   def makeSwitchOptionList(self, allowed_option_list, option_dict):
     """
