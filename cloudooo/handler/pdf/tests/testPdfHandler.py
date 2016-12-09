@@ -64,6 +64,19 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(metadata["title"], 'Set Metadata Test')
     self.assertEquals(metadata['creator'], 'gabriel\'@')
 
+  def testGetAllowedConversionFormatList(self):
+    """Test all combination of mimetype
+
+    None of the types below define any mimetype parameter to not ignore so far.
+    """
+    get = Handler.getAllowedConversionFormatList
+    # Handled mimetypes
+    self.assertEquals(get("application/pdf;ignored=param"),
+      [("text/plain", "Plain Text")])
+
+    # Unhandled mimetypes
+    self.assertEquals(get("text/plain;ignored=param"), [])
+    self.assertEquals(get("text/plain;charset=UTF-8;ignored=param"), [])
 
 def test_suite():
   return make_suite(TestHandler)
