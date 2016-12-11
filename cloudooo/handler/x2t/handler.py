@@ -26,16 +26,16 @@
 #
 ##############################################################################
 from xml.etree import ElementTree
-from os.path import join, dirname, realpath
 from subprocess import Popen, PIPE
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, mktemp
 import sys
+import os
 
 from zope.interface import implements
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger
+from cloudooo.util import logger, zipTree, unzip
 
 AVS_OFFICESTUDIO_FILE_UNKNOWN = "0"
 AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = "65"
@@ -52,7 +52,7 @@ AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION = "8195"
 AVS_OFFICESTUDIO_FILE_OTHER_HTMLZIP = "2051"
 AVS_OFFICESTUDIO_FILE_OTHER_ZIP = "2057"
 
-Ext2Formats = {
+format_code_map = {
   "docy": AVS_OFFICESTUDIO_FILE_CANVAS_WORD,
   "docx": AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX,
   "xlsy": AVS_OFFICESTUDIO_FILE_CANVAS_SPREADSHEET,
@@ -60,11 +60,6 @@ Ext2Formats = {
   "ppty": AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION,
   "pptx": AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTX,
 }
-
-dir_name = dirname(realpath(sys.argv[0]))
-#dir_name = join(dirname(realpath(__file__)), 'bin')
-converter_bin = join(dir_name, 'x2t')
-converter_lib_dirname = join(dir_name, 'lib')
 
 yformat_map = {
   'docy': 'docx',
@@ -78,9 +73,13 @@ yformat_service_map = {
   'ppty': 'com.sun.star.presentation.PresentationDocument',
 }
 
+yformat_tuple = ("docy", "xlsy", "ppty")
 
 class Handler(object):
-  """ImageMagic Handler is used to handler images."""
+  """
+  X2T Handler is used to convert Microsoft Office 2007 documents to OnlyOffice
+  documents.
+  """
 
   implements(IHandler)
 
@@ -91,55 +90,83 @@ class Handler(object):
     data(string)
       The opened and readed file into a string
     source_format(string)
-      The source format of the inputed file"""
+      The source format of the inputed file
+    """
     self.base_folder_url = base_folder_url
     self.file = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
-    self.environment['LD_LIBRARY_PATH'] = converter_lib_dirname
 
   def convert(self, destination_format=None, **kw):
     """ Convert the inputed file to output as format that were informed """
-    logger.debug("yformat convert x2t: %s > %s" % (self.file.source_format, destination_format))
-    in_format = Ext2Formats.get(self.file.source_format)
-    out_format = Ext2Formats.get(destination_format)
+    source_format = self.file.source_format
+    logger.debug("x2t convert: %s > %s" % (source_format, destination_format))
 
-    with NamedTemporaryFile(suffix='.%s' % destination_format, dir=self.base_folder_url) as output_file:
-      config = {
-        # 'm_sKey': 'from',
-        'm_sFileFrom': self.file.getUrl(),
-        'm_nFormatFrom': in_format,
-        'm_sFileTo': output_file.name,
-        'm_nFormatTo': out_format,
-        # 'm_bPaid': 'true',
-        # 'm_bEmbeddedFonts': 'false',
-        # 'm_bFromChanges': 'false',
-        # 'm_sFontDir': '/usr/share/fonts',
-        # 'm_sThemeDir': '/var/www/onlyoffice/documentserver/FileConverterService/presentationthemes',
-      }
-      with NamedTemporaryFile(suffix=".xml", dir=self.base_folder_url) as temp_xml:
-        root = ElementTree.Element('root')
-        for key, value in config.items():
-          ElementTree.SubElement(root, key).text = value
-        ElementTree.ElementTree(root).write(temp_xml, encoding='utf-8', xml_declaration=True, default_namespace=None,
-                                            method="xml")
-        temp_xml.flush()
-        p = Popen([converter_bin, temp_xml.name],
-                  env=self.environment,
-                  stdout=PIPE,
-                  stderr=PIPE,
-                  close_fds=True,
-                  )
-        stdout, stderr = p.communicate()
-        with open(output_file.name) as output_file1:
-          file_content = output_file1.read()
-        return_code_msg = "yformat convert x2t return:{}".format(p.returncode)
-        if p.returncode != 0 or not file_content:
-          raise Exception(return_code_msg + '\n' + stderr)
-      logger.debug(stdout)
-      logger.debug(stderr)
-      logger.debug("yformat convert x2t return:{}".format(p.returncode))
+    # init vars and xml configuration file
+    in_format = format_code_map[source_format]
+    out_format = format_code_map[destination_format]
+    root_dir = self.file.directory_name
+    input_dir = os.path.join(root_dir, "input");
+    output_dir = os.path.join(root_dir, "output");
+    final_file_name = os.path.join(root_dir, "document.%s" % destination_format)
+    input_file_name = self.file.getUrl()
+    output_file_name = final_file_name
+    config_file_name = os.path.join(root_dir, "config.xml")
+
+    if source_format in yformat_tuple:
+      os.mkdir(input_dir)
+      unzip(self.file.getUrl(), input_dir)
+      for _, _, files in os.walk(input_dir):
+        input_file_name, = files
+        break
+      input_file_name = os.path.join(input_dir, input_file_name)
+    if destination_format in yformat_tuple:
+      os.mkdir(output_dir)
+      output_file_name = os.path.join(output_dir, "body.txt")
+
+    config_file = open(config_file_name, "w")
+
+    config = {
+      # 'm_sKey': 'from',
+      'm_sFileFrom': input_file_name,
+      'm_nFormatFrom': in_format,
+      'm_sFileTo': output_file_name,
+      'm_nFormatTo': out_format,
+      # 'm_bPaid': 'true',
+      # 'm_bEmbeddedFonts': 'false',
+      # 'm_bFromChanges': 'false',
+      # 'm_sFontDir': '/usr/share/fonts',
+      # 'm_sThemeDir': '/var/www/onlyoffice/documentserver/FileConverterService/presentationthemes',
+    }
+    root = ElementTree.Element('root')
+    for key, value in config.items():
+      ElementTree.SubElement(root, key).text = value
+    ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
+    config_file.close()
+
+    # run convertion binary
+    p = Popen(
+      ["x2t", config_file.name],
+      stdout=PIPE,
+      stderr=PIPE,
+      close_fds=True,
+      env=self.environment,
+    )
+    stdout, stderr = p.communicate()
+    if p.returncode != 0:
+      raise RuntimeError("x2t: exit code %d != 0\n+ %s\n> stdout: %s\n> stderr: %s@ x2t xml:\n%s" % (p.returncode, " ".join(["x2t", config_file.name]), stdout, stderr, "  " + open(config_file.name).read().replace("\n", "\n  ")))
+
+    if destination_format in yformat_tuple:
+      zipTree(
+        final_file_name,
+        (output_file_name, ""),
+        (os.path.join(os.path.dirname(output_file_name), "media"), ""),
+      )
+
+    self.file.reload(final_file_name)
+    try:
+      return self.file.getContent()
+    finally:
       self.file.trash()
-      return file_content
 
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.

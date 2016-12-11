@@ -136,10 +136,10 @@ class MimeMapper(object):
     filter_dict, type_dict = json.loads(stdout)
 
     ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
-        'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-        'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-        'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
-        'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
+      # 'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
+      # 'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
+      # 'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
+      # 'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
     ]
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
         'Text', # Use 'Text - Choose Encoding' instead

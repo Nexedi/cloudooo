@@ -1,7 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
-#                    Gabriel M. Monnerat <gabriel@tiolive.com>
+# Copyright (c) 2016 Nexedi SA and Contributors. All Rights Reserved.
 #
 # WARNING: This program as such is intended to be used by professional
 # programmers who take the whole responsibility of assessing all potential
@@ -26,9 +25,10 @@
 #
 ##############################################################################
 
+from base64 import b64encode
 
 import magic
-from cloudooo.handler.imagemagick.handler import Handler
+from cloudooo.handler.wkhtmltopdf.handler import Handler
 from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
 
@@ -37,23 +37,40 @@ class TestHandler(HandlerTestCase):
   def afterSetUp(self):
     self.kw = dict(env=dict(PATH=self.env_path))
 
-  def testConvertPNGtoJPG(self):
-    """Test conversion of png to jpg"""
-    png_file = open("data/test.png").read()
-    handler = Handler(self.tmp_url, png_file, "png", **self.kw)
-    jpg_file = handler.convert("jpg")
+  def _testBase(self, html_path, **conversion_kw):
+    html_file = open(html_path).read()
+    handler = Handler(self.tmp_url, html_file, "html", **self.kw)
+    pdf_file = handler.convert("pdf", **conversion_kw)
     mime = magic.Magic(mime=True)
-    jpg_mimetype = mime.from_buffer(jpg_file)
-    self.assertEquals("image/jpeg", jpg_mimetype)
+    pdf_mimetype = mime.from_buffer(pdf_file)
+    self.assertEquals("application/pdf", pdf_mimetype)
 
-  def testgetMetadataFromImage(self):
-    """Test if metadata is extracted from image correctly"""
-    png_file = open("data/test.png").read()
-    handler = Handler(self.tmp_url, png_file, "png", **self.kw)
-    metadata = handler.getMetadata()
-    self.assertEquals(metadata.get("Compression"), "Zip")
-    self.assertEquals(metadata.get("Colorspace"), "sRGB")
-    self.assertEquals(metadata.get("Alpha color"), "grey74")
+  def testConvertHtmlWithPngDataUrlToPdf(self):
+    """Test conversion of html with png data url to pdf"""
+    self._testBase("data/test_with_png_dataurl.html")
+
+  def testConvertHtmlWithScriptToPdf(self):
+    """Test conversion of html with script to pdf"""
+    self._testBase("data/test_with_script.html")
+
+  def testConvertHtmlWithOpacityStyleToPdf(self):
+    """Test conversion of html with opacity style to pdf
+
+    Opacity style in a web pages causes Segmentation Fault only if wkhtmltopdf
+    is not connected to a graphical service like Xorg.
+    """
+    self._testBase("data/test_with_opacity_style.html")
+
+  # TODO: def testConvertHtmlWithHeaderAndFooter(self):
+
+  def testConvertHtmlWithTableOfContent(self):
+    """Test conversion of html with an additional table of content"""
+    self._testBase(
+      "data/test_with_toc.html",
+      toc=True,
+      xsl_style_sheet_data=b64encode(open("data/test_toc.xsl").read()),
+    )
+    # XXX how to check for table of content presence ?
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """

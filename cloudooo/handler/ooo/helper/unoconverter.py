@@ -108,7 +108,12 @@ class UnoConverter(object):
     elif filter_name == "impress_pdf_Export":
       property = PropertyValue('FilterData', 0,
                        uno.Any('[]com.sun.star.beans.PropertyValue',
-                       (PropertyValue('ExportNotesPages', 0, True, 0),),), 0)
+                       (PropertyValue('ExportNotesPages', 0, True, 0),
+                       PropertyValue('SelectPdfVersion', 0, 1, 0),),), 0)
+    elif "pdf_Export" in filter_name :
+      property = PropertyValue('FilterData', 0,
+                       uno.Any('[]com.sun.star.beans.PropertyValue',
+                       (PropertyValue('SelectPdfVersion', 0, 1, 0),),), 0)
     elif filter_name in ("draw_html_Export", "HTML (StarCalc)"):
       property = PropertyValue('FilterData', 0,
                         uno.Any('[]com.sun.star.beans.PropertyValue',
