@@ -38,7 +38,7 @@ from types import InstanceType
 import json
 
 try:
-  from cloudooo.handler.yformat.handler import yformat_service_map
+  from cloudooo.handler.x2t.handler import yformat_service_map
 except ImportError:
   yformat_service_map = {}
 
