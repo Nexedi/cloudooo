@@ -28,11 +28,11 @@
 ##############################################################################
 
 import mimetypes
-from mimetypes import guess_all_extensions, guess_extension
+from mimetypes import guess_type, guess_all_extensions, guess_extension
 from base64 import encodestring, decodestring
 from zope.interface import implements
 from interfaces.manager import IManager, IERP5Compatibility
-from cloudooo.util import logger
+from cloudooo.util import logger, parseContentType
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
@@ -59,6 +59,35 @@ def getHandlerClass(source_format, destination_format, mimetype_registry,
   raise HandlerNotFound('No Handler found for %r=>%r' % (source_format,
                                                          destination_format))
 
+def BBB_guess_type(url):
+  base = url.split("/")[-1].lstrip(".")
+  # if base.endswith(".ms.docx"): return ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Microsoft Word 2007-2013 XML")
+  split = base.split(".")
+  ext = '' if len(split) == 1 else split[-1]
+  return {
+    "docy": ("application/x-asc-text", None),
+    "xlsy": ("application/x-asc-spreadsheet", None),
+    "ppty": ("application/x-asc-presentation", None),
+  }.get(ext, None) or guess_type(url)
+
+def BBB_guess_extension(mimetype, title=None):
+  return {
+    # title : extension
+    "Flat XML ODF Text Document": ".fodt",
+    "MET - OS/2 Metafile": ".met",
+    "Microsoft Excel 2007-2013 XML": ".ms.xlsx",
+    "Microsoft PowerPoint 2007-2013 XML": ".ms.pptx",
+    "Microsoft PowerPoint 2007-2013 XML AutoPlay": ".ms.ppsx",
+    "Microsoft Word 2007-2013 XML": ".ms.docx",
+  }.get(title, None) or {
+    # mediatype : extension
+    "application/postscript": ".eps",
+    "application/vnd.ms-excel": ".xls",
+    "application/vnd.ms-excel.sheet.macroenabled.12": ".xlsm",
+    "application/vnd.ms-powerpoint": ".ppt",
+    "text/plain": ".txt",
+    "image/jpeg": ".jpg",
+  }.get(parseContentType(mimetype).gettype(), None) or guess_extension(mimetype)
 
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
@@ -143,33 +172,30 @@ class Manager(object):
     return metadata_dict
 
   def getAllowedExtensionList(self, request_dict={}):
-    """List types which can be generated from given type
+    """BBB: extension should not be used, use MIMEType with getAllowedConversionFormatList
+
+    List extension which can be generated from given type
     Type can be given as:
+      - content type
       - filename extension
-      - document type ('text', 'spreadsheet', 'presentation' or 'drawing')
-    e.g
-    self.getAllowedMimetypeList(dict(document_type="text"))
-    return extension_list
+      - document type
     """
     mimetype = request_dict.get('mimetype')
     extension = request_dict.get('extension')
     document_type = request_dict.get('document_type')
+    if not mimetype:
+      if extension:
+        mimetype, _ = BBB_guess_type("a." + extension)
+      elif document_type:
+        # BBB no other choice than to ask ooo.mimemapper
+        return mimemapper.getAllowedExtensionList(document_type=document_type)
     if mimetype:
-      allowed_extension_list = []
-      for ext in guess_all_extensions(mimetype):
-        ext = ext.replace('.', '')
-        extension_list = mimemapper.getAllowedExtensionList(extension=ext,
-                                                 document_type=document_type)
-        for extension in extension_list:
-          if extension not in allowed_extension_list:
-            allowed_extension_list.append(extension)
-      return allowed_extension_list
-    elif extension:
-      extension = extension.replace('.', '')
-      return mimemapper.getAllowedExtensionList(extension=extension,
-                                                 document_type=document_type)
-    elif document_type:
-      return mimemapper.getAllowedExtensionList(document_type=document_type)
+      allowed_extension_set = set()
+      for content_type, title in self.getAllowedConversionFormatList(mimetype):
+        ext = BBB_guess_extension(content_type, title)
+        if ext:
+          allowed_extension_set.add((ext.lstrip('.'), title))
+      return list(allowed_extension_set) or [('', '')]
     else:
       return [('', '')]
 
@@ -278,7 +304,7 @@ class Manager(object):
     """
     # calculate original extension required by convertFile from
     # given content_type (orig_format)
-    original_extension = guess_extension(orig_format).strip('.')
+    original_extension = BBB_guess_extension(orig_format).strip('.')
     # XXX - ugly way to remove "/" and "."
     orig_format = orig_format.split('.')[-1]
     orig_format = orig_format.split('/')[-1]
@@ -318,7 +344,12 @@ class Manager(object):
     """
     response_dict = {}
     try:
-      extension_list = self.getAllowedExtensionList({"mimetype": content_type})
+      mimetype_list = self.getAllowedConversionFormatList(content_type)
+      extension_list = []
+      for m, t in mimetype_list:
+        ext = BBB_guess_extension(m, t)
+        if ext:
+          extension_list.append((ext.lstrip('.'), t))
       response_dict['response_data'] = extension_list
       return (200, response_dict, '')
     except Exception, e:
