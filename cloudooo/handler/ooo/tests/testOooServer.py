@@ -66,20 +66,18 @@ class TestServer(TestCase):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
-    doc_allowed_list.sort()
-    for arg in doc_allowed_list:
-      self.assertTrue(tuple(arg) in text_expected_tuple,
-                    "%s not in %s" % (arg, text_expected_tuple))
+    # Verify all expected types ("doc" MAY NOT be present)
+    self.assertEquals(sorted([(a, b) for a, b in doc_allowed_list if a != "doc"]),
+                      sorted(list(filter(lambda (a, b): a != "doc", text_expected_tuple))))
 
   def testGetAllowedExtensionListByMimetype(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by mimetype"""
     request_dict = {"mimetype": "application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
-    msword_allowed_list.sort()
-    for arg in msword_allowed_list:
-      self.assertTrue(tuple(arg) in text_expected_tuple,
-                    "%s not in %s" % (arg, text_expected_tuple))
+    # Verify all expected types ("doc" MAY NOT be present)
+    self.assertEquals(sorted([(a, b) for a, b in msword_allowed_list if a != "doc"]),
+                      sorted(list(filter(lambda (a, b): a != "doc", text_expected_tuple))))
 
   def ConversionScenarioList(self):
     return [
@@ -381,14 +379,9 @@ class TestServer(TestCase):
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    # Verify if all expected types are in response list
-    for arg in text_expected_tuple:
-      self.assertTrue(list(arg) in response_dict['response_data'],
-                    "%s not in %s" % (arg, response_dict['response_data']))
-    # Verify if all types in response list are expected
-    for arg in response_dict['response_data']:
-      self.assertTrue(tuple(arg) in text_expected_tuple,
-                    "%s not in %s" % (arg, text_expected_tuple))
+    # Verify all expected types ("odt" MAY NOT be present)
+    self.assertEquals(sorted([(a, b) for a, b in response_dict['response_data'] if a != "odt"]),
+                      sorted(list(filter(lambda (a, b): a != "odt", text_expected_tuple))))
 
   def testGetTableItemListFromOdt(self):
     """Test if getTableItemList can get the table item list from odt file"""
