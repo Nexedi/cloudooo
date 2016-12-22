@@ -161,23 +161,25 @@ class Handler(object):
       self.file.trash()
 
   def getMetadata(self, base_document=False):
-    """Returns a dictionary with all metadata of document.
-    along with the metadata.
+    r"""Returns a dictionary with all metadata of document.
+    /!\ Not Implemented: no format are handled correctly.
     """
     # XXX Cloudooo takes the first handler that can "handle" source_mimetype.
     #     However, docx documents metadata can only be "handled" by the ooo handler.
     #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
     #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
+    #     And then, this method MUST raise on unhandled format. Here xformats are "handled" by cheating.
     if self._source_format in (
           "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         ):
       return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).getMetadata(base_document)
-    raise NotImplementedError
+    return {}
 
   def setMetadata(self, metadata={}):
-    """Returns image with new metadata.
+    r"""Returns document with new metadata.
+    /!\ Not Implemented: no format are handled correctly.
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
@@ -185,13 +187,14 @@ class Handler(object):
     #     However, docx documents metadata can only be "handled" by the ooo handler.
     #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
     #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
+    #     And then, this method MUST raise on unhandled format. Here xformats are "handled" by cheating.
     if self._source_format in (
           "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         ):
       return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).setMetadata(metadata)
-    raise NotImplementedError
+    return self.file.getContent()
 
   @staticmethod
   def getAllowedConversionFormatList(source_mimetype):
