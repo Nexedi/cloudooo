@@ -81,15 +81,19 @@ class TestHandler(HandlerTestCase):
     self.assertTrue(y_body_data.startswith("DOCY;v5;7519;"), "%r... does not start with 'DOCY;v5;7519;'" % (y_body_data[:20],))
     y_zip.open("media/image1.png")
 
-  def testgetMetadataFromImage(self):
-    """Test getMetadata not implemented form yformats"""
+  def testgetMetadata(self):
+    """Test getMetadata from yformats (not implemented)"""
     handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    self.assertRaises(NotImplementedError, handler.getMetadata)
+    #   Of course, expected behavior should be a dict of internal metadata
+    # but don't know how to handle it so far.
+    self.assertEquals(handler.getMetadata(), {})
 
   def testsetMetadata(self):
-    """Test setMetadata not implemented for yformats"""
+    """Test setMetadata for yformats (not implemented)"""
     handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    self.assertRaises(NotImplementedError, handler.setMetadata)
+    #   Of course, expected behavior should be an updated data with new
+    # internal metadata but don't know how to handle it so far.
+    self.assertEquals(handler.setMetadata(), "")
 
   def testGetAllowedConversionFormatList(self):
     """Test all combination of mimetype
