@@ -105,12 +105,13 @@ class Handler(object):
     config_file_name = os.path.join(root_dir, "config.xml")
 
     if source_format in yformat_tuple:
-      os.mkdir(input_dir)
-      unzip(self.file.getUrl(), input_dir)
-      for _, _, files in os.walk(input_dir):
-        input_file_name, = files
-        break
-      input_file_name = os.path.join(input_dir, input_file_name)
+      if self._data.startswith("PK\x03\x04"):
+        os.mkdir(input_dir)
+        unzip(self.file.getUrl(), input_dir)
+        for _, _, files in os.walk(input_dir):
+          input_file_name, = files
+          break
+        input_file_name = os.path.join(input_dir, input_file_name)
     if destination_format in yformat_tuple:
       os.mkdir(output_dir)
       output_file_name = os.path.join(output_dir, "body.txt")

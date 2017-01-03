@@ -51,6 +51,8 @@ class TestHandler(HandlerTestCase):
 
   def testConvertXlsy(self):
     """Test conversion of xlsy to xlsx and back"""
+    x_data = Handler(self.tmp_url, open("data/test_body.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
+    self.assertIn("xl/", x_data[:2000])
     x_data = Handler(self.tmp_url, open("data/test.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
     self.assertIn("xl/", x_data[:2000])
 
