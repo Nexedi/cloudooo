@@ -103,6 +103,12 @@ class TestHandler(HandlerTestCase):
     None of the types below define any mimetype parameter to not ignore so far.
     """
     get = Handler.getAllowedConversionFormatList
+    self.assertEquals(get("application/x-asc-text+zip;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")])
+    self.assertEquals(get("application/x-asc-spreadsheet+zip;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet")])
+    self.assertEquals(get("application/x-asc-presentation+zip;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")])
     self.assertEquals(get("application/x-asc-text;ignored=param"),
       [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")])
     self.assertEquals(get("application/x-asc-spreadsheet;ignored=param"),
@@ -110,11 +116,11 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(get("application/x-asc-presentation;ignored=param"),
       [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")])
     self.assertEquals(get("application/vnd.openxmlformats-officedocument.wordprocessingml.document;ignored=param"),
-      [("application/x-asc-text", "OnlyOffice Text Document")])
+      [("application/x-asc-text+zip", "OnlyOffice Text Document")])
     self.assertEquals(get("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;ignored=param"),
-      [("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet")])
+      [("application/x-asc-spreadsheet+zip", "OnlyOffice Spreadsheet")])
     self.assertEquals(get("application/vnd.openxmlformats-officedocument.presentationml.presentation;ignored=param"),
-      [("application/x-asc-presentation", "OnlyOffice Presentation")])
+      [("application/x-asc-presentation+zip", "OnlyOffice Presentation")])
 
 def test_suite():
   return make_suite(TestHandler)

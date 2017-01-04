@@ -65,9 +65,9 @@ def BBB_guess_type(url):
   split = base.split(".")
   ext = '' if len(split) == 1 else split[-1]
   return {
-    "docy": ("application/x-asc-text", None),
-    "xlsy": ("application/x-asc-spreadsheet", None),
-    "ppty": ("application/x-asc-presentation", None),
+    "docy": ("application/x-asc-text+zip", None),
+    "xlsy": ("application/x-asc-spreadsheet+zip", None),
+    "ppty": ("application/x-asc-presentation+zip", None),
   }.get(ext, None) or guess_type(url)
 
 def BBB_guess_extension(mimetype, title=None):

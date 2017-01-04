@@ -202,21 +202,21 @@ class Handler(object):
     """Returns a list content_type and their titles which are supported
     by enabled handlers.
 
-    [('application/x-asc-text', 'OnlyOffice Text Document'),
+    [('application/x-asc-text+zip', 'OnlyOffice Text Document'),
      ...
     ]
     """
     source_mimetype = parseContentType(source_mimetype).gettype()
     if source_mimetype in ("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
-      return [("application/x-asc-text", "OnlyOffice Text Document")]
-    if source_mimetype in ("docy", "application/x-asc-text"):
+      return [("application/x-asc-text+zip", "OnlyOffice Text Document")]
+    if source_mimetype in ("docy", "application/x-asc-text+zip", "application/x-asc-text"):
       return [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")]
     if source_mimetype in ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-      return [("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet")]
-    if source_mimetype in ("xlsy", "application/x-asc-spreadsheet"):
+      return [("application/x-asc-spreadsheet+zip", "OnlyOffice Spreadsheet")]
+    if source_mimetype in ("xlsy", "application/x-asc-spreadsheet+zip", "application/x-asc-spreadsheet"):
       return [("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet")]
     if source_mimetype in ("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"):
-      return [("application/x-asc-presentation", "OnlyOffice Presentation")]
-    if source_mimetype in ("ppty", "application/x-asc-presentation"):
+      return [("application/x-asc-presentation+zip", "OnlyOffice Presentation")]
+    if source_mimetype in ("ppty", "application/x-asc-presentation+zip", "application/x-asc-presentation"):
       return [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")]
     return []

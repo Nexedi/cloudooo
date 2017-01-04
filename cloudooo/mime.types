@@ -56,7 +56,7 @@ application/vnd.oasis.opendocument.database                                     
 application/vnd.oasis.opendocument.image                                        odi
 application/vnd.ms-word.document.macroEnabled.12                                docm
 application/vnd.openxmlformats-officedocument.wordprocessingml.document         docx
-application/x-asc-text                                                          docy
+application/x-asc-text+zip                                                      docy
 application/vnd.openxmlformats-officedocument.wordprocessingml.template         dotx
 application/vnd.ms-powerpoint.template.macroEnabled.12                          potm
 application/vnd.openxmlformats-officedocument.presentationml.template           potx
@@ -65,12 +65,12 @@ application/vnd.ms-powerpoint.slideshow.macroEnabled.12                         
 application/vnd.openxmlformats-officedocument.presentationml.slideshow          ppsx
 application/vnd.ms-powerpoint.presentation.macroEnabled.12                      pptm
 application/vnd.openxmlformats-officedocument.presentationml.presentation       pptx
-application/x-asc-presentation                                                  ppty
+application/x-asc-presentation+zip                                              ppty
 application/vnd.ms-excel.addin.macroEnabled.12                                  xlam
 application/vnd.ms-excel.sheet.binary.macroEnabled.12                           xlsb
 application/vnd.ms-excel.sheet.macroEnabled.12                                  xlsm
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet               xlsx
-application/x-asc-spreadsheet                                                   xlsy
+application/x-asc-spreadsheet+zip                                               xlsy
 application/vnd.ms-excel.template.macroEnabled.12                               xltm
 application/vnd.openxmlformats-officedocument.spreadsheetml.template            xltx
 application/x-msmetafile                                                        wmf
