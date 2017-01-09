@@ -86,6 +86,12 @@ application/x-openoffice-gdimetafile                                            
 application/emf                                                                 emf
 application/x-emf                                                               emf
 application/octet-stream                                                        met
+application/docy                                                                docy
+application/yformat-docy                                                        docy
+application/xlsy                                                                xlsy
+application/yformat-xlsy                                                        xlsy
+application/ppty                                                                ppty
+application/yformat-ppty                                                        ppty
 #
 # Image
 #
