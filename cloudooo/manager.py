@@ -41,6 +41,7 @@ from fnmatch import fnmatch
 #XXX Must be removed
 from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.handler.ooo.mimemapper import mimemapper
+from cloudooo.handler.wkhtmltopdf.handler import Handler as WkhtmltopdfHandler
 
 class HandlerNotFound(Exception):
   pass
@@ -113,7 +114,20 @@ class Manager(object):
     """
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
-    handler_class = getHandlerClass(source_format,
+    # XXX Force the use of wkhtmltopdf handler if converting from html to pdf
+    #     with conversion parameters.
+    #     This is a hack that quickly enables the use of wkhtmltopdf without
+    #     conflicting with other "html to pdf" conversion method
+    #     (i.e. using the ooo handler) that does not use such a parameter.
+    #     This hack should be removed after defining and implementing a way to
+    #     use the conversion_kw in a possible interoperable way between all
+    #     "html to pdf" handlers.
+    if (conversion_kw and
+        source_format in ("html", "text/html") and
+        destination_format in ("pdf", "application/pdf")):
+      handler_class = WkhtmltopdfHandler
+    else:
+      handler_class = getHandlerClass(source_format,
                                     destination_format,
                                     self.mimetype_registry,
                                     self.handler_dict)
