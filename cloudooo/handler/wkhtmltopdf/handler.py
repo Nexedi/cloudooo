@@ -30,7 +30,7 @@ from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
-from tempfile import mktemp
+from tempfile import mktemp, mkdtemp
 from os.path import basename
 from base64 import b64decode
 
@@ -54,6 +54,9 @@ class Handler(object):
       dir=self.file.directory_name,
     )
     return path
+
+  def makeTempDir(self, *args, **kw):
+    return mkdtemp(*args, dir=self.file.directory_name, **kw)
 
   def convertPathToUrl(self, path):
     if path.startswith("/"):
@@ -356,6 +359,8 @@ class Handler(object):
       "include_in_outline",
     ], conversion_kw)
     command += self.makeSwitchOptionList(["default_header"], conversion_kw)
+    # put cache in the temp dir - to disable cache
+    command += ["--cache-dir", self.makeTempDir(prefix="cache")]
     command += self.makeOneStringArgumentOptionList([
       #"cache_dir",  # we decide
       "encoding",
