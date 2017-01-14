@@ -232,12 +232,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_TextRtf(self):
@@ -292,12 +287,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImagePng(self):
@@ -311,12 +301,7 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_TextHtml(self):
@@ -355,12 +340,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentGraphics(self):
@@ -374,12 +354,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageGif(self):
@@ -393,12 +368,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageSvgXml(self):
@@ -412,12 +382,7 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageTiff(self):
@@ -431,12 +396,7 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXCmuRaster(self):
@@ -452,10 +412,6 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageBmp(self):
@@ -470,11 +426,6 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXPortableBitmap(self):
@@ -489,11 +440,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXPortableGraymap(self):
@@ -508,11 +455,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXPortablePixmap(self):
@@ -527,11 +470,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXXpixmap(self):
@@ -546,11 +485,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ApplicationVndMsExcel(self):
@@ -658,12 +593,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Impress)') ])
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentPresentationmlPresentation(self):
@@ -683,12 +613,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Impress)') ])
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentPresentationmlSlideshow(self):
@@ -708,12 +633,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Impress)') ])
 
   def testGetAllowedConversionFormatList_ApplicationVndMsPowerpoint(self):
@@ -734,12 +654,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
-        ('image/x-cmu-raster', 'RAS - Sun Raster Image'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
-        ('image/x-portable-bitmap', 'PBM - Portable Bitmap'),
-        ('image/x-portable-graymap', 'PGM - Portable Graymap'),
-        ('image/x-portable-pixmap', 'PPM - Portable Pixelmap'),
-        ('image/x-xpixmap', 'XPM - X PixMap'),
         ('text/html', 'HTML Document (Impress)') ])
 
 def test_suite():

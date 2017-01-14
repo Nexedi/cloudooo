@@ -474,10 +474,10 @@ class TestServer(TestCase):
     data = encodestring(open("./data/granulate_test.odt").read())
     image_list = self.proxy.getImageItemList(data, "odt")
     self.assertEquals([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', 'TioLive Logo'],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', ''],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'TioLive Logo'],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', ''],
                        ['2000004F0000423300001370ADF6545B2997B448.svm', 'Python Logo'],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', 'Again TioLive Logo']],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'Again TioLive Logo']],
                       image_list)
 
   def testGetImageItemListFromDoc(self):
@@ -485,10 +485,10 @@ class TestServer(TestCase):
     data = encodestring(open("./data/granulate_test.doc").read())
     image_list = self.proxy.getImageItemList(data, "doc")
     self.assertEquals([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', 'TioLive Logo'],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', ''],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'TioLive Logo'],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', ''],
                        ['2000031600004233000013702113A0E70B910778.wmf', 'Python Logo'],
-                       ['10000201000000C80000004EF26C99A54A61B987.png', 'Again TioLive Logo']],
+                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'Again TioLive Logo']],
                       image_list)
 
   def testGetImageFromOdt(self):
