@@ -201,7 +201,8 @@ class TestHandler(HandlerTestCase):
       ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Office Open XML Text'),
       ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
       ('image/png', 'PNG - Portable Network Graphic'),
-      ('text/html', 'HTML Document (Writer)')]
+      ('text/html', 'HTML Document (Writer)'),
+      ('text/plain', 'Text - Choose Encoding')]
     self.assertEquals(get("text/plain;ignored=param"), text_plain_output_list)
     self.assertEquals(get("text/plain;charset=UTF-8;ignored=param"), text_plain_output_list)
     self.assertEquals(get("text/plain;charset=US-ASCII;ignored=param"), text_plain_output_list)
@@ -210,7 +211,8 @@ class TestHandler(HandlerTestCase):
     """Test allowed conversion format for application/msword"""
     self.assertEquals(
       sorted(Handler.getAllowedConversionFormatList("application/msword;ignored=param")),
-      [ ('application/pdf', 'PDF - Portable Document Format'),
+      [ ('application/msword', 'Microsoft Word 97-2003'),
+        ('application/pdf', 'PDF - Portable Document Format'),
         ('application/rtf', 'Rich Text'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
@@ -225,7 +227,8 @@ class TestHandler(HandlerTestCase):
     """Test allowed conversion format for application/pdf"""
     self.assertEquals(
       sorted(Handler.getAllowedConversionFormatList("application/pdf;ignored=param")),
-      [ ('application/postscript', 'EPS - Encapsulated PostScript'),
+      [ ('application/pdf', 'PDF - Portable Document Format'),
+        ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
@@ -248,6 +251,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
         ('application/rtf', 'Rich Text'),
+        ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Microsoft Word 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Office Open XML Text'),
@@ -271,6 +275,8 @@ class TestHandler(HandlerTestCase):
         ('application/rtf', 'Rich Text'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
+        ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Microsoft Word 2007-2013 XML'),
+        ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Office Open XML Text'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('text/html', 'HTML Document (Writer)'),
@@ -284,6 +290,7 @@ class TestHandler(HandlerTestCase):
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
+        ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
@@ -299,6 +306,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
+        ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
@@ -325,6 +333,9 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('text/csv', 'Text CSV'),
+        ('text/html', 'HTML Document'),
+        ('text/html', 'HTML Document (Calc)'),
+        ('text/html', 'HTML Document (Writer)'),
         ('text/plain', 'Text (Writer/Web)'),
         ('text/plain', 'Text - Choose Encoding'),
         ('text/plain', 'Text - Choose Encoding (Writer/Web)') ])
@@ -334,6 +345,7 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(
       sorted(Handler.getAllowedConversionFormatList("application/postscript;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
+        ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
@@ -349,6 +361,7 @@ class TestHandler(HandlerTestCase):
       sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.graphics;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
+        ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -364,6 +377,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
@@ -381,6 +395,7 @@ class TestHandler(HandlerTestCase):
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
+        ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -396,6 +411,7 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
+        ('image/tiff', 'TIFF - Tagged Image File Format'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
 
@@ -426,6 +442,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphic'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
 
   def testGetAllowedConversionFormatList_ImageXPortableBitmap(self):
@@ -493,6 +510,7 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-excel;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
+        ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
@@ -514,6 +532,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
+        ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -528,6 +547,8 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document (Calc)') ])
@@ -568,6 +589,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.sun.xml.writer', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
+        ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document'),
         ('text/html', 'HTML Document (Calc)'),
         ('text/html', 'HTML Document (Writer)'),
@@ -584,6 +606,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003'),
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
+        ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),  # TEST it
@@ -606,6 +629,8 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
+        ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
+        ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Office Open XML Presentation AutoPlay'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
@@ -628,6 +653,8 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
+        ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
+        ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Office Open XML Presentation AutoPlay'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -638,11 +665,12 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndMsPowerpoint(self):
     """Test allowed conversion format for application/vnd.ms-powerpoint"""
-    self.maxDiff = None
     self.assertEquals(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-powerpoint;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
+        ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003'),
+        ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),

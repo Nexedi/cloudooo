@@ -241,7 +241,7 @@ class Handler(object):
           continue
         if ext:
           mimetype, _ = mimetypes.guess_type("a." + ext)  # XXX never guess
-          if mimetype and mimetype != parsed_mimetype_type:
+          if mimetype:
             output_set.add((mimetype, title))
     return list(output_set)
 
