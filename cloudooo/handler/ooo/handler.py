@@ -29,6 +29,7 @@
 import json
 import re
 import pkg_resources
+import mimetypes
 from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
@@ -39,7 +40,7 @@ from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
 from cloudooo.handler.ooo.monitor import monitor_sleeping_time
-from cloudooo.util import logger
+from cloudooo.util import logger, parseContentType
 from psutil import pid_exists
 
 try:
@@ -237,6 +238,37 @@ class Handler(object):
     doc_loaded = self.document.getContent()
     self.document.trash()
     return doc_loaded
+
+  @staticmethod
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+     ('application/pdf', 'PDF - Portable Document Format'),
+     ...
+    ]
+    """
+    # XXX please never guess extension from mimetype
+    output_set = set()
+    if "/" in source_mimetype:
+      parsed_mimetype_type = parseContentType(source_mimetype).gettype()
+      # here `guess_all_extensions` never handles mimetype parameters
+      #   (even for `text/plain;charset=UTF-8` which is standard)
+      extension_list = mimetypes.guess_all_extensions(parsed_mimetype_type)  # XXX never guess
+    else:
+      extension_list = [source_mimetype]
+
+    for ext in extension_list:
+      for ext, title in mimemapper.getAllowedExtensionList(extension=ext.replace(".", "")):
+        if ext in ("fodt", ".fodt"):  # BBB
+          output_set.add(("application/vnd.oasis.opendocument.text-flat-xml", title))
+          continue
+        if ext:
+          mimetype, _ = mimetypes.guess_type("a." + ext)  # XXX never guess
+          if mimetype:
+            output_set.add((mimetype, title))
+    return list(output_set)
 
 def bootstrapHandler(configuration_dict):
   # Bootstrap handler

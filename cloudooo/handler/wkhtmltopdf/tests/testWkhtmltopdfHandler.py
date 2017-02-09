@@ -77,6 +77,18 @@ class TestHandler(HandlerTestCase):
     handler = Handler(self.tmp_url, "", "png", **self.kw)
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
+  def testGetAllowedConversionFormatList(self):
+    """Test all combination of mimetype
+
+    None of the types below define any mimetype parameter to not ignore so far.
+    """
+    get = Handler.getAllowedConversionFormatList
+    # Handled mimetypes
+    self.assertEquals(get("text/html;ignored=param"),
+      [("application/pdf", "PDF - Portable Document Format")])
+
+    # Unhandled mimetypes
+    self.assertEquals(get("application/pdf;ignored=param"), [])
 
 def test_suite():
   return make_suite(TestHandler)

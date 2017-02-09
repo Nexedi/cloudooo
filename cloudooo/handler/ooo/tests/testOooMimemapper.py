@@ -74,8 +74,10 @@ drawing_expected_tuple = (
 
 web_expected_tuple = (
     ('html', 'HTML Document'),
+    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'Text (Writer/Web)'),
     ('pdf', 'PDF - Portable Document Format'),
+    ('png', 'PNG - Portable Network Graphic'),
     ('sxw', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
     ('txt', 'Text (Writer/Web)'),
     ('txt', 'Text - Choose Encoding (Writer/Web)'),

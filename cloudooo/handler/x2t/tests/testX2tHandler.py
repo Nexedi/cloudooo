@@ -51,6 +51,8 @@ class TestHandler(HandlerTestCase):
 
   def testConvertXlsy(self):
     """Test conversion of xlsy to xlsx and back"""
+    x_data = Handler(self.tmp_url, open("data/test_body.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
+    self.assertIn("xl/", x_data[:2000])
     x_data = Handler(self.tmp_url, open("data/test.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
     self.assertIn("xl/", x_data[:2000])
 
@@ -81,16 +83,38 @@ class TestHandler(HandlerTestCase):
     self.assertTrue(y_body_data.startswith("DOCY;v5;7519;"), "%r... does not start with 'DOCY;v5;7519;'" % (y_body_data[:20],))
     y_zip.open("media/image1.png")
 
-  def testgetMetadataFromImage(self):
-    """Test getMetadata not implemented form yformats"""
+  def testgetMetadata(self):
+    """Test getMetadata from yformats (not implemented)"""
     handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    self.assertRaises(NotImplementedError, handler.getMetadata)
+    #   Of course, expected behavior should be a dict of internal metadata
+    # but don't know how to handle it so far.
+    self.assertEquals(handler.getMetadata(), {})
 
   def testsetMetadata(self):
-    """Test setMetadata not implemented for yformats"""
+    """Test setMetadata for yformats (not implemented)"""
     handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    self.assertRaises(NotImplementedError, handler.setMetadata)
+    #   Of course, expected behavior should be an updated data with new
+    # internal metadata but don't know how to handle it so far.
+    self.assertEquals(handler.setMetadata(), "")
 
+  def testGetAllowedConversionFormatList(self):
+    """Test all combination of mimetype
+
+    None of the types below define any mimetype parameter to not ignore so far.
+    """
+    get = Handler.getAllowedConversionFormatList
+    self.assertEquals(get("application/x-asc-text;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")])
+    self.assertEquals(get("application/x-asc-spreadsheet;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet")])
+    self.assertEquals(get("application/x-asc-presentation;ignored=param"),
+      [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")])
+    self.assertEquals(get("application/vnd.openxmlformats-officedocument.wordprocessingml.document;ignored=param"),
+      [("application/x-asc-text", "OnlyOffice Text Document")])
+    self.assertEquals(get("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;ignored=param"),
+      [("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet")])
+    self.assertEquals(get("application/vnd.openxmlformats-officedocument.presentationml.presentation;ignored=param"),
+      [("application/x-asc-presentation", "OnlyOffice Presentation")])
 
 def test_suite():
   return make_suite(TestHandler)

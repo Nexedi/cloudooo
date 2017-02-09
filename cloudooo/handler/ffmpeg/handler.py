@@ -123,3 +123,16 @@ class Handler(object):
       return self.input.getContent()
     finally:
       self.input.trash()
+
+  @staticmethod
+  def getAllowedConversionFormatList(source_mimetype):
+    """Returns a list content_type and their titles which are supported
+    by enabled handlers.
+
+    [('audio/ogg;codecs=opus', 'Opus Audio File Format'),
+     ('video/webm', 'Webm Video File Format'),
+     ...
+    ]
+    """
+    # XXX NotImplemented
+    return []

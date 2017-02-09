@@ -87,7 +87,7 @@ class IManager(Interface):
     metadata_dict : Metadatas to include in content
     """
 
-  def getAllowedConversionFormatList(source_mimetype):
+  def getAllowedConversionFormatList(self, source_mimetype):
     """Returns a list content_type and their titles which are supported
     by enabled handlers.
 
