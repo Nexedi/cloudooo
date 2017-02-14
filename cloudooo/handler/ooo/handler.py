@@ -118,15 +118,16 @@ class Handler(object):
       openoffice.start()
     command_list = self._getCommand(*feature_list, **kw)
     stdout, stderr = self._subprocess(command_list)
-    if not stdout and len(re.findall("\w*Exception|\w*Error", stderr)) >= 1:
-      logger.debug(stderr)
+    if not stdout and stderr:
+      first_error = "first run error: " + stderr
+      logger.error(stderr)
       self.document.restoreOriginal()
       openoffice.restart()
       kw['document_url'] = self.document.getUrl()
       command = self._getCommand(*feature_list, **kw)
       stdout, stderr = self._subprocess(command)
       if stderr != "":
-          raise Exception(stderr)
+        raise Exception(first_error + "\nsecond run error: " + stderr)
 
     return stdout, stderr
 
