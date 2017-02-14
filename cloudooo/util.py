@@ -132,9 +132,8 @@ def zipTree(destination, *tree_path_list):
   return destination
 
 def unzip(source, destination):
-  zipfile = ZipFile(source)
-  zipfile.extractall(destination)
-  zipfile.close()
+  with ZipFile(source) as zipfile:
+    zipfile.extractall(destination)
 
 def parseContentType(content_type):
   """Parses `text/plain;charset="utf-8"` to a mimetools.Message object.
