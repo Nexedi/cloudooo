@@ -27,42 +27,132 @@
 ##############################################################################
 from xml.etree import ElementTree
 from subprocess import Popen, PIPE
-from tempfile import NamedTemporaryFile, mktemp
-import sys
 import os
+import json
+import io
+from mimetypes import guess_type
 
 from zope.interface import implements
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger, zipTree, unzip, parseContentType
+from cloudooo.util import logger, unzip, parseContentType
 from cloudooo.handler.ooo.handler import Handler as OOoHandler
 
-AVS_OFFICESTUDIO_FILE_UNKNOWN = "0"
-AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = "65"
-AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTX = "129"
-AVS_OFFICESTUDIO_FILE_PRESENTATION_PPSX = "132"
-AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLSX = "257"
-AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_PDF = "513"
-AVS_OFFICESTUDIO_FILE_TEAMLAB_DOCY = "4097"
-AVS_OFFICESTUDIO_FILE_TEAMLAB_XLSY = "4098"
-AVS_OFFICESTUDIO_FILE_TEAMLAB_PPTY = "4099"
-AVS_OFFICESTUDIO_FILE_CANVAS_WORD = "8193"
-AVS_OFFICESTUDIO_FILE_CANVAS_SPREADSHEET = "8194"
-AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION = "8195"
-AVS_OFFICESTUDIO_FILE_OTHER_HTMLZIP = "2051"
-AVS_OFFICESTUDIO_FILE_OTHER_ZIP = "2057"
+from zipfile import ZipFile, ZIP_DEFLATED
+
+AVS_OFFICESTUDIO_FILE_UNKNOWN = 0x0000
+
+AVS_OFFICESTUDIO_FILE_DOCUMENT = 0x0040
+AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0001
+AVS_OFFICESTUDIO_FILE_DOCUMENT_DOC = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0002
+AVS_OFFICESTUDIO_FILE_DOCUMENT_ODT = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0003
+AVS_OFFICESTUDIO_FILE_DOCUMENT_RTF = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0004
+AVS_OFFICESTUDIO_FILE_DOCUMENT_TXT = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0005
+AVS_OFFICESTUDIO_FILE_DOCUMENT_HTML = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0006
+AVS_OFFICESTUDIO_FILE_DOCUMENT_MHT = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0007
+AVS_OFFICESTUDIO_FILE_DOCUMENT_EPUB = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0008
+AVS_OFFICESTUDIO_FILE_DOCUMENT_FB2 = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x0009
+AVS_OFFICESTUDIO_FILE_DOCUMENT_MOBI = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x000a
+AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCM = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x000b
+AVS_OFFICESTUDIO_FILE_DOCUMENT_DOTX = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x000c
+AVS_OFFICESTUDIO_FILE_DOCUMENT_DOTM = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x000d
+AVS_OFFICESTUDIO_FILE_DOCUMENT_ODT_FLAT = AVS_OFFICESTUDIO_FILE_DOCUMENT + 0x000e
+
+AVS_OFFICESTUDIO_FILE_PRESENTATION = 0x0080
+AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTX = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0001
+AVS_OFFICESTUDIO_FILE_PRESENTATION_PPT = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0002
+AVS_OFFICESTUDIO_FILE_PRESENTATION_ODP = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0003
+AVS_OFFICESTUDIO_FILE_PRESENTATION_PPSX = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0004
+AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTM = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0005
+AVS_OFFICESTUDIO_FILE_PRESENTATION_PPSM = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0006
+AVS_OFFICESTUDIO_FILE_PRESENTATION_POTX = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0007
+AVS_OFFICESTUDIO_FILE_PRESENTATION_POTM = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0008
+AVS_OFFICESTUDIO_FILE_PRESENTATION_ODP_FLAT = AVS_OFFICESTUDIO_FILE_PRESENTATION + 0x0009
+
+AVS_OFFICESTUDIO_FILE_SPREADSHEET = 0x0100
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLSX = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0001
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLS = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0002
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_ODS = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0003
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_CSV = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0004
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLSM = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0005
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLTX = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0006
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLTM = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0007
+AVS_OFFICESTUDIO_FILE_SPREADSHEET_ODS_FLAT = AVS_OFFICESTUDIO_FILE_SPREADSHEET + 0x0008
+
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM = 0x0200
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_PDF = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0001
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_SWF = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0002
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_DJVU = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0003
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_XPS = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0004
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_SVG = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0005
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_HTMLR = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0006
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_HTMLRMenu = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0007
+AVS_OFFICESTUDIO_FILE_CROSSPLATFORM_HTMLRCanvas = AVS_OFFICESTUDIO_FILE_CROSSPLATFORM + 0x0008
+
+AVS_OFFICESTUDIO_FILE_IMAGE = 0x0400
+AVS_OFFICESTUDIO_FILE_IMAGE_JPG = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0001
+AVS_OFFICESTUDIO_FILE_IMAGE_TIFF = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0002
+AVS_OFFICESTUDIO_FILE_IMAGE_TGA = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0003
+AVS_OFFICESTUDIO_FILE_IMAGE_GIF = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0004
+AVS_OFFICESTUDIO_FILE_IMAGE_PNG = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0005
+AVS_OFFICESTUDIO_FILE_IMAGE_EMF = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0006
+AVS_OFFICESTUDIO_FILE_IMAGE_WMF = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0007
+AVS_OFFICESTUDIO_FILE_IMAGE_BMP = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0008
+AVS_OFFICESTUDIO_FILE_IMAGE_CR2 = AVS_OFFICESTUDIO_FILE_IMAGE + 0x0009
+AVS_OFFICESTUDIO_FILE_IMAGE_PCX = AVS_OFFICESTUDIO_FILE_IMAGE + 0x000a
+AVS_OFFICESTUDIO_FILE_IMAGE_RAS = AVS_OFFICESTUDIO_FILE_IMAGE + 0x000b
+AVS_OFFICESTUDIO_FILE_IMAGE_PSD = AVS_OFFICESTUDIO_FILE_IMAGE + 0x000c
+AVS_OFFICESTUDIO_FILE_IMAGE_ICO = AVS_OFFICESTUDIO_FILE_IMAGE + 0x000d
+
+AVS_OFFICESTUDIO_FILE_OTHER = 0x0800
+AVS_OFFICESTUDIO_FILE_OTHER_EXTRACT_IMAGE = AVS_OFFICESTUDIO_FILE_OTHER + 0x0001
+AVS_OFFICESTUDIO_FILE_OTHER_MS_OFFCRYPTO = AVS_OFFICESTUDIO_FILE_OTHER + 0x0002
+AVS_OFFICESTUDIO_FILE_OTHER_HTMLZIP = AVS_OFFICESTUDIO_FILE_OTHER + 0x0003
+AVS_OFFICESTUDIO_FILE_OTHER_OLD_DOCUMENT = AVS_OFFICESTUDIO_FILE_OTHER + 0x0004
+AVS_OFFICESTUDIO_FILE_OTHER_OLD_PRESENTATION = AVS_OFFICESTUDIO_FILE_OTHER + 0x0005
+AVS_OFFICESTUDIO_FILE_OTHER_OLD_DRAWING = AVS_OFFICESTUDIO_FILE_OTHER + 0x0006
+AVS_OFFICESTUDIO_FILE_OTHER_TEAMLAB_INNER = AVS_OFFICESTUDIO_FILE_OTHER + 0x0007
+AVS_OFFICESTUDIO_FILE_OTHER_JSON = AVS_OFFICESTUDIO_FILE_OTHER + 0x0008
+AVS_OFFICESTUDIO_FILE_OTHER_ZIP = AVS_OFFICESTUDIO_FILE_OTHER + 0x0009
+
+AVS_OFFICESTUDIO_FILE_TEAMLAB = 0x1000
+AVS_OFFICESTUDIO_FILE_TEAMLAB_DOCY = AVS_OFFICESTUDIO_FILE_TEAMLAB + 0x0001
+AVS_OFFICESTUDIO_FILE_TEAMLAB_XLSY = AVS_OFFICESTUDIO_FILE_TEAMLAB + 0x0002
+AVS_OFFICESTUDIO_FILE_TEAMLAB_PPTY = AVS_OFFICESTUDIO_FILE_TEAMLAB + 0x0003
+
+AVS_OFFICESTUDIO_FILE_CANVAS = 0x2000
+AVS_OFFICESTUDIO_FILE_CANVAS_WORD = AVS_OFFICESTUDIO_FILE_CANVAS + 0x0001
+AVS_OFFICESTUDIO_FILE_CANVAS_SPREADSHEET = AVS_OFFICESTUDIO_FILE_CANVAS + 0x0002
+AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION = AVS_OFFICESTUDIO_FILE_CANVAS + 0x0003
+AVS_OFFICESTUDIO_FILE_CANVAS_PDF = AVS_OFFICESTUDIO_FILE_CANVAS + 0x0004
 
 format_code_map = {
-  "docy": AVS_OFFICESTUDIO_FILE_CANVAS_WORD,
+  "odt":  AVS_OFFICESTUDIO_FILE_DOCUMENT_ODT,
+  "ods":  AVS_OFFICESTUDIO_FILE_SPREADSHEET_ODS,
+  "odp":  AVS_OFFICESTUDIO_FILE_PRESENTATION_ODP,
   "docx": AVS_OFFICESTUDIO_FILE_DOCUMENT_DOCX,
-  "xlsy": AVS_OFFICESTUDIO_FILE_CANVAS_SPREADSHEET,
   "xlsx": AVS_OFFICESTUDIO_FILE_SPREADSHEET_XLSX,
-  "ppty": AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION,
   "pptx": AVS_OFFICESTUDIO_FILE_PRESENTATION_PPTX,
+  "docy": AVS_OFFICESTUDIO_FILE_CANVAS_WORD,
+  "xlsy": AVS_OFFICESTUDIO_FILE_CANVAS_SPREADSHEET,
+  "ppty": AVS_OFFICESTUDIO_FILE_CANVAS_PRESENTATION,
+}
+
+format_code_map_output = {
+  "docy": AVS_OFFICESTUDIO_FILE_TEAMLAB_DOCY,
+  "xlsy": AVS_OFFICESTUDIO_FILE_TEAMLAB_XLSY,
+  "ppty": AVS_OFFICESTUDIO_FILE_TEAMLAB_PPTY,
+}
+
+yformat_map = {
+  'docy': 'docx',
+  'xlsy': 'xlsx',
+  'ppty': 'pptx',
 }
 
 yformat_tuple = ("docy", "xlsy", "ppty")
+
 
 class Handler(object):
   """
@@ -95,34 +185,37 @@ class Handler(object):
 
     # init vars and xml configuration file
     in_format = format_code_map[source_format]
-    out_format = format_code_map[destination_format]
+    out_format = format_code_map_output.get(destination_format,
+                                            format_code_map[destination_format])
     root_dir = self.file.directory_name
     input_dir = os.path.join(root_dir, "input");
-    output_dir = os.path.join(root_dir, "output");
-    final_file_name = os.path.join(root_dir, "document.%s" % destination_format)
     input_file_name = self.file.getUrl()
-    output_file_name = final_file_name
+    output_file_name = os.path.join(root_dir, "document.%s" % destination_format)
     config_file_name = os.path.join(root_dir, "config.xml")
+    metadata = None
+    output_data = None
 
     if source_format in yformat_tuple:
       if self._data.startswith("PK\x03\x04"):
         os.mkdir(input_dir)
         unzip(self.file.getUrl(), input_dir)
-        for _, _, files in os.walk(input_dir):
-          input_file_name, = files
-          break
-        input_file_name = os.path.join(input_dir, input_file_name)
-    if destination_format in yformat_tuple:
-      os.mkdir(output_dir)
-      output_file_name = os.path.join(output_dir, "body.txt")
+        input_file_name = os.path.join(input_dir, "body.txt")
+        if not os.path.isfile(input_file_name):
+          input_file_name = os.path.join(input_dir, "Editor.bin")
+          if not os.path.isfile(input_file_name):
+            raise RuntimeError("input format incorrect: Editor.bin absent in zip archive")
+        metadata_file_name = os.path.join(input_dir, "metadata.json")
+        if os.path.isfile(metadata_file_name):
+          with open(metadata_file_name) as metadata_file:
+            metadata = json.loads(metadata_file.read())
 
     with open(config_file_name, "w") as config_file:
       config = {
         # 'm_sKey': 'from',
         'm_sFileFrom': input_file_name,
-        'm_nFormatFrom': in_format,
+        'm_nFormatFrom': str(in_format),
         'm_sFileTo': output_file_name,
-        'm_nFormatTo': out_format,
+        'm_nFormatTo': str(out_format),
         # 'm_bPaid': 'true',
         # 'm_bEmbeddedFonts': 'false',
         # 'm_bFromChanges': 'false',
@@ -132,7 +225,8 @@ class Handler(object):
       root = ElementTree.Element('root')
       for key, value in config.items():
         ElementTree.SubElement(root, key).text = value
-      ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
+      ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True,
+                                          default_namespace=None, method="xml")
 
     # run convertion binary
     p = Popen(
@@ -144,56 +238,93 @@ class Handler(object):
     )
     stdout, stderr = p.communicate()
     if p.returncode != 0:
-      raise RuntimeError("x2t: exit code %d != 0\n+ %s\n> stdout: %s\n> stderr: %s@ x2t xml:\n%s" % (p.returncode, " ".join(["x2t", config_file.name]), stdout, stderr, "  " + open(config_file.name).read().replace("\n", "\n  ")))
+      raise RuntimeError("x2t: exit code %d != 0\n+ %s\n> stdout: %s\n> stderr: %s@ x2t xml:\n%s"
+                         % (p.returncode, " ".join(["x2t", config_file.name]), stdout, stderr,
+                            "  " + open(config_file.name).read().replace("\n", "\n  ")))
 
-    if destination_format in yformat_tuple:
-      zipTree(
-        final_file_name,
-        (output_file_name, ""),
-        (os.path.join(os.path.dirname(output_file_name), "media"), ""),
-      )
-
-    self.file.reload(final_file_name)
+    self.file.reload(output_file_name)
     try:
-      return self.file.getContent()
+      if source_format in yformat_tuple:
+        if metadata:
+          output_data = OOoHandler(self.base_folder_url, self.file.getContent(), source_format, **self._init_kw)\
+            .setMetadata(metadata)
+        else:
+          output_data = self.file.getContent()
+      elif destination_format in yformat_tuple:
+        if not metadata:
+          if source_format not in yformat_tuple:
+            metadata = OOoHandler(self.base_folder_url, self._data, source_format, **self._init_kw).getMetadata()
+          if not metadata:
+            metadata = {}
+          metadata.pop('MIMEType', None)
+          metadata.pop('Generator', None)
+          metadata.pop('AppVersion', None)
+          metadata.pop('ImplementationName', None)
+        with ZipFile(output_file_name, mode="a") as zipfile:
+          zipfile.writestr("metadata.json", json.dumps(metadata))
+        output_data = self.file.getContent()
     finally:
       self.file.trash()
+    return output_data
+
+  def _getContentType(self):
+    mimetype_type = None
+    if "/" not in self._source_format:
+      mimetype_type = guess_type('a.' + self._source_format)[0]
+    if mimetype_type is None:
+      mimetype_type = self._source_format
+    return mimetype_type
 
   def getMetadata(self, base_document=False):
     r"""Returns a dictionary with all metadata of document.
-    /!\ Not Implemented: no format are handled correctly.
     """
-    # XXX Cloudooo takes the first handler that can "handle" source_mimetype.
-    #     However, docx documents metadata can only be "handled" by the ooo handler.
-    #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
-    #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
-    #     And then, this method MUST raise on unhandled format. Here xformats are "handled" by cheating.
-    if self._source_format in (
-          "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ):
-      return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).getMetadata(base_document)
-    return {}
+    if self._source_format in yformat_tuple and self._data.startswith("PK\x03\x04"):
+      if base_document:
+        openxml_format = yformat_map[self._source_format]
+        data = self.convert(yformat_map[self._source_format])
+        return OOoHandler(self.base_folder_url, data, openxml_format, **self._init_kw).getMetadata(base_document)
+      else:
+        with io.BytesIO(self._data) as memfile, ZipFile(memfile) as zipfile:
+          try:
+            metadata = zipfile.read("metadata.json")
+          except KeyError:
+            metadata = '{}'
+          metadata = json.loads(metadata)
+          metadata['MIMEType'] = self._getContentType()
+          return metadata
+    else:
+      return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw)\
+        .getMetadata(base_document)
 
-  def setMetadata(self, metadata={}):
+  def setMetadata(self, metadata=None):
     r"""Returns document with new metadata.
-    /!\ Not Implemented: no format are handled correctly.
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    # XXX Cloudooo takes the first handler that can "handle" source_mimetype.
-    #     However, docx documents metadata can only be "handled" by the ooo handler.
-    #     Handlers should provide a way to tell if such capability is available for the required source mimetype.
-    #     We have to define a precise direction on how to know/get what are handlers capabilities according to Cloudooo configuration.
-    #     And then, this method MUST raise on unhandled format. Here xformats are "handled" by cheating.
-    if self._source_format in (
-          "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ):
+    if metadata is None:
+      metadata = {}
+    if self._source_format in yformat_tuple and self._data.startswith("PK\x03\x04"):
+      root_dir = self.file.directory_name
+      output_file_name = os.path.join(root_dir, "tmp")
+      try:
+        input_dir = os.path.join(root_dir, "input")
+        os.mkdir(input_dir)
+        unzip(self.file.getUrl(), input_dir)
+        with open(os.path.join(input_dir, "metadata.json"), "w") as metadata_file:
+          metadata_file.write(json.dumps(metadata))
+        with ZipFile(output_file_name, "w") as zipfile:
+          for root, _, files in os.walk(input_dir):
+            relative_root = root.replace(input_dir, '')
+            for file_name in files:
+              absolute_path = os.path.join(root, file_name)
+              file_name = os.path.join(relative_root, file_name)
+              zipfile.write(absolute_path, file_name)
+        output_data = open(output_file_name).read()
+      finally:
+        os.unlink(output_file_name)
+      return output_data
+    else:
       return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).setMetadata(metadata)
-    return self.file.getContent()
 
   @staticmethod
   def getAllowedConversionFormatList(source_mimetype):

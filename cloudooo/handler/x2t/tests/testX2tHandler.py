@@ -34,6 +34,9 @@ from cStringIO import StringIO
 from cloudooo.handler.x2t.handler import Handler
 from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
 
+OPENOFFICE = True
+
+
 class TestHandler(HandlerTestCase):
 
   def afterSetUp(self):
@@ -84,18 +87,37 @@ class TestHandler(HandlerTestCase):
     y_zip.open("media/image1.png")
 
   def testgetMetadata(self):
-    """Test getMetadata from yformats (not implemented)"""
+    """Test getMetadata from yformats"""
     handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    #   Of course, expected behavior should be a dict of internal metadata
-    # but don't know how to handle it so far.
-    self.assertEquals(handler.getMetadata(), {})
+    self.assertEquals(handler.getMetadata(), {
+	u'CreationDate': u'00/00/0000 00:00:00',
+	u'ImplementationName': u'com.sun.star.comp.comphelper.OPropertyBag',
+	u'MIMEType': u'text/plain',
+	u'ModificationDate': u'00/00/0000 00:00:00',
+	u'PrintDate': u'00/00/0000 00:00:00',
+	u'TemplateDate': u'00/00/0000 00:00:00',
+	})
+    handler = Handler(self.tmp_url, open("data/test_with_metadata.xlsy").read(), "xlsy", **self.kw)
+    self.assertEquals(handler.getMetadata(), {
+        u'CreationDate': u'31/01/2018 21:09:10',
+        u'Keywords': [u'\u0442\u0435\u0441\u0442', u'\u0441\u0430\u0431\u0436\u0435\u043a\u0442'],
+        'MIMEType': 'xlsy',
+        u'ModificationDate': u'31/01/2018 21:22:36',
+        u'PrintDate': u'00/00/0000 00:00:00',
+        u'Subject': u'\u0432\u044b\u043a\u043b\u044e\u0447\u0438 \u0442\u0435\u043b\u0435\u0432\u0438\u0437\u043e\u0440',
+        u'TemplateDate': u'00/00/0000 00:00:00',
+        u'Title': u'kesha'})
 
   def testsetMetadata(self):
-    """Test setMetadata for yformats (not implemented)"""
-    handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
-    #   Of course, expected behavior should be an updated data with new
-    # internal metadata but don't know how to handle it so far.
-    self.assertEquals(handler.setMetadata(), "")
+    """Test setMetadata for yformats"""
+    handler = Handler(self.tmp_url, open("data/test_with_metadata.xlsy").read(), "xlsy", **self.kw)
+    new_mime_data = handler.setMetadata({
+            "Title": "test title",
+            "Subject": "test subject",
+            "Keywords": "test keywords",
+           })
+    handler = Handler(self.tmp_url, new_mime_data, "xlsy", **self.kw)
+    self.assertEquals(handler.getMetadata(), {u'Keywords': u'test keywords', 'MIMEType': 'xlsy', u'Title': u'test title', u'Subject': u'test subject'})
 
   def testGetAllowedConversionFormatList(self):
     """Test all combination of mimetype
