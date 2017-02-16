@@ -116,25 +116,23 @@ class Handler(object):
       os.mkdir(output_dir)
       output_file_name = os.path.join(output_dir, "body.txt")
 
-    config_file = open(config_file_name, "w")
-
-    config = {
-      # 'm_sKey': 'from',
-      'm_sFileFrom': input_file_name,
-      'm_nFormatFrom': in_format,
-      'm_sFileTo': output_file_name,
-      'm_nFormatTo': out_format,
-      # 'm_bPaid': 'true',
-      # 'm_bEmbeddedFonts': 'false',
-      # 'm_bFromChanges': 'false',
-      # 'm_sFontDir': '/usr/share/fonts',
-      # 'm_sThemeDir': '/var/www/onlyoffice/documentserver/FileConverterService/presentationthemes',
-    }
-    root = ElementTree.Element('root')
-    for key, value in config.items():
-      ElementTree.SubElement(root, key).text = value
-    ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
-    config_file.close()
+    with open(config_file_name, "w") as config_file:
+      config = {
+        # 'm_sKey': 'from',
+        'm_sFileFrom': input_file_name,
+        'm_nFormatFrom': in_format,
+        'm_sFileTo': output_file_name,
+        'm_nFormatTo': out_format,
+        # 'm_bPaid': 'true',
+        # 'm_bEmbeddedFonts': 'false',
+        # 'm_bFromChanges': 'false',
+        # 'm_sFontDir': '/usr/share/fonts',
+        # 'm_sThemeDir': '/var/www/onlyoffice/documentserver/FileConverterService/presentationthemes',
+      }
+      root = ElementTree.Element('root')
+      for key, value in config.items():
+        ElementTree.SubElement(root, key).text = value
+      ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True, default_namespace=None, method="xml")
 
     # run convertion binary
     p = Popen(
