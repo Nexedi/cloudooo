@@ -72,12 +72,6 @@ yformat_map = {
   'ppty': 'pptx',
 }
 
-yformat2opendocument_map = {
-  'docy': 'odt',
-  'xlsy': 'ods',
-  'ppty': 'odp',
-}
-
 yformat_tuple = (
   "docy", "application/x-asc-text",
   "xlsy", "application/x-asc-spreadsheet",
@@ -239,19 +233,19 @@ class Handler(object):
     r"""Returns a dictionary with all metadata of document.
     """
     if self._source_format in yformat_tuple and self._data.startswith("PK\x03\x04"):
-      with io.BytesIO(self._data) as memfile, ZipFile(memfile) as zipfile:
-        try:
-          metadata = zipfile.read("metadata.json")
-        except KeyError:
-          metadata = '{}'
-        metadata = json.loads(metadata)
-        metadata['MIMEType'] = self._getContentType()
-        if base_document:
-          opendocument_format = yformat2opendocument_map[self._source_format]
-          metadata['MIMEType'] = guess_type('a.' + opendocument_format)[0]
-          metadata['Data'] = self.convert(opendocument_format)
-
-        return metadata
+      if base_document:
+        openxml_format = yformat_map[self._source_format]
+        data = self.convert(yformat_map[self._source_format])
+        return OOoHandler(self.base_folder_url, data, openxml_format, **self._init_kw).getMetadata(base_document)
+      else:
+        with io.BytesIO(self._data) as memfile, ZipFile(memfile) as zipfile:
+          try:
+            metadata = zipfile.read("metadata.json")
+          except KeyError:
+            metadata = '{}'
+          metadata = json.loads(metadata)
+          metadata['MIMEType'] = self._getContentType()
+          return metadata
     else:
       return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).getMetadata(base_document)
 
