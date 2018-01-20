@@ -205,16 +205,33 @@ class Handler(object):
     ]
     """
     source_mimetype = parseContentType(source_mimetype).gettype()
-    if source_mimetype in ("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
-      return [("application/x-asc-text", "OnlyOffice Text Document")]
     if source_mimetype in ("docy", "application/x-asc-text"):
-      return [("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document")]
-    if source_mimetype in ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-      return [("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet")]
+      return [
+        ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document"),
+        ("application/vnd.oasis.opendocument.text", "ODF Text Document"),
+      ]
     if source_mimetype in ("xlsy", "application/x-asc-spreadsheet"):
-      return [("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet")]
-    if source_mimetype in ("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"):
-      return [("application/x-asc-presentation", "OnlyOffice Presentation")]
+      return [
+        ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel 2007 Spreadsheet"),
+        ("application/vnd.oasis.opendocument.spreadsheet", "ODF Spreadsheet Document"),
+      ]
     if source_mimetype in ("ppty", "application/x-asc-presentation"):
-      return [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation")]
-    return []
+      return [
+        ("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation"),
+        ("application/vnd.oasis.opendocument.presentation", "ODF Presentation Document"),
+      ]
+
+    get_format_list = OOoHandler.getAllowedConversionFormatList
+    format_list = get_format_list(source_mimetype)
+    format_list_append = format_list.append
+    for f_type, _ in format_list:
+      if f_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        format_list_append(("application/x-asc-text", "OnlyOffice Text Document"))
+        break
+      if f_type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        format_list_append(("application/x-asc-spreadsheet", "OnlyOffice Spreadsheet"))
+        break
+      if f_type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        format_list_append(("application/x-asc-presentation", "OnlyOffice Presentation"))
+        break
+    return format_list
