@@ -27,8 +27,6 @@
 ##############################################################################
 
 
-import magic
-import os.path
 from zipfile import ZipFile
 from cStringIO import StringIO
 from cloudooo.handler.x2t.handler import Handler
@@ -46,7 +44,7 @@ class TestHandler(HandlerTestCase):
     """Test conversion of xlsx to xlsy and back"""
     y_data = Handler(self.tmp_url, open("data/test.xlsx").read(), "xlsx", **self.kw).convert("xlsy")
     y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("XLSY;v2;5883;"), "%r... does not start with 'XLSY;v2;5883;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith("XLSY;v10;0;"), "%r... does not start with 'XLSY;v10;0;'" % (y_body_data[:20],))
 
     x_data = Handler(self.tmp_url, y_data, "xlsy", **self.kw).convert("xlsx")
     # magic inspired by https://github.com/minad/mimemagic/pull/19/files
@@ -61,14 +59,14 @@ class TestHandler(HandlerTestCase):
 
     y_data = Handler(self.tmp_url, x_data, "xlsx", **self.kw).convert("xlsy")
     y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("XLSY;v2;10579;"), "%r... does not start with 'XLSY;v2;10579;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith("XLSY;v10;0;"), "%r... does not start with 'XLSY;v10;0;'" % (y_body_data[:20],))
 
   def testConvertDocx(self):
     """Test conversion of docx to docy and back"""
     y_data = Handler(self.tmp_url, open("data/test_with_image.docx").read(), "docx", **self.kw).convert("docy")
     y_zip = ZipFile(StringIO(y_data))
     y_body_data = y_zip.open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("DOCY;v5;2795;"), "%r... does not start with 'DOCY;v5;2795;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith("DOCY;v10;0;"), "%r... does not start with 'DOCY;v10;0;'" % (y_body_data[:20],))
     y_zip.open("media/image1.png")
 
     x_data = Handler(self.tmp_url, y_data, "docy", **self.kw).convert("docx")
@@ -83,7 +81,7 @@ class TestHandler(HandlerTestCase):
     y_data = Handler(self.tmp_url, x_data, "docx", **self.kw).convert("docy")
     y_zip = ZipFile(StringIO(y_data))
     y_body_data = y_zip.open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("DOCY;v5;7519;"), "%r... does not start with 'DOCY;v5;7519;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith("DOCY;v10;0;"), "%r... does not start with 'DOCY;v10;0;'" % (y_body_data[:20],))
     y_zip.open("media/image1.png")
 
   def testgetMetadata(self):
