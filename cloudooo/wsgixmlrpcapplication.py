@@ -69,7 +69,8 @@ class WSGIXMLRPCApplication(object):
         else:
             # got a valid XML RPC response
             start_response("200 OK", [('Content-Type', 'text/xml'),
-                                      ('Content-Length', str(len(response)),)])
+                                      ('Content-Length', str(len(response)),),
+                                      ('Access-Control-Allow-Origin', '*')])
             return [response]
 
     def __call__(self, environ, start_response):
