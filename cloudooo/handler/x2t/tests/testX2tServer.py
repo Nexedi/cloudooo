@@ -36,12 +36,10 @@ class TestServer(TestCase):
       (join('data', 'test.xlsx'), "xlsx", "xlsy", "application/zip"),
       (join('data', 'test.xlsy'), "xlsy", "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
       (join('data', 'test_with_image.docx'), "docx", "docy", "application/zip"),
-      # Here, the content type should be application/vnd.openxmlformats-officedocument.wordprocessingml.document
-      # but "magic" seems to not detect it correctly. However, the document can be read correctly by LibreOffice.
-      (join('data', 'test_with_image.docy'), "docy", "docx", "application/octet-stream"),
+      (join('data', 'test_with_image.docy'), "docy", "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
     ]
 
-  def testConvertHtmltoPdf(self):
+  def testConvertOnlyOfficeToFrom(self):
     """Converts xlsx,docx to their y format and y to x"""
     self.runConversionList(self.ConversionScenarioList())
 
