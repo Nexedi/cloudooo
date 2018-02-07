@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys
 
-version = '1.2.5-dev'
+version = '1.2.6-dev'
 
 def read(name):
     return open(name).read()
@@ -13,6 +13,7 @@ install_requires = [
           'zope.interface',
           'PasteDeploy',
           'PasteScript',
+          'pyPdf',
           'WSGIUtils',
           'psutil>=3.0.0',
           'lxml',
