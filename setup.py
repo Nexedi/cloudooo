@@ -13,7 +13,7 @@ install_requires = [
           'zope.interface',
           'PasteDeploy',
           'PasteScript',
-          'pyPdf',
+          'PyPDF2>=1.26.0',
           'WSGIUtils',
           'psutil>=3.0.0',
           'lxml',

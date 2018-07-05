@@ -34,8 +34,8 @@ from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
-from pyPdf import PdfFileWriter, PdfFileReader
-from pyPdf.generic import NameObject, createStringObject
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2.generic import NameObject, createStringObject
 
 class Handler(object):
   """PDF Handler is used to handler inputed pdf document."""
