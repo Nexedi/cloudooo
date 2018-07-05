@@ -18,9 +18,11 @@ install_requires = [
           'psutil>=3.0.0',
           'lxml',
           'python-magic',
-          'argparse',
           'erp5.util'
           ]
+
+if sys.version_info < (2, 7):
+  install_requires.append('argparse')
 
 setup(name='cloudooo',
       version=version,
