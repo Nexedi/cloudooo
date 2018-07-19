@@ -100,7 +100,7 @@ def run():
 
 
   args = parser.parse_args()
-  master = taskdistribution.TaskDistributionTool(args.master_url)
+  master = taskdistribution.TaskDistributor(args.master_url)
   test_suite_title = args.test_suite_title or args.test_suite
   revision = args.revision
   suite = TestSuite(1, test_suite=args.test_suite,
