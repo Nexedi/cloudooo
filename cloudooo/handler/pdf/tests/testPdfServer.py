@@ -86,5 +86,3 @@ class TestServer(TestCase):
     """Test if metadata is inserted correctly in pdf file"""
     self.runUpdateMetadataList(self.UpdateMetadataScenarioList())
 
-def test_suite():
-  return make_suite(TestServer)

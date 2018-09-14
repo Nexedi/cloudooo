@@ -50,5 +50,3 @@ class TestAllSupportedFormat(TestCase):
   def testAllSupportedFormat(self):
     self.runConversionList(self.ConversionScenarioList())
 
-def test_suite():
-  return make_suite(TestAllSupportedFormat)

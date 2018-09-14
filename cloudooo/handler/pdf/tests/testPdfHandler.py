@@ -78,5 +78,3 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(get("text/plain;ignored=param"), [])
     self.assertEquals(get("text/plain;charset=UTF-8;ignored=param"), [])
 
-def test_suite():
-  return make_suite(TestHandler)

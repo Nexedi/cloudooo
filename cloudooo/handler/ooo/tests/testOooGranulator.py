@@ -174,5 +174,3 @@ class TestOOGranulator(HandlerTestCase):
     oogranulator = OOGranulator(data, 'odt')
     self.assertEquals(['Title 1', 1], oogranulator.getChapterItem(1))
 
-def test_suite():
-  return make_suite(TestOOGranulator)

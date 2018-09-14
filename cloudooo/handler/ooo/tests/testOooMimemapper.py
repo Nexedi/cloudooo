@@ -306,5 +306,3 @@ class TestMimeMapper(HandlerTestCase):
     self.assertEquals(filtername, "impress_html_Export")
 
 
-def test_suite():
-  return make_suite(TestMimeMapper)

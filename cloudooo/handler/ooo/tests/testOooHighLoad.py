@@ -65,5 +65,3 @@ class TestHighLoad(TestCase):
     self.assertTrue(all(result_list))
 
 
-def test_suite():
-  return make_suite(TestHighLoad)

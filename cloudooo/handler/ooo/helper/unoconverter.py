@@ -28,8 +28,10 @@
 ##############################################################################
 
 import sys
+import csv
+import codecs
 import helper_util
-from os.path import dirname
+from os.path import dirname, splitext
 from tempfile import mktemp
 from base64 import decodestring, encodestring
 from getopt import getopt, GetoptError
@@ -144,6 +146,26 @@ class UnoConverter(object):
     else:
       return ()
 
+  def _getPropertyToImport(self, source_url):
+    """Create the property for import filter, according to the extension of the file."""
+    _, extension = splitext(source_url)
+    if extension == '.csv':
+      # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
+
+      # Try to sniff the csv delimiter
+      with codecs.open(source_url, 'rb', 'utf-8', errors="ignore") as csvfile:
+        try:
+          dialect = csv.Sniffer().sniff(csvfile.read(1024))
+          delimiter = ord(dialect.delimiter)
+        except csv.Error:
+          delimiter = ord(',')
+
+      return (
+        self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
+        self._createProperty("FilterOptions", "{delimiter},34,UTF-8".format(**locals())), )
+
+    return ()
+
   def _load(self):
     """Create one document with basic properties
     refresh argument tells to uno environment to
@@ -154,7 +176,11 @@ class UnoConverter(object):
                                                     self.office_binary_path)
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
-    uno_document = desktop.loadComponentFromURL(uno_url, "_blank", 0, ())
+    uno_document = desktop.loadComponentFromURL(
+        uno_url,
+        "_blank",
+        0,
+        self._getPropertyToImport(self.document_url))
     if not uno_document:
       raise AttributeError("This document can not be loaded or is empty")
     if self.refresh:

@@ -117,5 +117,3 @@ class TestOpenOffice(HandlerTestCase):
     self.assertFalse(second_openoffice.status())
 
 
-def test_suite():
-  return make_suite(TestOpenOffice)

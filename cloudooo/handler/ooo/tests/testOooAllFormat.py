@@ -62,5 +62,3 @@ class TestAllFormats(TestCase):
     for extension in extension_list:
         self._testConvertFile(input_url, source_format, extension[0], None)
 
-def test_suite():
-  return make_suite(TestAllFormats)

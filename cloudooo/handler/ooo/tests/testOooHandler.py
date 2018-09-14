@@ -685,5 +685,3 @@ class TestHandler(HandlerTestCase):
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Impress)') ])
 
-def test_suite():
-  return make_suite(TestHandler)

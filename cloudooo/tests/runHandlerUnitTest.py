@@ -70,15 +70,12 @@ def run():
   config = ConfigParser()
   config.read(server_cloudooo_conf)
   module = __import__(test_name)
-  if not hasattr(module, "test_suite"):
-    exit("No test suite to run, exiting immediately")
 
   DAEMON = getattr(module, 'DAEMON', False)
   OPENOFFICE = getattr(module, 'OPENOFFICE', False)
 
   TestRunner = backportUnittest.TextTestRunner
-  suite = unittest.TestSuite()
-  suite.addTest(module.test_suite())
+  suite = unittest.defaultTestLoader.loadTestsFromModule(module)
 
   if DAEMON:
     log_file = '%s/cloudooo_test.log' % config.get('app:main',

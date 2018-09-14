@@ -133,5 +133,3 @@ class TestHandler(HandlerTestCase):
       [("application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint 2007 Presentation"),
 	('application/vnd.oasis.opendocument.presentation', 'ODF Presentation Document')])
 
-def test_suite():
-  return make_suite(TestHandler)

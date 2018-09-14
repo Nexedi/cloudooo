@@ -138,16 +138,16 @@ class OpenOffice(Application):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
     self.command = [join(self.office_binary_path, self._bin_soffice),
-         '-headless',
-         '-invisible',
-         '-nocrashreport',
-         '-nologo',
-         '-nodefault',
-         '-norestore',
-         '-nofirststartwizard',
-         '-accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
+         '--headless',
+         '--invisible',
+         '--nocrashreport',
+         '--nologo',
+         '--nodefault',
+         '--norestore',
+         '--nofirststartwizard',
+         '--accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
          '-env:UserInstallation=file://%s' % self.path_user_installation,
-         '-language=%s' % self.default_language,
+         '--language=%s' % self.default_language,
          ]
     # To run soffice.bin, several environment variables should be set.
     env = self.environment_dict.copy()

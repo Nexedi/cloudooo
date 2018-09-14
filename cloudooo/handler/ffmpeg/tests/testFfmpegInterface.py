@@ -45,5 +45,3 @@ class TestInterface(unittest.TestCase):
         ('metadata_dict',))
 
 
-def test_suite():
-  return make_suite(TestInterface)

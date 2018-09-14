@@ -87,5 +87,3 @@ class TestUnoConverter(HandlerTestCase):
     self.assertEquals(exists(output_url), False)
 
 
-def test_suite():
-  return make_suite(TestUnoConverter)
