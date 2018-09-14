@@ -1,4 +1,5 @@
 ##############################################################################
+# coding: utf-8
 #
 # Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
 #                    Gabriel M. Monnerat <gabriel@tiolive.com>
@@ -573,3 +574,37 @@ class TestChapterItemList(TestCase):
     chapter = self.proxy.getChapterItem(1, data, "odt")
     self.assertEquals(['Title 1', 1], chapter)
 
+
+class TestCSVEncoding(TestCase):
+  """Cloudoo tries to be "a bit" clever with CSV:
+   * the supported encoding is UTF-8, but also accepts latin9, for compatibility.
+  """
+  def test_decode_ascii(self):
+    data = encodestring(open("./data/csv_ascii.csv").read())
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        ["test", "1234"],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+
+  def test_decode_utf8(self):
+    data = encodestring(open("./data/csv_utf8.csv").read())
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        [u"Jérome", u"ジェローム"],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+    self.assertEqual(
+        [u"नमस्ते", u"여보세요"],
+        [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
+
+  def test_decode_latin9(self):
+    data = encodestring(open("./data/csv_latin9.csv").read())
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        [u"Jérome", u"1€"],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
