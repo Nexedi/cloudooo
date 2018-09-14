@@ -28,6 +28,8 @@
 ##############################################################################
 
 import sys
+import csv
+import codecs
 import helper_util
 from os.path import dirname, splitext
 from tempfile import mktemp
@@ -149,9 +151,18 @@ class UnoConverter(object):
     _, extension = splitext(source_url)
     if extension == '.csv':
       # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
+
+      # Try to sniff the csv delimiter
+      with codecs.open(source_url, 'rb', 'utf-8', errors="ignore") as csvfile:
+        try:
+          dialect = csv.Sniffer().sniff(csvfile.read(1024))
+          delimiter = ord(dialect.delimiter)
+        except csv.Error:
+          delimiter = ord(',')
+
       return (
         self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
-        self._createProperty("FilterOptions", "44,34,UTF-8"), )
+        self._createProperty("FilterOptions", "{delimiter},34,UTF-8".format(**locals())), )
 
     return ()
 
