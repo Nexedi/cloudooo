@@ -578,6 +578,7 @@ class TestChapterItemList(TestCase):
 class TestCSVEncoding(TestCase):
   """Cloudoo tries to be "a bit" clever with CSV:
    * the supported encoding is UTF-8, but also accepts latin1, for compatibility.
+   * the fields delimiter is guessed by python csv module.
   """
   def test_decode_utf8(self):
     data = encodestring(open("./data/csv_utf8.csv").read())
@@ -599,3 +600,36 @@ class TestCSVEncoding(TestCase):
     self.assertEqual(
         [u"Jérome", '1'],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+
+  def test_separator_semicolon(self):
+    data = encodestring(open("./data/csv_semicolon.csv").read())
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        ['a a', '1'],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['b b', '2;x'],
+        [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
+
+  def test_separator_tab(self):
+    data = encodestring(open("./data/tsv.tsv").read())
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        ['a', 'b'],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['1,3', 'c'],
+        [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
+
+  def test_empty_csv(self):
+    data = encodestring("")
+    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(converted), parser)
+    self.assertEqual(
+        [],
+        [x.text for x in tree.getroot().findall('.//td')])
