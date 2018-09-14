@@ -39,8 +39,9 @@ import magic
 from cloudooo.handler.ooo.tests.testOooMimemapper import text_expected_tuple, presentation_expected_tuple
 
 
-class TestServer(TestCase):
-  """Test XmlRpc Server. Needs cloudooo server started"""
+"""Tests for XmlRpc Server. Needs cloudooo server started"""
+
+class TestAllowedExtensions(TestCase):
 
   def testGetAllowedTextExtensionListByType(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
@@ -83,6 +84,10 @@ class TestServer(TestCase):
     self.assertEquals(sorted([(a, b) for a, b in msword_allowed_list if a not in ("doc", "docy")]),
                       sorted(list(filter(lambda (a, b): a not in ("doc", "docy"), text_expected_tuple))))
 
+
+class TestConversion(TestCase):
+  """Test that conversion of some test documents to various destination format does not fail.
+  """
   def ConversionScenarioList(self):
     return [
             # Test Convert Doc -> Odt
@@ -129,7 +134,24 @@ class TestServer(TestCase):
             "opendocument.presentation"),
             ])
 
+  def ConvertScenarioList(self):
+    return [
+            # Test run_convert method
+            ('test.doc', open(join('data', 'test.doc')).read(), 200, '',
+            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
+            ),
+            # Test run_convert method with invalid file
+            ('test.doc', open(join('data', 'test.doc')).read()[:30], 200, '',
+            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
+            ),
+            ]
 
+  def testRunConvertMethod(self):
+    """Test run_convert method"""
+    self.runConvertScenarioList(self.ConvertScenarioList())
+
+
+class TestGetMetadata(TestCase):
   def GetMetadataScenarioList(self):
     return [
             # Test method getFileMetadataItemList. Without data converted
@@ -191,21 +213,6 @@ class TestServer(TestCase):
     self.assertEquals(metadata_dict.get("Reference"), "new value")
     self.assertEquals(metadata_dict.get("Something"), "ABC")
 
-  def ConvertScenarioList(self):
-    return [
-            # Test run_convert method
-            ('test.doc', open(join('data', 'test.doc')).read(), 200, '',
-            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
-            ),
-            # Test run_convert method with invalid file
-            ('test.doc', open(join('data', 'test.doc')).read()[:30], 200, '',
-            ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
-            ),
-            ]
-
-  def testRunConvertMethod(self):
-    """Test run_convert method"""
-    self.runConvertScenarioList(self.ConvertScenarioList())
 
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
@@ -222,6 +229,8 @@ class TestServer(TestCase):
     self.assertNotEquals(response_dict['data'], '')
     self.assertEquals(response_dict['mime'], 'application/pdf')
 
+
+class TestGenerate(TestCase):
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
   def testRunGenerateMethodConvertOdsToHTML(self):
@@ -337,6 +346,8 @@ class TestServer(TestCase):
     self.assertEquals(response_dict, {})
     self.assertTrue(response_message.startswith('Traceback'))
 
+
+class TestSetMetadata(TestCase):
   def testRunSetMetadata(self):
     """Test run_setmetadata method, updating the same metadata"""
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
@@ -377,6 +388,8 @@ class TestServer(TestCase):
     self.assertEquals(response_dict, {})
     self.assertTrue(response_message.startswith('Traceback'))
 
+
+class TestGetAllowedTargetItemList(TestCase):
   def testGetAllowedTargetItemList(self):
     """Test if filter name returns correctly with ERP5 API"""
     mimetype = 'application/vnd.oasis.opendocument.text'
@@ -390,6 +403,8 @@ class TestServer(TestCase):
         sorted([(a, b) for a, b in response_dict['response_data'] if a not in ("odt", "docy")]),
         sorted(list(filter(lambda (a, b): a not in ("odt", "docy"), text_expected_tuple))))
 
+
+class TestGetTableItemList(TestCase):
   def testGetTableItemListFromOdt(self):
     """Test if getTableItemList can get the table item list from odt file"""
     table_list = [['Developers', ''],
@@ -476,6 +491,8 @@ class TestServer(TestCase):
                        ['Phone', '+55 (22) 9999-9999'],
                        ['Email', 'rafael@tiolive.com']], line_item_list)
 
+
+class TestImagetItemList(TestCase):
   def testGetImageItemListFromOdt(self):
     """Test if getImageItemList can get the list of images items from odt file"""
     data = encodestring(open("./data/granulate_test.odt").read())
@@ -519,6 +536,8 @@ class TestServer(TestCase):
     geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
     self.assertEquals(original_image, geted_image)
 
+
+class TestParagraphItemList(TestCase):
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList can get paragraphs correctly from document"""
     data = encodestring(open("./data/granulate_test.odt").read())
@@ -537,6 +556,8 @@ class TestServer(TestCase):
     paragraph = self.proxy.getParagraph(data, 1, "odt")
     self.assertEquals(['', 'P1'], paragraph)
 
+
+class TestChapterItemList(TestCase):
   def testGetChapterItemList(self):
     """Test if getChapterItemList can get the chapters list correctly from document"""
     data = encodestring(open("./data/granulate_chapters_test.odt").read())
