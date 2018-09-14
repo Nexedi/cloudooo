@@ -54,9 +54,6 @@ class Handler(object):
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """Creates document in file system and loads it in OOo."""
-    self.document = FileSystemDocument(base_folder_url,
-                                      data,
-                                      source_format)
     self.zip = kw.get('zip', False)
     self.uno_path = kw.get("uno_path", None)
     self.office_binary_path = kw.get("office_binary_path", None)
@@ -67,6 +64,21 @@ class Handler(object):
       self.uno_path = environ.get("uno_path")
     if not self.office_binary_path:
       self.office_binary_path = environ.get("office_binary_path")
+    self._createDocument(base_folder_url, data, source_format)
+
+  def _createDocument(self, base_folder_url, data, source_format):
+    if source_format == 'csv':
+      # Cloudooo expect csv, but also tolerate latin1 for backward compatibility.
+      # The heuristic is "if it's not utf-8", let's assume it's latin 1.
+      try:
+        unicode(data, 'utf-8')
+      except UnicodeDecodeError:
+        data = unicode(data, 'iso-8859-1').encode('utf-8')
+        logger.debug("csv data is not utf-8, assuming iso-8859-1")
+    self.document = FileSystemDocument(
+         base_folder_url,
+         data,
+         source_format)
 
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
