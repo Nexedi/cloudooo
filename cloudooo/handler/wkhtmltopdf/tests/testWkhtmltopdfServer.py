@@ -49,5 +49,3 @@ class TestServer(TestCase):
       (open(join('data', 'test_with_png_dataurl.html')).read(), 'html', 'xyz'),
     ]
 
-def test_suite():
-  return make_suite(TestServer)

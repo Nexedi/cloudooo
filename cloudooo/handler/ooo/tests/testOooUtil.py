@@ -62,9 +62,3 @@ class TestUtil(unittest.TestCase):
     self.assertEquals(mimetypes.types_map.get(".3gp"), "video/3gpp")
 
 
-def test_suite():
-  return make_suite(TestUtil)
-
-if "__main__" == __name__:
-  suite = unittest.TestLoader().loadTestsFromTestCase(TestUtil)
-  unittest.TextTestRunner(verbosity=2).run(suite)

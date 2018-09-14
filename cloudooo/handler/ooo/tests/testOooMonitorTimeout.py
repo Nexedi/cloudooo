@@ -91,5 +91,3 @@ class TestMonitorTimeout(unittest.TestCase):
       openoffice.release()
 
 
-def test_suite():
-  return make_suite(TestMonitorTimeout)

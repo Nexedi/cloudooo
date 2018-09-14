@@ -107,5 +107,3 @@ class TestMonitorMemory(unittest.TestCase):
     self.assertEquals(type(memory_usage_int), IntType)
 
 
-def test_suite():
-  return make_suite(TestMonitorMemory)

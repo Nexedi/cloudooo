@@ -130,5 +130,3 @@ class TestFileSystemDocument(unittest.TestCase):
                 sorted(['logo.gif', 'test.htm']))
 
 
-def test_suite():
-  return make_suite(TestFileSystemDocument)

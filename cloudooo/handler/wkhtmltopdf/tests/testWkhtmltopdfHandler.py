@@ -90,5 +90,3 @@ class TestHandler(HandlerTestCase):
     # Unhandled mimetypes
     self.assertEquals(get("application/pdf;ignored=param"), [])
 
-def test_suite():
-  return make_suite(TestHandler)

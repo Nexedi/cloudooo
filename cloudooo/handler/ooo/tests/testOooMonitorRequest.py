@@ -60,5 +60,3 @@ class TestMonitorRequest(HandlerTestCase):
     monitor_request.terminate()
 
 
-def test_suite():
-  return make_suite(TestMonitorRequest)

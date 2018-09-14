@@ -61,5 +61,3 @@ class TestHandler(HandlerTestCase):
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
 
-def test_suite():
-  return make_suite(TestHandler)

@@ -75,5 +75,3 @@ class TestAllFormatsERP5Compatibility(TestCase):
       self.fail('Failed Conversions:\n' + message)
 
 
-def test_suite():
-  return make_suite(TestAllFormatsERP5Compatibility)

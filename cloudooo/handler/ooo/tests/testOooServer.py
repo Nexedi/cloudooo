@@ -552,5 +552,3 @@ class TestServer(TestCase):
     chapter = self.proxy.getChapterItem(1, data, "odt")
     self.assertEquals(['Title 1', 1], chapter)
 
-def test_suite():
-  return make_suite(TestServer)

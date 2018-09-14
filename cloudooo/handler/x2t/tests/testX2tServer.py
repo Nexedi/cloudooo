@@ -51,5 +51,3 @@ class TestServer(TestCase):
       (open(join('data', 'test.xlsx')).read(), 'xlsx', 'xyz'),
     ]
 
-def test_suite():
-  return make_suite(TestServer)

@@ -48,5 +48,3 @@ class TestAllSupportedFormat(TestCase):
     """Tests if ffmpeg convets midi file"""
     self.runConversionList(join('data', 'test.ogg'), "ogg", "midi", "audio/rtp-midi")
 
-def test_suite():
-  return make_suite(TestAllSupportedFormat)

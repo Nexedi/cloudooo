@@ -74,5 +74,3 @@ class TestServer(TestCase):
     self.runFaultGetMetadataList(self.FaultGetMetadataScenarioList())
 
 
-def test_suite():
-  return make_suite(TestServer)

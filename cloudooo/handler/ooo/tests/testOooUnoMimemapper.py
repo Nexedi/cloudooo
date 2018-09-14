@@ -118,5 +118,3 @@ class TestUnoMimeMapper(HandlerTestCase):
     openoffice.start()
 
 
-def test_suite():
-  return make_suite(TestUnoMimeMapper)

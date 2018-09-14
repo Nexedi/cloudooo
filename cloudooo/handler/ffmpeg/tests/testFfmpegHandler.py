@@ -69,5 +69,3 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(file_format, 'audio/x-wav')
 
 
-def test_suite():
-  return make_suite(TestHandler)

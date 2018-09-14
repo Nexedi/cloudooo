@@ -64,5 +64,3 @@ class TestLegacyInterface(TestCase):
     self.assertEquals(self._getFileType(response_dict['data']),
                       'application/vnd.oasis.opendocument.text')
 
-def test_suite():
-  return make_suite(TestLegacyInterface)

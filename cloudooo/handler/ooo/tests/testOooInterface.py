@@ -181,5 +181,3 @@ class TestInterface(TestCase):
     self.assertEquals(sorted(ILockable.names()), sorted(lockable_method_list))
 
 
-def test_suite():
-  return make_suite(TestInterface)

@@ -72,5 +72,3 @@ class TestMonitorInit(HandlerTestCase):
                                  True)
 
 
-def test_suite():
-  return make_suite(TestMonitorInit)

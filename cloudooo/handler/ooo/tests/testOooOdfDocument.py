@@ -65,5 +65,3 @@ class TestOdfDocument(HandlerTestCase):
                     'document-content'))
 
 
-def test_suite():
-  return make_suite(TestOdfDocument)

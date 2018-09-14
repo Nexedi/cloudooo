@@ -60,5 +60,3 @@ class TestApplication(unittest.TestCase):
     self.assertEquals(self.application.pid(), None)
 
 
-def test_suite():
-  return make_suite(TestApplication)

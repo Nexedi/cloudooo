@@ -54,5 +54,3 @@ class TestFilter(unittest.TestCase):
     self.assertTrue(self.filter.isPreferred())
 
 
-def test_suite():
-  return make_suite(TestFilter)
