@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 
 def getServiceManager(host, port, uno_path, office_binary_path):
   """Get the ServiceManager from the running OpenOffice.org.
@@ -20,6 +21,13 @@ def getServiceManager(host, port, uno_path, office_binary_path):
                                                                   uno_context)
   # Connect to the running OpenOffice.org and get its
   # context.
-  uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+  # Retry 10 times if needed.
+  for i in range(10):
+    try:
+      uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+      break
+    except:
+      # I don't know how to import com.sun.star.connection.NoConnectException
+      time.sleep(1)
   # Get the ServiceManager object
   return uno_connection.ServiceManager
