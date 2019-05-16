@@ -75,9 +75,9 @@ class TestUnoConverter(HandlerTestCase):
           "--destination_format=%s" % "doc",
           "--source_format=%s" % "odt",
           "--mimemapper=%s" % mimemapper_pickled]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           stderr=PIPE).communicate()
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = process.communicate()
+    self.assertEquals(process.returncode, -6)
     self.assertEquals(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)

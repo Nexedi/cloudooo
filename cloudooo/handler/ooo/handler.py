@@ -126,11 +126,14 @@ class Handler(object):
       if pid_exists(process.pid):
         logger.debug("Process %s terminated", process.pid)
         process.terminate()
-    if (process.returncode < 0 and process.returncode != -6) or stderr:
+    if (process.returncode != -6) or stderr:
       logger.error("Process %s command:%s", process.pid, " ".join(command_list))
       logger.error("Process %s stdout:%s", process.pid, stdout)
       logger.error("Process %s stderr:%s", process.pid, stderr)
     logger.debug("Process %s terminated with returncode %s", process.pid, process.returncode)
+    if process.returncode != -6:
+      raise ValueError("unocnverter.py should always be interrupted by abort,"
+                       " otherwise deadlock can be raised")
     return stdout, stderr
 
   def _callUnoConverter(self, *feature_list, **kw):

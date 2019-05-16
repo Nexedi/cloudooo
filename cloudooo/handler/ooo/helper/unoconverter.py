@@ -367,4 +367,12 @@ def main():
   sys.stdout.write(output)
 
 if "__main__" == __name__:
-  main()
+  # use abort for avoid deadlock
+  try:
+    main()
+  except:
+    import traceback
+    sys.stderr.write(traceback.format_exc())
+  sys.stdout.flush()
+  sys.stderr.flush()
+  os.abort()
