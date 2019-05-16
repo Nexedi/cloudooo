@@ -2,14 +2,26 @@
 import sys
 import helper_util
 from getopt import getopt, GetoptError
-
+import time
+import uno
+NoConnectException = uno.getClass("com.sun.star.connection.NoConnectException")
 
 def test_openoffice(hostname, port):
+  # increase count if NoConnectException raised
+  count = 10
   try:
-    helper_util.getServiceManager(hostname, port)
+    for i in range(count - 1):
+      try:
+        helper_util.getServiceManager(hostname, port)
+        break
+      except NoConnectException:
+        if i == count - 2:
+          helper_util.getServiceManager(hostname, port)
+      time.sleep(1)
     return True
-  except Exception, err:
-    print err
+  except:
+    import traceback
+    sys.stderr.write(traceback.format_exc())
     return False
 
 
