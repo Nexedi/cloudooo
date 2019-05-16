@@ -27,7 +27,6 @@
 #
 ##############################################################################
 
-import os
 import sys
 import csv
 import codecs
@@ -367,4 +366,4 @@ def main():
   sys.stdout.write(output)
 
 if "__main__" == __name__:
-  main()
+  helper_util.exitOverAbort(main)

@@ -1,3 +1,4 @@
+import signal
 import sys
 import os
 import time
@@ -31,3 +32,13 @@ def getServiceManager(host, port, uno_path, office_binary_path):
       time.sleep(1)
   # Get the ServiceManager object
   return uno_connection.ServiceManager
+
+def exitOverAbort(main_func):
+  try:
+    main_func()
+  except:
+    import traceback
+    sys.stderr.write(traceback.format_exc())
+  sys.stdout.flush()
+  sys.stderr.flush()
+  os.kill(os.getpid(), signal.SIGQUIT)

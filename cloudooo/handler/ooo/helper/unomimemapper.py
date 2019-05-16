@@ -141,4 +141,4 @@ def main():
                               sort_keys=True, indent=2, separators=(',', ':')))
 
 if "__main__" == __name__:
-  main()
+  helper_util.exitOverAbort(main)

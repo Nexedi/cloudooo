@@ -129,7 +129,6 @@ class MimeMapper(object):
     stdout, stderr = process.communicate()
     if stderr:
       logger.error(stderr)
-    if process.returncode:
       raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)
 

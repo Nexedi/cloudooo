@@ -63,9 +63,9 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           stderr=PIPE).communicate()
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = process.communicate()
+    self.assertEquals(process.returncode, -15)
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
@@ -84,9 +84,9 @@ class TestUnoMimeMapper(HandlerTestCase):
                                        "/helper/unomimemapper.py"),
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           stderr=PIPE).communicate()
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = process.communicate()
+    self.assertEquals(process.returncode, -3)
     self.assertEquals(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
@@ -110,9 +110,9 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           stderr=PIPE).communicate()
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = process.communicate()
+    self.assertEquals(process.returncode, -3)
     self.assertEquals(stdout, '')
     self.assertTrue(stderr.endswith(error_msg), stderr)
     openoffice.start()
