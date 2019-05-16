@@ -368,3 +368,6 @@ def main():
 
 if "__main__" == __name__:
   main()
+  sys.stdout.flush()
+  sys.stderr.flush()
+  os.abort()
