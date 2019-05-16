@@ -35,10 +35,14 @@ from threading import Lock
 from zope.interface import implements
 from application import Application
 from cloudooo.interfaces.lockable import ILockable
-from cloudooo.util import logger, convertStringToBool
+from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStartDaemon, \
                                       removeDirectory, \
                                       socketStatus
+try:
+  import json
+except ImportError:
+  import simplejson as json
 
 
 class OpenOffice(Application):
@@ -55,6 +59,7 @@ class OpenOffice(Application):
     """
     self._bin_soffice = 'soffice.bin'
     self._lock = Lock()
+    self.last_test_error = None
     self._cleanRequest()
 
   def _testOpenOffice(self, host, port):
@@ -70,16 +75,18 @@ class OpenOffice(Application):
             "--port=%s" % port,
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path]
-    logger.debug("Testing Openoffice Instance %s" % port)
     stdout, stderr = Popen(args, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
-    stdout_bool = convertStringToBool(stdout.replace("\n", ""))
-    if stdout_bool and stderr != "":
-      logger.debug("%s\n%s" % (stderr, stdout))
+    if stdout == "":
+      logger.error("openoffice_tester.py cmdline: %s", " ".join(args))
+      logger.error("openoffice_tester.py stdout: %s", stdout)
+      logger.error("openoffice_tester.py stderr: %s", stderr)
       return False
-    else:
+    stdout = json.loads(stdout)
+    self.last_test_error = stderr
+    if stdout == True:
       logger.debug("Instance %s works" % port)
-      return True
+    return stdout
 
   def _cleanRequest(self):
     """Define request attribute as 0"""

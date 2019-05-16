@@ -3,13 +3,18 @@ import sys
 import helper_util
 from getopt import getopt, GetoptError
 
+try:
+  import json
+except ImportError:
+  import simplejson as json
+
 
 def test_openoffice(hostname, port, uno_path, office_binary_path):
+  import pyuno
   try:
     helper_util.getServiceManager(hostname, port, uno_path, office_binary_path)
     return True
-  except Exception, err:
-    print err
+  except pyuno.getClass("com.sun.star.connection.NoConnectException"):
     return False
 
 
@@ -30,12 +35,14 @@ def main():
       hostname = arg
     elif opt == "--uno_path":
       uno_path = arg
+      if uno_path not in sys.path:
+        sys.path.append(uno_path)
     elif opt == "--office_binary_path":
       office_binary_path = arg
 
-  sys.stdout.write(str(test_openoffice(hostname, port,
-                               uno_path, office_binary_path)))
-
+  output = json.dumps(test_openoffice(hostname, port,
+                               uno_path, office_binary_path))
+  sys.stdout.write(output)
 
 if __name__ == "__main__":
   helper_util.exitOverAbort(main)
