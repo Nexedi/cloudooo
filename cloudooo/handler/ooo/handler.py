@@ -119,11 +119,18 @@ class Handler(object):
       self._startTimeout()
       process = Popen(command_list, stdout=PIPE, stderr=PIPE, close_fds=True,
                       env=openoffice.environment_dict.copy())
+      logger.debug("Process %s running", process.pid)
       stdout, stderr = process.communicate()
     finally:
       self._stopTimeout()
       if pid_exists(process.pid):
+        logger.debug("Process %s terminated", process.pid)
         process.terminate()
+    if (process.returncode < 0 and process.returncode != -6) or stderr:
+      logger.error("Process %s command:%s", process.pid, " ".join(command_list))
+      logger.error("Process %s stdout:%s", process.pid, stdout)
+      logger.error("Process %s stderr:%s", process.pid, stderr)
+    logger.debug("Process %s terminated with returncode %s", process.pid, process.returncode)
     return stdout, stderr
 
   def _callUnoConverter(self, *feature_list, **kw):
@@ -131,7 +138,9 @@ class Handler(object):
     if not openoffice.status():
       openoffice.start()
     command_list = self._getCommand(*feature_list, **kw)
+    logger.debug("run convert first")
     stdout, stderr = self._subprocess(command_list)
+    logger.debug("stop convert first")
     if not stdout and stderr:
       first_error = stderr
       logger.error(stderr)
@@ -139,10 +148,11 @@ class Handler(object):
       openoffice.restart()
       kw['document_url'] = self.document.getUrl()
       command = self._getCommand(*feature_list, **kw)
+      logger.debug("run convert second")
       stdout, stderr = self._subprocess(command)
+      logger.debug("stop convert second")
       if not stdout and stderr:
         second_error = "\nerror of the second run: " + stderr
-        logger.error(second_error)
         raise Exception(first_error + second_error)
 
     return stdout, stderr

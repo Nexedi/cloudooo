@@ -33,6 +33,7 @@ from subprocess import STDOUT
 from zope.interface import implements
 from filter import Filter
 from os import environ, path
+from cloudooo.util import logger
 from cloudooo.interfaces.mimemapper import IMimemapper
 from types import InstanceType
 import json
@@ -124,8 +125,10 @@ class MimeMapper(object):
             "--hostname=%s" % hostname,
             "--port=%s" % port]
 
-    process = Popen(command, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    process = Popen(command, stdout=PIPE, stderr=PIPE, close_fds=True)
     stdout, stderr = process.communicate()
+    if stderr:
+      logger.error(stderr)
     if process.returncode:
       raise ValueError(stdout)
     filter_dict, type_dict = json.loads(stdout)

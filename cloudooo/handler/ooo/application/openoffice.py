@@ -37,7 +37,7 @@ from application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger, convertStringToBool
 from cloudooo.handler.ooo.util import waitStartDaemon, \
-                                      removeDirectory, waitStopDaemon, \
+                                      removeDirectory, \
                                       socketStatus
 
 
@@ -105,7 +105,6 @@ class OpenOffice(Application):
     """Start OpenOffice.org process"""
     for i in range(5):
       self.stop()
-      waitStopDaemon(self, self.timeout)
       self.process = Popen(command,
                            close_fds=True,
                            env=env)
@@ -121,14 +120,16 @@ class OpenOffice(Application):
           for connection in process.connections():
             if connection.status == "LISTEN" and \
                 connection.laddr[1] == self.port:
-              process.terminate()
+              self.stopProcess(process.pid)
+              break
       except AccessDenied, e:
         pass
       except TypeError, e:
         # exception to prevent one psutil issue with zombie processes
-        logger.debug(e)
+        logger.error(e)
       except NotImplementedError, e:
-        logger.error("lsof isn't installed on this machine: " + str(e))
+        logger.error("lsof isn't installed on this machine: %s", str(e))
+        break
 
   def start(self, init=True):
     """Start Instance."""

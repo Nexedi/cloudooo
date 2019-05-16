@@ -29,8 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
 from cloudooo.util import logger
-from cloudooo.handler.ooo.util import waitStopDaemon
-from psutil import pid_exists, Process, AccessDenied
+from psutil import pid_exists, Process, AccessDenied, TimeoutExpired, NoSuchProcess
 
 
 class Application(object):
@@ -47,17 +46,36 @@ class Application(object):
                                                     self.getAddress()[-1],
                                                     self.pid()))
 
-  def stop(self):
+  def stopProcess(self, process_pid):
     """Stop the process"""
-    if hasattr(self, 'process') and self.status():
-      process_pid = self.process.pid
-      logger.debug("Stop Pid - %s" % process_pid)
+    error = False
+    logger.debug("Stop Pid - %s", process_pid)
+    returncode = None
+    try:
+      process = Process(process_pid)
+      cmdline = " ".join(process.cmdline())
+      process.terminate()
+      returncode = process.wait(self.timeout)
+    except NoSuchProcess:
+      pass
+    except TimeoutExpired:
+      error = True
+      logger.error("Process %s survived SIGTERM after %s", process_pid, self.timeout)
       try:
-        self.process.terminate()
-        waitStopDaemon(self, self.timeout)
-      finally:
-        if pid_exists(process_pid) or self.status():
-          Process(process_pid).kill()
+        process.kill()
+        returncode = process.wait(self.timeout)
+      except NoSuchProcess:
+        pass
+      except TimeoutExpired:
+        logger.error("Process %s survived SIGKILL after %s", process_pid, self.timeout)
+    if error and returncode:
+      logger.error("Process %s cmdline: %s ended with returncode %s", process_pid, cmdline, returncode)
+    elif returncode != 0:
+      logger.debug("Process %s ended with returncode %s", process_pid, returncode)
+
+  def stop(self):
+    if hasattr(self, 'process'):
+      self.stopProcess(self.process.pid)
       delattr(self, "process")
 
   def loadSettings(self, hostname, port, path_run_dir, **kwargs):
