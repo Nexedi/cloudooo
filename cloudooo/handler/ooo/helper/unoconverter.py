@@ -27,6 +27,7 @@
 #
 ##############################################################################
 
+import os
 import sys
 import csv
 import codecs
@@ -75,18 +76,22 @@ Options:
 class UnoConverter(object):
   """A module to easily work with OpenOffice.org."""
 
-  def __init__(self, hostname, port, document_url, source_format, uno_path,
-               office_binary_path, refresh):
+  def __init__(self, service_manager, document_url, source_format, refresh):
     """ """
-    self.hostname = hostname
-    self.port = port
+    self.service_manager = service_manager
     self.document_url = document_url
     self.document_dir_path = dirname(document_url)
     self.source_format = source_format
     self.refresh = refresh
-    self.uno_path = uno_path
-    self.office_binary_path = office_binary_path
     self._load()
+
+  def __enter__(self):
+    return self
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    if traceback:
+      sys.stderr.write(str(traceback))
+    self.document_loaded.close(True)
 
   def _createProperty(self, name, value):
     """Create property"""
@@ -171,9 +176,7 @@ class UnoConverter(object):
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
     """
-    service_manager = helper_util.getServiceManager(self.hostname, self.port,
-                                                    self.uno_path,
-                                                    self.office_binary_path)
+    service_manager = self.service_manager
     desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(
@@ -210,11 +213,8 @@ class UnoConverter(object):
                         dir=self.document_dir_path)
 
     property_list = self._getPropertyToExport(output_format)
-    try:
-      self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
-         tuple(property_list))
-    finally:
-      self.document_loaded.dispose()
+    self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
+       tuple(property_list))
     return output_url
 
   def getMetadata(self):
@@ -242,9 +242,7 @@ class UnoConverter(object):
             except AttributeError:
               pass
 
-    service_manager = helper_util.getServiceManager(self.hostname, self.port,
-                                                    self.uno_path,
-                                                    self.office_binary_path)
+    service_manager = self.service_manager
     type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
     uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
@@ -286,7 +284,6 @@ class UnoConverter(object):
         user_defined_properties.addProperty(prop, 0, '')
         user_defined_properties.setPropertyValue(prop, value)
     self.document_loaded.store()
-    self.document_loaded.dispose()
 
 
 def help():
@@ -317,7 +314,6 @@ def main():
     import json
   except ImportError:
     import simplejson as json
-  refresh = None
   hostname = port = document_url = office_binary_path = uno_path =\
   destination_format = source_format = refresh = metadata = mimemapper = None
   for opt, arg in iter(opt_list):
@@ -345,28 +341,28 @@ def main():
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
 
-
-  unoconverter = UnoConverter(hostname, port, document_url,  source_format,
-                              uno_path, office_binary_path, refresh)
-  if "--convert" in param_list and not '--getmetadata' in param_list \
-      and not destination_format:
-    output = unoconverter.convert()
-  elif '--convert' in param_list and destination_format:
-    output = unoconverter.convert(destination_format)
-  elif '--getmetadata' in param_list and not '--convert' in param_list:
-    metadata_dict = unoconverter.getMetadata()
-    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
-  elif '--getmetadata' in param_list and '--convert' in param_list:
-    document_url = unoconverter.convert()
-    # Instanciate new UnoConverter instance with new url
-    unoconverter = UnoConverter(hostname, port, document_url, source_format,
-                                uno_path, office_binary_path, refresh)
-    metadata_dict = unoconverter.getMetadata()
-    metadata_dict['document_url'] = document_url
-    output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
-  elif '--setmetadata' in param_list:
-    unoconverter.setMetadata(metadata)
-    output = document_url
+  service_manager = helper_util.getServiceManager(hostname, port,
+                                                  uno_path, office_binary_path)
+  if '--getmetadata' in param_list and '--convert' in param_list:
+    with UnoConverter(service_manager, document_url,  source_format, refresh) as unoconverter:
+      document_url = unoconverter.convert()
+      # Instanciate new UnoConverter instance with new url
+    with UnoConverter(service_manager, document_url, source_format, refresh) as unoconverter:
+      metadata_dict = unoconverter.getMetadata()
+      metadata_dict['document_url'] = document_url
+      output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
+  else:
+    with UnoConverter(service_manager, document_url,  source_format, refresh) as unoconverter:
+      if "--convert" in param_list and not destination_format:
+        output = unoconverter.convert()
+      elif '--convert' in param_list and destination_format:
+        output = unoconverter.convert(destination_format)
+      elif '--getmetadata' in param_list:
+        metadata_dict = unoconverter.getMetadata()
+        output = encodestring(json.dumps(metadata_dict).encode('utf-8')).decode('utf-8')
+      elif '--setmetadata' in param_list:
+        unoconverter.setMetadata(metadata)
+        output = document_url
 
   sys.stdout.write(output)
 
