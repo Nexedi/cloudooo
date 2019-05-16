@@ -58,6 +58,8 @@ class Application(object):
       finally:
         if pid_exists(process_pid) or self.status():
           Process(process_pid).kill()
+          logger.debug("Process " + str(process_pid) + " killed with returncode " + str(self.process.returncode))
+      logger.debug("Process " + str(process_pid) + " terminated with returncode " + str(self.process.returncode))
       delattr(self, "process")
 
   def loadSettings(self, hostname, port, path_run_dir, **kwargs):
