@@ -58,7 +58,7 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   uno_path = config.get("app:main", "uno_path")
   working_path = config.get("app:main", "working_path")
   hostname = config.get("server:main", "host")
-  openoffice_port = int(config.get("app:main", "openoffice_port"))
+  openoffice_port = int(config.get("app:main", "openoffice_port")) + 1
   office_binary_path = config.get("app:main", "office_binary_path")
   environment_dict = {}
   for item in config.options("app:main"):
@@ -93,11 +93,10 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
                             environment_dict)
     openoffice.start()
     openoffice.acquire()
-    hostname, port = openoffice.getAddress()
     kw = dict(uno_path=config.get("app:main", "uno_path"),
               office_binary_path=config.get("app:main", "office_binary_path"))
     if not mimemapper.isLoaded():
-        mimemapper.loadFilterList(hostname, port, **kw)
+        mimemapper.loadFilterList(openoffice.getConnection(), **kw)
     openoffice.release()
     return openoffice
 
@@ -110,8 +109,9 @@ def stopFakeEnvironment(stop_openoffice=True):
 
 if 1:
   from cloudooo.handler.ooo.application.openoffice import OpenOffice
-  from cloudooo.handler.ooo.util import waitStartDaemon, waitStopDaemon
+  from cloudooo.handler.ooo.util import waitStartDaemon
   from subprocess import Popen, PIPE
+  from time import sleep
 
   # patch OpenOffice._startProcess not to put bogus output to stderr,
   # that prevents detecting the end of unit test.
@@ -119,14 +119,16 @@ if 1:
     """Start OpenOffice.org process"""
     for i in range(5):
       self.stop()
-      waitStopDaemon(self, self.timeout)
       self.process = Popen(command, stderr=PIPE,
                            close_fds=True,
                            env=env)
-      if not waitStartDaemon(self, self.timeout):
+      sleep(1)
+      if self.process.poll() is not None:
+        # process already terminated so
+        # rerun
         continue
-      if self._testOpenOffice(self.hostname, self.port):
-        return
+      if waitStartDaemon(self, self.timeout - 1):
+        break
 
   OpenOffice._startProcess = _startProcess
 

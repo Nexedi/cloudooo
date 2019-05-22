@@ -150,9 +150,7 @@ class TestMimeMapper(HandlerTestCase):
     """Mimemapper is created and load uno path."""
     self.mimemapper = MimeMapper()
     openoffice.acquire()
-    hostname, port = openoffice.getAddress()
-    self.mimemapper.loadFilterList(hostname,
-                                  port,
+    self.mimemapper.loadFilterList(openoffice.getConnection(),
                                   python_path=self.python_path)
     openoffice.release()
 

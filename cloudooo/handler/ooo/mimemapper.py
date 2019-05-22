@@ -88,7 +88,7 @@ class MimeMapper(object):
     """Verify if filters were loaded"""
     return self._loaded
 
-  def loadFilterList(self, hostname, port, **kw):
+  def loadFilterList(self, connection, **kw):
     """Load all filters of openoffice.
     Keyword arguments:
       hostname -- host of OpenOffice
@@ -122,8 +122,7 @@ class MimeMapper(object):
                              path.join("helper", "unomimemapper.py")),
             "--uno_path=%s" % uno_path,
             "--office_binary_path=%s" % office_binary_path,
-            "--hostname=%s" % hostname,
-            "--port=%s" % port]
+            "--connection=%s" % connection]
 
     process = Popen(command, stdout=PIPE, stderr=PIPE, close_fds=True)
     stdout, stderr = process.communicate()

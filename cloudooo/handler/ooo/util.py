@@ -26,8 +26,6 @@
 #
 ##############################################################################
 
-from socket import socket, error
-from errno import EADDRINUSE
 from time import sleep
 from os import remove
 from shutil import rmtree
@@ -40,19 +38,6 @@ def removeDirectory(path):
     rmtree(path)
   except OSError, msg:
     logger.error(msg)
-
-
-def socketStatus(hostname, port):
-  """Verify if the address is busy."""
-  try:
-    socket().bind((hostname, port),)
-    # False if the is free
-    return False
-  except error, (num, err):
-    if num == EADDRINUSE:
-      # True if the isn't free
-      return True
-
 
 def waitStartDaemon(daemon, attempts):
   """Wait a certain time to start the daemon."""

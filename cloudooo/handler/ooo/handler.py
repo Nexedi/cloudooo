@@ -83,13 +83,11 @@ class Handler(object):
 
   def _getCommand(self, *args, **kw):
     """Transforms all parameters passed in a command"""
-    hostname, port = openoffice.getAddress()
-    kw['hostname'] = hostname
-    kw['port'] = port
     python = path.join(self.office_binary_path, "python")
     command_list = [path.exists(python) and python or "python",
                     pkg_resources.resource_filename(__name__,
                                  path.join("helper", "unoconverter.py")),
+                    "--connection=%s" % openoffice.getConnection(),
                     "--uno_path=%s" % self.uno_path,
                     "--office_binary_path=%s" % self.office_binary_path,
                     '--document_url=%s' % self.document.getUrl()]
@@ -146,7 +144,6 @@ class Handler(object):
     logger.debug("stop convert first")
     if not stdout and stderr:
       first_error = stderr
-      logger.error(stderr)
       self.document.restoreOriginal()
       openoffice.restart()
       kw['document_url'] = self.document.getUrl()
@@ -316,6 +313,5 @@ def bootstrapHandler(configuration_dict):
 
   # Load all filters
   openoffice.acquire()
-  mimemapper.loadFilterList(application_hostname,
-                            openoffice_port, **kw)
+  mimemapper.loadFilterList(openoffice.getConnection(), **kw)
   openoffice.release()

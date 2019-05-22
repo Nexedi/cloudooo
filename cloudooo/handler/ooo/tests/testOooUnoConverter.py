@@ -47,7 +47,7 @@ class TestUnoConverter(HandlerTestCase):
   def afterSetUp(self):
     """ """
     openoffice.acquire()
-    self.hostname, self.port = openoffice.getAddress()
+    self.connection = openoffice.getConnection()
     data = open("data/test.odt", 'r').read()
     self.document = FileSystemDocument(self.tmp_url, data, 'odt')
 
@@ -69,8 +69,7 @@ class TestUnoConverter(HandlerTestCase):
           "--convert",
           "--uno_path=%s" % self.uno_path,
           "--office_binary_path=%s" % self.office_binary_path,
-          "--hostname=%s" % self.hostname,
-          "--port=%s" % self.port,
+          "--connection=%s" % self.connection,
           "--document_url=%s" % self.document.getUrl(),
           "--destination_format=%s" % "doc",
           "--source_format=%s" % "odt",

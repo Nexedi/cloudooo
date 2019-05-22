@@ -29,7 +29,7 @@
 from zope.interface import implements
 from cloudooo.interfaces.application import IApplication
 from cloudooo.util import logger
-from psutil import pid_exists, Process, AccessDenied, TimeoutExpired, NoSuchProcess
+from psutil import pid_exists, Process, TimeoutExpired, NoSuchProcess
 
 
 class Application(object):
@@ -100,17 +100,7 @@ class Application(object):
     pid = self.pid()
     if pid is None or not pid_exists(pid):
       return False
-
-    process = Process(pid)
-    try:
-      for connection in process.connections():
-        if connection.status == 'LISTEN' and \
-            connection.laddr[1] == self.port:
-          return True
-    except AccessDenied:
-      return False
-
-    return False
+    return True
 
   def getAddress(self):
     """Return port and hostname of OOo Instance."""

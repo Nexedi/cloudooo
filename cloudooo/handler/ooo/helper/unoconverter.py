@@ -298,7 +298,7 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help", "test",
       "convert", "getmetadata", "setmetadata",
       "uno_path=", "office_binary_path=",
-      "hostname=", "port=", "source_format=",
+      "connection=", "source_format=",
       "document_url=", "destination_format=",
       "mimemapper=", "metadata=", "refresh=",
       "unomimemapper_bin="])
@@ -313,15 +313,13 @@ def main():
     import json
   except ImportError:
     import simplejson as json
-  hostname = port = document_url = office_binary_path = uno_path =\
+  connection = document_url = office_binary_path = uno_path =\
   destination_format = source_format = refresh = metadata = mimemapper = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
-    elif opt == '--hostname':
-      hostname = arg
-    elif opt == '--port':
-      port = arg
+    elif opt == '--connection':
+      connection = arg
     elif opt == '--document_url':
       document_url = arg
     elif opt == '--office_binary_path':
@@ -340,7 +338,7 @@ def main():
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
 
-  service_manager = helper_util.getServiceManager(hostname, port,
+  service_manager = helper_util.getServiceManager(connection,
                                                   uno_path, office_binary_path)
   if '--getmetadata' in param_list and '--convert' in param_list:
     with UnoConverter(service_manager, document_url,  source_format, refresh) as unoconverter:
