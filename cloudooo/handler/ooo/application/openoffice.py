@@ -25,10 +25,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ##############################################################################
-
+import uuid
 import pkg_resources
-import psutil
-from psutil import AccessDenied
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
@@ -37,12 +35,12 @@ from application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStartDaemon, \
-                                      removeDirectory, \
-                                      socketStatus
+                                      removeDirectory
 try:
   import json
 except ImportError:
   import simplejson as json
+from time import sleep
 
 
 class OpenOffice(Application):
@@ -62,17 +60,16 @@ class OpenOffice(Application):
     self.last_test_error = None
     self._cleanRequest()
 
-  def _testOpenOffice(self, host, port):
+  def _testOpenOffice(self):
     """Test if OpenOffice was started correctly"""
-    logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
+    logger.debug("Test OpenOffice %s - Pid %s" % (self.getConnection(),
                                                   self.pid()))
     python = join(self.office_binary_path, "python")
     args = [exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo",
                                       join('handler', 'ooo',
                                            "helper", "openoffice_tester.py")),
-            "--hostname=%s" % host,
-            "--port=%s" % port,
+            "--connection=%s" % self.getConnection(),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path]
     stdout, stderr = Popen(args, stdout=PIPE,
@@ -85,7 +82,7 @@ class OpenOffice(Application):
     stdout = json.loads(stdout)
     self.last_test_error = stderr
     if stdout == True:
-      logger.debug("Instance %s works" % port)
+      logger.debug("Instance %s works" % self.getConnection())
     return stdout
 
   def _cleanRequest(self):
@@ -108,6 +105,17 @@ class OpenOffice(Application):
     self.uno_path = uno_path
     self.default_language = default_language
     self.environment_dict = environment_dict
+    self.connection = "socket,host=%s,port=%d" % (self.hostname, self.port)
+    self.connection = "pipe,name=cloudooo_libreoffice_%s" % str(uuid.uuid1())
+
+  def status(self):
+    if Application.status(self) and \
+          self._testOpenOffice():
+      # repeat for check if uno client do not terminate
+      # libreoffice
+      if Application.status(self):
+        return True
+    return False
 
   def _startProcess(self, command, env):
     """Start OpenOffice.org process"""
@@ -116,28 +124,14 @@ class OpenOffice(Application):
       self.process = Popen(command,
                            close_fds=True,
                            env=env)
-      if not waitStartDaemon(self, self.timeout):
-        continue
-      if self._testOpenOffice(self.hostname, self.port):
-        return
-
-  def _releaseOpenOfficePort(self):
-    for process in psutil.process_iter():
-      try:
-        if process.exe() == join(self.office_binary_path, self._bin_soffice):
-          for connection in process.connections():
-            if connection.status == "LISTEN" and \
-                connection.laddr[1] == self.port:
-              self.stopProcess(process.pid)
-              break
-      except AccessDenied, e:
-        pass
-      except TypeError, e:
-        # exception to prevent one psutil issue with zombie processes
-        logger.error(e)
-      except NotImplementedError, e:
-        logger.error("lsof isn't installed on this machine: %s", str(e))
+      sleep(1)
+      if waitStartDaemon(self, self.timeout - 1):
+        if self.last_test_error:
+          logger.debug(self.last_test_error)
         break
+
+  def getConnection(self):
+    return self.connection
 
   def start(self, init=True):
     """Start Instance."""
@@ -154,7 +148,7 @@ class OpenOffice(Application):
          '--nodefault',
          '--norestore',
          '--nofirststartwizard',
-         '--accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
+         '--accept=%s;urp;' % self.getConnection(),
          '-env:UserInstallation=file://%s' % self.path_user_installation,
          '--language=%s' % self.default_language,
          ]
@@ -172,8 +166,6 @@ class OpenOffice(Application):
     """Stop the instance by pid. By the default
     the signal is 15."""
     Application.stop(self)
-    if socketStatus(self.hostname, self.port):
-      self._releaseOpenOfficePort()
     self._cleanRequest()
 
   def isLocked(self):

@@ -66,9 +66,9 @@ Options:
 class UnoMimemapper(object):
   """ """
 
-  def __init__(self, hostname, port, uno_path=None, office_binary_path=None):
+  def __init__(self, connection, uno_path=None, office_binary_path=None):
     """ Receives hostname and port from openoffice and create a service manager"""
-    self.service_manager = helper_util.getServiceManager(hostname, port,
+    self.service_manager = helper_util.getServiceManager(connection,
                                                          uno_path,
                                                          office_binary_path)
 
@@ -111,7 +111,7 @@ def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "h", ["help",
       "uno_path=", "office_binary_path=",
-      "hostname=", "port="])
+      "connection="])
   except GetoptError as msg:
     msg = msg.msg + "\nUse --help or -h\n"
     sys.stderr.write(msg)
@@ -120,7 +120,7 @@ def main():
   if not opt_list:
     help()
 
-  port = hostname = uno_path = office_binary_path = None
+  connection = uno_path = office_binary_path = None
   for opt, arg in opt_list:
     if opt in ("-h", "--help"):
       help()
@@ -128,12 +128,10 @@ def main():
       uno_path = arg
     elif opt == "--office_binary_path":
       office_binary_path = arg
-    elif opt == '--hostname':
-      hostname = arg
-    elif opt == "--port":
-      port = arg
+    elif opt == '--connection':
+      connection = arg
 
-  mimemapper = UnoMimemapper(hostname, port, uno_path, office_binary_path)
+  mimemapper = UnoMimemapper(connection, uno_path, office_binary_path)
   filter_dict = mimemapper.getFilterDict()
   type_dict = mimemapper.getTypeDict()
 

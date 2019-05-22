@@ -2,7 +2,7 @@ import signal
 import sys
 import os
 
-def getServiceManager(host, port, uno_path, office_binary_path):
+def getServiceManager(connection, uno_path, office_binary_path):
   """Get the ServiceManager from the running OpenOffice.org.
   """
   # Add in sys.path the path of pyuno
@@ -21,7 +21,7 @@ def getServiceManager(host, port, uno_path, office_binary_path):
                                                                   uno_context)
   # Connect to the running OpenOffice.org and get its
   # context.
-  uno_connection = resolver.resolve("uno:socket,host=%s,port=%s,tcpNoDelay=1;urp;StarOffice.ComponentContext" % (host, port))
+  uno_connection = resolver.resolve("uno:%s;urp;StarOffice.ComponentContext" % connection)
   # Get the ServiceManager object
   return uno_connection.ServiceManager
 

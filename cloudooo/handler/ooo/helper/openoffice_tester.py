@@ -9,10 +9,10 @@ except ImportError:
   import simplejson as json
 
 
-def test_openoffice(hostname, port, uno_path, office_binary_path):
+def test_openoffice(connection, uno_path, office_binary_path):
   import pyuno
   try:
-    helper_util.getServiceManager(hostname, port, uno_path, office_binary_path)
+    helper_util.getServiceManager(connection, uno_path, office_binary_path)
     return True
   except pyuno.getClass("com.sun.star.connection.NoConnectException"):
     return False
@@ -21,18 +21,16 @@ def test_openoffice(hostname, port, uno_path, office_binary_path):
 def main():
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "",
-                                ["port=", "hostname=", "uno_path=",
+                                ["connection=", "uno_path=",
                                  "office_binary_path="])
   except GetoptError as e:
-    sys.stderr.write("%s \nUse --port and --hostname" % e)
+    sys.stderr.write("%s \nUse --connection" % e)
     sys.exit(2)
 
-  port = hostname = uno_path = office_binary_path = None
+  connection = uno_path = office_binary_path = None
   for opt, arg in opt_list:
-    if opt == "--port":
-      port = arg
-    elif opt == "--hostname":
-      hostname = arg
+    if opt == "--connection":
+      connection = arg
     elif opt == "--uno_path":
       uno_path = arg
       if uno_path not in sys.path:
@@ -40,7 +38,7 @@ def main():
     elif opt == "--office_binary_path":
       office_binary_path = arg
 
-  output = json.dumps(test_openoffice(hostname, port,
+  output = json.dumps(test_openoffice(connection,
                                uno_path, office_binary_path))
   sys.stdout.write(output)
 

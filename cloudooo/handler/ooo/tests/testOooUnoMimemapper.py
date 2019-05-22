@@ -54,36 +54,13 @@ class TestUnoMimeMapper(HandlerTestCase):
 
   def testCreateLocalAttributes(self):
     """Test if filters returns correctly the filters and types in dict"""
-    hostname, host = openoffice.getAddress()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
             pkg_resources.resource_filename(self.package_namespace,
                                        "/helper/unomimemapper.py"),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path,
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
-    process = Popen(command, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    self.assertEquals(process.returncode, -15)
-    self.assertEquals(stderr, '')
-    filter_dict, type_dict = json.loads(stdout)
-    self.assertTrue('filter_dict' in locals())
-    self.assertTrue('type_dict' in locals())
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
-    self.assertEquals(stderr, '')
-
-  def testCallUnoMimemapperOnlyHostNameAndPort(self):
-    """ Test call unomimemapper without uno_path and office_binary_path"""
-    hostname, host = openoffice.getAddress()
-    command = [path.join(self.office_binary_path, "python"),
-            pkg_resources.resource_filename(self.package_namespace,
-                                       "/helper/unomimemapper.py"),
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
+            "--connection=%s" % openoffice.getConnection()]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
     self.assertEquals(process.returncode, -3)
@@ -99,8 +76,7 @@ class TestUnoMimeMapper(HandlerTestCase):
 
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
-    error_msg = "couldn\'t connect to socket (Success)\n"
-    hostname, host = openoffice.getAddress()
+    error_msg = "helper_util.com.sun.star.connection.NoConnectException: Connector : couldn't connect to "
     openoffice.stop()
     python = path.join(self.office_binary_path, "python")
     command = [path.exists(python) and python or "python",
@@ -108,13 +84,12 @@ class TestUnoMimeMapper(HandlerTestCase):
                                             "/helper/unomimemapper.py"),
             "--uno_path=%s" % self.uno_path,
             "--office_binary_path=%s" % self.office_binary_path,
-            "--hostname=%s" % self.hostname,
-            "--port=%s" % self.openoffice_port]
+            "--connection=%s" % openoffice.getConnection()]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
     self.assertEquals(process.returncode, -3)
     self.assertEquals(stdout, '')
-    self.assertTrue(stderr.endswith(error_msg), stderr)
+    self.assertTrue(error_msg in stderr, stderr)
     openoffice.start()
 
 
