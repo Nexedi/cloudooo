@@ -4,9 +4,9 @@ import helper_util
 from getopt import getopt, GetoptError
 
 
-def test_openoffice(hostname, port):
+def test_openoffice(hostname, port, uno_path, office_binary_path):
   try:
-    helper_util.getServiceManager(hostname, port)
+    helper_util.getServiceManager(hostname, port, uno_path, office_binary_path)
     return True
   except Exception, err:
     print err
