@@ -68,7 +68,8 @@ class OpenOffice(Application):
                                            "helper", "openoffice_tester.py")),
             "--hostname=%s" % host,
             "--port=%s" % port,
-            "--uno_path=%s" % self.uno_path]
+            "--uno_path=%s" % self.uno_path,
+            "--office_binary_path=%s" % self.office_binary_path]
     logger.debug("Testing Openoffice Instance %s" % port)
     stdout, stderr = Popen(args, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
