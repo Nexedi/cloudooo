@@ -18,8 +18,8 @@ def main():
     opt_list, arg_list = getopt(sys.argv[1:], "",
                                 ["port=", "hostname=", "uno_path=",
                                  "office_binary_path="])
-  except GetoptError, e:
-    print >> sys.stderr, "%s \nUse --port and --hostname" % e
+  except GetoptError as e:
+    sys.stderr.write("%s \nUse --port and --hostname" % e)
     sys.exit(2)
 
   port = hostname = uno_path = office_binary_path = None
@@ -33,7 +33,8 @@ def main():
     elif opt == "--office_binary_path":
       office_binary_path = arg
 
-  print test_openoffice(hostname, port, uno_path, office_binary_path)
+  sys.stdout.write(str(test_openoffice(hostname, port,
+                               uno_path, office_binary_path)))
 
 
 if __name__ == "__main__":
