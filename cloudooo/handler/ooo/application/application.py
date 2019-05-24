@@ -46,36 +46,36 @@ class Application(object):
                                                     self.getAddress()[-1],
                                                     self.pid()))
 
-  def stopProcess(self, process_pid):
-    """Stop the process"""
-    error = False
-    logger.debug("Stop Pid - %s", process_pid)
-    returncode = None
-    try:
-      process = Process(process_pid)
-      cmdline = " ".join(process.cmdline())
-      process.terminate()
-      returncode = process.wait(self.timeout)
-    except NoSuchProcess:
-      pass
-    except TimeoutExpired:
-      error = True
-      logger.error("Process %s survived SIGTERM after %s", process_pid, self.timeout)
+  def stop(self):
+    if hasattr(self, 'process'):
+      error = False
+      process_pid = self.process.pid
+      logger.debug("Stop Pid - %s", process_pid)
+      returncode = None
       try:
-        process.kill()
+        process = Process(process_pid)
+        cmdline = " ".join(process.cmdline())
+        process.terminate()
         returncode = process.wait(self.timeout)
       except NoSuchProcess:
         pass
       except TimeoutExpired:
-        logger.error("Process %s survived SIGKILL after %s", process_pid, self.timeout)
-    if error and returncode:
-      logger.error("Process %s cmdline: %s ended with returncode %s", process_pid, cmdline, returncode)
-    elif returncode != 0:
-      logger.debug("Process %s ended with returncode %s", process_pid, returncode)
+        error = True
+        logger.error("Process %s survived SIGTERM after %s", process_pid, self.timeout)
+        try:
+          process.kill()
+          returncode = process.wait(self.timeout)
+        except NoSuchProcess:
+          pass
+        except TimeoutExpired:
+          logger.error("Process %s survived SIGKILL after %s", process_pid, self.timeout)
 
-  def stop(self):
-    if hasattr(self, 'process'):
-      self.stopProcess(self.process.pid)
+      if returncode is None:
+        returncode = self.process.returncode
+      if error and returncode:
+        logger.error("Process %s cmdline: %s ended with returncode %s", process_pid, cmdline, returncode)
+      elif returncode != 0:
+        logger.debug("Process %s ended with returncode %s", process_pid, returncode)
       delattr(self, "process")
 
   def loadSettings(self, hostname, port, path_run_dir, **kwargs):
