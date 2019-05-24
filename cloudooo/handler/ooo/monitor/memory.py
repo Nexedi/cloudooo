@@ -44,15 +44,18 @@ class MonitorMemory(Monitor, Process):
     Process.__init__(self)
     self.limit = limit_memory_usage
 
-  def create_process(self):
-    self.process = psutil.Process(int(self.openoffice.pid()))
+  def create_process(self, pid):
+    if not hasattr(self, 'process') or \
+        self.process.pid != int(pid):
+      self.process = psutil.Process(pid)
+    return self.process
 
-  def get_memory_usage(self):
+  def get_memory_usage(self, pid):
+    if pid is None:
+      return 0
     try:
-      if not hasattr(self, 'process') or \
-          self.process.pid != int(self.openoffice.pid()):
-        self.create_process()
-      return self.process.memory_info().rss / (1024 * 1024)
+      process = self.create_process(pid)
+      return process.memory_info().rss / (1024 * 1024)
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0
@@ -69,9 +72,10 @@ class MonitorMemory(Monitor, Process):
     self.status_flag = True
     logger.debug("Start MonitorMemory")
     while self.status_flag:
-      if self.get_memory_usage() > self.limit:
-        logger.debug("Stopping OpenOffice")
-        self.openoffice.stop()
+      pid = self.openoffice.pid()
+      if self.get_memory_usage(pid) > self.limit:
+        logger.debug("Stopping OpenOffice on memory limit increase")
+        self.openoffice.stop(pid=pid)
       sleep(self.interval)
     logger.debug("Stop MonitorMemory")
 

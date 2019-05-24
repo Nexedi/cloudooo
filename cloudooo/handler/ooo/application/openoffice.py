@@ -164,11 +164,11 @@ class OpenOffice(Application):
     self._cleanRequest()
     Application.start(self)
 
-  def stop(self):
+  def stop(self, pid=None):
     """Stop the instance by pid. By the default
     the signal is 15."""
-    Application.stop(self)
-    self._cleanRequest()
+    if Application.stop(self, pid=pid):
+      self._cleanRequest()
 
   def isLocked(self):
     """Verify if OOo instance is being used."""

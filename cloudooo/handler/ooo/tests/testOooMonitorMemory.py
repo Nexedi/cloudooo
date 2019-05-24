@@ -90,7 +90,7 @@ class TestMonitorMemory(unittest.TestCase):
   def testCreateProcess(self):
     """Test if the psutil.Process is create correctly"""
     self.monitor = MonitorMemory(openoffice, 2, 400)
-    self.monitor.create_process()
+    self.monitor.create_process(openoffice.pid())
     self.assertTrue(hasattr(self.monitor, 'process'))
     self.assertEquals(type(self.monitor.process), Process)
 
@@ -98,11 +98,11 @@ class TestMonitorMemory(unittest.TestCase):
     """Test memory usage"""
     self.monitor = MonitorMemory(openoffice, 2, 400)
     openoffice.stop()
-    memory_usage_int = self.monitor.get_memory_usage()
+    memory_usage_int = self.monitor.get_memory_usage(openoffice.pid())
     self.assertEquals(memory_usage_int, 0)
     if not openoffice.status():
       openoffice.start()
-    memory_usage_int = self.monitor.get_memory_usage()
+    memory_usage_int = self.monitor.get_memory_usage(openoffice.pid())
     self.assertEquals(type(memory_usage_int), IntType)
 
 

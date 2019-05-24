@@ -46,8 +46,11 @@ class Application(object):
                                                     self.getAddress()[-1],
                                                     self.pid()))
 
-  def stop(self):
+  def stop(self, pid=None):
     if hasattr(self, 'process'):
+      if pid is not None and self.process.pid != pid:
+        # pid already stopped
+        return False
       error = False
       process_pid = self.process.pid
       returncode = self.process.poll()
@@ -85,6 +88,7 @@ class Application(object):
         self.daemonOutputLog()
         logger.debug("Process %s ended with returncode %s", process_pid, returncode)
       delattr(self, "process")
+      return True
 
   def daemonOutputLog(self):
     if hasattr(self, 'process'):
