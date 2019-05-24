@@ -50,7 +50,9 @@ class MonitorTimeout(Monitor, Process):
     sleep(self.interval)
     if self.openoffice.isLocked():
       logger.debug("Stop OpenOffice - Port %s - Pid %s" % (port, pid))
-      self.openoffice.stop()
+      # using pid is not necessary here
+      # but safe if incorrect use
+      self.openoffice.stop(pid=pid)
 
   def terminate(self):
     """Stop the process"""
