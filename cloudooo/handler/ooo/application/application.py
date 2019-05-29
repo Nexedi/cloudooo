@@ -118,11 +118,14 @@ class Application(object):
     self.start(init=False)
 
   def status(self):
-    """Check by socket if the openoffice work."""
-    pid = self.pid()
-    if pid is None or not pid_exists(pid):
-      return False
-    return True
+    """Check daemon running."""
+    if hasattr(self, 'process'):
+      returncode = self.process.poll()
+      if returncode is None or returncode == 0:
+        return True
+      if pid_exists(self.process.pid):
+        return True
+    return False
 
   def getAddress(self):
     """Return port and hostname of OOo Instance."""

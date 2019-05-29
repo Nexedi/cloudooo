@@ -133,7 +133,8 @@ class OpenOffice(Application):
       if waitStartDaemon(self, self.timeout - 1):
         if self.last_test_error:
           logger.debug(self.last_test_error)
-        break
+        return True
+    return False
 
   def getConnection(self):
     return self.connection
@@ -175,9 +176,11 @@ class OpenOffice(Application):
     env["HOME"] = self.path_user_installation
     env["TMP"] = self.path_user_installation
     env["TMPDIR"] = self.path_user_installation
-    self._startProcess(self.command, env)
-    self._cleanRequest()
-    Application.start(self)
+    if self._startProcess(self.command, env):
+      self._cleanRequest()
+      logger.debug("%s libreoffice PID: %s started", self.getConnection(), self.pid())
+    else:
+      logger.error("%s libreoffice not started", self.getConnection())
 
   def stop(self, pid=None):
     """Stop the instance by pid. By the default
