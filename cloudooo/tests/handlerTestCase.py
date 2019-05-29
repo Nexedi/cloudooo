@@ -29,6 +29,7 @@
 
 import unittest
 import sys
+from cloudooo import util
 from os import environ, path, mkdir, putenv
 from ConfigParser import ConfigParser
 from cloudooo.handler.ooo.application.openoffice import openoffice
@@ -60,6 +61,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   hostname = config.get("server:main", "host")
   openoffice_port = int(config.get("app:main", "openoffice_port")) + 1
   office_binary_path = config.get("app:main", "office_binary_path")
+  if 0:
+    util.configureLogger(debug_mode=True)
   environment_dict = {}
   for item in config.options("app:main"):
     if item.startswith("env-"):
