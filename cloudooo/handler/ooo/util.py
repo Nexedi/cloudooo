@@ -26,10 +26,13 @@
 #
 ##############################################################################
 
+import os
 from time import sleep
 from os import remove
 from shutil import rmtree
 from cloudooo.util import logger
+from psutil import process_iter, Process, NoSuchProcess, wait_procs
+import signal
 
 
 def removeDirectory(path):
@@ -58,6 +61,42 @@ def waitStopDaemon(daemon, attempts=5):
     sleep(1)
   return False
 
+def processUsedFilesInPath(path):
+  pids = set()
+  for p in process_iter(attrs=['open_files', 'memory_maps']):
+    for f in (p.info['open_files'] or []) + (p.info['memory_maps'] or []):
+      if f.path.startswith(path):
+        pids.add(p.pid)
+  return pids
+
+def kill_procs_tree(pids, sig=signal.SIGTERM,
+                   timeout=3, on_terminate=None):
+  pids = set(pids)
+  children_pids = set(pids)
+  for pid in pids:
+    parent = None
+    try:
+      parent = Process(pid)
+    except NoSuchProcess:
+      pass
+    if parent:
+      children = parent.children(recursive=True)
+      for p in children:
+        children_pids.add(p.pid)
+  my_pid = os.getpid()
+  if my_pid in children_pids:
+    children_pids.remove(my_pid)
+  pids = []
+  for pid in children_pids:
+    try:
+      p = Process(pid)
+      p.send_signal(sig)
+      pids.append(p)
+    except NoSuchProcess:
+      pass
+  gone, alive = wait_procs(pids, timeout=timeout,
+                                  callback=on_terminate)
+  return (gone, alive)
 
 def remove_file(filepath):
   try:

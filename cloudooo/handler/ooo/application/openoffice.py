@@ -34,8 +34,11 @@ from zope.interface import implements
 from application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger
+import signal
 from cloudooo.handler.ooo.util import waitStartDaemon, \
-                                      removeDirectory
+                                      removeDirectory, \
+                                      processUsedFilesInPath, \
+                                      kill_procs_tree
 try:
   import json
 except ImportError:
@@ -139,6 +142,18 @@ class OpenOffice(Application):
     """Start Instance."""
     self.path_user_installation = join(self.path_run_dir, \
         "cloudooo_instance_%s" % self.port)
+    lock_file = join(self.path_user_installation, '.lock')
+    if exists(lock_file):
+      pids = processUsedFilesInPath(self.path_user_installation)
+      if len(pids) == 0:
+        logger.debug("Stalled lock file: %s", lock_file)
+      else:
+        logger.debug("kill process used workdir: %s", self.path_user_installation)
+        _, alive = kill_procs_tree(pids, sig=signal.SIGKILL, timeout=self.timeout)
+        if len(alive) > 0:
+          logger.error("process blocks worked directory and alive after SIGKILL: %s", alive)
+      removeDirectory(self.path_user_installation)
+
     if init and exists(self.path_user_installation):
       removeDirectory(self.path_user_installation)
     # Create command with all parameters to start the instance
