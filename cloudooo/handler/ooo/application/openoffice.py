@@ -63,10 +63,7 @@ class OpenOffice(Application):
     self.last_test_error = None
     self._cleanRequest()
 
-  def _testOpenOffice(self):
-    """Test if OpenOffice was started correctly"""
-    logger.debug("Test OpenOffice %s - Pid %s" % (self.getConnection(),
-                                                  self.pid()))
+  def _run_libreoffice_tester(self, args=[]):
     python = join(self.office_binary_path, "python")
     args = [exists(python) and python or "python",
             pkg_resources.resource_filename("cloudooo",
@@ -74,18 +71,41 @@ class OpenOffice(Application):
                                            "helper", "openoffice_tester.py")),
             "--connection=%s" % self.getConnection(),
             "--uno_path=%s" % self.uno_path,
-            "--office_binary_path=%s" % self.office_binary_path]
+            "--office_binary_path=%s" % self.office_binary_path] + args
     stdout, stderr = Popen(args, stdout=PIPE,
         stderr=PIPE, close_fds=True).communicate()
     if stdout == "":
       logger.error("openoffice_tester.py cmdline: %s", " ".join(args))
       logger.error("openoffice_tester.py stdout: %s", stdout)
       logger.error("openoffice_tester.py stderr: %s", stderr)
-      return False
+      return False, stderr
     stdout = json.loads(stdout)
+    return stdout, stderr
+
+  def _testOpenOffice(self):
+    """Test if LibreOffice was started correctly"""
+    logger.debug("%s instance testing - Pid %s" % (self.getConnection(),
+                                                  self.pid()))
+    stdout, stderr = self._run_libreoffice_tester()
     self.last_test_error = stderr
     if stdout == True:
-      logger.debug("Instance %s works" % self.getConnection())
+      logger.debug("%s instance works" % self.getConnection())
+    return stdout
+
+  def _terminate(self):
+    """Send LibreOffice daemon terminate command"""
+    logger.debug("%s instance terminating - Pid %s" % (self.getConnection(),
+                                                  self.pid()))
+    stdout, stderr = self._run_libreoffice_tester(["--terminate"])
+    if stderr:
+      logger.error(stderr)
+    if stdout == True:
+      for num in range(5):
+        if not exists(self.lock_file):
+          logger.debug("%s terminate" % self.getConnection())
+          return stdout
+        sleep(1)
+      logger.error("%s can not terminate" % self.getConnection())
     return stdout
 
   def _cleanRequest(self):
@@ -104,6 +124,9 @@ class OpenOffice(Application):
     if environment_dict is None:
       environment_dict = {}
     Application.loadSettings(self, hostname, port, path_run_dir)
+    self.path_user_installation = join(self.path_run_dir, \
+        "cloudooo_instance_%s" % self.port)
+    self.lock_file = join(self.path_user_installation, '.lock')
     self.office_binary_path = office_binary_path
     self.uno_path = uno_path
     self.default_language = default_language
@@ -141,13 +164,10 @@ class OpenOffice(Application):
 
   def start(self, init=True):
     """Start Instance."""
-    self.path_user_installation = join(self.path_run_dir, \
-        "cloudooo_instance_%s" % self.port)
-    lock_file = join(self.path_user_installation, '.lock')
-    if exists(lock_file):
+    if exists(self.lock_file):
       pids = processUsedFilesInPath(self.path_user_installation)
       if len(pids) == 0:
-        logger.debug("Stalled lock file: %s", lock_file)
+        logger.debug("Stalled lock file: %s", self.lock_file)
       else:
         logger.debug("kill process used workdir: %s", self.path_user_installation)
         _, alive = kill_procs_tree(pids, sig=signal.SIGKILL, timeout=self.timeout)
@@ -182,11 +202,21 @@ class OpenOffice(Application):
     else:
       logger.error("%s libreoffice not started", self.getConnection())
 
-  def stop(self, pid=None):
-    """Stop the instance by pid. By the default
-    the signal is 15."""
-    if Application.stop(self, pid=pid):
+  def reset(self, *args, **kw):
+    if Application.stop(self, *args, **kw):
       self._cleanRequest()
+
+  def stop(self, pid=None):
+    if hasattr(self, 'process'):
+      if pid is not None and self.process.pid != pid:
+        return False
+      returncode = self.process.poll()
+      if returncode is None or returncode == 0:
+        self._terminate()
+      if Application.stop(self, pid=pid):
+        self._cleanRequest()
+        return True
+    return False
 
   def isLocked(self):
     """Verify if OOo instance is being used."""

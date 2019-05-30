@@ -52,7 +52,7 @@ class MonitorTimeout(Monitor, Process):
       logger.debug("Stop OpenOffice - Port %s - Pid %s" % (port, pid))
       # using pid is not necessary here
       # but safe if incorrect use
-      self.openoffice.stop(pid=pid)
+      self.openoffice.reset(pid=pid)
 
   def terminate(self):
     """Stop the process"""

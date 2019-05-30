@@ -75,7 +75,7 @@ class MonitorMemory(Monitor, Process):
       pid = self.openoffice.pid()
       if self.get_memory_usage(pid) > self.limit:
         logger.debug("Stopping OpenOffice on memory limit increase")
-        self.openoffice.stop(pid=pid)
+        self.openoffice.reset(pid=pid)
       sleep(self.interval)
     logger.debug("Stop MonitorMemory")
 
