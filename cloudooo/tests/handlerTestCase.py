@@ -107,31 +107,6 @@ def stopFakeEnvironment(stop_openoffice=True):
     openoffice.stop()
   return True
 
-if 1:
-  from cloudooo.handler.ooo.application.openoffice import OpenOffice
-  from cloudooo.handler.ooo.util import waitStartDaemon
-  from subprocess import Popen, PIPE
-  from time import sleep
-
-  # patch OpenOffice._startProcess not to put bogus output to stderr,
-  # that prevents detecting the end of unit test.
-  def _startProcess(self, command, env):
-    """Start OpenOffice.org process"""
-    for i in range(5):
-      self.stop()
-      self.process = Popen(command, stderr=PIPE,
-                           close_fds=True,
-                           env=env)
-      sleep(1)
-      if self.process.poll() is not None:
-        # process already terminated so
-        # rerun
-        continue
-      if waitStartDaemon(self, self.timeout - 1):
-        break
-
-  OpenOffice._startProcess = _startProcess
-
 class HandlerTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""
 
