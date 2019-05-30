@@ -45,10 +45,10 @@ def removeDirectory(path):
 def waitStartDaemon(daemon, attempts):
   """Wait a certain time to start the daemon."""
   for num in range(attempts):
-    if daemon.status():
-      return True
-    elif daemon.pid() is None:
+    if not daemon.isRunning():
       return False
+    elif daemon.status():
+      return True
     sleep(1)
   return False
 

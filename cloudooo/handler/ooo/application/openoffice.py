@@ -134,6 +134,14 @@ class OpenOffice(Application):
     self.connection = "socket,host=%s,port=%d" % (self.hostname, self.port)
     self.connection = "pipe,name=cloudooo_libreoffice_%s" % str(uuid.uuid1())
 
+  def isRunning(self):
+    if hasattr(self, "process"):
+      returncode = self.process.poll()
+      if returncode is not None and returncode != 0:
+        return False
+      return True
+    return False
+
   def status(self):
     if Application.status(self) and \
           self._testOpenOffice():
