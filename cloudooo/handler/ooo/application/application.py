@@ -50,8 +50,14 @@ class Application(object):
     if hasattr(self, 'process'):
       error = False
       process_pid = self.process.pid
+      returncode = self.process.poll()
+      # libreoffice daemon want go to background
+      # so it return 0, so ignore 0
+      if returncode is not None and returncode != 0:
+        self.daemonOutputLog()
+        logger.debug("Process %s already ended with returncode %s", process_pid, returncode)
+        return False
       logger.debug("Stop Pid - %s", process_pid)
-      returncode = None
       try:
         process = Process(process_pid)
         cmdline = " ".join(process.cmdline())
@@ -74,9 +80,20 @@ class Application(object):
         returncode = self.process.returncode
       if error and returncode:
         logger.error("Process %s cmdline: %s ended with returncode %s", process_pid, cmdline, returncode)
-      elif returncode != 0:
+      elif returncode is not None and returncode != 0:
+        self.daemonOutputLog()
         logger.debug("Process %s ended with returncode %s", process_pid, returncode)
       delattr(self, "process")
+
+  def daemonOutputLog(self):
+    if hasattr(self, 'process'):
+      process_pid = self.process.pid
+      stdout = self.process.stdout.read()
+      if stdout:
+        logger.debug("Process %s stdout: %s", process_pid, stdout)
+      stderr = self.process.stderr.read()
+      if stderr:
+        logger.error("Process %s stderr: %s", process_pid, stderr)
 
   def loadSettings(self, hostname, port, path_run_dir, **kwargs):
     """Define attributes for application instance

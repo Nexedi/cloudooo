@@ -122,6 +122,8 @@ class OpenOffice(Application):
     for i in range(5):
       self.stop()
       self.process = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE,
                            close_fds=True,
                            env=env)
       sleep(1)
