@@ -58,6 +58,7 @@ class Application(object):
         logger.debug("Process %s already ended with returncode %s", process_pid, returncode)
         return False
       logger.debug("Stop Pid - %s", process_pid)
+      cmdline = ""
       try:
         process = Process(process_pid)
         cmdline = " ".join(process.cmdline())
