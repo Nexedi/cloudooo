@@ -71,17 +71,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
   check_folder(working_path, tmp_dir)
   if not environ.get('uno_path'):
     environ['uno_path'] = uno_path
-  office_binary_path = config.get("app:main", "office_binary_path")
   if not environ.get('office_binary_path'):
     environ['office_binary_path'] = office_binary_path
-
-  if uno_path not in sys.path:
-    sys.path.append(uno_path)
-
-  fundamentalrc_file = '%s/fundamentalrc' % office_binary_path
-  if path.exists(fundamentalrc_file) and \
-      'URE_BOOTSTRAP' not in environ:
-    putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%s' % fundamentalrc_file)
 
   if start_openoffice:
     default_language = config.get('app:main',
