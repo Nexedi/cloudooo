@@ -110,9 +110,12 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--office_binary_path=%s" % self.office_binary_path,
             "--hostname=%s" % self.hostname,
             "--port=%s" % self.openoffice_port]
-    stdout, stderr = Popen(command,
-                           stdout=PIPE,
-                           stderr=PIPE).communicate()
+    # due to a5157949fb5fc9e0c4b0b204f0e737c15498cf38 
+    # cloudooo will retry 10 times before raising thus take this into account
+    for i in range(10):
+      stdout, stderr = Popen(command,
+                             stdout=PIPE,
+                             stderr=PIPE).communicate()
     self.assertEquals(stdout, '')
     self.assertTrue(stderr.endswith(error_msg), stderr)
     openoffice.start()

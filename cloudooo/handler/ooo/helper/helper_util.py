@@ -22,11 +22,15 @@ def getServiceManager(host, port, uno_path, office_binary_path):
   # Connect to the running OpenOffice.org and get its
   # context.
   # Retry 10 times if needed.
-  for i in range(10):
+  max_attempts = 10
+  for i in range(max_attempts):
     try:
       uno_connection = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
       break
     except:
+      if i == (max_attempts - 1):
+        # no use to try, raise accordingly rather than swallow exception
+        raise
       # I don't know how to import com.sun.star.connection.NoConnectException
       time.sleep(1)
   # Get the ServiceManager object
