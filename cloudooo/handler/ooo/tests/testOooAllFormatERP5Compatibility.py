@@ -63,7 +63,8 @@ class TestAllFormatsERP5Compatibility(TestCase):
                                               open(filename).read()),
                                               None,
                                               extension,
-                                              source_mimetype)[1]['data']
+                                              source_mimetype)[1]
+        data_output = data_output['data']
         file_type = self._getFileType(data_output)
         if file_type.endswith(": empty"):
           fault_list.append((source_format, extension, file_type))
