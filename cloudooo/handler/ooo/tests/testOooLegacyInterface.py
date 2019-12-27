@@ -59,7 +59,6 @@ class TestLegacyInterface(TestCase):
                                                              None,
                                                              'odt',
                                                              'text/html')
-
     self.assertEquals(response_dict['mime'], 'application/vnd.oasis.opendocument.text')
     self.assertEquals(self._getFileType(response_dict['data']),
                       'application/vnd.oasis.opendocument.text')
