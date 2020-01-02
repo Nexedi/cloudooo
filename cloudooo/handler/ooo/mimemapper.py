@@ -250,8 +250,10 @@ class MimeMapper(object):
             return filter.getName()
         filter_list.sort(key=lambda x: x.getSortIndex())
         return filter_list[-1].getName()
-    else:
+    elif len(filter_list) == 1:
       return filter_list[0].getName()
+    # no filter found but rest of code expects string despite empty ...
+    return ''
 
   def getFilterList(self, extension):
     """Search filter by extension, and return the filter as string.
