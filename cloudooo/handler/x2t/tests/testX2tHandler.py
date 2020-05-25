@@ -32,7 +32,7 @@
 from zipfile import ZipFile
 from cStringIO import StringIO
 from cloudooo.handler.x2t.handler import Handler
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 
 OPENOFFICE = True
 

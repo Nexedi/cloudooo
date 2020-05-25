@@ -35,7 +35,6 @@ from base64 import decodestring
 from os import path
 from zipfile import ZipFile
 from cloudooo.handler.ooo.document import FileSystemDocument
-from cloudooo.tests.handlerTestCase import make_suite
 
 
 class TestFileSystemDocument(unittest.TestCase):

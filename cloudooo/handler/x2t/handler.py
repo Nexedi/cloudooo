@@ -41,7 +41,7 @@ from cloudooo.file import File
 from cloudooo.util import logger, unzip, parseContentType
 from cloudooo.handler.ooo.handler import Handler as OOoHandler
 
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZipFile
 
 AVS_OFFICESTUDIO_FILE_UNKNOWN = 0x0000
 

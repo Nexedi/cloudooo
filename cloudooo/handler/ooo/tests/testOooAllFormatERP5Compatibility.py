@@ -29,7 +29,7 @@
 ##############################################################################
 
 from xmlrpclib import Fault
-from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase
 from base64 import encodestring
 
 class TestAllFormatsERP5Compatibility(TestCase):

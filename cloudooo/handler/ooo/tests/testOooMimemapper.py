@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 

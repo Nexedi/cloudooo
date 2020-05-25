@@ -32,7 +32,7 @@
 from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.granulator import OOGranulator
 
 

@@ -31,7 +31,7 @@
 import magic
 from os import path
 from base64 import encodestring, decodestring
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.handler import Handler
 from cloudooo.handler.ooo.application.openoffice import openoffice
 import os

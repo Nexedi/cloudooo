@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase
 
 class TestAllFormats(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""

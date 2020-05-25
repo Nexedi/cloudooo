@@ -31,7 +31,6 @@
 import unittest
 import logging
 from cloudooo import util
-from cloudooo.tests.handlerTestCase import make_suite
 import mimetypes
 
 

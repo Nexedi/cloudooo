@@ -27,7 +27,7 @@
 #
 ##############################################################################
 from os.path import join
-from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase
 
 
 class TestServer(TestCase):

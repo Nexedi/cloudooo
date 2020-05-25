@@ -29,7 +29,7 @@
 ##############################################################################
 
 from base64 import encodestring
-from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase
 from pkg_resources import resource_filename
 
 

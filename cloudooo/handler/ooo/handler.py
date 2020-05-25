@@ -29,7 +29,6 @@
 ##############################################################################
 
 import json
-import re
 import pkg_resources
 import mimetypes
 from base64 import decodestring, encodestring

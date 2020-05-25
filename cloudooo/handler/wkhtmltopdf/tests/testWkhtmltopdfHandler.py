@@ -31,7 +31,7 @@ from base64 import b64encode
 
 import magic
 from cloudooo.handler.wkhtmltopdf.handler import Handler
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 
 
 class TestHandler(HandlerTestCase):

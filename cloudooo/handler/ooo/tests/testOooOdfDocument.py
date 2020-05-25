@@ -30,7 +30,7 @@
 
 from zipfile import ZipFile
 from lxml import etree
-from cloudooo.tests.handlerTestCase import HandlerTestCase, make_suite
+from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.document import OdfDocument
 
 

@@ -30,7 +30,7 @@
 
 from base64 import encodestring, decodestring
 from multiprocessing import Process, Array
-from cloudooo.tests.cloudoooTestCase import TestCase, make_suite
+from cloudooo.tests.cloudoooTestCase import TestCase
 import magic
 
 mime_decoder = magic.Magic(mime=True)

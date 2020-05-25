@@ -46,7 +46,6 @@ from cloudooo.interfaces.monitor import IMonitor
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
-from cloudooo.tests.handlerTestCase import make_suite
 from cloudooo.tests.backportUnittest import TestCase, expectedFailure
 
 
