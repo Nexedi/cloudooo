@@ -23,7 +23,7 @@ The configuration file is used to start the application using paster.
 
 ::
   
-  $ cp ./cloudooo/sample/sample.conf . # Copy to current folder
+  $ cp ./cloudooo/sample/sample.conf ./cloudooo.conf # Copy to current folder
 
 The next step is define some attributes in cloudooo.conf:
     - working_path - folder to run the application. This folder need be created.
