@@ -73,7 +73,7 @@ class Manager(object):
     self.handler_dict = self.kw.pop("handler_dict")
 
   def convertFile(self, file, source_format, destination_format, zip=False,
-                  refresh=False):
+                  refresh=False, conversion_kw={}):
     """Returns the converted file in the given format.
     Keywords arguments:
       file -- File as string in base64
@@ -84,7 +84,21 @@ class Manager(object):
     """
     self.kw['zip'] = zip
     self.kw['refresh'] = refresh
-    handler_class = getHandlerClass(source_format,
+    # XXX Force the use of wkhtmltopdf handler if converting from html to pdf
+    #     with conversion parameters.
+    #     This is a hack that quickly enables the use of wkhtmltopdf without
+    #     conflicting with other "html to pdf" conversion method
+    #     (i.e. using the ooo handler) that does not use such a parameter.
+    #     This hack should be removed after defining and implementing a way to
+    #     use the conversion_kw in a possible interoperable way between all
+    #     "html to pdf" handlers.
+    if (conversion_kw and
+        source_format in ("html", "text/html") and
+        destination_format in ("pdf", "application/pdf")):
+      from cloudooo.handler.wkhtmltopdf.handler import Handler as WkhtmltopdfHandler
+      handler_class = WkhtmltopdfHandler
+    else:
+      handler_class = getHandlerClass(source_format,
                                     destination_format,
                                     self.mimetype_registry,
                                     self.handler_dict)
@@ -92,7 +106,7 @@ class Manager(object):
                             decodestring(file),
                             source_format,
                             **self.kw)
-    decode_data = handler.convert(destination_format)
+    decode_data = handler.convert(destination_format, **conversion_kw)
     return encodestring(decode_data)
 
   def updateFileMetadata(self, file, source_format, metadata_dict):
