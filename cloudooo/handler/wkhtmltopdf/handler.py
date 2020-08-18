@@ -79,7 +79,10 @@ class Handler(object):
       stdout=PIPE,
       stderr=PIPE,
       close_fds=True,
-      env=self.environment,
+# self.environment defines LD_LIBRARY_PATH breaking wkhtmltopdf (official) package
+#     env=self.environment,
+      env={'LANG': 'ja_JP.UTF-8',
+           'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'},
       cwd=self.file.directory_name,
     ).communicate()
     self.file.reload(output_path)
