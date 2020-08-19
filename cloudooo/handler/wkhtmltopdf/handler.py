@@ -67,13 +67,13 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
-    logger.debug("wkhtmltopdf convert: %s > %s" % (self.file.source_format, destination_format))
     output_path = self.makeTempFile(destination_format)
     command = self.makeWkhtmltopdfCommandList(
       self.convertPathToUrl(self.file.getUrl()),
       output_path,
       conversion_kw=kw,
     )
+    logger.debug("wkhtmltopdf convert: %s" % ' '.join(command))
     stdout, stderr = Popen(
       command,
       stdout=PIPE,
