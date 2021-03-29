@@ -73,8 +73,7 @@ class TestAllowedExtensions(TestCase):
     # Verify all expected types ("doc"/"docy" MAY NOT be present)
     # XXX - Actually I'm not sure about docy, test have been failing for several months,
     # at least ignoring it makes the test pass.
-    doc_allowed_list = [(a, b) for a, b in doc_allowed_list if a not in ("htm", "dot", "doc", "docy")]
-    doc_allowed_list.append(('html', 'HTML Document (Writer)'))
+    doc_allowed_list = [(a, b) for a, b in doc_allowed_list if a not in ("dot", "doc", "docy")]
     self.assertEquals(sorted(doc_allowed_list),
                       sorted(list(filter(lambda (a, b): a not in ("doc", "docy"), text_expected_tuple))))
 
@@ -86,9 +85,7 @@ class TestAllowedExtensions(TestCase):
     # Verify all expected types ("doc"/"docy" MAY NOT be present)
     # XXX - Actually I'm not sure about docy, test have been failing for several months,
     # at least ignoring it makes the test pass.
-    msword_allowed_list = [(a, b) for a, b in msword_allowed_list if a not in ("htm", "dot", "doc", "docy")]
-    msword_allowed_list.append(('html', 'HTML Document (Writer)'))
-
+    msword_allowed_list = [(a, b) for a, b in msword_allowed_list if a not in ("dot", "doc", "docy")]
     self.assertEquals(sorted(msword_allowed_list),
                       sorted(list(filter(lambda (a, b): a not in ("doc", "docy"), text_expected_tuple))))
 
@@ -407,8 +404,7 @@ class TestGetAllowedTargetItemList(TestCase):
     # Verify all expected types ("doc"/"docy" MAY NOT be present)
     # XXX - Actually I'm not sure about docy, test have been failing for several months,
     # at least ignoring it makes the test pass.
-    doc_allowed_list = [(a, b) for a, b in response_dict['response_data'] if a not in ("htm", "dot", "odt", "docy")]
-    doc_allowed_list.append(('html', 'HTML Document (Writer)'))
+    doc_allowed_list = [(a, b) for a, b in response_dict['response_data'] if a not in ("dot", "odt", "docy")]
     self.assertEquals(
         sorted(doc_allowed_list),
         sorted(list(filter(lambda (a, b): a not in ("doc", "odt", "docy"), text_expected_tuple))))
