@@ -51,46 +51,31 @@ class TestAllowedExtensions(TestCase):
     ui_name. The request is by document type as text"""
     text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
-    text_allowed_list.sort()
-    for arg in text_allowed_list:
-      self.assertTrue(tuple(arg) in text_expected_tuple,
-                    "%s not in %s" % (arg, text_expected_tuple))
+    self.assertEqual(
+        sorted([tuple(x) for x in text_allowed_list]),
+        sorted(text_expected_tuple))
 
   def testGetAllowedPresentationExtensionListByType(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by document type as presentation"""
     request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
-    presentation_allowed_list.sort()
+    self.assertTrue(presentation_allowed_list)
     for arg in presentation_allowed_list:
-      self.assertTrue(tuple(arg) in presentation_expected_tuple,
-                    "%s not in %s" % (arg, presentation_expected_tuple))
+      self.assertIn(tuple(arg), presentation_expected_tuple)
 
   def testGetAllowedExtensionListByExtension(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
-    # Verify all expected types ("doc"/"docy" MAY NOT be present)
-    # XXX - Actually I'm not sure about docy, test have been failing for several months,
-    # at least ignoring it makes the test pass.
-    doc_allowed_list = [(a, b) for a, b in doc_allowed_list if a not in ("htm", "dot", "doc", "docy")]
-    doc_allowed_list.append(('html', 'HTML Document (Writer)'))
-    self.assertEquals(sorted(doc_allowed_list),
-                      sorted(list(filter(lambda (a, b): a not in ("doc", "docy"), text_expected_tuple))))
+    self.assertEqual(sorted([tuple(x) for x in doc_allowed_list]), sorted(text_expected_tuple))
 
   def testGetAllowedExtensionListByMimetype(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by mimetype"""
     request_dict = {"mimetype": "application/msword"}
     msword_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
-    # Verify all expected types ("doc"/"docy" MAY NOT be present)
-    # XXX - Actually I'm not sure about docy, test have been failing for several months,
-    # at least ignoring it makes the test pass.
-    msword_allowed_list = [(a, b) for a, b in msword_allowed_list if a not in ("htm", "dot", "doc", "docy")]
-    msword_allowed_list.append(('html', 'HTML Document (Writer)'))
-
-    self.assertEquals(sorted(msword_allowed_list),
-                      sorted(list(filter(lambda (a, b): a not in ("doc", "docy"), text_expected_tuple))))
+    self.assertEqual(sorted([tuple(x) for x in msword_allowed_list]), sorted(text_expected_tuple))
 
 
 class TestConversion(TestCase):
@@ -404,14 +389,12 @@ class TestGetAllowedTargetItemList(TestCase):
     response_code, response_dict, response_message = \
                   self.proxy.getAllowedTargetItemList(mimetype)
     self.assertEquals(response_code, 200)
-    # Verify all expected types ("doc"/"docy" MAY NOT be present)
-    # XXX - Actually I'm not sure about docy, test have been failing for several months,
-    # at least ignoring it makes the test pass.
-    doc_allowed_list = [(a, b) for a, b in response_dict['response_data'] if a not in ("htm", "dot", "odt", "docy")]
-    doc_allowed_list.append(('html', 'HTML Document (Writer)'))
+    # XXX in this test, docy is present in the allowed target extensions
     self.assertEquals(
-        sorted(doc_allowed_list),
-        sorted(list(filter(lambda (a, b): a not in ("doc", "odt", "docy"), text_expected_tuple))))
+        sorted([(extension, ui_name)
+                for (extension, ui_name) in response_dict['response_data']
+                if extension not in ('docy',)]),
+        sorted(text_expected_tuple))
 
 
 class TestGetTableItemList(TestCase):

@@ -84,10 +84,12 @@ def BBB_guess_extension(mimetype, title=None):
     "Microsoft Word 2007-2013 XML": ".ms.docx",
   }.get(title, None) or {
     # mediatype : extension
+    "application/msword": ".doc",
     "application/postscript": ".eps",
     "application/vnd.ms-excel": ".xls",
     "application/vnd.ms-excel.sheet.macroenabled.12": ".xlsm",
     "application/vnd.ms-powerpoint": ".ppt",
+    "text/html": ".html",
     "text/plain": ".txt",
     "image/jpeg": ".jpg",
   }.get(parseContentType(mimetype).gettype(), None) or guess_extension(mimetype)
