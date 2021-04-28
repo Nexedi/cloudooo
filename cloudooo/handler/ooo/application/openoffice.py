@@ -30,7 +30,7 @@
 
 import pkg_resources
 import psutil
-from psutil import AccessDenied
+from psutil import AccessDenied, NoSuchProcess
 from os.path import exists, join
 from subprocess import Popen, PIPE
 from threading import Lock
@@ -117,20 +117,18 @@ class OpenOffice(Application):
         return
 
   def _releaseOpenOfficePort(self):
+    openoffice_exe = join(self.office_binary_path, self._bin_soffice)
     for process in psutil.process_iter():
       try:
-        if process.exe() == join(self.office_binary_path, self._bin_soffice):
+        if process.exe() == openoffice_exe:
           for connection in process.connections():
             if connection.status == "LISTEN" and \
                 connection.laddr[1] == self.port:
               process.terminate()
-      except AccessDenied, e:
+      except (NoSuchProcess, AccessDenied):
         pass
-      except TypeError, e:
-        # exception to prevent one psutil issue with zombie processes
-        logger.debug(e)
-      except NotImplementedError, e:
-        logger.error("lsof isn't installed on this machine: " + str(e))
+      except Exception:
+        logger.error("Unexpected error releasing openoffice port", exc_info=True)
 
   def start(self, init=True):
     """Start Instance."""
