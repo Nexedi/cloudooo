@@ -101,7 +101,7 @@ class TestHandler(HandlerTestCase):
     self.assertEquals(handler.getMetadata(), {
         u'CreationDate': u'31/01/2018 21:09:10',
         u'Keywords': [u'\u0442\u0435\u0441\u0442', u'\u0441\u0430\u0431\u0436\u0435\u043a\u0442'],
-        'MIMEType': 'xlsy',
+        'MIMEType': 'application/x-asc-spreadsheet',
         u'ModificationDate': u'31/01/2018 21:22:36',
         u'PrintDate': u'00/00/0000 00:00:00',
         u'Subject': u'\u0432\u044b\u043a\u043b\u044e\u0447\u0438 \u0442\u0435\u043b\u0435\u0432\u0438\u0437\u043e\u0440',
@@ -117,7 +117,7 @@ class TestHandler(HandlerTestCase):
             "Keywords": "test keywords",
            })
     handler = Handler(self.tmp_url, new_mime_data, "xlsy", **self.kw)
-    self.assertEquals(handler.getMetadata(), {u'Keywords': u'test keywords', 'MIMEType': 'xlsy', u'Title': u'test title', u'Subject': u'test subject'})
+    self.assertEquals(handler.getMetadata(), {u'Keywords': u'test keywords', 'MIMEType': 'application/x-asc-spreadsheet', u'Title': u'test title', u'Subject': u'test subject'})
 
   def testGetAllowedConversionFormatList(self):
     """Test all combination of mimetype

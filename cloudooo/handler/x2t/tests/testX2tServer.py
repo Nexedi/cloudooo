@@ -26,7 +26,11 @@
 # See https://www.nexedi.com/licensing for rationale and options.
 #
 ##############################################################################
+import io
+import zipfile
+from base64 import decodestring, encodestring
 from os.path import join
+
 from cloudooo.tests.cloudoooTestCase import TestCase
 
 
@@ -35,6 +39,8 @@ class TestServer(TestCase):
 
   def ConversionScenarioList(self):
     return [
+      # magic recognize xlsy and docy files as zip files, so the
+      # expected mime is application/zip
       (join('data', 'test.xlsx'), "xlsx", "xlsy", "application/zip"),
       (join('data', 'test.xlsy'), "xlsy", "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
       (join('data', 'test_with_image.docx'), "docx", "docy", "application/zip"),
@@ -52,4 +58,32 @@ class TestServer(TestCase):
       # Try convert one xlsx for a invalid format
       (open(join('data', 'test.xlsx')).read(), 'xlsx', 'xyz'),
     ]
+
+  def test_xlsx_to_xlsy(self):
+    with open(join('data', 'test.xlsx')) as f:
+      xlsx_data = f.read()
+    xlsy_data = self.proxy.convertFile(
+      encodestring(xlsx_data),
+      'xlsx',
+      'xlsy',
+      False
+    )
+    self.assertEqual(
+      sorted(zipfile.ZipFile(io.BytesIO(decodestring(xlsy_data))).namelist()),
+      sorted(['Editor.xlsx', 'body.txt', 'metadata.json'])
+    )
+
+  def test_docx_to_docy(self):
+    with open(join('data', 'test_with_image.docx')) as f:
+      docx_data = f.read()
+    docy_data = self.proxy.convertFile(
+      encodestring(docx_data),
+      'docx',
+      'docy',
+      False
+    )
+    self.assertEqual(
+      sorted(zipfile.ZipFile(io.BytesIO(decodestring(docy_data))).namelist()),
+      sorted(['body.txt', 'media/image1.png', 'metadata.json'])
+    )
 
