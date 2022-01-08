@@ -41,7 +41,7 @@ from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
 from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
 from cloudooo.handler.ooo.monitor import monitor_sleeping_time
-from cloudooo.util import logger, parseContentType
+from cloudooo.util import logger, parseContentType, loadMimetypeList
 from psutil import pid_exists
 
 
@@ -66,6 +66,7 @@ class Handler(object):
     if not self.office_binary_path:
       self.office_binary_path = environ.get("office_binary_path")
     self._createDocument(base_folder_url, data, source_format)
+    loadMimetypeList()
 
   def _createDocument(self, base_folder_url, data, source_format):
     if source_format == 'csv':

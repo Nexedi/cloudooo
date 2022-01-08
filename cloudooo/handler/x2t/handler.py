@@ -38,7 +38,7 @@ from zope.interface import implements
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
-from cloudooo.util import logger, unzip, parseContentType
+from cloudooo.util import logger, unzip, parseContentType, loadMimetypeList
 from cloudooo.handler.ooo.handler import Handler as OOoHandler
 
 from zipfile import ZipFile
@@ -179,6 +179,7 @@ class Handler(object):
     self._init_kw = kw
     self.file = File(base_folder_url, data, source_format)
     self.environment = kw.get("env", {})
+    loadMimetypeList()
 
   def convert(self, destination_format=None, **kw):
     """ Convert the inputed file to output as format that were informed """
