@@ -28,6 +28,8 @@
 #
 ##############################################################################
 
+# pylint:disable=no-method-argument,no-self-argument
+
 from zope.interface import Interface
 
 
@@ -89,7 +91,7 @@ class IManager(Interface):
     metadata_dict : Metadatas to include in content
     """
 
-  def getAllowedConversionFormatList(self, source_mimetype):
+  def getAllowedConversionFormatList(source_mimetype):
     """Returns a list content_type and their titles which are supported
     by enabled handlers.
 
@@ -126,7 +128,7 @@ class IERP5Compatibility(Interface):
     dictionary"""
     return (200 or 402, dict(), '')
 
-  def run_getmetadata(self, filename, data, meta, extension, orig_format):
+  def run_getmetadata(filename, data, meta, extension, orig_format):
     """Extracts metadata from ODF and returns in dictionary"""
     return (200 or 402, dict(), '')
 
@@ -134,6 +136,6 @@ class IERP5Compatibility(Interface):
     """It exports a ODF to given format"""
     return (200 or 402, dict(), '')
 
-  def getAllowedTargetItemList(self, content_type):
+  def getAllowedTargetItemList(content_type):
     """List types which can be generated from given content type"""
     return (200 or 402, dict(), '')

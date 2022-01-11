@@ -28,6 +28,9 @@
 #
 ##############################################################################
 
+# pylint:disable=no-method-argument,no-self-argument
+
+
 from zope.interface import Interface
 
 
