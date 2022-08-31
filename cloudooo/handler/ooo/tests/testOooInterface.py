@@ -48,137 +48,57 @@ from cloudooo.interfaces.granulate import ITableGranulator, \
                                           ITextGranulator
 from cloudooo.tests.backportUnittest import TestCase, expectedFailure
 
+import zope.interface.verify
 
 class TestInterface(TestCase):
   """Test All Interfaces"""
 
   def testITableGranulator(self):
     """Test if Manager implements ITableGranulator"""
-    self.assertTrue(ITableGranulator.implementedBy(Manager))
-    method_list = ['getLineItemList',
-                   'getTable',
-                   'getTableItemList',
-                   'getColumnItemList']
-    self.assertEquals(sorted(ITableGranulator.names()), sorted(method_list))
+    zope.interface.verify.verifyClass(ITableGranulator, Manager)
 
   def testITextGranulator(self):
     """Test if Manager implements ITextGranulator"""
-    self.assertTrue(ITextGranulator.implementedBy(Manager))
-    method_list = ['getChapterItemList',
-                   'getParagraph',
-                   'getChapterItem',
-                   'getParagraphItemList']
-    self.assertEquals(ITextGranulator.names(), method_list)
+    zope.interface.verify.verifyClass(ITextGranulator, Manager)
 
   def testIImageGranulator(self):
     """Test if Manager implements IImageGranulator"""
-    self.assertTrue(IImageGranulator.implementedBy(Manager))
-    method_list = ['getImageItemList', 'getImage']
-    self.assertEquals(IImageGranulator.names(), method_list)
+    zope.interface.verify.verifyClass(IImageGranulator, Manager)
 
   def testIFile(self):
     """Test if FileSystemDocument implements IFile"""
-    self.assertTrue(IFile.implementedBy(FileSystemDocument))
+    zope.interface.verify.verifyClass(IFile, FileSystemDocument)
 
   def testIOdfDocument(self):
     """Test if OdfDocument implements IOdfDocument"""
-    self.assertTrue(IOdfDocument.implementedBy(OdfDocument))
-    method_list = ['getContentXml',
-                   'parsed_content',
-                   'source_format',
-                   'getFile']
-    self.assertEquals(IOdfDocument.names(), method_list)
+    zope.interface.verify.verifyClass(IOdfDocument, OdfDocument)
 
   def testIFilter(self):
     """Test if Filter implements IFile"""
-    self.assertTrue(IFilter.implementedBy(Filter))
-    self.assertEquals(IFilter.names(), ['getLabel', 'getName', 'getSortIndex',
-      'isPreferred', 'getDocumentService', 'getExtension', 'getMimetype'])
+    zope.interface.verify.verifyClass(IFilter, Filter)
 
-  # XXX Change at interfaces are not applied in real classes. 
-  # This tests should be rewrited to test the real classes instead hardcore
-  # copy and paste information.
   @expectedFailure
   def testIManager(self):
     """Test if Manager implements IManager"""
-    self.assertTrue(IManager.implementedBy(Manager))
-    method_list = ['convertFile',
-                  'getFileMetadataItemList',
-                  'updateFileMetadata',
-                  'getAllowedExtensionList',
-                  'granulateFile']
+    zope.interface.verify.verifyClass(IManager, Manager)
 
-    for method in method_list:
-      self.assertTrue(method in IManager.names())
-    self.assertEquals(len(method_list), len(IManager.names()))
-
-    self.assertEquals(IManager.get('convertFile').required, ('file',
-      'source_format', 'destination_format', 'zip', 'refresh'))
-    self.assertEquals(IManager.get('getAllowedExtensionList').required,
-        ('request_dict',))
-    self.assertEquals(IManager.get('getFileMetadataItemList').required,
-        ('file', 'source_format', 'base_document'))
-    self.assertEquals(IManager.get('updateFileMetadata').required,
-        ('file', 'source_format', 'metadata_dict'))
-
-  # XXX Change at interfaces are not applied in real classes. 
-  # This tests should be rewrited to test the real classes instead hardcore
-  # copy and paste information.
   @expectedFailure
   def testIMimeMapper(self):
     """Test if Mimemapper implements IMimemapper."""
-    method_list = ['getDocumentTypeDict', 'getFilterName', 'loadFilterList',
-        'getFilterList', 'getAllowedExtensionList',
-        'isLoaded']
-    for method in method_list:
-      self.assertTrue(method in IMimemapper.names())
-
-    self.assertTrue(IMimemapper.implementedBy(MimeMapper))
-    self.assertEquals(len(method_list), len(IMimemapper.names()))
-    self.assertEquals(IMimemapper.get('getFilterName').required,
-                                  ('extension', 'document_type'))
-    self.assertEquals(IMimemapper.get('loadFilterList').required, ())
-    self.assertEquals(IMimemapper.get('getFilterList').required, ('extension',))
-    self.assertEquals(IMimemapper.get('getDocumentTypeDict').required, ())
-    self.assertEquals(IMimemapper.get('getAllowedExtensionList').required,
-        ("document_type",))
+    zope.interface.verify.verifyClass(IMimemapper, MimeMapper)
 
   def testIMonitor(self):
     """Test if Monitors implements IMonitor"""
-    self.assertTrue(IMonitor.implementedBy(MonitorRequest))
-    self.assertEquals(IMonitor.names(), ["run"])
+    zope.interface.verify.verifyClass(IMonitor, MonitorRequest)
 
-  # XXX Change at interfaces are not applied in real classes. 
-  # This tests should be rewrited to test the real classes instead hardcore
-  # copy and paste information.
-  @expectedFailure
   def testIHandler(self):
     """Test if Handlers implements IHandler"""
-    self.assertTrue(IHandler.implementedBy(Handler))
-    method_list = ['convert', 'getMetadata', 'setMetadata']
-    for method in method_list:
-      self.assertTrue(method in IHandler.names(),
-                            "Method %s is not declared" % method)
-    self.assertEquals(len(method_list), len(IHandler.names()))
-    self.assertEquals(IHandler.get('convert').required, ('destination_format',))
-    self.assertEquals(IHandler.get('getMetadata').required,
-        ('converted_data',))
-    self.assertEquals(IHandler.get('setMetadata').required,
-        ('metadata_dict',))
+    zope.interface.verify.verifyClass(IHandler, Handler)
 
   def testIApplication(self):
     """Test if OpenOffice implements IApplication"""
-    self.assertTrue(IApplication.implementedBy(OpenOffice))
-    application_method_list = ["start", "stop", "pid",
-                              "status", "restart",
-                              "loadSettings", "getAddress"]
-    self.assertEquals(sorted(IApplication.names()),
-        sorted(application_method_list))
+    zope.interface.verify.verifyClass(IApplication, OpenOffice)
 
   def testILockable(self):
     """Test if Openoffice implements ILockable"""
-    self.assertTrue(ILockable.implementedBy(OpenOffice))
-    lockable_method_list = ["_lock", "acquire", "release", "isLocked"]
-    self.assertEquals(sorted(ILockable.names()), sorted(lockable_method_list))
-
-
+    zope.interface.verify.verifyClass(ILockable, OpenOffice)

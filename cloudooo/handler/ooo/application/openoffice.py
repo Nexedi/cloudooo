@@ -89,7 +89,7 @@ class OpenOffice(Application):
   def loadSettings(self, hostname, port, path_run_dir,
                    office_binary_path, uno_path, default_language,
                    environment_dict=None, **kw):
-    """Method to load the configuratio to control one OpenOffice Instance
+    """Method to load the configuration to control one OpenOffice Instance
     Keyword arguments:
     office_path -- Full Path of the OOo executable.
       e.g office_binary_path='/opt/openoffice.org3/program'

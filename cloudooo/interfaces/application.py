@@ -45,10 +45,15 @@ class IApplication(Interface):
   def pid():
     """Get the process pid"""
 
-  def loadSettings(hostname,
-                  port,
-                  working_path,
-                  office_binary_path):
+  def loadSettings(
+      hostname,
+      port,
+      working_path,
+      office_binary_path,
+      uno_path,
+      default_language,
+      environment_dict=None,
+    ):
     """Load configuration to control OOo Instances"""
 
   def status():
