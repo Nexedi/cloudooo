@@ -77,17 +77,17 @@ Options:
 class UnoConverter(object):
   """A module to easily work with OpenOffice.org."""
 
-  def __init__(self, hostname, port, document_url, source_format, uno_path,
-               office_binary_path, refresh):
-    """ """
-    self.hostname = hostname
-    self.port = port
+  def __init__(self, service_manager, document_url,
+               source_format, destination_format, refresh):
+    self.service_manager = service_manager
     self.document_url = document_url
-    self.document_dir_path = dirname(document_url)
     self.source_format = source_format
     self.refresh = refresh
-    self.uno_path = uno_path
-    self.office_binary_path = office_binary_path
+    self.destination_format = destination_format
+    self.filter_list = [(x[1], x[2])
+      for x in mimemapper.get("filter_list", ())
+      if destination_format == x[0] and x[2]
+    ] if mimemapper else ()
     self._load()
 
   def _createProperty(self, name, value):
@@ -129,42 +129,31 @@ class UnoConverter(object):
 
     return [property, ]
 
-  def _getFilterName(self, destination_format, type):
-    for filter_tuple in mimemapper["filter_list"]:
-      if destination_format == filter_tuple[0] and filter_tuple[1] == type:
-        return filter_tuple[2]
-
-  def _getPropertyToExport(self, destination_format=None):
-    """Create the property according to the extension of the file."""
-    if destination_format and self.document_loaded:
-      filter_name = self._getFilterName(destination_format, self.document_type)
-      property_list = []
-      property = self._createProperty("Overwrite", True)
-      property_list.append(property)
-      property = self._createProperty("FilterName", filter_name)
-      property_list.append(property)
-      property_list.extend(self._createSpecificProperty(filter_name))
-      return property_list
-    else:
-      return ()
-
-  def _getPropertyToImport(self, source_url):
+  def _getPropertyToImport(self,
+      _ods="com.sun.star.sheet.SpreadsheetDocument"):
     """Create the property for import filter, according to the extension of the file."""
-    _, extension = splitext(source_url)
-    if extension == '.csv':
-      # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
+    candidates = (x[0] for x in self.filter_list)
+    if self.source_format == 'csv':
+      if _ods in candidates:
+        # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
 
-      # Try to sniff the csv delimiter
-      with codecs.open(source_url, 'rb', 'utf-8', errors="ignore") as csvfile:
-        try:
-          dialect = csv.Sniffer().sniff(csvfile.read(1024))
-          delimiter = ord(dialect.delimiter)
-        except csv.Error:
-          delimiter = ord(',')
+        # Try to sniff the csv delimiter
+        with codecs.open(self.document_url, 'rb', 'utf-8', errors="ignore") as csvfile:
+          try:
+            dialect = csv.Sniffer().sniff(csvfile.read(1024))
+            delimiter = ord(dialect.delimiter)
+          except csv.Error:
+            delimiter = ord(',')
 
-      return (
-        self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
-        self._createProperty("FilterOptions", "{delimiter},34,UTF-8".format(**locals())), )
+        return (
+          self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
+          self._createProperty("FilterOptions", "%s,34,UTF-8" % delimiter))
+
+    elif self.source_format == 'html':
+      if next(candidates, None) == _ods:
+        return (
+          self._createProperty("FilterName", "calc_HTML_WebQuery"),
+          )
 
     return ()
 
@@ -173,27 +162,25 @@ class UnoConverter(object):
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
     """
-    service_manager = helper_util.getServiceManager(self.hostname, self.port,
-                                                    self.uno_path,
-                                                    self.office_binary_path)
-    desktop = service_manager.createInstance("com.sun.star.frame.Desktop")
+    createInstance = self.service_manager.createInstance
+    desktop = createInstance("com.sun.star.frame.Desktop")
     uno_url = self.systemPathToFileUrl(self.document_url)
     uno_document = desktop.loadComponentFromURL(
         uno_url,
         "_blank",
         0,
-        self._getPropertyToImport(self.document_url))
+        self._getPropertyToImport())
     if not uno_document:
       raise AttributeError("This document can not be loaded or is empty")
     if self.refresh:
       # Before converting to expected format, refresh dynamic
       # value inside document.
-      dispatcher = service_manager.createInstance("com.sun.star.frame.DispatchHelper")
+      dispatcher = createInstance("com.sun.star.frame.DispatchHelper")
       for uno_command in ('UpdateFields', 'UpdateAll', 'UpdateInputFields',
                           'UpdateAllLinks', 'UpdateCharts',):
         dispatcher.executeDispatch(uno_document.getCurrentController().getFrame(),
                                    '.uno:%s' % uno_command, '', 0, ())
-    module_manager = service_manager.createInstance("com.sun.star.frame.ModuleManager")
+    module_manager = createInstance("com.sun.star.frame.ModuleManager")
     self.document_type = module_manager.identify(uno_document)
     self.document_loaded = uno_document
 
@@ -202,19 +189,28 @@ class UnoConverter(object):
     from unohelper import systemPathToFileUrl
     return systemPathToFileUrl(path)
 
-  def convert(self, output_format=None):
+  def convert(self):
     """it converts a document to specific format"""
-    if output_format in ("html", "htm", "xhtml"):
-      destination_format = "impr.html"
+    for document_type, filter_name in self.filter_list:
+      if document_type == self.document_type:
+        property_list = [
+          self._createProperty("Overwrite", True),
+          self._createProperty("FilterName", filter_name),
+        ]
+        property_list += self._createSpecificProperty(filter_name)
+        property_list = tuple(property_list)
+        break
     else:
-      destination_format = output_format
-    output_url = mktemp(suffix='.%s' % destination_format,
-                        dir=self.document_dir_path)
+        property_list = ()
 
-    property_list = self._getPropertyToExport(output_format)
+    ext = self.destination_format
+    if ext in ("html", "htm", "xhtml"):
+      ext = "impr.html"
+    output_url = mktemp(suffix='.' + ext if ext else '',
+                        dir=dirname(self.document_url))
     try:
       self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
-         tuple(property_list))
+         property_list)
     finally:
       self.document_loaded.dispose()
     return output_url
@@ -244,11 +240,9 @@ class UnoConverter(object):
             except AttributeError:
               pass
 
-    service_manager = helper_util.getServiceManager(self.hostname, self.port,
-                                                    self.uno_path,
-                                                    self.office_binary_path)
-    type_detection = service_manager.createInstance("com.sun.star.document.TypeDetection")
-    uno_file_access = service_manager.createInstance("com.sun.star.ucb.SimpleFileAccess")
+    createInstance = self.service_manager.createInstance
+    type_detection = createInstance("com.sun.star.document.TypeDetection")
+    uno_file_access = createInstance("com.sun.star.ucb.SimpleFileAccess")
     doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
     input_stream = self._createProperty("InputStream", doc)
     open_new_view = self._createProperty("OpenNewView", True)
@@ -347,28 +341,24 @@ def main():
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
 
-
-  unoconverter = UnoConverter(hostname, port, document_url,  source_format,
-                              uno_path, office_binary_path, refresh)
-  if "--convert" in param_list and not '--getmetadata' in param_list \
-      and not destination_format:
-    output = unoconverter.convert()
-  elif '--convert' in param_list and destination_format:
-    output = unoconverter.convert(destination_format)
-  elif '--getmetadata' in param_list and not '--convert' in param_list:
-    metadata_dict = unoconverter.getMetadata()
-    output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()
-  elif '--getmetadata' in param_list and '--convert' in param_list:
-    document_url = unoconverter.convert()
-    # Instanciate new UnoConverter instance with new url
-    unoconverter = UnoConverter(hostname, port, document_url, source_format,
-                                uno_path, office_binary_path, refresh)
-    metadata_dict = unoconverter.getMetadata()
-    metadata_dict['document_url'] = document_url
-    output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()
-  elif '--setmetadata' in param_list:
+  service_manager = helper_util.getServiceManager(
+    hostname, port, uno_path, office_binary_path)
+  unoconverter = UnoConverter(service_manager, document_url,
+                              source_format, destination_format, refresh)
+  if '--setmetadata' in param_list:
     unoconverter.setMetadata(metadata)
     output = document_url
+  else:
+    output = unoconverter.convert() if "--convert" in param_list else None
+    if '--getmetadata' in param_list:
+      if output:
+        # Instanciate new UnoConverter instance with new url
+        unoconverter = UnoConverter(service_manager, output,
+          destination_format or source_format, None, refresh)
+      metadata_dict = unoconverter.getMetadata()
+      if output:
+        metadata_dict['document_url'] = output
+      output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()
 
   sys.stdout.write(output)
 
