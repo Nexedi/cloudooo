@@ -47,7 +47,7 @@ class TestLegacyInterface(TestCase):
                                                   None,
                                                   'text/html')
 
-    self.assertEquals(response_dict['mime'], 'text/html')
+    self.assertEquals(response_dict['mime'], 'text/html', response_dict)
     self.assertEquals(self._getFileType(response_dict['data']),
                       'text/html')
 

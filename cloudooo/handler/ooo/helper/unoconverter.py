@@ -206,7 +206,8 @@ class UnoConverter(object):
     ext = self.destination_format
     if ext in ("html", "htm", "xhtml"):
       ext = "impr.html"
-    output_url = mktemp(suffix='.' + ext, dir=dirname(self.document_url))
+    output_url = mktemp(suffix='.' + ext if ext else '',
+                        dir=dirname(self.document_url))
     try:
       self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
          property_list)
