@@ -232,6 +232,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -248,9 +249,13 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentText(self):
     """Test allowed conversion format for application/vnd.oasis.opendocument.text"""
-    self.assertEquals(
-      sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.text;ignored=param")),
-      [ ('application/msword', 'Microsoft Word 97-2003'),
+    for content_type in (
+      "application/vnd.oasis.opendocument.text;ignored=param",
+      "application/vnd.oasis.opendocument.text-flat-xml;ignored=param",
+      ):
+      self.assertEquals(
+        sorted(Handler.getAllowedConversionFormatList(content_type)), [
+        ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
         ('application/rtf', 'Rich Text'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
@@ -260,13 +265,8 @@ class TestHandler(HandlerTestCase):
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
         ('text/html', 'HTML Document (Writer)'),
-        ('text/plain', 'Text - Choose Encoding') ])
-
-  def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentTextFlatXml(self):
-    """Test allowed conversion format for application/vnd.oasis.opendocument.text-flat-xml"""
-    self.assertEquals(
-      sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.text-flat-xml;ignored=param")),
-      [])
+        ('text/plain', 'Text - Choose Encoding'),
+        ])
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument(self):
     """Test allowed conversion format for application/vnd.openxmlformats-officedocument.wordprocessingml.document"""
@@ -291,6 +291,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -306,6 +307,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -324,6 +326,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', u'Flat XML ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text', 'Text (Writer/Web)'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
@@ -349,6 +352,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -364,6 +368,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -379,6 +384,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -394,6 +400,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -409,6 +416,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -424,6 +432,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -439,6 +448,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -454,6 +464,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -469,6 +480,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -484,6 +496,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -499,6 +512,7 @@ class TestHandler(HandlerTestCase):
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing'),
+        ('application/vnd.oasis.opendocument.graphics-flat-xml', u'Flat XML ODF Drawing'),
         ('image/gif', 'GIF - Graphics Interchange Format'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -515,6 +529,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', u'Flat XML ODF Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -535,6 +550,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', u'Flat XML ODF Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -549,6 +565,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', u'Flat XML ODF Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Microsoft Excel 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/png', 'PNG - Portable Network Graphic'),
@@ -581,6 +598,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
         ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
+        ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', u'Flat XML ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text', 'Text (Writer/Web)'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
@@ -609,6 +627,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
+        ('application/vnd.oasis.opendocument.presentation-flat-xml', u'Flat XML ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),  # TEST it
@@ -631,6 +650,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
+        ('application/vnd.oasis.opendocument.presentation-flat-xml', u'Flat XML ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
@@ -653,6 +673,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
+        ('application/vnd.oasis.opendocument.presentation-flat-xml', u'Flat XML ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
@@ -675,6 +696,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.ms-powerpoint', 'Microsoft PowerPoint 97-2003 AutoPlay'),
         ('application/vnd.oasis.opendocument.graphics', 'ODF Drawing (Impress)'),
         ('application/vnd.oasis.opendocument.presentation', 'ODF Presentation'),
+        ('application/vnd.oasis.opendocument.presentation-flat-xml', u'Flat XML ODF Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Microsoft PowerPoint 2007-2013 XML'),
         ('application/vnd.openxmlformats-officedocument.presentationml.presentation', 'Office Open XML Presentation'),
         ('application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
