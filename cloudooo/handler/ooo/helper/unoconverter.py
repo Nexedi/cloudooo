@@ -75,6 +75,9 @@ Options:
                         Dictionary with metadata
   --infilter=FILTER_NAME[:FILTER_OPTIONS]
                         Import filter with options
+  --script=PYTHON_TEXT
+                        Script to execute on the loaded document,
+                        in Python langage
 """
 
 
@@ -193,6 +196,15 @@ class UnoDocument(object):
     module_manager = createInstance("com.sun.star.frame.ModuleManager")
     self.document_type = module_manager.identify(uno_document)
 
+  def runScript(self, script):
+    exec(script, {
+      # Inspired from XSCRIPTCONTEXT API.
+      # XXX: Is it possible to get a real XSCRIPTCONTEXT object?
+      "ComponentContext": self.service_manager.DefaultContext,
+      #"Desktop": self.desktop, # is there any reasonable use?
+      "Document": self.document_loaded,
+    })
+
   def convert(self):
     """it converts a document to specific format"""
     for document_type, filter_name in self.filter_list:
@@ -305,7 +317,7 @@ def main():
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=",
       "mimemapper=", "metadata=", "refresh=",
-      "unomimemapper_bin=", "infilter="])
+      "unomimemapper_bin=", "infilter=", "script="])
   except GetoptError as msg:
     msg = msg.msg + help_msg
     sys.stderr.write(msg)
@@ -317,7 +329,7 @@ def main():
     import json
   except ImportError:
     import simplejson as json
-  metadata = mimemapper = None
+  metadata = mimemapper = script = None
   hostname = port = office_binary_path = uno_path = None
   document_url = destination_format = source_format = infilter = refresh = None
   for opt, arg in iter(opt_list):
@@ -346,11 +358,15 @@ def main():
       mimemapper = json.loads(arg)
     elif opt == '--infilter':
       infilter = arg
+    elif opt == '--script':
+      script = arg
 
   service_manager = helper_util.getServiceManager(
     hostname, port, uno_path, office_binary_path)
   unodocument = UnoDocument(service_manager, document_url,
     source_format, destination_format, infilter, refresh)
+  if script:
+    unodocument.runScript(script)
   if '--setmetadata' in param_list:
     unodocument.setMetadata(metadata)
     output = document_url
