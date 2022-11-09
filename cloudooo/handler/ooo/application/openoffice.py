@@ -30,14 +30,14 @@
 
 import pkg_resources
 import psutil
+import subprocess
 from psutil import AccessDenied, NoSuchProcess
 from os.path import exists, join
-from subprocess import Popen, PIPE
 from threading import Lock
 from zope.interface import implements
 from application import Application
 from cloudooo.interfaces.lockable import ILockable
-from cloudooo.util import logger, convertStringToBool
+from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStartDaemon, \
                                       removeDirectory, waitStopDaemon, \
                                       socketStatus
@@ -64,7 +64,7 @@ class OpenOffice(Application):
     logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
                                                   self.pid()))
     python = join(self.office_binary_path, "python")
-    args = [exists(python) and python or "python",
+    args = [exists(python) and python or "python3",
             pkg_resources.resource_filename("cloudooo",
                                       join('handler', 'ooo',
                                            "helper", "openoffice_tester.py")),
@@ -72,11 +72,10 @@ class OpenOffice(Application):
             "--port=%s" % port,
             "--uno_path=%s" % self.uno_path]
     logger.debug("Testing Openoffice Instance %s" % port)
-    stdout, stderr = Popen(args, stdout=PIPE,
-        stderr=PIPE, close_fds=True).communicate()
-    stdout_bool = convertStringToBool(stdout.replace("\n", ""))
-    if stdout_bool and stderr != "":
-      logger.debug("%s\n%s" % (stderr, stdout))
+    try:
+      subprocess.check_output(args, stderr=subprocess.STDOUT, close_fds=True)
+    except subprocess.CalledProcessError as e:
+      logger.warning(e.output)
       return False
     else:
       logger.debug("Instance %s works" % port)
@@ -108,9 +107,7 @@ class OpenOffice(Application):
     for i in range(5):
       self.stop()
       waitStopDaemon(self, self.timeout)
-      self.process = Popen(command,
-                           close_fds=True,
-                           env=env)
+      self.process = subprocess.Popen(command, close_fds=True, env=env)
       if not waitStartDaemon(self, self.timeout):
         continue
       if self._testOpenOffice(self.hostname, self.port):

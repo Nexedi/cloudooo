@@ -92,18 +92,7 @@ def configureLogger(level=None, debug_mode=False):
   # add ch to logger
   logger.addHandler(ch)
 
-
-def convertStringToBool(string):
-  """This function is used to convert string 'true' and 'false' only.
-  Keyword arguments:
-  string -- string to convert to boolean
-  """
-  if string.upper() == "TRUE":
-    return True
-  elif string.upper() == "FALSE":
-    return False
-  else:
-    return None
+convertStringToBool = ('false', 'true').index
 
 def zipTree(destination, *tree_path_list):
   """

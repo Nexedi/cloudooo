@@ -65,8 +65,9 @@ def application(global_config, **local_config):
   local_config["env"] = environment_dict
 
   gc.enable()
-  debug_mode = util.convertStringToBool(local_config.get('debug_mode'))
-  util.configureLogger(debug_mode=debug_mode)
+  util.configureLogger(debug_mode=util.convertStringToBool(
+    # .lower() is for backward compatibility
+    local_config.get('debug_mode', 'false').lower()))
   # path of directory to run cloudooo
   working_path = local_config.get('working_path')
   if not path.exists(working_path):

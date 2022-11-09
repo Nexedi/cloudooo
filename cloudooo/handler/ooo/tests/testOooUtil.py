@@ -46,14 +46,6 @@ class TestUtil(unittest.TestCase):
     util.logger.info("Test Log")
     util.logger.debug("Test Log")
 
-  def testConversion(self):
-    """Test convertion to bool"""
-    self.assertTrue(util.convertStringToBool('true'))
-    self.assertEquals(util.convertStringToBool('false'), False)
-    self.assertTrue(util.convertStringToBool('truE'))
-    self.assertEquals(util.convertStringToBool('faLse'), False)
-    self.assertEquals(util.convertStringToBool(''), None)
-
   def testLoadMimetypelist(self):
     """Test if the file with mimetypes is loaded correctly"""
     self.assertEquals(mimetypes.types_map.get(".ogv"), None)
