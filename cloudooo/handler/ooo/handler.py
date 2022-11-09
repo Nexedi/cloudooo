@@ -173,6 +173,8 @@ class Handler(object):
     Keyword Arguments:
     destination_format -- extension of document as String
     """
+    if not self.enable_scripting and kw.get('script'):
+      raise Exception("ooo: scripting is disabled")
     logger.debug("OooConvert: %s > %s" % (self.source_format, destination_format))
     kw['source_format'] = self.source_format
     if destination_format:
@@ -278,6 +280,9 @@ def bootstrapHandler(configuration_dict):
   signal(SIGINT, stopProcesses)
   signal(SIGQUIT, stopProcesses)
   signal(SIGHUP, stopProcesses)
+
+  Handler.enable_scripting = ('false', 'true').index(
+    configuration_dict.pop("ooo_enable_scripting", 'false'))
 
   working_path = configuration_dict.get('working_path')
   application_hostname = configuration_dict.get('application_hostname')
