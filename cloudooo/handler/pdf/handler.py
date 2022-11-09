@@ -27,7 +27,6 @@
 # See https://www.nexedi.com/licensing for rationale and options.
 #
 ##############################################################################
-import io
 
 from zope.interface import implements
 from cloudooo.interfaces.handler import IHandler
@@ -36,8 +35,6 @@ from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
-from pyPdf import PdfFileWriter, PdfFileReader
-from pyPdf.generic import NameObject, createStringObject
 
 class Handler(object):
   """PDF Handler is used to handler inputed pdf document."""
@@ -52,7 +49,6 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """ Convert a pdf document """
-    # TODO: use pyPdf
     logger.debug("PDFConvert: %s > %s" % (self.document.source_format, destination_format))
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.document.directory_name)
@@ -72,7 +68,6 @@ class Handler(object):
     """Returns a dictionary with all metadata of document.
     along with the metadata.
     """
-    # TODO: use pyPdf and not use lower()
     command = ["pdfinfo", self.document.getUrl()]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
@@ -82,10 +77,13 @@ class Handler(object):
     info_list = filter(None, stdout.split("\n"))
     metadata = {}
     for info in iter(info_list):
-      info = info.split(":")
-      info_name = info[0].lower()
-      info_value = ":".join(info[1:]).strip()
-      metadata[info_name] = info_value
+      if info.count(":") == 1:
+        info_name, info_value = info.split(":")
+      else:
+        info_name, info_value = info.split("  ")
+        info_name = info_name.replace(":", "")
+      info_value = info_value.strip()
+      metadata[info_name.lower()] = info_value
     self.document.trash()
     return metadata
 
@@ -94,27 +92,31 @@ class Handler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    # TODO: date as "D:20090401124817-04'00'" ASN.1 for ModDate and CreationDate
-    input_pdf = PdfFileReader(open(self.document.getUrl(), "rb"))
-    output_pdf = PdfFileWriter()
-
-    modification_date = metadata.pop("ModificationDate", None)
-    if modification_date:
-      metadata['ModDate'] = modification_date
-    if type(metadata.get('Keywords', None)) is list:
-      metadata['Keywords'] = metadata['Keywords'].join(' ')
-    args = {}
-    for key, value in list(metadata.items()):
-      args[NameObject('/' + key.capitalize())] = createStringObject(value)
-
-    output_pdf._info.getObject().update(args)
-
-    for page_num in range(input_pdf.getNumPages()):
-      output_pdf.addPage(input_pdf.getPage(page_num))
-
-    output_stream = io.BytesIO()
-    output_pdf.write(output_stream)
-    return output_stream.getvalue()
+    text_template = "InfoKey: %s\nInfoValue: %s\n"
+    text_list = [text_template % (key.capitalize(), value) \
+                                 for key, value in metadata.iteritems()]
+    metadata_file = File(self.document.directory_name,
+                         "".join(text_list),
+                         "txt")
+    output_url = mktemp(suffix=".pdf",
+                        dir=self.document.directory_name)
+    command = ["pdftk",
+               self.document.getUrl(),
+               "update_info",
+               metadata_file.getUrl(),
+               "output",
+               output_url
+               ]
+    stdout, stderr = Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE,
+                           close_fds=True,
+                           env=self.environment).communicate()
+    self.document.reload(output_url)
+    try:
+      return self.document.getContent()
+    finally:
+      self.document.trash()
 
   @staticmethod
   def getAllowedConversionFormatList(source_mimetype):
