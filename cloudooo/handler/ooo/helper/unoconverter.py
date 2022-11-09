@@ -33,9 +33,11 @@ import sys
 import csv
 import codecs
 import helper_util
+from unohelper import systemPathToFileUrl
 from os.path import dirname, splitext
 from tempfile import mktemp
 from base64 import b64encode, b64decode
+from functools import partial
 from getopt import getopt, GetoptError
 
 try:
@@ -45,7 +47,7 @@ except NameError:
 
 __doc__ = """
 
-usage: unoconverter [options]
+usage: unodocument [options]
 
 Options:
   -h, --help            this help screen
@@ -74,21 +76,20 @@ Options:
 """
 
 
-class UnoConverter(object):
+class UnoDocument(object):
   """A module to easily work with OpenOffice.org."""
 
   def __init__(self, service_manager, document_url,
-               source_format, destination_format, refresh):
+               source_format, destination_format, *args):
     self.service_manager = service_manager
     self.document_url = document_url
     self.source_format = source_format
-    self.refresh = refresh
     self.destination_format = destination_format
     self.filter_list = [(x[1], x[2])
       for x in mimemapper.get("filter_list", ())
       if destination_format == x[0] and x[2]
     ] if mimemapper else ()
-    self._load()
+    self._load(*args)
 
   def _createProperty(self, name, value):
     """Create property"""
@@ -157,37 +158,32 @@ class UnoConverter(object):
 
     return ()
 
-  def _load(self):
+  def _load(self, refresh):
     """Create one document with basic properties
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
     """
     createInstance = self.service_manager.createInstance
-    desktop = createInstance("com.sun.star.frame.Desktop")
-    uno_url = self.systemPathToFileUrl(self.document_url)
-    uno_document = desktop.loadComponentFromURL(
+    self.desktop = createInstance("com.sun.star.frame.Desktop")
+    uno_url = systemPathToFileUrl(self.document_url)
+    self.document_loaded = uno_document = self.desktop.loadComponentFromURL(
         uno_url,
         "_blank",
         0,
         self._getPropertyToImport())
     if not uno_document:
       raise AttributeError("This document can not be loaded or is empty")
-    if self.refresh:
+    if refresh:
       # Before converting to expected format, refresh dynamic
       # value inside document.
-      dispatcher = createInstance("com.sun.star.frame.DispatchHelper")
+      dispatch = partial(
+        createInstance("com.sun.star.frame.DispatchHelper").executeDispatch,
+        uno_document.CurrentController.Frame)
       for uno_command in ('UpdateFields', 'UpdateAll', 'UpdateInputFields',
                           'UpdateAllLinks', 'UpdateCharts',):
-        dispatcher.executeDispatch(uno_document.getCurrentController().getFrame(),
-                                   '.uno:%s' % uno_command, '', 0, ())
+        dispatch('.uno:%s' % uno_command, '', 0, ())
     module_manager = createInstance("com.sun.star.frame.ModuleManager")
     self.document_type = module_manager.identify(uno_document)
-    self.document_loaded = uno_document
-
-  def systemPathToFileUrl(self, path):
-    """Returns a path in uno library patterns"""
-    from unohelper import systemPathToFileUrl
-    return systemPathToFileUrl(path)
 
   def convert(self):
     """it converts a document to specific format"""
@@ -209,7 +205,7 @@ class UnoConverter(object):
     output_url = mktemp(suffix='.' + ext if ext else '',
                         dir=dirname(self.document_url))
     try:
-      self.document_loaded.storeToURL(self.systemPathToFileUrl(output_url),
+      self.document_loaded.storeToURL(systemPathToFileUrl(output_url),
          property_list)
     finally:
       self.document_loaded.dispose()
@@ -243,7 +239,7 @@ class UnoConverter(object):
     createInstance = self.service_manager.createInstance
     type_detection = createInstance("com.sun.star.document.TypeDetection")
     uno_file_access = createInstance("com.sun.star.ucb.SimpleFileAccess")
-    doc = uno_file_access.openFileRead(self.systemPathToFileUrl(self.document_url))
+    doc = uno_file_access.openFileRead(systemPathToFileUrl(self.document_url))
     input_stream = self._createProperty("InputStream", doc)
     open_new_view = self._createProperty("OpenNewView", True)
     filter_name = type_detection.queryTypeByDescriptor((input_stream,
@@ -313,9 +309,9 @@ def main():
     import json
   except ImportError:
     import simplejson as json
-  refresh = None
-  hostname = port = document_url = office_binary_path = uno_path =\
-  destination_format = source_format = refresh = metadata = mimemapper = None
+  metadata = mimemapper = None
+  hostname = port = office_binary_path = uno_path = None
+  document_url = destination_format = source_format = refresh = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
@@ -343,19 +339,19 @@ def main():
 
   service_manager = helper_util.getServiceManager(
     hostname, port, uno_path, office_binary_path)
-  unoconverter = UnoConverter(service_manager, document_url,
-                              source_format, destination_format, refresh)
+  unodocument = UnoDocument(service_manager, document_url,
+    source_format, destination_format, refresh)
   if '--setmetadata' in param_list:
-    unoconverter.setMetadata(metadata)
+    unodocument.setMetadata(metadata)
     output = document_url
   else:
-    output = unoconverter.convert() if "--convert" in param_list else None
+    output = unodocument.convert() if "--convert" in param_list else None
     if '--getmetadata' in param_list:
       if output:
-        # Instanciate new UnoConverter instance with new url
-        unoconverter = UnoConverter(service_manager, output,
+        # Instanciate new UnoDocument instance with new url
+        unodocument = UnoDocument(service_manager, output,
           destination_format or source_format, None, refresh)
-      metadata_dict = unoconverter.getMetadata()
+      metadata_dict = unodocument.getMetadata()
       if output:
         metadata_dict['document_url'] = output
       output = b64encode(json.dumps(metadata_dict).encode('utf-8')).decode()

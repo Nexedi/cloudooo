@@ -103,8 +103,8 @@ class Manager(object):
     """Need pass the path where the temporary document will be created."""
     self._path_tmp_dir = path_tmp_dir
     self.kw = kw
-    self.mimetype_registry = self.kw.pop("mimetype_registry")
-    self.handler_dict = self.kw.pop("handler_dict")
+    self.mimetype_registry = kw.pop("mimetype_registry")
+    self.handler_dict = kw.pop("handler_dict")
 
   def convertFile(self, file, source_format, destination_format, zip=False,
                   refresh=False, conversion_kw={}):
@@ -116,8 +116,8 @@ class Manager(object):
       zip -- Boolean Attribute. If true, returns the file in the form of a
       zip archive
     """
-    self.kw['zip'] = zip
-    self.kw['refresh'] = refresh
+    kw = self.kw.copy()
+    kw.update(zip=zip, refresh=refresh)
     # XXX Force the use of wkhtmltopdf handler if converting from html to pdf
     #     with conversion parameters.
     #     This is a hack that quickly enables the use of wkhtmltopdf without
@@ -138,7 +138,7 @@ class Manager(object):
     handler = handler_class(self._path_tmp_dir,
                             decodestring(file),
                             source_format,
-                            **self.kw)
+                            **kw)
     decode_data = handler.convert(destination_format, **conversion_kw)
     return encodestring(decode_data)
 

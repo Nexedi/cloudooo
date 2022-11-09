@@ -17,7 +17,8 @@ def load(local_config):
                               int(local_config.get('limit_number_request')))
   monitor_request.start()
 
-  if bool(local_config.get('enable_memory_monitor')):
+  # .lower() is for backward compatibility
+  if ('false', 'true').index(local_config.get('enable_memory_monitor').lower()):
     global monitor_memory
     monitor_memory = MonitorMemory(openoffice,
                                   monitor_interval,
