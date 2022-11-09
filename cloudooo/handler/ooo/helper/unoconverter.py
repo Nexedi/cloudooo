@@ -73,6 +73,8 @@ Options:
                         created
   --metadata=DICT_SERIALIZED
                         Dictionary with metadata
+  --infilter=FILTER_NAME[:FILTER_OPTIONS]
+                        Import filter with options
 """
 
 
@@ -130,9 +132,15 @@ class UnoDocument(object):
 
     return [property, ]
 
-  def _getPropertyToImport(self,
+  def _getPropertyToImport(self, infilter,
       _ods="com.sun.star.sheet.SpreadsheetDocument"):
     """Create the property for import filter, according to the extension of the file."""
+    if infilter:
+      infilter = infilter.split(':', 1)
+      args = [self._createProperty("FilterName", infilter.pop(0))]
+      if infilter:
+        args.append(self._createProperty("FilterOptions", *infilter))
+      return args
     candidates = (x[0] for x in self.filter_list)
     if self.source_format == 'csv':
       if _ods in candidates:
@@ -158,7 +166,7 @@ class UnoDocument(object):
 
     return ()
 
-  def _load(self, refresh):
+  def _load(self, infilter, refresh):
     """Create one document with basic properties
     refresh argument tells to uno environment to
     replace dynamic properties of document before conversion
@@ -170,7 +178,7 @@ class UnoDocument(object):
         uno_url,
         "_blank",
         0,
-        self._getPropertyToImport())
+        self._getPropertyToImport(infilter))
     if not uno_document:
       raise AttributeError("This document can not be loaded or is empty")
     if refresh:
@@ -297,7 +305,7 @@ def main():
       "hostname=", "port=", "source_format=",
       "document_url=", "destination_format=",
       "mimemapper=", "metadata=", "refresh=",
-      "unomimemapper_bin="])
+      "unomimemapper_bin=", "infilter="])
   except GetoptError as msg:
     msg = msg.msg + help_msg
     sys.stderr.write(msg)
@@ -311,7 +319,7 @@ def main():
     import simplejson as json
   metadata = mimemapper = None
   hostname = port = office_binary_path = uno_path = None
-  document_url = destination_format = source_format = refresh = None
+  document_url = destination_format = source_format = infilter = refresh = None
   for opt, arg in iter(opt_list):
     if opt in ('-h', '--help'):
       help()
@@ -336,11 +344,13 @@ def main():
       metadata = json.loads(arg)
     elif opt == '--mimemapper':
       mimemapper = json.loads(arg)
+    elif opt == '--infilter':
+      infilter = arg
 
   service_manager = helper_util.getServiceManager(
     hostname, port, uno_path, office_binary_path)
   unodocument = UnoDocument(service_manager, document_url,
-    source_format, destination_format, refresh)
+    source_format, destination_format, infilter, refresh)
   if '--setmetadata' in param_list:
     unodocument.setMetadata(metadata)
     output = document_url
