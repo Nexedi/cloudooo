@@ -41,10 +41,11 @@ class TestMonitorInit(HandlerTestCase):
 
   def afterSetUp(self):
     """Create one fake file configuration"""
-    self.load_config = {}
-    self.load_config['monitor_interval'] = 1
-    self.load_config['limit_number_request'] = 100
-    self.load_config['limit_memory_used'] = 500
+    self.load_config = {
+      'monitor_interval': '1',
+      'limit_number_request': '100',
+      'limit_memory_used': '500',
+    }
 
   def tearDown(self):
     """stop all monitors"""
@@ -64,7 +65,7 @@ class TestMonitorInit(HandlerTestCase):
 
   def testMonitorLoadMonitorMemory(self):
     """Check if the MemoryMemory is started"""
-    self.load_config['enable_memory_monitor'] = True
+    self.load_config['enable_memory_monitor'] = 'true'
     monitor.load(self.load_config)
     self.assertEquals(isinstance(monitor.monitor_request,
                                  MonitorRequest),

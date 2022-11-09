@@ -2,6 +2,7 @@ from request import MonitorRequest
 from memory import MonitorMemory
 from sleeping_time import MonitorSpleepingTime
 from cloudooo.handler.ooo.application.openoffice import openoffice
+from cloudooo.util import convertStringToBool
 
 monitor_request = None
 monitor_memory = None
@@ -17,7 +18,9 @@ def load(local_config):
                               int(local_config.get('limit_number_request')))
   monitor_request.start()
 
-  if bool(local_config.get('enable_memory_monitor')):
+  # .lower() is for backward compatibility
+  if convertStringToBool(local_config.get(
+      'enable_memory_monitor', 'false').lower()):
     global monitor_memory
     monitor_memory = MonitorMemory(openoffice,
                                   monitor_interval,
