@@ -284,7 +284,7 @@ def bootstrapHandler(configuration_dict):
   signal(SIGHUP, stopProcesses)
 
   Handler.enable_scripting = ('false', 'true').index(
-    configuration_dict.pop("ooo_enable_scripting", 'false'))
+    configuration_dict.pop("ooo_enable_scripting", 'true'))
 
   working_path = configuration_dict.get('working_path')
   application_hostname = configuration_dict.get('application_hostname')
