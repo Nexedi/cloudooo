@@ -28,17 +28,16 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
+@implementer(IHandler)
 class Handler(object):
   """FFMPEG Handler is used to handler inputed audio and video files"""
-
-  implements(IHandler)
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """

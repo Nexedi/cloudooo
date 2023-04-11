@@ -32,7 +32,7 @@
 import mimetypes
 from mimetypes import guess_type, guess_extension
 from base64 import encodestring, decodestring
-from zope.interface import implements
+from zope.interface import implementer
 from interfaces.manager import IManager, IERP5Compatibility
 from cloudooo.util import logger, parseContentType
 from cloudooo.interfaces.granulate import ITableGranulator
@@ -94,10 +94,10 @@ def BBB_guess_extension(mimetype, title=None):
     "image/jpeg": ".jpg",
   }.get(parseContentType(mimetype).gettype(), None) or guess_extension(mimetype)
 
+@implementer(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
+             ITextGranulator)
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
-  implements(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
-             ITextGranulator)
 
   def __init__(self, path_tmp_dir, **kw):
     """Need pass the path where the temporary document will be created."""

@@ -28,14 +28,13 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.filter import IFilter
 
 
+@implementer(IFilter)
 class Filter(object):
   """Filter of OOo."""
-
-  implements(IFilter)
 
   def __init__(self, extension, filter, mimetype, document_service, **kwargs):
     """Receives extension, filter and mimetype of filter and saves in object.

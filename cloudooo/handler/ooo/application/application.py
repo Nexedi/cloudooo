@@ -28,18 +28,17 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.application import IApplication
 from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStopDaemon
 from psutil import pid_exists, Process, AccessDenied
 
 
+@implementer(IApplication)
 class Application(object):
   """Base object to create an object that is possible manipulation a
   process"""
-
-  implements(IApplication)
 
   name = "application"
 

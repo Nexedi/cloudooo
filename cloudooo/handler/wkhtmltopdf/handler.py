@@ -27,7 +27,7 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger, parseContentType
@@ -39,10 +39,9 @@ from base64 import b64decode
 def keyNameToOption(key_name, prefix=""):
   return "--" + prefix + key_name.replace("_", "-")
 
+@implementer(IHandler)
 class Handler(object):
   """ImageMagic Handler is used to handler images."""
-
-  implements(IHandler)
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """ Load pdf document """

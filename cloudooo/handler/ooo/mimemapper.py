@@ -32,7 +32,7 @@ import pkg_resources
 from re import findall
 from subprocess import Popen, PIPE
 from subprocess import STDOUT
-from zope.interface import implements
+from zope.interface import implementer
 from filter import Filter
 from os import environ, path
 from cloudooo.interfaces.mimemapper import IMimemapper
@@ -40,11 +40,11 @@ from types import InstanceType
 import json
 
 
+@implementer(IMimemapper)
 class MimeMapper(object):
   """Load all filters from OOo. You can get the filter you want or all
   filters of the specific extension.
   """
-  implements(IMimemapper)
 
   def __init__(self):
     """When it is instantiated, it creates a structure to store filters.

@@ -28,14 +28,13 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.monitor import IMonitor
 
 
+@implementer(IMonitor)
 class Monitor(object):
   """ """
-
-  implements(IMonitor)
 
   def __init__(self, openoffice, interval):
     """Expects an openoffice object and the interval"""

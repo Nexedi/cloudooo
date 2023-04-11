@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from zope.interface import implements
+from zope.interface import implementer
 from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
@@ -40,10 +40,9 @@ class FileSystemDocument(File):
   pass
 
 
+@implementer(IOdfDocument)
 class OdfDocument(object):
   """Manipulates odf documents in memory"""
-
-  implements(IOdfDocument)
 
   def __init__(self, data, source_format):
     """Open the the file in memory.

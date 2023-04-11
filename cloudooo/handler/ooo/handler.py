@@ -35,7 +35,7 @@ from base64 import decodestring, encodestring
 from os import environ, path
 from subprocess import Popen, PIPE
 from cloudooo.handler.ooo.application.openoffice import openoffice
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.ooo.document import FileSystemDocument
@@ -45,13 +45,13 @@ from cloudooo.util import logger, parseContentType, loadMimetypeList
 from psutil import pid_exists
 
 
+@implementer(IHandler)
 class Handler(object):
   """OOO Handler is used to access the one Document and OpenOffice.
   For each Document inputed is created on instance of this class to manipulate
   the document. This Document must be able to create and remove a temporary
   document at FS, load and export.
   """
-  implements(IHandler)
 
   enable_scripting = False
 

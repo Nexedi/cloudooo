@@ -34,7 +34,7 @@ import subprocess
 from psutil import AccessDenied, NoSuchProcess
 from os.path import exists, join
 from threading import Lock
-from zope.interface import implements
+from zope.interface import implementer
 from application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger
@@ -43,10 +43,9 @@ from cloudooo.handler.ooo.util import waitStartDaemon, \
                                       socketStatus
 
 
+@implementer(ILockable)
 class OpenOffice(Application):
   """Object to control one OOo Instance and all features instance."""
-
-  implements(ILockable)
 
   name = "openoffice"
 

@@ -32,17 +32,17 @@ import mimetypes
 import tempfile
 from os.path import join, exists, curdir, abspath
 from os import listdir, remove, chdir
-from zope.interface import implements
+from zope.interface import implementer
 from zipfile import ZipFile, is_zipfile
 from shutil import rmtree
 from cloudooo.interfaces.file import IFile
 
 
+@implementer(IFile)
 class File(object):
   """File is used to manipulate one temporary file
   stored into the filesystem.
   """
-  implements(IFile)
 
   def __init__(self, base_folder_url, data, source_format):
     """Create an file into file system and store the URL.

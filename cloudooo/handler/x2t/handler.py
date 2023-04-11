@@ -34,7 +34,7 @@ import json
 import io
 from mimetypes import guess_type
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
@@ -156,13 +156,12 @@ yformat_map = {
 yformat_tuple = ("docy", "xlsy", "ppty")
 
 
+@implementer(IHandler)
 class Handler(object):
   """
   X2T Handler is used to convert Microsoft Office 2007 documents to OnlyOffice
   documents.
   """
-
-  implements(IHandler)
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """

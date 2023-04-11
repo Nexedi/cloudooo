@@ -29,7 +29,7 @@
 ##############################################################################
 import io
 
-from zope.interface import implements
+from zope.interface import implementer
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger, parseContentType
@@ -39,10 +39,9 @@ from tempfile import mktemp
 from pyPdf import PdfFileWriter, PdfFileReader
 from pyPdf.generic import NameObject, createStringObject
 
+@implementer(IHandler)
 class Handler(object):
   """PDF Handler is used to handler inputed pdf document."""
-
-  implements(IHandler)
 
   def __init__(self, base_folder_url, data, source_format, **kw):
     """ Load pdf document """
