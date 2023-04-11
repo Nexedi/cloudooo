@@ -45,7 +45,7 @@ class TestHandler(HandlerTestCase):
     pdf_file = handler.convert("pdf", **conversion_kw)
     mime = magic.Magic(mime=True)
     pdf_mimetype = mime.from_buffer(pdf_file)
-    self.assertEquals("application/pdf", pdf_mimetype)
+    self.assertEqual("application/pdf", pdf_mimetype)
 
   def testConvertHtmlWithPngDataUrlToPdf(self):
     """Test conversion of html with png data url to pdf"""
@@ -86,9 +86,9 @@ class TestHandler(HandlerTestCase):
     """
     get = Handler.getAllowedConversionFormatList
     # Handled mimetypes
-    self.assertEquals(get("text/html;ignored=param"),
+    self.assertEqual(get("text/html;ignored=param"),
       [("application/pdf", "PDF - Portable Document Format")])
 
     # Unhandled mimetypes
-    self.assertEquals(get("application/pdf;ignored=param"), [])
+    self.assertEqual(get("application/pdf;ignored=param"), [])
 

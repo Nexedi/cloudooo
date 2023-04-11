@@ -81,11 +81,11 @@ class TestCase(backportUnittest.TestCase):
                                                         zip)
       file_type = self._getFileType(output_data)
       if destination_mimetype != None:
-        self.assertEquals(file_type, destination_mimetype)
+        self.assertEqual(file_type, destination_mimetype)
       else:
         if file_type.endswith(": empty"):
           fault_list.append((source_format, destination_format, file_type))
-    except Fault, err:
+    except Fault as err:
       fault_list.append((source_format, destination_format, err.faultString))
     if fault_list:
       template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
@@ -106,7 +106,7 @@ class TestCase(backportUnittest.TestCase):
                             source_format,
                             base_document)
     for key,value in expected_metadata.iteritems():
-      self.assertEquals(metadata_dict[key], value)
+      self.assertEqual(metadata_dict[key], value)
 
   def _testFaultGetMetadata(self, data, source_format):
     """ Generic test for fail converting"""
@@ -123,7 +123,7 @@ class TestCase(backportUnittest.TestCase):
                             source_format,
                             False)
     for key,value in metadata_dict.iteritems():
-      self.assertEquals(new_metadata_dict[key], value)
+      self.assertEqual(new_metadata_dict[key], value)
 
   def _testRunConvert(self, filename, data, expected_response_code,
                       response_dict_data,response_dict_keys,
@@ -131,17 +131,17 @@ class TestCase(backportUnittest.TestCase):
     """Generic test for run_convert"""
     response_code, response_dict, response_message = \
               self.proxy.run_convert(filename, encodestring(data))
-    self.assertEquals(response_code, expected_response_code)
-    self.assertEquals(type(response_dict), DictType)
+    self.assertEqual(response_code, expected_response_code)
+    self.assertEqual(type(response_dict), DictType)
     if expected_response_code == 402:
-      self.assertEquals(response_dict, {})
+      self.assertEqual(response_dict, {})
       self.assertTrue(response_message.endswith(expected_response_message),
                     "%s != %s" % (response_message, expected_response_message))
     else:
-      self.assertNotEquals(response_dict['data'], response_dict_data)
-      self.assertEquals(sorted(response_dict.keys()), response_dict_keys)
-      self.assertEquals(response_message, expected_response_message)
-      self.assertEquals(response_dict['meta']['MIMEType'], response_dict_meta)
+      self.assertNotEqual(response_dict['data'], response_dict_data)
+      self.assertEqual(sorted(response_dict.keys()), response_dict_keys)
+      self.assertEqual(response_message, expected_response_message)
+      self.assertEqual(response_dict['meta']['MIMEType'], response_dict_meta)
 
   def ConversionScenarioList(self):
     """

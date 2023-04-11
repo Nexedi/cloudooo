@@ -46,16 +46,16 @@ class TestHandler(HandlerTestCase):
     jpg_file = handler.convert("jpg")
     mime = magic.Magic(mime=True)
     jpg_mimetype = mime.from_buffer(jpg_file)
-    self.assertEquals("image/jpeg", jpg_mimetype)
+    self.assertEqual("image/jpeg", jpg_mimetype)
 
   def testgetMetadataFromImage(self):
     """Test if metadata is extracted from image correctly"""
     png_file = open("data/test.png").read()
     handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     metadata = handler.getMetadata()
-    self.assertEquals(metadata.get("Compression"), "Zip")
-    self.assertEquals(metadata.get("Colorspace"), "sRGB")
-    self.assertEquals(metadata.get("Alpha color"), "grey74")
+    self.assertEqual(metadata.get("Compression"), "Zip")
+    self.assertEqual(metadata.get("Colorspace"), "sRGB")
+    self.assertEqual(metadata.get("Alpha color"), "grey74")
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """

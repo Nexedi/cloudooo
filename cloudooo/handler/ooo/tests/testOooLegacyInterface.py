@@ -47,8 +47,8 @@ class TestLegacyInterface(TestCase):
                                                   None,
                                                   'text/html')
 
-    self.assertEquals(response_dict['mime'], 'text/html')
-    self.assertEquals(self._getFileType(response_dict['data']),
+    self.assertEqual(response_dict['mime'], 'text/html')
+    self.assertEqual(self._getFileType(response_dict['data']),
                       'text/html')
 
   def testHtmlToOdt(self):
@@ -61,7 +61,7 @@ class TestLegacyInterface(TestCase):
                                                              None,
                                                              'odt',
                                                              'text/html')
-    self.assertEquals(response_dict['mime'], 'application/vnd.oasis.opendocument.text')
-    self.assertEquals(self._getFileType(response_dict['data']),
+    self.assertEqual(response_dict['mime'], 'application/vnd.oasis.opendocument.text')
+    self.assertEqual(self._getFileType(response_dict['data']),
                       'application/vnd.oasis.opendocument.text')
 

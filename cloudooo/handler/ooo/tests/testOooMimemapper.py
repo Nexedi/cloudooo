@@ -161,50 +161,50 @@ class TestMimeMapper(HandlerTestCase):
   def testGetFilterWhenExtensionNotExist(self):
     """Test the case that the user passes extension which does not exist."""
     empty_list = self.mimemapper.getFilterList('xxx')
-    self.assertEquals(empty_list, [])
+    self.assertEqual(empty_list, [])
 
   def testIfThereIsDuplicateData(self):
     """Test if there is duplicate data."""
     # XXX It can not exists multiple keys inside a dictionary
     extension_list = self.mimemapper._doc_type_list_by_extension.keys()
-    self.assertEquals(len(extension_list), len(set(extension_list)))
+    self.assertEqual(len(extension_list), len(set(extension_list)))
     for type_list in self.mimemapper._doc_type_list_by_extension.values():
-      self.assertEquals(len(type_list), len(set(type_list)))
+      self.assertEqual(len(type_list), len(set(type_list)))
     document_type_list = self.mimemapper._document_type_dict.keys()
-    self.assertEquals(len(document_type_list), len(set(document_type_list)))
+    self.assertEqual(len(document_type_list), len(set(document_type_list)))
     document_service_list = self.mimemapper._document_type_dict.values()
-    self.assertEquals(len(document_service_list), len(set(document_service_list)))
+    self.assertEqual(len(document_service_list), len(set(document_service_list)))
     document_service_list = self.mimemapper._extension_list_by_type.keys()
-    self.assertEquals(len(document_service_list), len(set(document_service_list)))
+    self.assertEqual(len(document_service_list), len(set(document_service_list)))
     extension_list = self.mimemapper._extension_list_by_type.values()
     for extension in extension_list:
-      self.assertEquals(len(extension), len(set(extension)),
+      self.assertEqual(len(extension), len(set(extension)),
           "extension_list_by_type has duplicate data")
 
   def testGetFilterByExt(self):
     """Test if passing the extension the filter returns corretcly."""
     pdf_filter_list = self.mimemapper.getFilterList('pdf')
-    self.assertEquals(len(pdf_filter_list), 5)
+    self.assertEqual(len(pdf_filter_list), 5)
     xls_filter_list = self.mimemapper.getFilterList('xls')
-    self.assertEquals(len(xls_filter_list), 1)
+    self.assertEqual(len(xls_filter_list), 1)
     doc_filter_list = self.mimemapper.getFilterList('doc')
-    self.assertEquals(len(doc_filter_list), 1)
+    self.assertEqual(len(doc_filter_list), 1)
 
   def testGetDocumentTypeDict(self):
     """Test if dictonary document type returns type correctly."""
     document_type_dict = self.mimemapper._document_type_dict
     type = document_type_dict.get("text")
-    self.assertEquals(type, 'com.sun.star.text.TextDocument')
+    self.assertEqual(type, 'com.sun.star.text.TextDocument')
     type = document_type_dict.get("chart")
-    self.assertEquals(type, 'com.sun.star.chart2.ChartDocument')
+    self.assertEqual(type, 'com.sun.star.chart2.ChartDocument')
     type = document_type_dict.get("drawing")
-    self.assertEquals(type, 'com.sun.star.drawing.DrawingDocument')
+    self.assertEqual(type, 'com.sun.star.drawing.DrawingDocument')
     type = document_type_dict.get("presentation")
-    self.assertEquals(type, 'com.sun.star.presentation.PresentationDocument')
+    self.assertEqual(type, 'com.sun.star.presentation.PresentationDocument')
     type = document_type_dict.get("spreadsheet")
-    self.assertEquals(type, 'com.sun.star.sheet.SpreadsheetDocument')
+    self.assertEqual(type, 'com.sun.star.sheet.SpreadsheetDocument')
     type = document_type_dict.get("web")
-    self.assertEquals(type, 'com.sun.star.text.WebDocument')
+    self.assertEqual(type, 'com.sun.star.text.WebDocument')
 
   def testGetAllowedExtensionListByExtension(self):
     """Test if function getAllowedExtensionList returns correctly a list with
@@ -243,7 +243,7 @@ class TestMimeMapper(HandlerTestCase):
     got_list.sort()
     global_expected_list = list(global_expected_tuple)
     global_expected_list.sort()
-    self.assertEquals(got_list, global_expected_list)
+    self.assertEqual(got_list, global_expected_list)
 
   def testGetAllAllowedExtensionListForDrawing(self):
     """Passing document_type equal to 'drawing', the return must be equal
@@ -262,7 +262,7 @@ class TestMimeMapper(HandlerTestCase):
     got_tuple.sort()
     web_expected_list = list(web_expected_tuple)
     web_expected_list.sort()
-    self.assertEquals(got_tuple, web_expected_list)
+    self.assertEqual(got_tuple, web_expected_list)
 
   def testGetAllAllowedExtensionListForPresentation(self):
     """Passing document_type equal to 'presentation', the return must be equal
@@ -290,21 +290,21 @@ class TestMimeMapper(HandlerTestCase):
     got_list.sort()
     chart_expected_list = list(chart_expected_tuple)
     chart_expected_list.sort()
-    self.assertEquals(got_list, chart_expected_list)
+    self.assertEqual(got_list, chart_expected_list)
 
   def testGetFilterName(self):
     """Test if passing extension and document_type, the filter is correct."""
     filtername = self.mimemapper.getFilterName("xls",
                                             'com.sun.star.sheet.SpreadsheetDocument')
-    self.assertEquals(filtername, "MS Excel 97")
+    self.assertEqual(filtername, "MS Excel 97")
     filtername = self.mimemapper.getFilterName("pdf",
                                             'com.sun.star.text.TextDocument')
-    self.assertEquals(filtername, "writer_pdf_Export")
+    self.assertEqual(filtername, "writer_pdf_Export")
     filtername = self.mimemapper.getFilterName('ppt',
                              'com.sun.star.presentation.PresentationDocument')
-    self.assertEquals(filtername, "MS PowerPoint 97")
+    self.assertEqual(filtername, "MS PowerPoint 97")
     filtername = self.mimemapper.getFilterName("html",
                              'com.sun.star.presentation.PresentationDocument')
-    self.assertEquals(filtername, "impress_html_Export")
+    self.assertEqual(filtername, "impress_html_Export")
 
 

@@ -53,7 +53,7 @@ class TestSuite(BaseTestSuite):
                                    'runUnitTest')
       args = tuple(shlex.split(runUnitTest)) + args
       status_dict = self.spawn(*args, **kw)
-    except SubprocessError, e:
+    except SubprocessError as e:
       status_dict = e.status_dict
     test_log = status_dict['stderr']
     search = self.RUN_RE.search(test_log)

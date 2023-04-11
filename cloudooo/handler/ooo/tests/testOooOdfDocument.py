@@ -52,12 +52,12 @@ class TestOdfDocument(HandlerTestCase):
   def testGetExistentFile(self):
     """Test if the getFile method returns the requested file"""
     requested_file = self.oodocument.getFile('content.xml')
-    self.assertEquals(requested_file, self.oodocument.getContentXml())
+    self.assertEqual(requested_file, self.oodocument.getContentXml())
 
   def testGetNotPresentFile(self):
     """Test if the getFile method returns None for not present file request"""
     requested_file = self.oodocument.getFile('not_present.xml')
-    self.assertEquals(requested_file, '')
+    self.assertEqual(requested_file, '')
 
   def testParseContent(self):
     """Test if the _parsed_content attribute is the parsed content.xml"""

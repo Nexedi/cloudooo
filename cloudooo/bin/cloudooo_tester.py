@@ -21,30 +21,30 @@ class CloudoooTestCase(unittest.TestCase):
     data = encodestring(DOCUMENT_STRING)
     proxy = ServerProxy(self.proxy_address, allow_none=True)
     res = proxy.run_generate("t.text", data, None, 'pdf', 'text/plain')
-    self.assertEquals(res[1]['mime'], "application/pdf")
-    self.assertEquals(res[0], 200)
+    self.assertEqual(res[1]['mime'], "application/pdf")
+    self.assertEqual(res[0], 200)
 
   def test_set_metadata(self):
     data = encodestring(DOCUMENT_STRING)
     proxy = ServerProxy(self.proxy_address, allow_none=True)
     odt_data = proxy.convertFile(data, 'txt', 'odt')
     metadata_dict = proxy.getFileMetadataItemList(odt_data, 'odt')
-    self.assertEquals(metadata_dict["MIMEType"],
+    self.assertEqual(metadata_dict["MIMEType"],
                           'application/vnd.oasis.opendocument.text')
     res = proxy.run_setmetadata("t.odt", odt_data, {"Title": "test"})
-    self.assertEquals(res[0], 200)
+    self.assertEqual(res[0], 200)
     response_code, response_dict, response_message = \
                     proxy.run_convert("t.odt", res[1]['data'])
-    self.assertEquals(response_code, 200)
-    self.assertEquals(response_dict['meta']['Title'], "test")
+    self.assertEqual(response_code, 200)
+    self.assertEqual(response_dict['meta']['Title'], "test")
 
 
 def main():
   global PORT, HOSTNAME
   try:
-    opt_list, arg_list = getopt(sys.argv[1:], "",
+    opt_list, _ = getopt(sys.argv[1:], "",
                                 ["port=", "hostname="])
-  except GetoptError, e:
+  except GetoptError as e:
     print >> sys.stderr, "%s \nUse --port and --hostname" % e
     sys.exit(2)
 

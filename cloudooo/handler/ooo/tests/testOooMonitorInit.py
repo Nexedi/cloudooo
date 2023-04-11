@@ -53,13 +53,13 @@ class TestMonitorInit(HandlerTestCase):
 
   def testMonitorInitGlobalAttributes(self):
     """Test the global attributes"""
-    self.assertEquals(monitor.monitor_request, None)
-    self.assertEquals(monitor.monitor_memory, None)
+    self.assertEqual(monitor.monitor_request, None)
+    self.assertEqual(monitor.monitor_memory, None)
 
   def testMonitorLoadOnlyMonitorRequest(self):
     """Check if the monitors are started"""
     monitor.load(self.load_config)
-    self.assertEquals(isinstance(monitor.monitor_request,
+    self.assertEqual(isinstance(monitor.monitor_request,
                                 MonitorRequest),
                                 True)
 
@@ -67,10 +67,10 @@ class TestMonitorInit(HandlerTestCase):
     """Check if the MemoryMemory is started"""
     self.load_config['enable_memory_monitor'] = 'true'
     monitor.load(self.load_config)
-    self.assertEquals(isinstance(monitor.monitor_request,
+    self.assertEqual(isinstance(monitor.monitor_request,
                                  MonitorRequest),
                                  True)
-    self.assertEquals(isinstance(monitor.monitor_memory,
+    self.assertEqual(isinstance(monitor.monitor_memory,
                                  MonitorMemory),
                                  True)
 

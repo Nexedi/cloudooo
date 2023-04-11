@@ -57,7 +57,7 @@ class TestHandler(HandlerTestCase):
     """Check if the document was created correctly"""
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(document)
-    self.assertEquals(mimetype, expected_mimetype)
+    self.assertEqual(mimetype, expected_mimetype)
 
   def tearDown(self):
     """Cleanup temp files
@@ -94,11 +94,11 @@ class TestHandler(HandlerTestCase):
                         decodestring(data),
                         'odt')
     metadata = handler.getMetadata()
-    self.assertEquals(metadata.get('MIMEType'),
+    self.assertEqual(metadata.get('MIMEType'),
                       'application/vnd.oasis.opendocument.text')
     handler.document.restoreOriginal()
     metadata = handler.getMetadata(True)
-    self.assertNotEquals(metadata.get('Data'), '')
+    self.assertNotEqual(metadata.get('Data'), '')
 
   def testSetMetadata(self):
     """Test setMetadata"""
@@ -111,7 +111,7 @@ class TestHandler(HandlerTestCase):
                             new_data,
                             'odt')
     metadata = new_handler.getMetadata()
-    self.assertEquals(metadata.get('Title'), "cloudooo Test -")
+    self.assertEqual(metadata.get('Title'), "cloudooo Test -")
     handler = Handler(self.tmp_url,
                         decodestring(data),
                         'odt')
@@ -120,7 +120,7 @@ class TestHandler(HandlerTestCase):
                             new_data,
                             'odt')
     metadata = new_handler.getMetadata()
-    self.assertEquals(metadata.get('Title'), "Namie's working record")
+    self.assertEqual(metadata.get('Title'), "Namie's working record")
 
   def testConvertWithOpenOfficeStopped(self):
     """Test convert with openoffice stopped"""
@@ -141,8 +141,8 @@ class TestHandler(HandlerTestCase):
                         decodestring(data),
                         'odt')
     metadata = handler.getMetadata()
-    self.assertEquals(metadata.get('Title'), 'title')
-    self.assertEquals(metadata.get('MIMEType'),
+    self.assertEqual(metadata.get('Title'), 'title')
+    self.assertEqual(metadata.get('MIMEType'),
               'application/vnd.oasis.opendocument.text')
 
   def testSetMetadataWithOpenOfficeStopped(self):
@@ -157,7 +157,7 @@ class TestHandler(HandlerTestCase):
                             new_data,
                             'doc')
     metadata = new_handler.getMetadata()
-    self.assertEquals(metadata.get('Title'), "cloudooo Test -")
+    self.assertEqual(metadata.get('Title'), "cloudooo Test -")
 
   def testRefreshOdt(self):
     """Test refresh argument"""
@@ -205,13 +205,13 @@ class TestHandler(HandlerTestCase):
       ('image/png', 'PNG - Portable Network Graphic'),
       ('text/html', 'HTML Document (Writer)'),
       ('text/plain', 'Text - Choose Encoding')]
-    self.assertEquals(get("text/plain;ignored=param"), text_plain_output_list)
-    self.assertEquals(get("text/plain;charset=UTF-8;ignored=param"), text_plain_output_list)
-    self.assertEquals(get("text/plain;charset=US-ASCII;ignored=param"), text_plain_output_list)
+    self.assertEqual(get("text/plain;ignored=param"), text_plain_output_list)
+    self.assertEqual(get("text/plain;charset=UTF-8;ignored=param"), text_plain_output_list)
+    self.assertEqual(get("text/plain;charset=US-ASCII;ignored=param"), text_plain_output_list)
 
   def testGetAllowedConversionFormatList_ApplicationMsword(self):
     """Test allowed conversion format for application/msword"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/msword;ignored=param")),
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -227,7 +227,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationPdf(self):
     """Test allowed conversion format for application/pdf"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/pdf;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -243,7 +243,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_TextRtf(self):
     """Test allowed conversion format for text/rtf"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("text/rtf;ignored=param")),
       [])
 
@@ -253,7 +253,7 @@ class TestHandler(HandlerTestCase):
       "application/vnd.oasis.opendocument.text;ignored=param",
       "application/vnd.oasis.opendocument.text-flat-xml;ignored=param",
       ):
-      self.assertEquals(
+      self.assertEqual(
         sorted(Handler.getAllowedConversionFormatList(content_type)), [
         ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -270,7 +270,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument(self):
     """Test allowed conversion format for application/vnd.openxmlformats-officedocument.wordprocessingml.document"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.openxmlformats-officedocument.wordprocessingml.document;ignored=param")),
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -286,7 +286,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageJpeg(self):
     """Test allowed conversion format for image/jpeg"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/jpeg;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -302,7 +302,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImagePng(self):
     """Test allowed conversion format for image/png"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/png;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -318,7 +318,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_TextHtml(self):
     """Test allowed conversion format for text/html"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("text/html;ignored=param")),
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -347,7 +347,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationPostscript(self):
     """Test allowed conversion format for application/postscript"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/postscript;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -363,7 +363,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentGraphics(self):
     """Test allowed conversion format for application/vnd.oasis.opendocument.graphics"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.graphics;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -379,7 +379,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageGif(self):
     """Test allowed conversion format for image/gif"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/gif;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -395,7 +395,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageSvgXml(self):
     """Test allowed conversion format for image/svg+xml"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/svg+xml;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -411,7 +411,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageTiff(self):
     """Test allowed conversion format for image/tiff"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/tiff;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -427,7 +427,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageXCmuRaster(self):
     """Test allowed conversion format for image/x-cmu-raster"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-cmu-raster;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -443,7 +443,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageBmp(self):
     """Test allowed conversion format for image/x-ms-bmp"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-ms-bmp;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -459,7 +459,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageXPortableBitmap(self):
     """Test allowed conversion format for image/x-portable-bitmap"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-portable-bitmap;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -475,7 +475,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageXPortableGraymap(self):
     """Test allowed conversion format for image/x-portable-graymap"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-portable-graymap;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -491,7 +491,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageXPortablePixmap(self):
     """Test allowed conversion format for image/x-portable-pixmap"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-portable-pixmap;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -507,7 +507,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ImageXXpixmap(self):
     """Test allowed conversion format for image/x-xpixmap"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("image/x-xpixmap;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -523,7 +523,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndMsExcel(self):
     """Test allowed conversion format for application/vnd.ms-excel"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-excel;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
@@ -538,13 +538,13 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndMsExcelSheetMacroenabled12(self):
     """Test allowed conversion format for application/vnd.ms-excel.sheet.macroEnabled.12"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-excel.sheet.macroEnabled.12;ignored=param")),
       [])
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentSpreadsheet(self):
     """Test allowed conversion format for application/vnd.oasis.opendocument.spreadsheet"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.spreadsheet;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
@@ -559,7 +559,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenXmlFormatsOfficedocumentSpreadsheetmlSheet(self):
     """Test allowed conversion format for application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Microsoft Excel 97-2003'),
@@ -574,7 +574,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndSunXmlWriter(self):
     """Test allowed conversion format for application/vnd.sun.xml.writer"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.sun.xml.writer;ignored=param")),
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -590,7 +590,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_TextCsv(self):
     """Test allowed conversion format for text/csv"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("text/csv;ignored=param")),
       [ ('application/msword', 'Microsoft Word 97-2003'),
         ('application/pdf', 'PDF - Portable Document Format'),
@@ -619,7 +619,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentPresentation(self):
     """Test allowed conversion format for application/vnd.oasis.opendocument.presentation"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.presentation;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -642,7 +642,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentPresentationmlPresentation(self):
     """Test allowed conversion format for application/vnd.openxmlformats-officedocument.presentationml.presentation"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.openxmlformats-officedocument.presentationml.presentation;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -665,7 +665,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndOpenxmlformatsOfficedocumentPresentationmlSlideshow(self):
     """Test allowed conversion format for application/vnd.openxmlformats-officedocument.presentationml.slideshow"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.openxmlformats-officedocument.presentationml.slideshow;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),
@@ -688,7 +688,7 @@ class TestHandler(HandlerTestCase):
 
   def testGetAllowedConversionFormatList_ApplicationVndMsPowerpoint(self):
     """Test allowed conversion format for application/vnd.ms-powerpoint"""
-    self.assertEquals(
+    self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-powerpoint;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/postscript', 'EPS - Encapsulated PostScript'),

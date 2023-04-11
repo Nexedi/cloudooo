@@ -80,12 +80,12 @@ class TestUnoConverter(HandlerTestCase):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
-    self.assertEquals(stderr, '')
+    self.assertEqual(stderr, '')
     output_url = stdout.replace('\n', '')
     self.assertTrue(exists(output_url), stdout)
     mime = magic.Magic(mime=True)
-    self.assertEquals(mime.from_file(output_url), 'application/msword')
+    self.assertEqual(mime.from_file(output_url), 'application/msword')
     self.document.trash()
-    self.assertEquals(exists(output_url), False)
+    self.assertEqual(exists(output_url), False)
 
 

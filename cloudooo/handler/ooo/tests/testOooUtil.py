@@ -48,10 +48,10 @@ class TestUtil(unittest.TestCase):
 
   def testLoadMimetypelist(self):
     """Test if the file with mimetypes is loaded correctly"""
-    self.assertEquals(mimetypes.types_map.get(".ogv"), None)
-    self.assertEquals(mimetypes.types_map.get(".3gp"), None)
+    self.assertEqual(mimetypes.types_map.get(".ogv"), None)
+    self.assertEqual(mimetypes.types_map.get(".3gp"), None)
     util.loadMimetypeList()
-    self.assertEquals(mimetypes.types_map.get(".ogv"), "video/ogg")
-    self.assertEquals(mimetypes.types_map.get(".3gp"), "video/3gpp")
+    self.assertEqual(mimetypes.types_map.get(".ogv"), "video/ogg")
+    self.assertEqual(mimetypes.types_map.get(".3gp"), "video/3gpp")
 
 

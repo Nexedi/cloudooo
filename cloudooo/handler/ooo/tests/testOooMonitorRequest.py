@@ -47,18 +47,18 @@ class TestMonitorRequest(HandlerTestCase):
     monitor_request.terminate()
     sleep(4)
     try:
-      self.assertEquals(monitor_request.is_alive(), False)
+      self.assertEqual(monitor_request.is_alive(), False)
     finally:
       monitor_request.terminate()
 
   def testMonitorRequest(self):
     """Test if openoffice is monitored correclty"""
     openoffice.request = 3
-    self.assertEquals(openoffice.request, 3)
+    self.assertEqual(openoffice.request, 3)
     monitor_request = MonitorRequest(openoffice, 1, 2)
     monitor_request.start()
     sleep(4)
-    self.assertEquals(openoffice.request, 0)
+    self.assertEqual(openoffice.request, 0)
     monitor_request.terminate()
 
 

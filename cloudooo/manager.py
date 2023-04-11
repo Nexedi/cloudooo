@@ -274,7 +274,7 @@ class Manager(object):
       response_dict['mime'] = response_dict['meta']['MIMEType']
       del response_dict['meta']['Data']
       return (200, response_dict, "")
-    except Exception, e:
+    except Exception as e:
       import traceback;
       logger.error(traceback.format_exc())
       return (402, {}, e.args[0])
@@ -291,7 +291,7 @@ class Manager(object):
     try:
       response_dict['data'] = self.updateFileMetadata(data, extension, meta)
       return (200, response_dict, '')
-    except Exception, e:
+    except Exception as e:
       import traceback;
       logger.error(traceback.format_exc())
       return (402, {}, e.args[0])
@@ -311,7 +311,7 @@ class Manager(object):
       # we use 'Title'"
       response_dict['meta']['title'] = response_dict['meta']['Title']
       return (200, response_dict, '')
-    except Exception, e:
+    except Exception as e:
       import traceback;
       logger.error('run_getmetadata: ' + traceback.format_exc())
       return (402, {}, e.args[0])
@@ -353,7 +353,7 @@ class Manager(object):
         response_dict['mime'] = mimetypes.types_map.get('.%s' % extension,
             mimetypes.types_map.get('.%s' % extension.split('.')[-1]))
       return (200, response_dict, "")
-    except Exception, e:
+    except Exception as e:
       import traceback;
       logger.error(traceback.format_exc())
       return (402, response_dict, str(e))
@@ -373,7 +373,7 @@ class Manager(object):
           extension_list.append((ext.lstrip('.'), t))
       response_dict['response_data'] = extension_list
       return (200, response_dict, '')
-    except Exception, e:
+    except Exception as e:
       logger.error(e)
       return (402, {}, e.args[0])
 

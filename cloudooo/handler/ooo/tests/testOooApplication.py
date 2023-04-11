@@ -41,23 +41,23 @@ class TestApplication(unittest.TestCase):
 
   def testLoadSettings(self):
     """Test if settings are defined correctly"""
-    self.assertEquals(self.application.hostname, 'localhost')
-    self.assertEquals(self.application.port, 9999)
-    self.assertEquals(self.application.path_run_dir, '/tmp/')
+    self.assertEqual(self.application.hostname, 'localhost')
+    self.assertEqual(self.application.port, 9999)
+    self.assertEqual(self.application.path_run_dir, '/tmp/')
 
   def testStartTimeout(self):
     """Test if the attribute timeout is defined correctly"""
-    self.assertEquals(self.application.timeout, 20)
+    self.assertEqual(self.application.timeout, 20)
     application = Application()
     application.loadSettings('localhost', 9999, '/', start_timeout=25)
-    self.assertEquals(application.timeout, 25)
+    self.assertEqual(application.timeout, 25)
 
   def testgetAddress(self):
     """Test if getAddress() returns tuple with address correctly """
-    self.assertEquals(self.application.getAddress(), ('localhost', 9999))
+    self.assertEqual(self.application.getAddress(), ('localhost', 9999))
 
   def testPid(self):
     """As the application do not have the pid() should return None"""
-    self.assertEquals(self.application.pid(), None)
+    self.assertEqual(self.application.pid(), None)
 
 

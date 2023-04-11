@@ -52,7 +52,7 @@ class TestMonitorTimeout(unittest.TestCase):
     monitor_timeout = self._createMonitor(1)
     monitor_timeout.start()
     sleep(2)
-    self.assertEquals(monitor_timeout.is_alive(), False)
+    self.assertEqual(monitor_timeout.is_alive(), False)
     monitor_timeout.terminate()
 
   def testStopOpenOffice(self):
@@ -62,7 +62,7 @@ class TestMonitorTimeout(unittest.TestCase):
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
       sleep(2)
-      self.assertEquals(openoffice.status(), False)
+      self.assertEqual(openoffice.status(), False)
       openoffice.restart()
       self.assertTrue(openoffice.status())
     finally:
@@ -76,17 +76,17 @@ class TestMonitorTimeout(unittest.TestCase):
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
       sleep(2)
-      self.assertEquals(openoffice.status(), False)
+      self.assertEqual(openoffice.status(), False)
       monitor_timeout.terminate()
       openoffice.restart()
       self.assertTrue(openoffice.status())
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
       sleep(2)
-      self.assertEquals(openoffice.status(), False)
+      self.assertEqual(openoffice.status(), False)
       monitor_timeout.terminate()
       sleep(1)
-      self.assertEquals(monitor_timeout.is_alive(), False)
+      self.assertEqual(monitor_timeout.is_alive(), False)
     finally:
       monitor_timeout.terminate()
       openoffice.release()

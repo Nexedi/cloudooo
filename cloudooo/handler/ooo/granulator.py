@@ -126,7 +126,7 @@ class OOGranulator(object):
       odf_document.close()
       odf_document_as_string.seek(0)
       return odf_document_as_string.read()
-    except Exception, e:
+    except Exception as e:
       logger.error(e)
       return None
 

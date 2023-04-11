@@ -45,12 +45,12 @@ class TestHandler(HandlerTestCase):
     """Test coversion of video to another format"""
     output_data = self.input.convert("mpeg")
     file_format = self.file_detector.from_buffer(output_data)
-    self.assertEquals(file_format, 'video/mpeg')
+    self.assertEqual(file_format, 'video/mpeg')
 
   def testgetMetadata(self):
     """Test if metadata is extracted from"""
     output_metadata = self.input.getMetadata()
-    self.assertEquals(output_metadata, {'Encoder': 'Lavf52.64.2'})
+    self.assertEqual(output_metadata, {'Encoder': 'Lavf52.64.2'})
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
@@ -58,8 +58,8 @@ class TestHandler(HandlerTestCase):
     output = self.input.setMetadata(metadata_dict)
     handler = Handler(self.tmp_url, output, "ogv", **self.kw)
     metadata = handler.getMetadata()
-    self.assertEquals(metadata["Title"], "Set Metadata Test")
-    self.assertEquals(metadata["Creator"], "cloudooo")
+    self.assertEqual(metadata["Title"], "Set Metadata Test")
+    self.assertEqual(metadata["Creator"], "cloudooo")
 
   def testConvertAudio(self):
     """Test coversion of audio to another format"""
@@ -68,6 +68,6 @@ class TestHandler(HandlerTestCase):
     output_data = self.input.convert("wav")
     file_format = self.file_detector.from_buffer(output_data)
     # XXX this might expect 'audio/vnd.wave' but magic only got 'audio/x-wav'
-    self.assertEquals(file_format, 'audio/x-wav')
+    self.assertEqual(file_format, 'audio/x-wav')
 
 

@@ -68,15 +68,15 @@ class TestUnoMimeMapper(HandlerTestCase):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
-    self.assertEquals(stderr, '')
+    self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
     self.assertTrue('type_dict' in locals())
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
-    self.assertEquals(stderr, '')
+    self.assertNotEqual(filter_dict.get('writer8'), None)
+    self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
+    self.assertNotEqual(filter_dict.get('writer8'), None)
+    self.assertEqual(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
+    self.assertEqual(stderr, '')
 
   def testCallUnoMimemapperOnlyHostNameAndPort(self):
     """ Test call unomimemapper without uno_path and office_binary_path"""
@@ -89,15 +89,15 @@ class TestUnoMimeMapper(HandlerTestCase):
     stdout, stderr = Popen(command,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
-    self.assertEquals(stderr, '')
+    self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertTrue('filter_dict' in locals())
     self.assertTrue('type_dict' in locals())
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('Name'), 'writer8')
-    self.assertNotEquals(filter_dict.get('writer8'), None)
-    self.assertEquals(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
-    self.assertEquals(stderr, '')
+    self.assertNotEqual(filter_dict.get('writer8'), None)
+    self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
+    self.assertNotEqual(filter_dict.get('writer8'), None)
+    self.assertEqual(type_dict.get('writer8').get('PreferredFilter'), 'writer8')
+    self.assertEqual(stderr, '')
 
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
@@ -118,7 +118,7 @@ class TestUnoMimeMapper(HandlerTestCase):
       stdout, stderr = Popen(command,
                              stdout=PIPE,
                              stderr=PIPE).communicate()
-    self.assertEquals(stdout, '')
+    self.assertEqual(stdout, '')
     self.assertTrue(stderr.endswith(error_msg), stderr)
     openoffice.start()
 

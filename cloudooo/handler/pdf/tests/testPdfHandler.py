@@ -51,9 +51,9 @@ class TestHandler(HandlerTestCase):
     pdf_document = open("data/test.pdf").read()
     handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
-    self.assertEquals(type(metadata), DictType)
-    self.assertNotEquals(metadata, {})
-    self.assertEquals(metadata["title"], 'Free Cloud Alliance Presentation')
+    self.assertEqual(type(metadata), DictType)
+    self.assertNotEqual(metadata, {})
+    self.assertEqual(metadata["title"], 'Free Cloud Alliance Presentation')
 
   def testsetMetadata(self):
     """Test if the metadata is inserted correctly"""
@@ -63,8 +63,8 @@ class TestHandler(HandlerTestCase):
     new_document = handler.setMetadata(metadata_dict)
     handler = Handler(self.tmp_url, new_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
-    self.assertEquals(metadata["title"], 'Set Metadata Test')
-    self.assertEquals(metadata['creator'], 'gabriel\'@')
+    self.assertEqual(metadata["title"], 'Set Metadata Test')
+    self.assertEqual(metadata['creator'], 'gabriel\'@')
 
   def testGetAllowedConversionFormatList(self):
     """Test all combination of mimetype
@@ -73,10 +73,10 @@ class TestHandler(HandlerTestCase):
     """
     get = Handler.getAllowedConversionFormatList
     # Handled mimetypes
-    self.assertEquals(get("application/pdf;ignored=param"),
+    self.assertEqual(get("application/pdf;ignored=param"),
       [("text/plain", "Plain Text")])
 
     # Unhandled mimetypes
-    self.assertEquals(get("text/plain;ignored=param"), [])
-    self.assertEquals(get("text/plain;charset=UTF-8;ignored=param"), [])
+    self.assertEqual(get("text/plain;ignored=param"), [])
+    self.assertEqual(get("text/plain;charset=UTF-8;ignored=param"), [])
 

@@ -74,7 +74,7 @@ class TestMonitorMemory(unittest.TestCase):
       self.monitor = MonitorMemory(openoffice, 2, 10)
       self.monitor.start()
       sleep(self.interval)
-      self.assertEquals(openoffice.status(), False)
+      self.assertEqual(openoffice.status(), False)
     finally:
       self.monitor.terminate()
 
@@ -94,17 +94,17 @@ class TestMonitorMemory(unittest.TestCase):
     self.monitor = MonitorMemory(openoffice, 2, 400)
     self.monitor.create_process()
     self.assertTrue(hasattr(self.monitor, 'process'))
-    self.assertEquals(type(self.monitor.process), Process)
+    self.assertEqual(type(self.monitor.process), Process)
 
   def testGetMemoryUsage(self):
     """Test memory usage"""
     self.monitor = MonitorMemory(openoffice, 2, 400)
     openoffice.stop()
     memory_usage_int = self.monitor.get_memory_usage()
-    self.assertEquals(memory_usage_int, 0)
+    self.assertEqual(memory_usage_int, 0)
     if not openoffice.status():
       openoffice.start()
     memory_usage_int = self.monitor.get_memory_usage()
-    self.assertEquals(type(memory_usage_int), IntType)
+    self.assertEqual(type(memory_usage_int), IntType)
 
 

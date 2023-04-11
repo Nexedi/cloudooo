@@ -56,10 +56,10 @@ class TestOpenOffice(HandlerTestCase):
 
   def testPid(self):
     """Test pid function to validate if the return is correctly"""
-    self.assertNotEquals(self.openoffice.pid(), None)
+    self.assertNotEqual(self.openoffice.pid(), None)
     self.openoffice.stop()
-    self.assertEquals(self.openoffice.pid(), None)
-    self.assertEquals(self.openoffice.status(), False)
+    self.assertEqual(self.openoffice.pid(), None)
+    self.assertEqual(self.openoffice.status(), False)
 
   def testOpenOfficeStart(self):
     """Test if the start method works correclty"""
@@ -69,12 +69,12 @@ class TestOpenOffice(HandlerTestCase):
     """Test if the stop method works correctly"""
     self.openoffice.stop()
     waitStopDaemon(self.openoffice)
-    self.assertEquals(self.openoffice.status(), False)
+    self.assertEqual(self.openoffice.status(), False)
 
   def testOpenOfficeRequest(self):
     """Test if the requisition amount is increasing right"""
     self.openoffice.acquire()
-    self.assertEquals(self.openoffice.request, 1)
+    self.assertEqual(self.openoffice.request, 1)
     self.openoffice.release()
 
   def testOpenOfficeRestart(self):
@@ -87,7 +87,7 @@ class TestOpenOffice(HandlerTestCase):
     self.openoffice.acquire()
     self.assertTrue(self.openoffice.isLocked())
     self.openoffice.release()
-    self.assertEquals(self.openoffice.isLocked(), False)
+    self.assertEqual(self.openoffice.isLocked(), False)
 
   def testStartTwoOpenOfficeWithTheSameAddress(self):
     """Check if starting two openoffice using the same address, the second
@@ -100,7 +100,7 @@ class TestOpenOffice(HandlerTestCase):
                                 'en',
                                 self.environment_dict)
     second_openoffice.start()
-    self.assertEquals(self.openoffice.status(), False)
+    self.assertEqual(self.openoffice.status(), False)
     self.assertTrue(second_openoffice.status())
     second_openoffice.stop()
 

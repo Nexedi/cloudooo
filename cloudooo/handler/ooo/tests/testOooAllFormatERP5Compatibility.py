@@ -70,7 +70,7 @@ class TestAllFormatsERP5Compatibility(TestCase):
         file_type = self._getFileType(data_output)
         if file_type.endswith(": empty"):
           fault_list.append((source_format, extension, file_type))
-      except Fault, err:
+      except Fault as err:
         fault_list.append((source_format, extension, err.faultString))
     if fault_list:
       template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'

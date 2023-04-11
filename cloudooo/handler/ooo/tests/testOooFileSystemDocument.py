@@ -60,19 +60,19 @@ class TestFileSystemDocument(unittest.TestCase):
                                   document_filename)
     open(document_test_url, 'wb').write(decodestring("Test Document"))
     self.fsdocument.reload(document_test_url)
-    self.assertEquals(path.exists(old_document_url), False)
-    self.assertNotEquals(self.fsdocument.original_data,
+    self.assertEqual(path.exists(old_document_url), False)
+    self.assertNotEqual(self.fsdocument.original_data,
         self.fsdocument.getContent())
     old_document_url = self.fsdocument.getUrl()
     self.fsdocument.restoreOriginal()
-    self.assertEquals(path.exists(old_document_url), False)
-    self.assertNotEquals(old_document_url, self.fsdocument.getUrl())
+    self.assertEqual(path.exists(old_document_url), False)
+    self.assertNotEqual(old_document_url, self.fsdocument.getUrl())
     self.assertTrue(path.exists(self.fsdocument.getUrl()))
-    self.assertEquals(self.fsdocument.getContent(), self.data)
+    self.assertEqual(self.fsdocument.getContent(), self.data)
 
   def testgetContent(self):
     """Test if returns the data correctly"""
-    self.assertEquals(self.fsdocument.getContent(), self.data)
+    self.assertEqual(self.fsdocument.getContent(), self.data)
 
   def testgetUrl(self):
     """Check if the url is correct"""
@@ -83,9 +83,9 @@ class TestFileSystemDocument(unittest.TestCase):
     """Test if the document is created correctly"""
     url = self.fsdocument.getUrl()
     tmp_document = open(url, 'r').read()
-    self.assertEquals(self.data, tmp_document)
+    self.assertEqual(self.data, tmp_document)
     self.fsdocument.trash()
-    self.assertEquals(path.exists(url), False)
+    self.assertEqual(path.exists(url), False)
 
   def testReload(self):
     """Change url and check if occurs correctly"""
@@ -96,10 +96,10 @@ class TestFileSystemDocument(unittest.TestCase):
     open(document_test_url, 'wb').write(self.data)
     self.fsdocument.reload(document_test_url)
     url = self.fsdocument.getUrl()
-    self.assertEquals(path.exists(old_document_url), False)
-    self.assertEquals(self.fsdocument.getContent(), self.data)
+    self.assertEqual(path.exists(old_document_url), False)
+    self.assertEqual(self.fsdocument.getContent(), self.data)
     self.fsdocument.trash()
-    self.assertEquals(path.exists(url), False)
+    self.assertEqual(path.exists(url), False)
 
   def testZipDocumentList(self):
     """Tests if the zip file is returned correctly"""
@@ -107,14 +107,14 @@ class TestFileSystemDocument(unittest.TestCase):
     zip_file = self.fsdocument.getContent(True)
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(zip_file)
-    self.assertEquals(mimetype, 'application/zip')
+    self.assertEqual(mimetype, 'application/zip')
     ziptest = ZipFile(StringIO(zip_file), 'r')
-    self.assertEquals(len(ziptest.filelist), 2)
+    self.assertEqual(len(ziptest.filelist), 2)
     for file in ziptest.filelist:
       if file.filename.endswith("document2"):
-        self.assertEquals(file.file_size, 4)
+        self.assertEqual(file.file_size, 4)
       else:
-        self.assertEquals(file.file_size, 9)
+        self.assertEqual(file.file_size, 9)
 
   def testSendZipFile(self):
     """Tests if the htm is extrated from zipfile"""
@@ -123,11 +123,11 @@ class TestFileSystemDocument(unittest.TestCase):
     zipdocument = FileSystemDocument(self.tmp_url, data, 'zip')
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(zipdocument.getContent(True))
-    self.assertEquals(mimetype, "application/zip")
+    self.assertEqual(mimetype, "application/zip")
     mimetype = mime.from_buffer(zipdocument.getContent())
-    self.assertEquals(mimetype, "text/html")
+    self.assertEqual(mimetype, "text/html")
     zipfile = ZipFile(StringIO(zipdocument.getContent(True)))
-    self.assertEquals(sorted(zipfile.namelist()),
+    self.assertEqual(sorted(zipfile.namelist()),
                 sorted(['logo.gif', 'test.htm']))
 
 

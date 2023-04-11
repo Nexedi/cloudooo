@@ -40,7 +40,7 @@ def removeDirectory(path):
   """Remove directory"""
   try:
     rmtree(path)
-  except OSError, msg:
+  except OSError as msg:
     logger.error(msg)
 
 
@@ -50,8 +50,8 @@ def socketStatus(hostname, port):
     socket().bind((hostname, port),)
     # False if the is free
     return False
-  except error, (num, err):
-    if num == EADDRINUSE:
+  except error as err:
+    if err.errno == EADDRINUSE:
       # True if the isn't free
       return True
 
@@ -79,5 +79,5 @@ def waitStopDaemon(daemon, attempts=5):
 def remove_file(filepath):
   try:
     remove(filepath)
-  except OSError, msg:
-    print msg.strerror
+  except OSError as msg:
+    print(msg.strerror)

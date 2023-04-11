@@ -123,11 +123,11 @@ class TestCase(unittest.TestCase):
             success = False
             try:
                 self.setUp()
-            except SkipTest, e:
+            except SkipTest as e:
                 result.addSkip(self, str(e))
-            except SetupSiteError, e:
+            except SetupSiteError as e:
                 result.errors.append(None)
-            except BaseException, e:
+            except BaseException as e:
                 result.addError(self, sys.exc_info())
                 if isinstance(e, (KeyboardInterrupt, SystemExit)):
                     raise
@@ -136,13 +136,13 @@ class TestCase(unittest.TestCase):
                     testMethod()
                 except self.failureException:
                     result.addFailure(self, sys.exc_info())
-                except _ExpectedFailure, e:
+                except _ExpectedFailure as e:
                     result.addExpectedFailure(self, e.exc_info)
                 except _UnexpectedSuccess:
                     result.addUnexpectedSuccess(self)
-                except SkipTest, e:
+                except SkipTest as e:
                     result.addSkip(self, str(e))
-                except BaseException, e:
+                except BaseException as e:
                     result.addError(self, sys.exc_info())
                     if isinstance(e, (KeyboardInterrupt, SystemExit)):
                         raise
@@ -151,7 +151,7 @@ class TestCase(unittest.TestCase):
 
                 try:
                     self.tearDown()
-                except BaseException, e:
+                except BaseException as e:
                     result.addError(self, sys.exc_info())
                     if isinstance(e, (KeyboardInterrupt, SystemExit)):
                         raise

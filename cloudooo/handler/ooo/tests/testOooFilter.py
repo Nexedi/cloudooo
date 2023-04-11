@@ -48,10 +48,10 @@ class TestFilter(unittest.TestCase):
 
   def testFilter(self):
     """Tests filter gets"""
-    self.assertEquals(self.filter.getExtension(), 'pdf')
-    self.assertEquals(self.filter.getName(), 'writer_pdf_Export')
-    self.assertEquals(self.filter.getMimetype(), 'application/pdf')
-    self.assertEquals(self.filter.getSortIndex(), 1000)
+    self.assertEqual(self.filter.getExtension(), 'pdf')
+    self.assertEqual(self.filter.getName(), 'writer_pdf_Export')
+    self.assertEqual(self.filter.getMimetype(), 'application/pdf')
+    self.assertEqual(self.filter.getSortIndex(), 1000)
     self.assertTrue(self.filter.isPreferred())
 
 

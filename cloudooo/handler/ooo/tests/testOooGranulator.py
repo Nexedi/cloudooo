@@ -61,7 +61,7 @@ class TestOOGranulator(HandlerTestCase):
     table_list = [('Developers', ''),
                   ('Prices', 'Table 1: Prices table from Mon Restaurant'),
                   ('SoccerTeams', 'Tabela 2: Soccer Teams')]
-    self.assertEquals(table_list, oogranulator.getTableItemList())
+    self.assertEqual(table_list, oogranulator.getTableItemList())
 
   def testGetTable(self):
     """Test if getTable() returns on odf file with the right table"""
@@ -72,23 +72,23 @@ class TestOOGranulator(HandlerTestCase):
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
                                    namespaces=content_xml.nsmap)
-    self.assertEquals(1, len(table_list))
+    self.assertEqual(1, len(table_list))
     table = table_list[0]
     name_key = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}name'
-    self.assertEquals('Developers', table.attrib[name_key])
+    self.assertEqual('Developers', table.attrib[name_key])
 
   def testGetTableItemWithoutSuccess(self):
     """Test if getTable() returns None for an non existent table name"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
     table_data = oogranulator.getTable('NonExistentTable')
-    self.assertEquals(table_data, None)
+    self.assertEqual(table_data, None)
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
     data = open('./data/granulate_table_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
-    self.assertEquals([[0, 'Name'], [1, 'Country']],
+    self.assertEqual([[0, 'Name'], [1, 'Country']],
                       oogranulator.getColumnItemList('SoccerTeams'))
 
   def testGetLineItemList(self):
@@ -98,20 +98,20 @@ class TestOOGranulator(HandlerTestCase):
     matrix = [['Name', 'Phone', 'Email'],
              ['Hugo', '+55 (22) 8888-8888', 'hugomaia@tiolive.com'],
              ['Rafael', '+55 (22) 9999-9999', 'rafael@tiolive.com']]
-    self.assertEquals(matrix, oogranulator.getTableMatrix('Developers'))
+    self.assertEqual(matrix, oogranulator.getTableMatrix('Developers'))
 
     matrix = [['Product', 'Price'],
              ['Pizza', 'R$ 25,00'],
              ['Petit Gateau', 'R$ 10,00'],
              ['Feijoada', 'R$ 30,00']]
-    self.assertEquals(matrix, oogranulator.getTableMatrix('Prices'))
+    self.assertEqual(matrix, oogranulator.getTableMatrix('Prices'))
 
-    self.assertEquals(None, oogranulator.getTableMatrix('Non existent'))
+    self.assertEqual(None, oogranulator.getTableMatrix('Non existent'))
 
   def testGetImageItemList(self):
     """Test if getImageItemList() returns the right images list"""
     image_list = self.oogranulator.getImageItemList()
-    self.assertEquals([('10000000000000C80000009C38276C51.jpg', ''),
+    self.assertEqual([('10000000000000C80000009C38276C51.jpg', ''),
                        ('10000201000000C80000004E7B947D46.png', 'TioLive Logo'),
                        ('10000201000000C80000004E7B947D46.png', ''),
                        # XXX The svg image are stored into odf as svm
@@ -126,12 +126,12 @@ class TestOOGranulator(HandlerTestCase):
     image_id = '10000000000000C80000009C38276C51.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = self.oogranulator.getImage(image_id)
-    self.assertEquals(original_image, geted_image)
+    self.assertEqual(original_image, geted_image)
 
   def testGetImageWithoutSuccess(self):
     """Test if getImage() returns an empty string for not existent id"""
     obtained_image = self.oogranulator.getImage('anything.png')
-    self.assertEquals('', obtained_image)
+    self.assertEqual('', obtained_image)
 
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList() returns the right paragraphs list, with
@@ -140,31 +140,31 @@ class TestOOGranulator(HandlerTestCase):
       data = open('./data/granulate_test.odt').read()
       oogranulator = OOGranulator(data, 'odt')
       paragraph_list = oogranulator.getParagraphItemList()
-      self.assertEquals((0, 'P3'), paragraph_list[0])
-      self.assertEquals((1, 'P1'), paragraph_list[1])
-      self.assertEquals((2, 'P12'), paragraph_list[2])
-      self.assertEquals((8, 'P13'), paragraph_list[8])
-      self.assertEquals((19, 'Standard'), paragraph_list[19])
+      self.assertEqual((0, 'P3'), paragraph_list[0])
+      self.assertEqual((1, 'P1'), paragraph_list[1])
+      self.assertEqual((2, 'P12'), paragraph_list[2])
+      self.assertEqual((8, 'P13'), paragraph_list[8])
+      self.assertEqual((19, 'Standard'), paragraph_list[19])
 
   def testGetParagraphItemSuccessfully(self):
     """Test if getParagraphItem() returns the right paragraph"""
-    self.assertEquals(('Some images without title', 'P13'),
+    self.assertEqual(('Some images without title', 'P13'),
                       self.oogranulator.getParagraph(8))
 
     big_paragraph = self.oogranulator.getParagraph(5)
-    self.assertEquals('P8', big_paragraph[1])
+    self.assertEqual('P8', big_paragraph[1])
     self.assertTrue(big_paragraph[0].startswith(u'A prática cotidiana prova'))
     self.assertTrue(big_paragraph[0].endswith(u'corresponde às necessidades.'))
 
   def testGetParagraphItemWithoutSuccess(self):
     """Test if getParagraphItem() returns None for not existent id"""
-    self.assertEquals(None, self.oogranulator.getParagraph(200))
+    self.assertEqual(None, self.oogranulator.getParagraph(200))
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
     data = open('./data/granulate_chapters_test.odt').read()
     oogranulator = OOGranulator(data, 'odt')
-    self.assertEquals([(0, 'Title 0'), (1, 'Title 1'), (2, 'Title 2'),
+    self.assertEqual([(0, 'Title 0'), (1, 'Title 1'), (2, 'Title 2'),
                        (3, 'Title 3'), (4, 'Title 4'), (5, 'Title 5'),
                        (6, 'Title 6'), (7, 'Title 7'), (8, 'Title 8'),
                        (9, 'Title 9'), (10, 'Title 10')],
@@ -174,5 +174,5 @@ class TestOOGranulator(HandlerTestCase):
     """Test if getChapterItem() returns the right chapter"""
     data = open("./data/granulate_chapters_test.odt").read()
     oogranulator = OOGranulator(data, 'odt')
-    self.assertEquals(['Title 1', 1], oogranulator.getChapterItem(1))
+    self.assertEqual(['Title 1', 1], oogranulator.getChapterItem(1))
 
