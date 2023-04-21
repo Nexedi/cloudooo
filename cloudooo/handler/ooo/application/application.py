@@ -104,3 +104,9 @@ class Application(object):
     if not hasattr(self, 'process'):
       return None
     return self.process.pid
+
+  def hasExited(self):
+    """Check if process has exited running"""
+    if not hasattr(self, 'process'):
+      return True
+    return self.process.poll() is not None

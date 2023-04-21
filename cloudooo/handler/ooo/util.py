@@ -61,7 +61,7 @@ def waitStartDaemon(daemon, attempts):
   for num in range(attempts):
     if daemon.status():
       return True
-    elif daemon.pid() is None:
+    elif daemon.hasExited():
       return False
     sleep(1)
   return False
@@ -70,7 +70,7 @@ def waitStartDaemon(daemon, attempts):
 def waitStopDaemon(daemon, attempts=5):
   """Wait a certain time to stop the daemon."""
   for num in range(attempts):
-    if not daemon.status():
+    if not daemon.status() or daemon.hasExited():
       return True
     sleep(1)
   return False
