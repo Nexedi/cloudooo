@@ -68,7 +68,8 @@ class File(object):
     file_path = tempfile.mktemp(suffix=".%s" % self.source_format,
                                 dir=self.directory_name)
     # stores the data in temporary file
-    open(file_path, 'wb').write(self.original_data)
+    with open(file_path, 'wb') as f:
+      f.write(self.original_data)
     # If is a zipfile is need extract all files from whitin the compressed file
     if is_zipfile(file_path):
       zipfile = ZipFile(file_path)
@@ -106,12 +107,14 @@ class File(object):
           zipfile.write(file)
       finally:
         zipfile.close()
-      opened_zip = open(zip_path, 'r').read()
+      with open(zip_path, 'rb') as f:
+        opened_zip = f.read()
       remove(zip_path)
       chdir(current_dir_url)
       return opened_zip
     else:
-      return open(self.url, 'r').read()
+      with open(self.url, 'rb') as f:
+        return f.read()
 
   def getUrl(self):
     """Returns full path."""

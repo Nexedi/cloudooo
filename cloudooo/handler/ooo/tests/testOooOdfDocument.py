@@ -37,7 +37,8 @@ from cloudooo.handler.ooo.document import OdfDocument
 class TestOdfDocument(HandlerTestCase):
 
   def setUp(self):
-    data = open('./data/granulate_test.odt').read()
+    with open('./data/granulate_test.odt', 'rb') as f:
+      data = f.read()
     self.oodocument = OdfDocument(data, 'odt')
 
   def testReceivedGoodFile(self):
@@ -47,7 +48,7 @@ class TestOdfDocument(HandlerTestCase):
   def testGetContentXml(self):
     """Test if the getContentXml method returns the content.xml file"""
     content_xml = self.oodocument.getContentXml()
-    self.assertTrue('The content of this file is just' in content_xml)
+    self.assertIn(b'The content of this file is just', content_xml)
 
   def testGetExistentFile(self):
     """Test if the getFile method returns the requested file"""

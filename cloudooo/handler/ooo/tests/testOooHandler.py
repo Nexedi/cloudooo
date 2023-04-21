@@ -48,9 +48,8 @@ class TestHandler(HandlerTestCase):
 
   def _save_document(self, document_output_url, data):
     """Create document in file system"""
-    new_file = open(document_output_url, "w")
-    new_file.write(data)
-    new_file.close()
+    with open(document_output_url, "wb") as f:
+      f.write(data)
     self._file_path_list.append(document_output_url)
 
   def _assert_document_output(self, document, expected_mimetype):
@@ -70,18 +69,20 @@ class TestHandler(HandlerTestCase):
 
   def testConvertOdtToDoc(self):
     """Test convert ODT to DOC"""
-    data = encodestring(open("data/test.odt").read())
+    with open("data/test.odt", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt')
     doc_exported = handler.convert("doc")
     self._assert_document_output(doc_exported, "application/msword")
 
   def testConvertDocToOdt(self):
     """Test convert DOC to ODT"""
-    data = encodestring(open("data/test.doc").read())
+    with open("data/test.doc", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'doc')
     doc_exported = handler.convert("odt")
     self._assert_document_output(doc_exported,
@@ -89,9 +90,10 @@ class TestHandler(HandlerTestCase):
 
   def testGetMetadata(self):
     """Test getMetadata"""
-    data = encodestring(open("data/test.odt").read())
+    with open("data/test.odt", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt')
     metadata = handler.getMetadata()
     self.assertEqual(metadata.get('MIMEType'),
@@ -102,9 +104,10 @@ class TestHandler(HandlerTestCase):
 
   def testSetMetadata(self):
     """Test setMetadata"""
-    data = encodestring(open("data/test.odt").read())
+    with open("data/test.odt", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
     new_handler = Handler(self.tmp_url,
@@ -113,7 +116,7 @@ class TestHandler(HandlerTestCase):
     metadata = new_handler.getMetadata()
     self.assertEqual(metadata.get('Title'), "cloudooo Test -")
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt')
     new_data = handler.setMetadata({"Title": "Namie's working record"})
     new_handler = Handler(self.tmp_url,
@@ -125,9 +128,10 @@ class TestHandler(HandlerTestCase):
   def testConvertWithOpenOfficeStopped(self):
     """Test convert with openoffice stopped"""
     openoffice.stop()
-    data = encodestring(open("data/test.doc").read())
+    with open("data/test.doc", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'doc')
     doc_exported = handler.convert("odt")
     self._assert_document_output(doc_exported,
@@ -136,9 +140,10 @@ class TestHandler(HandlerTestCase):
   def testGetMetadataWithOpenOfficeStopped(self):
     """Test getMetadata with openoffice stopped"""
     openoffice.stop()
-    data = encodestring(open("data/test.odt").read())
+    with open("data/test.odt", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt')
     metadata = handler.getMetadata()
     self.assertEqual(metadata.get('Title'), 'title')
@@ -148,9 +153,10 @@ class TestHandler(HandlerTestCase):
   def testSetMetadataWithOpenOfficeStopped(self):
     """Test setMetadata with openoffice stopped"""
     openoffice.stop()
-    data = encodestring(open("data/test.doc").read())
+    with open("data/test.doc", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'doc')
     new_data = handler.setMetadata({"Title": "cloudooo Test -"})
     new_handler = Handler(self.tmp_url,
@@ -162,9 +168,10 @@ class TestHandler(HandlerTestCase):
   def testRefreshOdt(self):
     """Test refresh argument"""
     # Check when refreshing is disabled
-    data = encodestring(open("data/test_fields.odt").read())
+    with open("data/test_fields.odt", "rb") as f:
+      data = f.read()
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt',
                         refresh=False)
     doc_exported = handler.convert("odt")
@@ -176,9 +183,8 @@ class TestHandler(HandlerTestCase):
                                        namespaces=content_tree.nsmap))
 
     # Check when refreshing is enabled
-    data = encodestring(open("data/test_fields.odt").read())
     handler = Handler(self.tmp_url,
-                        decodestring(data),
+                        data,
                         'odt',
                         refresh=True)
     doc_exported = handler.convert("odt")

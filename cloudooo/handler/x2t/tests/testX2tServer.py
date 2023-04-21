@@ -52,12 +52,14 @@ class TestServer(TestCase):
     self.runConversionList(self.ConversionScenarioList())
 
   def FaultConversionScenarioList(self):
-    return [
-      # Test to verify if server fail when a empty string is sent
-      ('', '', ''),
-      # Try convert one xlsx for a invalid format
-      (open(join('data', 'test.xlsx')).read(), 'xlsx', 'xyz'),
+    scenario_list = [
+      # Test to verify if server fail when a empty file is sent
+      (b'', '', ''),
     ]
+    # Try convert one xlsx for a invalid format
+    with open(join('data', 'test.xlsx'), 'rb') as f:
+      scenario_list.append((f.read(), 'xlsx', 'xyz'))
+    return scenario_list
 
   def test_xlsx_to_xlsy(self):
     with open(join('data', 'test.xlsx')) as f:

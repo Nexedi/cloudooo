@@ -41,14 +41,16 @@ class TestHandler(HandlerTestCase):
 
   def testConvertPDFtoText(self):
     """Test conversion of pdf to txt"""
-    pdf_document = open("data/test.pdf").read()
+    with open("data/test.pdf", "rb") as f:
+      pdf_document = f.read()
     handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     txt_document = handler.convert("txt")
-    self.assertTrue(txt_document.startswith("UNG Docs Architecture"))
+    self.assertTrue(txt_document.startswith(b"UNG Docs Architecture"))
 
   def testgetMetadata(self):
     """Test if the metadata are extracted correctly"""
-    pdf_document = open("data/test.pdf").read()
+    with open("data/test.pdf", "rb") as f:
+      pdf_document = f.read()
     handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
     self.assertEqual(type(metadata), DictType)
@@ -57,7 +59,8 @@ class TestHandler(HandlerTestCase):
 
   def testsetMetadata(self):
     """Test if the metadata is inserted correctly"""
-    pdf_document = open("data/test.pdf").read()
+    with open("data/test.pdf", "rb") as f:
+      pdf_document = f.read()
     handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata_dict = {"title": "Set Metadata Test", "creator": "gabriel\'@"}
     new_document = handler.setMetadata(metadata_dict)

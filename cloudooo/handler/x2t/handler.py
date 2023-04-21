@@ -321,7 +321,8 @@ class Handler(object):
               absolute_path = os.path.join(root, file_name)
               file_name = os.path.join(relative_root, file_name)
               zipfile.write(absolute_path, file_name)
-        output_data = open(output_file_name).read()
+        with open(output_file_name, 'rb') as f:
+          output_data = f.read()
       finally:
         os.unlink(output_file_name)
       return output_data

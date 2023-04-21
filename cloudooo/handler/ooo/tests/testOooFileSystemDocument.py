@@ -58,7 +58,8 @@ class TestFileSystemDocument(unittest.TestCase):
     document_filename = "document"
     document_test_url = path.join(self.fsdocument.directory_name,
                                   document_filename)
-    open(document_test_url, 'wb').write(decodestring("Test Document"))
+    with open(document_test_url, 'wb') as f:
+      f.write(decodestring(b"Test Document"))
     self.fsdocument.reload(document_test_url)
     self.assertEqual(path.exists(old_document_url), False)
     self.assertNotEqual(self.fsdocument.original_data,
@@ -82,7 +83,8 @@ class TestFileSystemDocument(unittest.TestCase):
   def testLoadDocumentFile(self):
     """Test if the document is created correctly"""
     url = self.fsdocument.getUrl()
-    tmp_document = open(url, 'r').read()
+    with open(url, 'rb') as f:
+      tmp_document = f.read()
     self.assertEqual(self.data, tmp_document)
     self.fsdocument.trash()
     self.assertEqual(path.exists(url), False)
@@ -93,7 +95,8 @@ class TestFileSystemDocument(unittest.TestCase):
     document_filename = "document"
     document_test_url = path.join(self.fsdocument.directory_name,
                                                document_filename)
-    open(document_test_url, 'wb').write(self.data)
+    with open(document_test_url, 'wb') as f:
+      f.write(self.data)
     self.fsdocument.reload(document_test_url)
     url = self.fsdocument.getUrl()
     self.assertEqual(path.exists(old_document_url), False)
@@ -103,7 +106,8 @@ class TestFileSystemDocument(unittest.TestCase):
 
   def testZipDocumentList(self):
     """Tests if the zip file is returned correctly"""
-    open(path.join(self.fsdocument.directory_name, 'document2'), 'w').write('test')
+    with open(path.join(self.fsdocument.directory_name, 'document2'), 'w') as f:
+      f.write('test')
     zip_file = self.fsdocument.getContent(True)
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(zip_file)
@@ -118,8 +122,8 @@ class TestFileSystemDocument(unittest.TestCase):
 
   def testSendZipFile(self):
     """Tests if the htm is extrated from zipfile"""
-    zip_input_url = 'data/test.zip'
-    data = open(zip_input_url).read()
+    with open('./data/test.zip', 'rb') as f:
+      data = f.read()
     zipdocument = FileSystemDocument(self.tmp_url, data, 'zip')
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(zipdocument.getContent(True))

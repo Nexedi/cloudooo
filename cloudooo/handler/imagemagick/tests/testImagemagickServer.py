@@ -44,14 +44,17 @@ class TestServer(TestCase):
     self.runConversionList(self.ConversionScenarioList())
 
   def FaultConversionScenarioList(self):
-    return [
-            # Test to verify if server fail when a empty string is sent
-            ('', '', ''),
-            # Try convert one video for a invalid format
-            (open(join('data', 'test.png')).read(), 'png', 'xyz'),
-            # Try convert one video to format not possible
-            (open(join('data', 'test.png')).read(), 'png', '8bim'),
-            ]
+    scenario_list = [
+      # Test to verify if server fail when a empty file is sent
+      (b'', '', ''),
+    ]
+    # Try convert one png for a invalid format
+    with open(join('data', 'test.png'), 'rb') as f:
+      scenario_list.append((f.read(), 'png', 'xyz'))
+    # Try convert one png to format not possible
+    with open(join('data', 'test.png'), 'rb') as f:
+      scenario_list.append((f.read(), 'png', '8bim'))
+    return scenario_list
 
   def testFaultConversion(self):
     """Test fail convertion of Invalid image files"""

@@ -40,7 +40,8 @@ class TestHandler(HandlerTestCase):
     self.kw = dict(env=dict(PATH=self.env_path))
 
   def _testBase(self, html_path, **conversion_kw):
-    html_file = open(html_path).read()
+    with open(html_path, 'rb') as f:
+      html_file = f.read()
     handler = Handler(self.tmp_url, html_file, "html", **self.kw)
     pdf_file = handler.convert("pdf", **conversion_kw)
     mime = magic.Magic(mime=True)
@@ -67,16 +68,18 @@ class TestHandler(HandlerTestCase):
 
   def testConvertHtmlWithTableOfContent(self):
     """Test conversion of html with an additional table of content"""
+    with open("data/test_toc.xsl", 'rb') as f:
+      xsl_style_sheet_data = f.read()
     self._testBase(
       "data/test_with_toc.html",
       toc=True,
-      xsl_style_sheet_data=b64encode(open("data/test_toc.xsl").read()),
+      xsl_style_sheet_data=b64encode(xsl_style_sheet_data),
     )
     # XXX how to check for table of content presence ?
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    handler = Handler(self.tmp_url, "", "png", **self.kw)
+    handler = Handler(self.tmp_url, b"", "png", **self.kw)
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
   def testGetAllowedConversionFormatList(self):

@@ -39,7 +39,8 @@ from cloudooo.handler.ooo.granulator import OOGranulator
 class TestOOGranulator(HandlerTestCase):
 
   def setUp(self):
-    data = open('./data/granulate_test.odt').read()
+    with open('./data/granulate_test.odt', 'rb') as f:
+      data = f.read()
     self.oogranulator = OOGranulator(data, 'odt')
 
   def testOdfWithoutContentXml(self):
@@ -56,7 +57,8 @@ class TestOOGranulator(HandlerTestCase):
 
   def testgetTableItemList(self):
     """Test if getTableItemList() returns the right tables list"""
-    data = open('./data/granulate_table_test.odt').read()
+    with open('./data/granulate_table_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     table_list = [('Developers', ''),
                   ('Prices', 'Table 1: Prices table from Mon Restaurant'),
@@ -65,7 +67,8 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetTable(self):
     """Test if getTable() returns on odf file with the right table"""
-    data = open('./data/granulate_table_test.odt').read()
+    with open('./data/granulate_table_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     table_data_doc = oogranulator.getTable('Developers')
     content_xml_str = ZipFile(StringIO(table_data_doc)).read('content.xml')
@@ -79,21 +82,24 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetTableItemWithoutSuccess(self):
     """Test if getTable() returns None for an non existent table name"""
-    data = open('./data/granulate_table_test.odt').read()
+    with open('./data/granulate_table_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     table_data = oogranulator.getTable('NonExistentTable')
     self.assertEqual(table_data, None)
 
   def testGetColumnItemList(self):
     """Test if getColumnItemList() returns the right table columns list"""
-    data = open('./data/granulate_table_test.odt').read()
+    with open('./data/granulate_table_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     self.assertEqual([[0, 'Name'], [1, 'Country']],
                       oogranulator.getColumnItemList('SoccerTeams'))
 
   def testGetLineItemList(self):
     """Test if getLineItemList() returns the right table lines list"""
-    data = open('./data/granulate_table_test.odt').read()
+    with open('./data/granulate_table_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     matrix = [['Name', 'Phone', 'Email'],
              ['Hugo', '+55 (22) 8888-8888', 'hugomaia@tiolive.com'],
@@ -121,7 +127,8 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetImageSuccessfully(self):
     """Test if getImage() returns the right image file successfully"""
-    data = open('./data/granulate_test.odt').read()
+    with open('./data/granulate_test.odt', 'rb') as f:
+      data = f.read()
     zip = ZipFile(StringIO(data))
     image_id = '10000000000000C80000009C38276C51.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
@@ -131,13 +138,14 @@ class TestOOGranulator(HandlerTestCase):
   def testGetImageWithoutSuccess(self):
     """Test if getImage() returns an empty string for not existent id"""
     obtained_image = self.oogranulator.getImage('anything.png')
-    self.assertEqual('', obtained_image)
+    self.assertEqual(b'', obtained_image)
 
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList() returns the right paragraphs list, with
     the ids always in the same order"""
-    for i in range(5):
-      data = open('./data/granulate_test.odt').read()
+    for _ in range(5):
+      with open('./data/granulate_test.odt', 'rb') as f:
+        data = f.read()
       oogranulator = OOGranulator(data, 'odt')
       paragraph_list = oogranulator.getParagraphItemList()
       self.assertEqual((0, 'P3'), paragraph_list[0])
@@ -162,7 +170,8 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetChapterItemList(self):
     """Test if getChapterItemList() returns the right chapters list"""
-    data = open('./data/granulate_chapters_test.odt').read()
+    with open('./data/granulate_chapters_test.odt', 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     self.assertEqual([(0, 'Title 0'), (1, 'Title 1'), (2, 'Title 2'),
                        (3, 'Title 3'), (4, 'Title 4'), (5, 'Title 5'),
@@ -172,7 +181,8 @@ class TestOOGranulator(HandlerTestCase):
 
   def testGetChapterItem(self):
     """Test if getChapterItem() returns the right chapter"""
-    data = open("./data/granulate_chapters_test.odt").read()
+    with open("./data/granulate_chapters_test.odt", 'rb') as f:
+      data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     self.assertEqual(['Title 1', 1], oogranulator.getChapterItem(1))
 
