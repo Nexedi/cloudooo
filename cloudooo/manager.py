@@ -275,8 +275,7 @@ class Manager(object):
       del response_dict['meta']['Data']
       return (200, response_dict, "")
     except Exception as e:
-      import traceback;
-      logger.error(traceback.format_exc())
+      logger.error('Error converting to %s', extension, exc_info=True)
       return (402, {}, e.args[0])
 
   def run_setmetadata(self, filename='', data=None, meta=None,
@@ -292,8 +291,7 @@ class Manager(object):
       response_dict['data'] = self.updateFileMetadata(data, extension, meta)
       return (200, response_dict, '')
     except Exception as e:
-      import traceback;
-      logger.error(traceback.format_exc())
+      logger.error('Error setting metadata', exc_info=True)
       return (402, {}, e.args[0])
 
   def run_getmetadata(self, filename='', data=None, meta=None,
@@ -312,8 +310,7 @@ class Manager(object):
       response_dict['meta']['title'] = response_dict['meta']['Title']
       return (200, response_dict, '')
     except Exception as e:
-      import traceback;
-      logger.error('run_getmetadata: ' + traceback.format_exc())
+      logger.error('Error getting metadata', exc_info=True)
       return (402, {}, e.args[0])
 
   def run_generate(self, filename='', data=None, meta=None, extension=None,
@@ -354,8 +351,7 @@ class Manager(object):
             mimetypes.types_map.get('.%s' % extension.split('.')[-1]))
       return (200, response_dict, "")
     except Exception as e:
-      import traceback;
-      logger.error(traceback.format_exc())
+      logger.error('Error in generate from %s to %s', orig_format, extension, exc_info=True)
       return (402, response_dict, str(e))
 
   def getAllowedTargetItemList(self, content_type):
@@ -374,7 +370,7 @@ class Manager(object):
       response_dict['response_data'] = extension_list
       return (200, response_dict, '')
     except Exception as e:
-      logger.error(e)
+      logger.error('Error in getting target item list from %s', content_type, exc_info=True)
       return (402, {}, e.args[0])
 
   def _getOOGranulator(self, data, source_format="odt"):

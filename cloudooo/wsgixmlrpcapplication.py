@@ -12,16 +12,30 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import logging
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 
+logger = logging.getLogger(__name__)
 
-class WSGIXMLRPCApplication(object):
+class ErrorLoggingXMLRPCDispatcher(SimpleXMLRPCDispatcher):
+    """A XMLRPC Dispatcher which logs errors
+    """
+    def _dispatch(self, method, params):
+        try:
+            return SimpleXMLRPCDispatcher._dispatch(self, method, params)
+        except:
+            logger.exception("Error calling %s", method)
+            raise
+
+
+class WSGIXMLRPCApplication:
     """Application to handle requests to the XMLRPC service"""
 
     def __init__(self, instance=None, methods=[]):
         """Create windmill xmlrpc dispatcher"""
-        self.dispatcher = SimpleXMLRPCDispatcher(allow_none=True,
-                                                 encoding=None)
+        self.dispatcher = ErrorLoggingXMLRPCDispatcher(
+          allow_none=True,
+          encoding=None)
         if instance is not None:
             self.dispatcher.register_instance(instance)
         for method in methods:
@@ -63,6 +77,7 @@ class WSGIXMLRPCApplication(object):
             response += '\n'
         except:  # This should only happen if the module is buggy
             # internal error, report as HTTP server error
+            logger.exception("Error serving request")
             start_response("500 Server error", [('Content-Type',
                                                  'text/plain')])
             return []
