@@ -33,7 +33,6 @@ from os import environ, path
 from ConfigParser import ConfigParser
 from xmlrpclib import ServerProxy, Fault
 from magic import Magic
-from types import DictType
 from base64 import encodestring, decodestring
 from cloudooo.tests import backportUnittest
 
@@ -132,7 +131,7 @@ class TestCase(backportUnittest.TestCase):
     response_code, response_dict, response_message = \
               self.proxy.run_convert(filename, encodestring(data))
     self.assertEqual(response_code, expected_response_code)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     if expected_response_code == 402:
       self.assertEqual(response_dict, {})
       self.assertTrue(response_message.endswith(expected_response_message),

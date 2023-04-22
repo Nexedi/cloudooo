@@ -33,7 +33,6 @@ from time import sleep
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 from psutil import Process
-from types import IntType
 
 OPENOFFICE = True
 
@@ -94,7 +93,7 @@ class TestMonitorMemory(unittest.TestCase):
     self.monitor = MonitorMemory(openoffice, 2, 400)
     self.monitor.create_process()
     self.assertTrue(hasattr(self.monitor, 'process'))
-    self.assertEqual(type(self.monitor.process), Process)
+    self.assertIsInstance(self.monitor.process, Process)
 
   def testGetMemoryUsage(self):
     """Test memory usage"""
@@ -105,6 +104,6 @@ class TestMonitorMemory(unittest.TestCase):
     if not openoffice.status():
       openoffice.start()
     memory_usage_int = self.monitor.get_memory_usage()
-    self.assertEqual(type(memory_usage_int), IntType)
+    self.assertIsInstance(memory_usage_int, int)
 
 

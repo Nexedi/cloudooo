@@ -34,7 +34,6 @@ from os import remove
 from base64 import encodestring, decodestring
 from StringIO import StringIO
 from lxml import etree
-from types import DictType
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase
 from cloudooo.tests.backportUnittest import expectedFailure
@@ -226,7 +225,7 @@ class TestGetMetadata(TestCase):
                                       'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 200)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/pdf')
 
@@ -245,7 +244,7 @@ class TestGenerate(TestCase):
                                       "application/vnd.oasis.opendocument.spreadsheet")
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 200)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
@@ -272,7 +271,7 @@ class TestGenerate(TestCase):
                                       "application/vnd.oasis.opendocument.spreadsheet")
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 200)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
@@ -289,7 +288,7 @@ class TestGenerate(TestCase):
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 200)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
@@ -323,7 +322,7 @@ class TestGenerate(TestCase):
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 200)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
@@ -351,7 +350,7 @@ class TestGenerate(TestCase):
                                       None, 'pdf', 'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 402)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     self.assertEqual(response_dict, {})
     self.assertTrue(response_message.startswith('Traceback'))
 

@@ -43,7 +43,7 @@ class TestOdfDocument(HandlerTestCase):
 
   def testReceivedGoodFile(self):
     """Test if received path is from a good document returing an ZipFile"""
-    self.assertTrue(isinstance(self.oodocument._zipfile, ZipFile))
+    self.assertIsInstance(self.oodocument._zipfile, ZipFile)
 
   def testGetContentXml(self):
     """Test if the getContentXml method returns the content.xml file"""
@@ -63,7 +63,7 @@ class TestOdfDocument(HandlerTestCase):
   def testParseContent(self):
     """Test if the _parsed_content attribute is the parsed content.xml"""
     # XXX not sure it is good to store parsed document everytime
-    self.assertTrue(isinstance(self.oodocument.parsed_content, etree._Element))
+    self.assertIsInstance(self.oodocument.parsed_content, etree._Element)
     self.assertTrue(self.oodocument.parsed_content.tag.endswith(
                     'document-content'))
 

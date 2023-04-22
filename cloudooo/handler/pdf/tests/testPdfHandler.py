@@ -31,7 +31,6 @@
 
 from cloudooo.handler.pdf.handler import Handler
 from cloudooo.tests.handlerTestCase import HandlerTestCase
-from types import DictType
 
 
 class TestHandler(HandlerTestCase):
@@ -53,7 +52,7 @@ class TestHandler(HandlerTestCase):
       pdf_document = f.read()
     handler = Handler(self.tmp_url, pdf_document, "pdf", **self.kw)
     metadata = handler.getMetadata()
-    self.assertEqual(type(metadata), DictType)
+    self.assertIsInstance(metadata, dict)
     self.assertNotEqual(metadata, {})
     self.assertEqual(metadata["title"], 'Free Cloud Alliance Presentation')
 
