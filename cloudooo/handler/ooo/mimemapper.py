@@ -36,7 +36,6 @@ from zope.interface import implementer
 from filter import Filter
 from os import environ, path
 from cloudooo.interfaces.mimemapper import IMimemapper
-from types import InstanceType
 import json
 
 
@@ -67,23 +66,6 @@ class MimeMapper(object):
     for k, v in self._document_type_dict.iteritems():
       if k.startswith(document_type):
         return v
-
-  def _getElementNameByService(self, uno_service, ignore_name_list=[]):
-    """Returns an dict with elements."""
-    name_list = uno_service.getElementNames()
-    service_dict = {}
-    for name in iter(name_list):
-        element_dict = {}
-        element_list = uno_service.getByName(name)
-        for obj in iter(element_list):
-            if obj.Name in ignore_name_list:
-              continue
-            elif type(obj.Value) == InstanceType:
-              continue
-            element_dict[obj.Name] = obj.Value
-            service_dict[name] = element_dict
-
-    return service_dict
 
   def isLoaded(self):
     """Verify if filters were loaded"""
