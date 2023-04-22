@@ -6,7 +6,7 @@ import logging
 import unittest
 from time import sleep
 from subprocess import Popen
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from argparse import ArgumentParser
 from os import chdir, path, environ, curdir, remove
 from glob import glob

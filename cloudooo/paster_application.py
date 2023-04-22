@@ -51,7 +51,7 @@ def application(global_config, **local_config):
   """
   prefix = 'env-'
   environment_dict = {}
-  for parameter_name, value in local_config.iteritems():
+  for parameter_name, value in local_config.items():
     if parameter_name.startswith(prefix):
       value = value or ''
       variable_name = parameter_name[len(prefix):]
@@ -81,7 +81,7 @@ def application(global_config, **local_config):
 
   mimetype_registry = local_config.get("mimetype_registry", "")
   local_config["mimetype_registry"] = handler_mapping_list = \
-                                    filter(None, mimetype_registry.split("\n"))
+                                    [_f for _f in mimetype_registry.split("\n") if _f]
 
   ooo_disable_filter_list = []
   for filter_name in local_config.get("ooo_disable_filter_list", "").split("\n"):
@@ -109,6 +109,6 @@ def application(global_config, **local_config):
       handler_dict[handler] = module.Handler
 
   local_config['handler_dict'] = handler_dict
-  from manager import Manager
+  from .manager import Manager
   cloudooo_manager = Manager(cloudooo_path_tmp_dir, **local_config)
   return WSGIXMLRPCApplication(instance=cloudooo_manager)

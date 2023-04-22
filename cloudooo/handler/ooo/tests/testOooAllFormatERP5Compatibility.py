@@ -28,9 +28,10 @@
 #
 ##############################################################################
 
-from xmlrpclib import Fault
+from xmlrpc.client import Fault
 from cloudooo.tests.cloudoooTestCase import TestCase
-from base64 import encodestring
+from base64 import encodebytes
+
 
 class TestAllFormatsERP5Compatibility(TestCase):
   """
@@ -54,27 +55,21 @@ class TestAllFormatsERP5Compatibility(TestCase):
     """Test all spreadsheet formats"""
     self.runTestForType('data/test.ods', 'ods', 'application/vnd.oasis.opendocument.spreadsheet')
 
-  def runTestForType(self, filename, source_format, source_mimetype):
+  def runTestForType(self, filename:str, source_format:str, source_mimetype:str) -> None:
     """Generic test"""
     extension_list = self.proxy.getAllowedTargetItemList(source_mimetype)[1]['response_data']
-    fault_list = []
-    for extension, format in extension_list:
-      try:
-        data_output = self.proxy.run_generate(filename,
-                                              encodestring(
-                                              open(filename).read()),
+    with open(filename, 'rb') as f:
+      encoded_data = encodebytes(f.read()).decode()
+
+    for extension, _ in extension_list:
+      with self.subTest(extension):
+        _, data_output, fault = self.proxy.run_generate(filename,
+                                              encoded_data,
                                               None,
                                               extension,
-                                              source_mimetype)[1]
+                                              source_mimetype)
+        self.assertFalse(fault)
         data_output = data_output['data']
         file_type = self._getFileType(data_output)
-        if file_type.endswith(": empty"):
-          fault_list.append((source_format, extension, file_type))
-      except Fault as err:
-        fault_list.append((source_format, extension, err.faultString))
-    if fault_list:
-      template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
-      message = '\n'.join([template_message % fault for fault in fault_list])
-      self.fail('Failed Conversions:\n' + message)
-
+        self.assertNotIn(": empty", file_type)
 

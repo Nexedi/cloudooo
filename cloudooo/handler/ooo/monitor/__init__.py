@@ -1,6 +1,6 @@
-from request import MonitorRequest
-from memory import MonitorMemory
-from sleeping_time import MonitorSpleepingTime
+from .request import MonitorRequest
+from .memory import MonitorMemory
+from .sleeping_time import MonitorSpleepingTime
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.util import convertStringToBool
 

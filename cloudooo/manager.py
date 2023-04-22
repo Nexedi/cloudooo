@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
@@ -30,10 +29,12 @@
 ##############################################################################
 
 import mimetypes
+import xmlrpc
 from mimetypes import guess_type, guess_extension
-from base64 import encodestring, decodestring
+from binascii import a2b_base64
+from base64 import encodebytes
 from zope.interface import implementer
-from interfaces.manager import IManager, IERP5Compatibility
+from .interfaces.manager import IManager, IERP5Compatibility
 from cloudooo.util import logger, parseContentType
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
@@ -106,8 +107,8 @@ class Manager(object):
     self.mimetype_registry = kw.pop("mimetype_registry")
     self.handler_dict = kw.pop("handler_dict")
 
-  def convertFile(self, file, source_format, destination_format, zip=False,
-                  refresh=False, conversion_kw={}):
+  def convertFile(self, file:str, source_format:str, destination_format:str, zip=False,
+                  refresh=False, conversion_kw={}) -> str:
     """Returns the converted file in the given format.
     Keywords arguments:
       file -- File as string in base64
@@ -136,43 +137,43 @@ class Manager(object):
                                     self.mimetype_registry,
                                     self.handler_dict)
     handler = handler_class(self._path_tmp_dir,
-                            decodestring(file),
+                            a2b_base64(file),
                             source_format,
                             **kw)
     decode_data = handler.convert(destination_format, **conversion_kw)
-    return encodestring(decode_data)
+    return encodebytes(decode_data).decode()
 
-  def updateFileMetadata(self, file, source_format, metadata_dict):
+  def updateFileMetadata(self, file:str, source_format:str, metadata_dict:dict) -> str:
     """Receives the string of document and a dict with metadatas. The metadata
     is added in document.
     e.g
-    self.updateFileMetadata(data = encodestring(data), metadata = \
+    self.updateFileMetadata(data = encodebytes(data), metadata = \
       {"title":"abc","description":...})
-    return encodestring(document_with_metadata)
+    return encodebytes(document_with_metadata)
     """
     handler_class = getHandlerClass(source_format,
                                None,
                                self.mimetype_registry,
                                self.handler_dict)
     handler = handler_class(self._path_tmp_dir,
-                            decodestring(file),
+                            a2b_base64(file),
                             source_format,
                             **self.kw)
-    metadata_dict = dict([(key.capitalize(), value) \
-                        for key, value in metadata_dict.iteritems()])
+    metadata_dict = {key.capitalize(): value \
+                        for key, value in metadata_dict.items()}
     decode_data = handler.setMetadata(metadata_dict)
-    return encodestring(decode_data)
+    return encodebytes(decode_data).decode()
 
-  def getFileMetadataItemList(self, file, source_format, base_document=False):
-    """Receives the string of document as encodestring and returns a dict with
+  def getFileMetadataItemList(self, file:str, source_format:str, base_document=False) -> dict[str, str]:
+    """Receives the string of document as encodebytes and returns a dict with
     metadatas.
     e.g.
-    self.getFileMetadataItemList(data = encodestring(data))
+    self.getFileMetadataItemList(data = encodebytes(data).decode())
     return {'Title': 'abc','Description': 'comments', 'Data': None}
 
     If converted_data is True, the ODF of data is added in dictionary.
     e.g
-    self.getFileMetadataItemList(data = encodestring(data), True)
+    self.getFileMetadataItemList(data = encodebytes(data).decode(), True)
     return {'Title': 'abc','Description': 'comments', 'Data': string_ODF}
 
     Note that all keys of the dictionary have the first word in uppercase.
@@ -182,11 +183,11 @@ class Manager(object):
                                     self.mimetype_registry,
                                     self.handler_dict)
     handler = handler_class(self._path_tmp_dir,
-                            decodestring(file),
+                            a2b_base64(file),
                             source_format,
                             **self.kw)
     metadata_dict = handler.getMetadata(base_document)
-    metadata_dict['Data'] = encodestring(metadata_dict.get('Data', ''))
+    metadata_dict['Data'] = encodebytes(metadata_dict.get('Data', b'')).decode()
     return metadata_dict
 
   def getAllowedExtensionList(self, request_dict={}):
@@ -217,7 +218,7 @@ class Manager(object):
     else:
       return [('', '')]
 
-  def getAllowedConversionFormatList(self, source_mimetype):
+  def getAllowedConversionFormatList(self, source_mimetype:str) -> list:
     r"""Returns a list content_type and their titles which are supported
     by enabled handlers.
 
@@ -354,7 +355,7 @@ class Manager(object):
       logger.error('Error in generate from %s to %s', orig_format, extension, exc_info=True)
       return (402, response_dict, str(e))
 
-  def getAllowedTargetItemList(self, content_type):
+  def getAllowedTargetItemList(self, content_type:str):
     """Wrapper getAllowedExtensionList but returns a dict.
     This is a Backwards compatibility provided for ERP5 Project, in order to
     keep compatibility with OpenOffice.org Daemon.
@@ -373,25 +374,27 @@ class Manager(object):
       logger.error('Error in getting target item list from %s', content_type, exc_info=True)
       return (402, {}, e.args[0])
 
-  def _getOOGranulator(self, data, source_format="odt"):
+  def _getOOGranulator(self, data:str, source_format="odt"):
     """Returns an instance of the handler OOGranulator after convert the
-    data to 'odt'"""
+    data to 'odt'
+    data is a str with the actual data encoded in base64
+    """
     GRANULATABLE_FORMAT_LIST = ("odt",)
     if source_format not in GRANULATABLE_FORMAT_LIST:
       data = self.convertFile(data, source_format,
                     GRANULATABLE_FORMAT_LIST[0], zip=False)
-    return OOGranulator(decodestring(data), GRANULATABLE_FORMAT_LIST[0])
+    return OOGranulator(a2b_base64(data), GRANULATABLE_FORMAT_LIST[0])
 
   def getTableItemList(self, data, source_format="odt"):
     """Returns the list of table IDs in the form of (id, title)."""
     document = self._getOOGranulator(data, source_format)
     return document.getTableItemList()
 
-  def getTable(self, data, id, source_format="odt"):
+  def getTable(self, data, id, source_format="odt") -> str:
     """Returns the table into a new 'format' file."""
     document = self._getOOGranulator(data, source_format)
     #the file will be convert; so, the source_format will be always 'odt'
-    return encodestring(document.getTable(id, 'odt'))
+    return encodebytes(document.getTable(id, 'odt')).decode()
 
   def getColumnItemList(self, data, table_id, source_format):
     """Return the list of columns in the form of (id, title)."""
@@ -403,17 +406,16 @@ class Manager(object):
     document = self._getOOGranulator(data, source_format)
     return document.getLineItemList(table_id)
 
-  def getImageItemList(self, data, source_format):
+  def getImageItemList(self, data:str, source_format:str):
     """Return the list of images in the form of (id, title)."""
-    data = self.convertFile(data, source_format, 'odt', zip=False)
     document = self._getOOGranulator(data, source_format)
     return document.getImageItemList()
 
-  def getImage(self, data, image_id, source_format, format=None,
-               resolution=None, **kw):
+  def getImage(self, data:str, image_id:str, source_format:str, format=None,
+               resolution=None, **kw) -> str:
     """Return the given image."""
     document = self._getOOGranulator(data, source_format)
-    return encodestring(document.getImage(image_id, format, resolution, **kw))
+    return encodebytes(document.getImage(image_id, format, resolution, **kw)).decode()
 
   def getParagraphItemList(self, data, source_format):
     """Returns the list of paragraphs in the form of (id, class) where class

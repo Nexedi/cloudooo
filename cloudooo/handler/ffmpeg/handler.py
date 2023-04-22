@@ -36,7 +36,7 @@ from subprocess import Popen, PIPE
 from tempfile import mktemp
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """FFMPEG Handler is used to handler inputed audio and video files"""
 
   def __init__(self, base_folder_url, data, source_format, **kw):

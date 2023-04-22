@@ -30,7 +30,7 @@
 
 
 from zipfile import ZipFile
-from cStringIO import StringIO
+from io import BytesIO
 from cloudooo.handler.x2t.handler import Handler
 from cloudooo.tests.handlerTestCase import HandlerTestCase
 
@@ -44,80 +44,94 @@ class TestHandler(HandlerTestCase):
 
   def testConvertXlsx(self):
     """Test conversion of xlsx to xlsy and back"""
-    y_data = Handler(self.tmp_url, open("data/test.xlsx").read(), "xlsx", **self.kw).convert("xlsy")
-    y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("XLSY;v10;0;"), "%r... does not start with 'XLSY;v10;0;'" % (y_body_data[:20],))
+    with open("data/test.xlsx", "rb") as f:
+      data = f.read()
+    y_data = Handler(self.tmp_url, data, "xlsx", **self.kw).convert("xlsy")
+    y_body_data = ZipFile(BytesIO(y_data)).open("body.txt").read()
+    self.assertTrue(y_body_data.startswith(b"XLSY;v10;0;"), "{!r}... does not start with 'XLSY;v10;0;'".format(y_body_data[:20]))
 
     x_data = Handler(self.tmp_url, y_data, "xlsy", **self.kw).convert("xlsx")
     # magic inspired by https://github.com/minad/mimemagic/pull/19/files
-    self.assertIn("xl/", x_data[:2000])
+    self.assertIn(b"xl/", x_data[:2000])
 
   def testConvertXlsy(self):
     """Test conversion of xlsy to xlsx and back"""
-    x_data = Handler(self.tmp_url, open("data/test_body.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
-    self.assertIn("xl/", x_data[:2000])
-    x_data = Handler(self.tmp_url, open("data/test.xlsy").read(), "xlsy", **self.kw).convert("xlsx")
-    self.assertIn("xl/", x_data[:2000])
+    with open("data/test_body.xlsy", "rb") as f:
+      data = f.read()
+    x_data = Handler(self.tmp_url, data, "xlsy", **self.kw).convert("xlsx")
+    self.assertIn(b"xl/", x_data[:2000])
+    with open("data/test.xlsy", "rb") as f:
+      data = f.read()
+    x_data = Handler(self.tmp_url, data, "xlsy", **self.kw).convert("xlsx")
+    self.assertIn(b"xl/", x_data[:2000])
 
     y_data = Handler(self.tmp_url, x_data, "xlsx", **self.kw).convert("xlsy")
-    y_body_data = ZipFile(StringIO(y_data)).open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("XLSY;v10;0;"), "%r... does not start with 'XLSY;v10;0;'" % (y_body_data[:20],))
+    y_body_data = ZipFile(BytesIO(y_data)).open("body.txt").read()
+    self.assertTrue(y_body_data.startswith(b"XLSY;v10;0;"), "{!r}... does not start with 'XLSY;v10;0;'".format(y_body_data[:20]))
 
   def testConvertDocx(self):
     """Test conversion of docx to docy and back"""
-    y_data = Handler(self.tmp_url, open("data/test_with_image.docx").read(), "docx", **self.kw).convert("docy")
-    y_zip = ZipFile(StringIO(y_data))
+    with open("data/test_with_image.docx", "rb") as f:
+      data = f.read()
+    y_data = Handler(self.tmp_url, data, "docx", **self.kw).convert("docy")
+    y_zip = ZipFile(BytesIO(y_data))
     y_body_data = y_zip.open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("DOCY;v10;0;"), "%r... does not start with 'DOCY;v10;0;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith(b"DOCY;v10;0;"), "{!r}... does not start with 'DOCY;v10;0;'".format(y_body_data[:20]))
     y_zip.open("media/image1.png")
 
     x_data = Handler(self.tmp_url, y_data, "docy", **self.kw).convert("docx")
     # magic inspired by https://github.com/minad/mimemagic/pull/19/files
-    self.assertIn("word/", x_data[:2000])
+    self.assertIn(b"word/", x_data[:2000])
 
   def testConvertDocy(self):
     """Test conversion of docy to docx and back"""
-    x_data = Handler(self.tmp_url, open("data/test_with_image.docy").read(), "docy", **self.kw).convert("docx")
-    self.assertIn("word/", x_data[:2000])
+    with open("data/test_with_image.docy", "rb") as f:
+      data = f.read()
+    x_data = Handler(self.tmp_url, data, "docy", **self.kw).convert("docx")
+    self.assertIn(b"word/", x_data[:2000])
 
     y_data = Handler(self.tmp_url, x_data, "docx", **self.kw).convert("docy")
-    y_zip = ZipFile(StringIO(y_data))
+    y_zip = ZipFile(BytesIO(y_data))
     y_body_data = y_zip.open("body.txt").read()
-    self.assertTrue(y_body_data.startswith("DOCY;v10;0;"), "%r... does not start with 'DOCY;v10;0;'" % (y_body_data[:20],))
+    self.assertTrue(y_body_data.startswith(b"DOCY;v10;0;"), "{!r}... does not start with 'DOCY;v10;0;'".format(y_body_data[:20]))
     y_zip.open("media/image1.png")
 
   def testgetMetadata(self):
     """Test getMetadata from yformats"""
-    handler = Handler(self.tmp_url, "", "xlsy", **self.kw)
+    handler = Handler(self.tmp_url, b"", "xlsy", **self.kw)
     self.assertEqual(handler.getMetadata(), {
-	u'CreationDate': u'00/00/0000 00:00:00',
-	u'ImplementationName': u'com.sun.star.comp.comphelper.OPropertyBag',
-	u'MIMEType': u'text/plain',
-	u'ModificationDate': u'00/00/0000 00:00:00',
-	u'PrintDate': u'00/00/0000 00:00:00',
-	u'TemplateDate': u'00/00/0000 00:00:00',
+	'CreationDate': '00/00/0000 00:00:00',
+	'ImplementationName': 'com.sun.star.comp.comphelper.OPropertyBag',
+	'MIMEType': 'text/plain',
+	'ModificationDate': '00/00/0000 00:00:00',
+	'PrintDate': '00/00/0000 00:00:00',
+	'TemplateDate': '00/00/0000 00:00:00',
 	})
-    handler = Handler(self.tmp_url, open("data/test_with_metadata.xlsy").read(), "xlsy", **self.kw)
+    with open("data/test_with_metadata.xlsy", "rb") as f:
+      data = f.read()
+    handler = Handler(self.tmp_url, data, "xlsy", **self.kw)
     self.assertEqual(handler.getMetadata(), {
-        u'CreationDate': u'31/01/2018 21:09:10',
-        u'Keywords': [u'\u0442\u0435\u0441\u0442', u'\u0441\u0430\u0431\u0436\u0435\u043a\u0442'],
+        'CreationDate': '31/01/2018 21:09:10',
+        'Keywords': ['\u0442\u0435\u0441\u0442', '\u0441\u0430\u0431\u0436\u0435\u043a\u0442'],
         'MIMEType': 'application/x-asc-spreadsheet',
-        u'ModificationDate': u'31/01/2018 21:22:36',
-        u'PrintDate': u'00/00/0000 00:00:00',
-        u'Subject': u'\u0432\u044b\u043a\u043b\u044e\u0447\u0438 \u0442\u0435\u043b\u0435\u0432\u0438\u0437\u043e\u0440',
-        u'TemplateDate': u'00/00/0000 00:00:00',
-        u'Title': u'kesha'})
+        'ModificationDate': '31/01/2018 21:22:36',
+        'PrintDate': '00/00/0000 00:00:00',
+        'Subject': '\u0432\u044b\u043a\u043b\u044e\u0447\u0438 \u0442\u0435\u043b\u0435\u0432\u0438\u0437\u043e\u0440',
+        'TemplateDate': '00/00/0000 00:00:00',
+        'Title': 'kesha'})
 
   def testsetMetadata(self):
     """Test setMetadata for yformats"""
-    handler = Handler(self.tmp_url, open("data/test_with_metadata.xlsy").read(), "xlsy", **self.kw)
+    with open("data/test_with_metadata.xlsy", "rb") as f:
+      data = f.read()
+    handler = Handler(self.tmp_url, data, "xlsy", **self.kw)
     new_mime_data = handler.setMetadata({
             "Title": "test title",
             "Subject": "test subject",
             "Keywords": "test keywords",
            })
     handler = Handler(self.tmp_url, new_mime_data, "xlsy", **self.kw)
-    self.assertEqual(handler.getMetadata(), {u'Keywords': u'test keywords', 'MIMEType': 'application/x-asc-spreadsheet', u'Title': u'test title', u'Subject': u'test subject'})
+    self.assertEqual(handler.getMetadata(), {'Keywords': 'test keywords', 'MIMEType': 'application/x-asc-spreadsheet', 'Title': 'test title', 'Subject': 'test subject'})
 
   def testGetAllowedConversionFormatList(self):
     """Test all combination of mimetype

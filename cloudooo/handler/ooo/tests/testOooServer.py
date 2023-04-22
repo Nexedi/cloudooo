@@ -1,5 +1,4 @@
 ##############################################################################
-# coding: utf-8
 #
 # Copyright (c) 2009-2010 Nexedi SA and Contributors. All Rights Reserved.
 #                    Gabriel M. Monnerat <gabriel@tiolive.com>
@@ -31,8 +30,8 @@
 
 from os.path import join, exists
 from os import remove
-from base64 import encodestring, decodestring
-from StringIO import StringIO
+from base64 import encodebytes, decodebytes
+from io import BytesIO
 from lxml import etree
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase
@@ -199,8 +198,10 @@ class TestGetMetadata(TestCase):
   def testupdateFileMetadataUpdateSomeMetadata(self):
     """Test server using method updateFileMetadata when the same metadata is
     updated"""
-    odf_data = self.proxy.updateFileMetadata(encodestring(
-                open(join('data', 'testMetadata.odt')).read()),
+    with open(join('data', 'testMetadata.odt'), 'rb') as f:
+      data = f.read()
+    odf_data = self.proxy.updateFileMetadata(
+                encodebytes(data).decode(),
                 'odt',
                 dict(Reference="testSetMetadata", Something="ABC"))
     new_odf_data = self.proxy.updateFileMetadata(odf_data,
@@ -220,7 +221,7 @@ class TestGetMetadata(TestCase):
     with open(join('data', 'test.odt'), 'rb') as f:
       data = f.read()
     generate_result = self.proxy.run_generate('test.odt',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'pdf',
                                       'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
@@ -239,7 +240,7 @@ class TestGenerate(TestCase):
     with open(join('data', 'test.ods'), 'rb') as f:
       data = f.read()
     generate_result = self.proxy.run_generate('test.ods',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'html',
                                       "application/vnd.oasis.opendocument.spreadsheet")
     response_code, response_dict, response_message = generate_result
@@ -249,7 +250,7 @@ class TestGenerate(TestCase):
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
     with open(output_url, 'wb') as f:
-      f.write(decodestring(response_dict['data']))
+      f.write(decodebytes(response_dict['data'].encode()))
     self.assertTrue(is_zipfile(output_url))
     filename_list = [file.filename for file in ZipFile(output_url).filelist]
     for filename in filename_list:
@@ -266,7 +267,7 @@ class TestGenerate(TestCase):
     with open(join('data', 'test.ods'), 'rb') as f:
       data = f.read()
     generate_result = self.proxy.run_generate('test.ods',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'ms.xlsx',
                                       "application/vnd.oasis.opendocument.spreadsheet")
     response_code, response_dict, response_message = generate_result
@@ -283,7 +284,7 @@ class TestGenerate(TestCase):
     with open(join('data', 'test_png.odp'), 'rb') as f:
       data = f.read()
     generate_result = self.proxy.run_generate('test_png.odp',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'html',
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
@@ -293,19 +294,16 @@ class TestGenerate(TestCase):
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
     with open(output_url, 'wb') as f:
-      f.write(decodestring(response_dict['data']))
+      f.write(decodebytes(response_dict['data'].encode()))
     self.assertTrue(is_zipfile(output_url))
-    zipfile = ZipFile(output_url)
-    try:
+    with ZipFile(output_url) as zipfile:
       png_path = join(self.tmp_url, "img0.png")
       zipfile.extractall(self.tmp_url)
       with open(png_path, 'rb') as f:
-        content_type = self._getFileType(encodestring(f.read()))
+        content_type = self._getFileType(encodebytes(f.read()).decode())
       self.assertEqual(content_type, 'image/png')
       m = magic.Magic()
       self.assertIn("8-bit/color RGB", m.from_file(png_path))
-    finally:
-      zipfile.close()
     if exists(output_url):
       remove(output_url)
 
@@ -317,7 +315,7 @@ class TestGenerate(TestCase):
     with open(join('data', 'test.odp'), 'rb') as f:
       data = f.read()
     generate_result = self.proxy.run_generate('test.odp',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'html',
                                       'application/vnd.oasis.opendocument.presentation')
     response_code, response_dict, response_message = generate_result
@@ -327,7 +325,7 @@ class TestGenerate(TestCase):
     self.assertEqual(response_dict['mime'], 'application/zip')
     output_url = join(self.tmp_url, "zip.zip")
     with open(output_url, 'wb') as f:
-      f.write(decodestring(response_dict['data'].encode()))
+      f.write(decodebytes(response_dict['data'].encode()))
     self.assertTrue(is_zipfile(output_url))
     filename_list = [file.filename for file in ZipFile(output_url).filelist]
     for filename in filename_list:
@@ -344,9 +342,9 @@ class TestGenerate(TestCase):
   @expectedFailure
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
-    data = open(join('data', 'test.odt'), 'r').read()[:100]
+    data = open(join('data', 'test.odt')).read()[:100]
     generate_result = self.proxy.run_generate('test.odt',
-                                      encodestring(data),
+                                      encodebytes(data).decode(),
                                       None, 'pdf', 'application/vnd.oasis.opendocument.text')
     response_code, response_dict, response_message = generate_result
     self.assertEqual(response_code, 402)
@@ -361,7 +359,7 @@ class TestSetMetadata(TestCase):
     with open(join('data', 'testMetadata.odt'), 'rb') as f:
       data = f.read()
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
-                          encodestring(data),
+                          encodebytes(data).decode(),
                           {"Title": "testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     self.assertEqual(response_code, 200)
@@ -391,7 +389,7 @@ class TestSetMetadata(TestCase):
     with open(join('data', 'testMetadata.odt'), 'rb') as f:
       data = f.read()[:100]
     setmetadata_result = self.proxy.run_setmetadata('testMetadata.odt',
-                          encodestring(data),
+                          encodebytes(data).decode(),
                           {"Title": "testSetMetadata", "Description": "Music"})
     response_code, response_dict, response_message = setmetadata_result
     self.assertEqual(response_code, 402)
@@ -423,7 +421,7 @@ class TestGetTableItemList(TestCase):
     with open("data/granulate_table_test.odt", "rb") as f:
       data = f.read()
     granulated_table = self.proxy.getTableItemList(
-                        encodestring(data),
+                        encodebytes(data).decode(),
                         "odt")
     self.assertEqual(table_list, granulated_table)
 
@@ -435,18 +433,18 @@ class TestGetTableItemList(TestCase):
     with open("data/granulate_table_test.doc", "rb") as f:
       data = f.read()
     granulated_table = self.proxy.getTableItemList(
-                        encodestring(data),
+                        encodebytes(data).decode(),
                         "doc")
     self.assertEqual(table_list, granulated_table)
 
   def testGetTableFromOdt(self):
     """Test if getTableItemList can get a item of some granulated table from odt file"""
     with open("./data/granulate_table_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     granulated_table = self.proxy.getTableItemList(data, "odt")
-    table_item = decodestring(self.proxy.getTable(data, granulated_table[1][0],
-                                                      "odt"))
-    content_xml_str = ZipFile(StringIO(table_item)).read('content.xml')
+    table_item = decodebytes(self.proxy.getTable(data, granulated_table[1][0],
+                                                      "odt").encode())
+    content_xml_str = ZipFile(BytesIO(table_item)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
                                    namespaces=content_xml.nsmap)
@@ -458,12 +456,12 @@ class TestGetTableItemList(TestCase):
   def testGetTableFromDoc(self):
     """Test if getTableItemList can get a item of some granulated table from doc file"""
     with open("./data/granulate_table_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     granulated_table = self.proxy.getTableItemList(data, "doc")
     self.proxy.getTable(data, granulated_table[1][0], "doc")
-    table_item = decodestring(self.proxy.getTable(data, granulated_table[1][0],
-                                                      "doc"))
-    content_xml_str = ZipFile(StringIO(table_item)).read('content.xml')
+    table_item = decodebytes(self.proxy.getTable(data, granulated_table[1][0],
+                                                      "doc").encode())
+    content_xml_str = ZipFile(BytesIO(table_item)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
                                    namespaces=content_xml.nsmap)
@@ -475,7 +473,7 @@ class TestGetTableItemList(TestCase):
   def testGetColumnItemListFromOdt(self):
     """Test if getColumnItemList can get the list of column item from odt file"""
     with open("./data/granulate_table_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     columns = self.proxy.getColumnItemList(
                 data,
                 "SoccerTeams",
@@ -485,7 +483,7 @@ class TestGetTableItemList(TestCase):
   def testGetColumnItemListFromDoc(self):
     """Test if getColumnItemList can get the list of column item from doc file"""
     with open("./data/granulate_table_test.doc", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     #in the doc format the tables lose their names
     columns = self.proxy.getColumnItemList(
               data,
@@ -496,7 +494,7 @@ class TestGetTableItemList(TestCase):
   def testGetLineItemListFromOdt(self):
     """Test if getLineItemList can get the list of lines items from odt file"""
     with open("./data/granulate_table_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     line_item_list = self.proxy.getLineItemList(data, "Developers", "odt")
     self.assertEqual([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
                        ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
@@ -506,7 +504,7 @@ class TestGetTableItemList(TestCase):
   def testGetLineItemListFromDoc(self):
     """Test if getLineItemList can get the list of lines items from doc file"""
     with open("./data/granulate_table_test.doc", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     line_item_list = self.proxy.getLineItemList(data, "Table1", "doc")
     self.assertEqual([['Name', 'Hugo'], ['Phone', '+55 (22) 8888-8888'],
                        ['Email', 'hugomaia@tiolive.com'], ['Name', 'Rafael'],
@@ -518,56 +516,60 @@ class TestImagetItemList(TestCase):
   def testGetImageItemListFromOdt(self):
     """Test if getImageItemList can get the list of images items from odt file"""
     with open("./data/granulate_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     image_list = self.proxy.getImageItemList(data, "odt")
-    self.assertEqual([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'TioLive Logo'],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', ''],
-                       ['2000004F0000423300001370ADF6545B2997B448.svm', 'Python Logo'],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'Again TioLive Logo']],
-                      image_list)
+    self.assertEqual(
+      [['10000000000000C80000009C38276C51.jpg', ''],
+       ['10000201000000C80000004E7B947D46.png', 'TioLive Logo'],
+       ['10000201000000C80000004E7B947D46.png', ''],
+       ['2000004F00004233000013707E7DE37A.svm', 'Python Logo'],
+       ['10000201000000C80000004E7B947D46.png', 'Again TioLive Logo']],
+       image_list)
+    # the image filenames are the ones from the original document
+    with open("./data/granulate_test.odt", "rb") as f:
+      self.assertIn('Pictures/10000000000000C80000009C38276C51.jpg', ZipFile(f).namelist())
 
   def testGetImageItemListFromDoc(self):
     """Test if getImageItemList can get the list of images items from doc file"""
     with open("./data/granulate_test.doc", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     image_list = self.proxy.getImageItemList(data, "doc")
-    self.assertEqual([['10000000000000C80000009CBF079A6E41EE290C.jpg', ''],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'TioLive Logo'],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', ''],
-                       ['2000031600004233000013702113A0E70B910778.wmf', 'Python Logo'],
-                       ['10000201000000C80000004E85B3F70C71E07CE8.png', 'Again TioLive Logo']],
-                      image_list)
+    # the doc has been converted to odt, so the image ids are
+    # not really predictable (they seem to depend on Libreoffice version)
+    self.assertIn('.jpg', image_list[0][0])
+    self.assertIn('TioLive Logo', [i[1] for i in image_list])
 
   def testGetImageFromOdt(self):
     """Test if getImage can get a image from odt file after zip"""
     with open("./data/granulate_test.odt", "rb") as f:
-      data = encodestring(f.read())
-    zip = ZipFile(StringIO(decodestring(data)))
-    image_id = '10000201000000C80000004E7B947D46.png'
-    original_image = zip.read('Pictures/%s' % image_id)
-    geted_image = decodestring(self.proxy.getImage(data, image_id, "odt"))
+      data = encodebytes(f.read()).decode()
+    with ZipFile('./data/granulate_test.odt') as zip:
+      original_image = zip.read('Pictures/10000201000000C80000004E7B947D46.png')
+    geted_image = decodebytes(self.proxy.getImage(data, '10000201000000C80000004E7B947D46.png', "odt").encode())
     self.assertEqual(original_image, geted_image)
 
   def testGetImageFromDoc(self):
     """Test if getImage can get a image from doc file after zip"""
     with open("./data/granulate_test.doc", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     #This conversion is necessary to catch the image from the doc file;
     #so compare with the server return.
     data_odt = self.proxy.convertFile(data, 'doc', 'odt', False)
-    zip = ZipFile(StringIO(decodestring(data_odt)))
-    image_id = '10000000000000C80000009CBF079A6E41EE290C.jpg'
-    original_image = zip.read('Pictures/%s' % image_id)
-    geted_image = decodestring(self.proxy.getImage(data, image_id, "doc"))
+    zip = ZipFile(BytesIO(decodebytes(data_odt.encode())))
+    png_filename = [
+      name for name in zip.namelist()
+      if name.startswith('Pictures/')
+      and name.endswith('.png')][0]
+    image_id = png_filename[len('Pictures/'):]
+    original_image = zip.read(png_filename)
+    geted_image = decodebytes(self.proxy.getImage(data, image_id, "doc").encode())
     self.assertEqual(original_image, geted_image)
-
 
 class TestParagraphItemList(TestCase):
   def testGetParagraphItemList(self):
     """Test if getParagraphItemList can get paragraphs correctly from document"""
     with open("./data/granulate_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     paragraph_list = self.proxy.getParagraphItemList(data, "odt")
     self.assertEqual([[0, 'P3'], [1, 'P1'], [2, 'P12'], [3, 'P6'], [4, 'P7'],
                       [5, 'P8'], [6, 'P6'], [7, 'P6'], [8, 'P13'], [9, 'P9'],
@@ -580,7 +582,7 @@ class TestParagraphItemList(TestCase):
   def testGetParagraphItem(self):
     """Test if getParagraph can get a paragraph"""
     with open("./data/granulate_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     paragraph = self.proxy.getParagraph(data, 1, "odt")
     self.assertEqual(['', 'P1'], paragraph)
 
@@ -589,7 +591,7 @@ class TestChapterItemList(TestCase):
   def testGetChapterItemList(self):
     """Test if getChapterItemList can get the chapters list correctly from document"""
     with open("./data/granulate_chapters_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     chapter_list = self.proxy.getChapterItemList(data, "odt")
     self.assertEqual([[0, 'Title 0'], [1, 'Title 1'], [2, 'Title 2'],
                        [3, 'Title 3'], [4, 'Title 4'], [5, 'Title 5'],
@@ -599,7 +601,7 @@ class TestChapterItemList(TestCase):
   def testGetChapterItem(self):
     """Test if getChapterItem can get a chapter"""
     with open("./data/granulate_chapters_test.odt", "rb") as f:
-      data = encodestring(f.read())
+      data = encodebytes(f.read()).decode()
     chapter = self.proxy.getChapterItem(1, data, "odt")
     self.assertEqual(['Title 1', 1], chapter)
 
@@ -611,43 +613,43 @@ class TestCSVEncoding(TestCase):
   """
   def test_decode_ascii(self):
     with open("./data/csv_ascii.csv", "rb") as f:
-      data = encodestring(f.read())
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
         ["test", "1234"],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
 
   def test_decode_utf8(self):
     with open("./data/csv_utf8.csv", "rb") as f:
-      data = encodestring(f.read())
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
-        [u"Jérome", u"ジェローム"],
+        ["Jérome", "ジェローム"],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
     self.assertEqual(
-        [u"नमस्ते", u"여보세요"],
+        ["नमस्ते", "여보세요"],
         [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
 
   def test_decode_latin9(self):
     with open("./data/csv_latin9.csv", "rb") as f:
-      data = encodestring(f.read())
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
-        [u"Jérome", u"1€"],
+        ["Jérome", "1€"],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
 
   def test_separator_semicolon(self):
     with open("./data/csv_semicolon.csv", "rb") as f:
-      data = encodestring(f.read())
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
         ['a a', '1'],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
@@ -657,10 +659,10 @@ class TestCSVEncoding(TestCase):
 
   def test_separator_tab(self):
     with open("./data/tsv.tsv", "rb") as f:
-      data = encodestring(f.read())
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
         ['a', 'b'],
         [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
@@ -669,10 +671,10 @@ class TestCSVEncoding(TestCase):
         [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
 
   def test_empty_csv(self):
-    data = encodestring("")
-    converted = decodestring(self.proxy.convertFile(data, "csv", "html"))
+    data = ''
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
     parser = etree.HTMLParser()
-    tree = etree.parse(StringIO(converted), parser)
+    tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
         [],
         [x.text for x in tree.getroot().findall('.//td')])

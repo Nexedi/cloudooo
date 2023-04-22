@@ -157,7 +157,7 @@ yformat_tuple = ("docy", "xlsy", "ppty")
 
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """
   X2T Handler is used to convert Microsoft Office 2007 documents to OnlyOffice
   documents.
@@ -198,7 +198,7 @@ class Handler(object):
     output_data = None
 
     if source_format in yformat_tuple:
-      if self._data.startswith("PK\x03\x04"):
+      if self._data.startswith(b"PK\x03\x04"):
         os.mkdir(input_dir)
         unzip(self.file.getUrl(), input_dir)
         input_file_name = os.path.join(input_dir, "body.txt")
@@ -227,7 +227,7 @@ class Handler(object):
       root = ElementTree.Element('root')
       for key, value in config.items():
         ElementTree.SubElement(root, key).text = value
-      ElementTree.ElementTree(root).write(config_file, encoding='utf-8', xml_declaration=True,
+      ElementTree.ElementTree(root).write(config_file, encoding='unicode', xml_declaration=True,
                                           default_namespace=None, method="xml")
 
     # run convertion binary
@@ -280,7 +280,7 @@ class Handler(object):
   def getMetadata(self, base_document=False):
     r"""Returns a dictionary with all metadata of document.
     """
-    if self._source_format in yformat_tuple and self._data.startswith("PK\x03\x04"):
+    if self._source_format in yformat_tuple and self._data.startswith(b"PK\x03\x04"):
       if base_document:
         openxml_format = yformat_map[self._source_format]
         data = self.convert(yformat_map[self._source_format])
@@ -305,7 +305,7 @@ class Handler(object):
     """
     if metadata is None:
       metadata = {}
-    if self._source_format in yformat_tuple and self._data.startswith("PK\x03\x04"):
+    if self._source_format in yformat_tuple and self._data.startswith(b"PK\x03\x04"):
       root_dir = self.file.directory_name
       output_file_name = os.path.join(root_dir, "tmp")
       try:
@@ -330,7 +330,7 @@ class Handler(object):
       return OOoHandler(self.base_folder_url, self._data, self._source_format, **self._init_kw).setMetadata(metadata)
 
   @staticmethod
-  def getAllowedConversionFormatList(source_mimetype):
+  def getAllowedConversionFormatList(source_mimetype:str):
     """Returns a list content_type and their titles which are supported
     by enabled handlers.
 

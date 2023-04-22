@@ -28,7 +28,7 @@
 ##############################################################################
 import io
 import zipfile
-from base64 import decodestring, encodestring
+from base64 import decodebytes, encodebytes
 from os.path import join
 
 from cloudooo.tests.cloudoooTestCase import TestCase
@@ -62,30 +62,30 @@ class TestServer(TestCase):
     return scenario_list
 
   def test_xlsx_to_xlsy(self):
-    with open(join('data', 'test.xlsx')) as f:
+    with open(join('data', 'test.xlsx'), 'rb') as f:
       xlsx_data = f.read()
     xlsy_data = self.proxy.convertFile(
-      encodestring(xlsx_data),
+      encodebytes(xlsx_data).decode(),
       'xlsx',
       'xlsy',
       False
     )
     self.assertEqual(
-      sorted(zipfile.ZipFile(io.BytesIO(decodestring(xlsy_data))).namelist()),
+      sorted(zipfile.ZipFile(io.BytesIO(decodebytes(xlsy_data.encode()))).namelist()),
       sorted(['Editor.xlsx', 'body.txt', 'metadata.json'])
     )
 
   def test_docx_to_docy(self):
-    with open(join('data', 'test_with_image.docx')) as f:
+    with open(join('data', 'test_with_image.docx'), 'rb') as f:
       docx_data = f.read()
     docy_data = self.proxy.convertFile(
-      encodestring(docx_data),
+      encodebytes(docx_data).decode(),
       'docx',
       'docy',
       False
     )
     self.assertEqual(
-      sorted(zipfile.ZipFile(io.BytesIO(decodestring(docy_data))).namelist()),
+      sorted(zipfile.ZipFile(io.BytesIO(decodebytes(docy_data.encode()))).namelist()),
       sorted(['body.txt', 'media/image1.png', 'metadata.json'])
     )
 

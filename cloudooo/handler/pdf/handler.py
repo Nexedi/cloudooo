@@ -79,6 +79,7 @@ class Handler:
                            stdout=PIPE,
                            stderr=PIPE,
                            close_fds=True,
+                           text=True,
                            env=self.environment).communicate()
     info_list = [_f for _f in stdout.split("\n") if _f]
     metadata = {}

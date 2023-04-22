@@ -30,7 +30,7 @@
 
 import magic
 from os import path
-from base64 import encodestring, decodestring
+from base64 import encodebytes, decodebytes
 from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.handler import Handler
 from cloudooo.handler.ooo.application.openoffice import openoffice

@@ -61,7 +61,7 @@ class TestHandler(HandlerTestCase):
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    handler = Handler(self.tmp_url, "", "png", **self.kw)
+    handler = Handler(self.tmp_url, b"", "png", **self.kw)
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
 

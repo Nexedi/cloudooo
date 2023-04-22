@@ -33,8 +33,9 @@ from cloudooo.interfaces.filter import IFilter
 
 
 @implementer(IFilter)
-class Filter(object):
+class Filter:
   """Filter of OOo."""
+
 
   def __init__(self, extension, filter, mimetype, document_service, **kwargs):
     """Receives extension, filter and mimetype of filter and saves in object.

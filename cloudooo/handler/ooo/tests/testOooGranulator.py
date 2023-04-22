@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2010 Nexedi SA and Contributors. All Rights Reserved.
@@ -30,7 +29,7 @@
 ##############################################################################
 
 from zipfile import ZipFile
-from StringIO import StringIO
+from io import BytesIO
 from lxml import etree
 from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.granulator import OOGranulator
@@ -71,7 +70,7 @@ class TestOOGranulator(HandlerTestCase):
       data = f.read()
     oogranulator = OOGranulator(data, 'odt')
     table_data_doc = oogranulator.getTable('Developers')
-    content_xml_str = ZipFile(StringIO(table_data_doc)).read('content.xml')
+    content_xml_str = ZipFile(BytesIO(table_data_doc)).read('content.xml')
     content_xml = etree.fromstring(content_xml_str)
     table_list = content_xml.xpath('//table:table',
                                    namespaces=content_xml.nsmap)
@@ -129,7 +128,7 @@ class TestOOGranulator(HandlerTestCase):
     """Test if getImage() returns the right image file successfully"""
     with open('./data/granulate_test.odt', 'rb') as f:
       data = f.read()
-    zip = ZipFile(StringIO(data))
+    zip = ZipFile(BytesIO(data))
     image_id = '10000000000000C80000009C38276C51.jpg'
     original_image = zip.read('Pictures/%s' % image_id)
     geted_image = self.oogranulator.getImage(image_id)
@@ -161,8 +160,8 @@ class TestOOGranulator(HandlerTestCase):
 
     big_paragraph = self.oogranulator.getParagraph(5)
     self.assertEqual('P8', big_paragraph[1])
-    self.assertTrue(big_paragraph[0].startswith(u'A prática cotidiana prova'))
-    self.assertTrue(big_paragraph[0].endswith(u'corresponde às necessidades.'))
+    self.assertTrue(big_paragraph[0].startswith('A prática cotidiana prova'))
+    self.assertTrue(big_paragraph[0].endswith('corresponde às necessidades.'))
 
   def testGetParagraphItemWithoutSuccess(self):
     """Test if getParagraphItem() returns None for not existent id"""

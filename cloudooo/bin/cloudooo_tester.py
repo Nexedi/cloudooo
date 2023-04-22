@@ -2,11 +2,11 @@
 
 import unittest
 import sys
-from base64 import encodestring
-from xmlrpclib import ServerProxy
+from base64 import encodebytes
+from xmlrpc.client import ServerProxy
 from getopt import getopt, GetoptError
 
-DOCUMENT_STRING = """MemoryMonitor - TimeoutMonitor -
+DOCUMENT_STRING = b"""MemoryMonitor - TimeoutMonitor -
 RequestMonitor\n\nOOHandler\n\nMimemapper\n\nERP5\n"""
 HOSTNAME = PORT = None
 
@@ -15,17 +15,17 @@ class CloudoooTestCase(unittest.TestCase):
   """ """
 
   def setUp(self):
-    self.proxy_address = "http://%s:%s" % (HOSTNAME, PORT)
+    self.proxy_address = f"http://{HOSTNAME}:{PORT}"
 
   def test_run_generate(self):
-    data = encodestring(DOCUMENT_STRING)
+    data = encodebytes(DOCUMENT_STRING)
     proxy = ServerProxy(self.proxy_address, allow_none=True)
     res = proxy.run_generate("t.text", data, None, 'pdf', 'text/plain')
     self.assertEqual(res[1]['mime'], "application/pdf")
     self.assertEqual(res[0], 200)
 
   def test_set_metadata(self):
-    data = encodestring(DOCUMENT_STRING)
+    data = encodebytes(DOCUMENT_STRING)
     proxy = ServerProxy(self.proxy_address, allow_none=True)
     odt_data = proxy.convertFile(data, 'txt', 'odt')
     metadata_dict = proxy.getFileMetadataItemList(odt_data, 'odt')
@@ -45,7 +45,7 @@ def main():
     opt_list, _ = getopt(sys.argv[1:], "",
                                 ["port=", "hostname="])
   except GetoptError as e:
-    print >> sys.stderr, "%s \nUse --port and --hostname" % e
+    print("%s \nUse --port and --hostname" % e, file=sys.stderr)
     sys.exit(2)
 
   for opt, arg in opt_list:
@@ -55,7 +55,7 @@ def main():
       HOSTNAME = arg
 
   if not HOSTNAME and not PORT:
-    print >> sys.stderr, "Use --port and --hostname"
+    print("Use --port and --hostname", file=sys.stderr)
     sys.exit(2)
   suite = unittest.TestLoader().loadTestsFromTestCase(CloudoooTestCase)
   unittest.TextTestRunner(verbosity=2).run(suite)

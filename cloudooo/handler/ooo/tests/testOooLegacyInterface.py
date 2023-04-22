@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from base64 import encodestring
+from base64 import encodebytes
 from cloudooo.tests.cloudoooTestCase import TestCase
 from pkg_resources import resource_filename
 
@@ -39,10 +39,11 @@ class TestLegacyInterface(TestCase):
     """Check implicit base conversion of HTML documents."""
     filename = resource_filename('cloudooo.handler.ooo.tests.data',
                                  'test_failure_conversion.html')
-    data =  open(filename, 'r').read()
+    with open(filename, 'rb') as f:
+      data = f.read()
     status, response_dict, message = self.proxy.run_convert(
                                                   filename,
-                                                  encodestring(data),
+                                                  encodebytes(data).decode(),
                                                   None,
                                                   None,
                                                   'text/html')
@@ -55,9 +56,10 @@ class TestLegacyInterface(TestCase):
     """Check conversion of HTML to odt"""
     filename = resource_filename('cloudooo.handler.ooo.tests.data',
                                  'test_failure_conversion.html')
-    data =  open(filename, 'r').read()
+    with open(filename, 'rb') as f:
+      data = f.read()
     status, response_dict, message = self.proxy.run_generate(filename,
-                                                             encodestring(data),
+                                                             encodebytes(data).decode(),
                                                              None,
                                                              'odt',
                                                              'text/html')

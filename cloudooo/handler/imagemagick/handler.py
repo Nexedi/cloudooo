@@ -38,7 +38,7 @@ from tempfile import mktemp
 
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """ImageMagic Handler is used to handler images."""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -73,6 +73,7 @@ class Handler(object):
                           stdout=PIPE,
                           stderr=PIPE,
                           close_fds=True,
+                          text=True,
                           env=self.environment).communicate()
     self.file.trash()
     metadata_dict = {}

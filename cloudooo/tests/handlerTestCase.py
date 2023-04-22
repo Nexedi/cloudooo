@@ -32,7 +32,7 @@
 import unittest
 import sys
 from os import environ, path, mkdir, putenv
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
@@ -42,7 +42,7 @@ config = ConfigParser()
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(test_case))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(test_case))
   return suite
 
 
@@ -84,8 +84,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
 
   if start_openoffice:
     default_language = config.get('app:main',
-                                  'openoffice_user_interface_language', False,
-                                  {'openoffice_user_interface_language': 'en'})
+                                  'openoffice_user_interface_language', raw=False,
+                                  vars={'openoffice_user_interface_language': 'en'})
     openoffice.loadSettings(hostname,
                             openoffice_port,
                             working_path,

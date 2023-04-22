@@ -67,7 +67,8 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           text=True).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -86,7 +87,8 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           text=True).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -113,7 +115,8 @@ class TestUnoMimeMapper(HandlerTestCase):
     for i in range(10):
       stdout, stderr = Popen(command,
                              stdout=PIPE,
-                             stderr=PIPE).communicate()
+                             stderr=PIPE,
+                             text=True).communicate()
     self.assertEqual(stdout, '')
     self.assertIn(error_msg, stderr)
     openoffice.start()

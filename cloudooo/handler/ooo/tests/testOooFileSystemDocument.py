@@ -30,8 +30,8 @@
 
 import unittest
 import magic
-from StringIO import StringIO
-from base64 import decodestring
+from io import BytesIO
+from base64 import decodebytes
 from os import path
 from zipfile import ZipFile
 from cloudooo.handler.ooo.document import FileSystemDocument
@@ -43,7 +43,7 @@ class TestFileSystemDocument(unittest.TestCase):
   def setUp(self):
     """Create data to tests and instantiated a FileSystemDocument"""
     self.tmp_url = '/tmp'
-    self.data = decodestring("cloudooo Test")
+    self.data = decodebytes(b"cloudooo Test")
     self.fsdocument = FileSystemDocument(self.tmp_url, self.data, 'txt')
 
   def tearDown(self):
@@ -59,7 +59,7 @@ class TestFileSystemDocument(unittest.TestCase):
     document_test_url = path.join(self.fsdocument.directory_name,
                                   document_filename)
     with open(document_test_url, 'wb') as f:
-      f.write(decodestring(b"Test Document"))
+      f.write(decodebytes(b"Test Document"))
     self.fsdocument.reload(document_test_url)
     self.assertEqual(path.exists(old_document_url), False)
     self.assertNotEqual(self.fsdocument.original_data,
@@ -112,7 +112,7 @@ class TestFileSystemDocument(unittest.TestCase):
     mime = magic.Magic(mime=True)
     mimetype = mime.from_buffer(zip_file)
     self.assertEqual(mimetype, 'application/zip')
-    ziptest = ZipFile(StringIO(zip_file), 'r')
+    ziptest = ZipFile(BytesIO(zip_file), 'r')
     self.assertEqual(len(ziptest.filelist), 2)
     for file in ziptest.filelist:
       if file.filename.endswith("document2"):
@@ -130,7 +130,7 @@ class TestFileSystemDocument(unittest.TestCase):
     self.assertEqual(mimetype, "application/zip")
     mimetype = mime.from_buffer(zipdocument.getContent())
     self.assertEqual(mimetype, "text/html")
-    zipfile = ZipFile(StringIO(zipdocument.getContent(True)))
+    zipfile = ZipFile(BytesIO(zipdocument.getContent(True)))
     self.assertEqual(sorted(zipfile.namelist()),
                 sorted(['logo.gif', 'test.htm']))
 

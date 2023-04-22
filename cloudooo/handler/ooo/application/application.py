@@ -36,7 +36,7 @@ from psutil import pid_exists, Process, AccessDenied
 
 
 @implementer(IApplication)
-class Application(object):
+class Application:
   """Base object to create an object that is possible manipulation a
   process"""
 

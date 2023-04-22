@@ -79,6 +79,7 @@ class TestUnoConverter(HandlerTestCase):
           "--source_format=%s" % "odt",
           "--mimemapper=%s" % mimemapper_pickled]
     stdout, stderr = Popen(command,
+                           text=True,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
     self.assertEqual(stderr, '')

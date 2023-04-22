@@ -33,7 +33,7 @@ from cloudooo.interfaces.monitor import IMonitor
 
 
 @implementer(IMonitor)
-class Monitor(object):
+class Monitor:
   """ """
 
   def __init__(self, openoffice, interval):

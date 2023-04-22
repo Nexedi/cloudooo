@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 import logging
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+from xmlrpc.server import SimpleXMLRPCDispatcher
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class ErrorLoggingXMLRPCDispatcher(SimpleXMLRPCDispatcher):
     """
     def _dispatch(self, method, params):
         try:
-            return SimpleXMLRPCDispatcher._dispatch(self, method, params)
+            return super()._dispatch(method, params)
         except:
             logger.exception("Error calling %s", method)
             raise
@@ -48,7 +48,7 @@ class WSGIXMLRPCApplication:
             return self.handle_POST(environ, start_response)
         else:
             start_response("400 Bad request", [('Content-Type', 'text/plain')])
-            return ['']
+            return [b'']
 
     def handle_POST(self, environ, start_response):
         """Handles the HTTP POST request.
@@ -74,7 +74,7 @@ class WSGIXMLRPCApplication:
             response = self.dispatcher._marshaled_dispatch(
                     data, getattr(self.dispatcher, '_dispatch', None)
                 )
-            response += '\n'
+            response += b'\n'
         except:  # This should only happen if the module is buggy
             # internal error, report as HTTP server error
             logger.exception("Error serving request")

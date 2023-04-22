@@ -166,17 +166,17 @@ class TestMimeMapper(HandlerTestCase):
   def testIfThereIsDuplicateData(self):
     """Test if there is duplicate data."""
     # XXX It can not exists multiple keys inside a dictionary
-    extension_list = self.mimemapper._doc_type_list_by_extension.keys()
+    extension_list = list(self.mimemapper._doc_type_list_by_extension.keys())
     self.assertEqual(len(extension_list), len(set(extension_list)))
-    for type_list in self.mimemapper._doc_type_list_by_extension.values():
+    for type_list in list(self.mimemapper._doc_type_list_by_extension.values()):
       self.assertEqual(len(type_list), len(set(type_list)))
-    document_type_list = self.mimemapper._document_type_dict.keys()
+    document_type_list = list(self.mimemapper._document_type_dict.keys())
     self.assertEqual(len(document_type_list), len(set(document_type_list)))
-    document_service_list = self.mimemapper._document_type_dict.values()
+    document_service_list = list(self.mimemapper._document_type_dict.values())
     self.assertEqual(len(document_service_list), len(set(document_service_list)))
-    document_service_list = self.mimemapper._extension_list_by_type.keys()
+    document_service_list = list(self.mimemapper._extension_list_by_type.keys())
     self.assertEqual(len(document_service_list), len(set(document_service_list)))
-    extension_list = self.mimemapper._extension_list_by_type.values()
+    extension_list = list(self.mimemapper._extension_list_by_type.values())
     for extension in extension_list:
       self.assertEqual(len(extension), len(set(extension)),
           "extension_list_by_type has duplicate data")

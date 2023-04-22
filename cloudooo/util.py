@@ -96,7 +96,7 @@ convertStringToBool = ('false', 'true').index
 
 def zipTree(destination, *tree_path_list):
   """
-    destination may be a path or a StringIO
+    destination may be a path or a file-like
 
     tree_path_list is a list that may contain a path or a couple(path, archive_root)
   """

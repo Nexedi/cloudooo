@@ -35,7 +35,7 @@ from psutil import AccessDenied, NoSuchProcess
 from os.path import exists, join
 from threading import Lock
 from zope.interface import implementer
-from application import Application
+from .application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStartDaemon, \
@@ -155,12 +155,12 @@ class OpenOffice(Application):
     env["TMPDIR"] = self.path_user_installation
     self._startProcess(self.command, env)
     self._cleanRequest()
-    Application.start(self)
+    super().start()
 
   def stop(self):
     """Stop the instance by pid. By the default
     the signal is 15."""
-    Application.stop(self)
+    super().stop()
     if socketStatus(self.hostname, self.port):
       self._releaseOpenOfficePort()
     self._cleanRequest()

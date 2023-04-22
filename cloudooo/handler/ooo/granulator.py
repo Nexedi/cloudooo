@@ -29,7 +29,7 @@
 ##############################################################################
 
 from zipfile import ZipFile
-from StringIO import StringIO
+from io import BytesIO
 from lxml import etree
 from os import path
 from cloudooo.util import logger
@@ -61,17 +61,17 @@ def getTemplatePath(format):
   return path.join(path.dirname(__file__), 'template.%s' % format)
 
 
-class OOGranulator(object):
+class OOGranulator:
   """Granulate an OpenOffice document into tables, images, chapters and
   paragraphs."""
 
-  def __init__(self, file, source_format):
+  def __init__(self, file:bytes, source_format:str):
     self.document = OdfDocument(file, source_format)
 
   def _odfWithoutContentXml(self, format='odt'):
     """Returns an odf document without content.xml
     It is a way to escape from this issue: http://bugs.python.org/issue6818"""
-    new_odf_document = ZipFile(StringIO(), 'a')
+    new_odf_document = ZipFile(BytesIO(), 'a')
     template_path = getTemplatePath(format)
     template_file = ZipFile(template_path)
     for item in template_file.filelist:
@@ -202,7 +202,7 @@ class OOGranulator(object):
     image_list = []
 
     for xml_image in xml_image_list:
-      id = xml_image.values()[0].split('/')[-1]
+      id = list(xml_image.values())[0].split('/')[-1]
       title = ''.join(xml_image.xpath(IMAGE_TITLE_XPATH_QUERY%(stylename_list[0], name_list[0], id),
                                       namespaces=xml_image.nsmap))
       if title != '':
@@ -262,22 +262,17 @@ class OOGranulator(object):
     chapter_list = self.document.parsed_content.xpath(
                                  CHAPTER_XPATH_QUERY,
                                  namespaces=self.document.parsed_content.nsmap)
-    return chapter_list
+    return [str(x) for x in chapter_list]
 
   def getChapterItemList(self):
     """Returns the list of chapters in the form of (id, level)."""
-    id = 0
-    chapter_list = []
-    for chapter in self._getChapterList():
-      chapter_list.append((id, chapter.encode('utf-8')))
-      id += 1
-    return chapter_list
+    return list(enumerate(self._getChapterList()))
 
   def getChapterItem(self, chapter_id):
     """Return the chapter in the form of (title, level)."""
     chapter_list = self._getChapterList()
     try:
-      chapter = chapter_list[chapter_id].encode('utf-8')
+      chapter = chapter_list[chapter_id]
       return [chapter, chapter_id]
     except IndexError:
       msg = "Unable to find chapter %s at chapter list." % chapter_id

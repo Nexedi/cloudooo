@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from monitor import Monitor
+from .monitor import Monitor
 from multiprocessing import Process
 import psutil
 from cloudooo.util import logger
@@ -54,7 +54,7 @@ class MonitorMemory(Monitor, Process):
       if not hasattr(self, 'process') or \
           self.process.pid != int(self.openoffice.pid()):
         self.create_process()
-      return self.process.memory_info().rss / (1024 * 1024)
+      return self.process.memory_info().rss // (1024 * 1024)
     except TypeError:
       logger.debug("OpenOffice is stopped")
       return 0

@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from base64 import encodestring, decodestring
+from base64 import encodebytes, decodebytes
 from multiprocessing import Process, Array
 from cloudooo.tests.cloudoooTestCase import TestCase
 import magic
@@ -39,8 +39,8 @@ mime_decoder = magic.Magic(mime=True)
 def basicTestToGenerate(id, proxy, data, source_format, destination_format,
                         result_list):
   """Test to use method generate of server"""
-  document = proxy.convertFile(encodestring(data), source_format, destination_format)
-  mimetype = mime_decoder.from_buffer(decodestring(document))
+  document = proxy.convertFile(encodebytes(data), source_format, destination_format)
+  mimetype = mime_decoder.from_buffer(decodebytes(document))
   assert mimetype == 'application/pdf'
   result_list[id] = True
 

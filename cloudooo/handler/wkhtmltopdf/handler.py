@@ -40,7 +40,7 @@ def keyNameToOption(key_name, prefix=""):
   return "--" + prefix + key_name.replace("_", "-")
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """ImageMagic Handler is used to handler images."""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -272,10 +272,12 @@ class Handler(object):
     return option_list
 
   def makeDataPathArgumentOptionList(self, *args, **kw):
-    return self.makeDataUrlArgumentOptionList(*args, url_type="path", **kw)
+    kw['url_type'] = "path"
+    return self.makeDataUrlArgumentOptionList(*args, **kw)
 
   def makeDataFileArgumentOptionList(self, *args, **kw):
-    return self.makeDataUrlArgumentOptionList(*args, url_type="file", **kw)
+    kw['url_type'] = "file"
+    return self.makeDataUrlArgumentOptionList(*args, **kw)
 
   def makeRepeatableDataUrlArgumentOptionList(self, allowed_option_list,
                                               option_dict, **kw):

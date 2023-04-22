@@ -40,11 +40,6 @@ from base64 import b64encode, b64decode
 from functools import partial
 from getopt import getopt, GetoptError
 
-try:
-  basestring
-except NameError:
-  basestring = str
-
 __doc__ = """
 
 usage: unodocument [options]
@@ -81,7 +76,17 @@ Options:
 """
 
 
-class UnoDocument(object):
+MARKER = []
+def next(gen, default=MARKER):
+  try:
+    return gen.__next__()
+  except StopIteration:
+    if default is MARKER:
+      raise
+    return default
+
+
+class UnoDocument:
   """A module to easily work with OpenOffice.org."""
 
   def __init__(self, service_manager, document_url,
@@ -242,9 +247,9 @@ class UnoDocument(object):
           continue
         property_value = getattr(container, property_name, '')
         if property_value:
-          if isinstance(property_value, basestring):
+          if isinstance(property_value, str):
             metadata[property_name] = property_value
-          elif isinstance(property_value, tuple) and isinstance(property_value[0], basestring):
+          elif isinstance(property_value, tuple) and isinstance(property_value[0], str):
             metadata[property_name] = property_value
           else:
             try:
@@ -284,7 +289,7 @@ class UnoDocument(object):
           if isinstance(current_value, tuple):
             if isinstance(value, list):
               value = tuple(value)
-            elif isinstance(value, basestring):
+            elif isinstance(value, str):
               # BBB: old ERP5 code sends Keywords as a string
               # separated by a whitespace.
               value = tuple(value.split(' '))
@@ -294,7 +299,7 @@ class UnoDocument(object):
       else:
         new_properties.append([prop, value])
     for prop, value in new_properties:
-      if isinstance(value, basestring):
+      if isinstance(value, str):
         user_defined_properties.addProperty(prop, 0, '')
         user_defined_properties.setPropertyValue(prop, value)
     self.document_loaded.store()
@@ -311,7 +316,7 @@ def main():
 
   help_msg = "\nUse --help or -h\n"
   try:
-    opt_list, arg_list = getopt(sys.argv[1:], "h", ["help", "test",
+    opt_list, _ = getopt(sys.argv[1:], "h", ["help", "test",
       "convert", "getmetadata", "setmetadata",
       "uno_path=", "office_binary_path=",
       "hostname=", "port=", "source_format=",
@@ -325,10 +330,8 @@ def main():
 
   param_list = [tuple[0] for tuple in iter(opt_list)]
 
-  try:
-    import json
-  except ImportError:
-    import simplejson as json
+  import json
+
   metadata = mimemapper = script = None
   hostname = port = office_binary_path = uno_path = None
   document_url = destination_format = source_format = infilter = refresh = None

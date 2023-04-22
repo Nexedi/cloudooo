@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from monitor import Monitor
+from .monitor import Monitor
 from threading import Thread
 from cloudooo.util import logger
 from time import sleep, time

@@ -28,7 +28,7 @@ setup(name='cloudooo',
         "Topic :: System :: Networking",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
-        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 3",
         "Natural Language :: English",
         "Framework :: Paste"],
       keywords='xmlrpc openoffice wsgi paste python',
@@ -40,6 +40,7 @@ setup(name='cloudooo',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
+      python_requires='>=3.8',
       entry_points="""
       [paste.app_factory]
       main = cloudooo.paster_application:application
