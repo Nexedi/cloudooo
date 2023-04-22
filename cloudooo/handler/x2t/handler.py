@@ -183,7 +183,7 @@ class Handler(object):
   def convert(self, destination_format=None, **kw):
     """ Convert the inputed file to output as format that were informed """
     source_format = self.file.source_format
-    logger.debug("x2t convert: %s > %s" % (source_format, destination_format))
+    logger.debug("x2t convert: %s > %s", source_format, destination_format)
 
     # init vars and xml configuration file
     in_format = format_code_map[source_format]

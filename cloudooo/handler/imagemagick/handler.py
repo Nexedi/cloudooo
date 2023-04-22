@@ -49,7 +49,7 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
-    logger.debug("ImageMagickConvert: %s > %s" % (self.file.source_format, destination_format))
+    logger.debug("ImageMagickConvert: %s > %s", self.file.source_format, destination_format)
     output_url = mktemp(suffix='.%s' % destination_format,
                         dir=self.base_folder_url)
     command = ["convert", self.file.getUrl(), output_url]
@@ -80,7 +80,7 @@ class Handler(object):
       std = std.strip()
       if re.search("^[a-zA-Z]", std):
         if std.count(":") > 1:
-          key, value = re.compile(".*\:\ ").split(std)
+          key, value = re.compile(r".*\:\ ").split(std)
         else:
           key, value = std.split(":")
         metadata_dict[key] = value.strip()

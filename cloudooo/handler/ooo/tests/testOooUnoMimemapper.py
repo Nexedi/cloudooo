@@ -70,8 +70,6 @@ class TestUnoMimeMapper(HandlerTestCase):
                            stderr=PIPE).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertTrue('filter_dict' in locals())
-    self.assertTrue('type_dict' in locals())
     self.assertNotEqual(filter_dict.get('writer8'), None)
     self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -91,8 +89,6 @@ class TestUnoMimeMapper(HandlerTestCase):
                            stderr=PIPE).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertTrue('filter_dict' in locals())
-    self.assertTrue('type_dict' in locals())
     self.assertNotEqual(filter_dict.get('writer8'), None)
     self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -119,7 +115,7 @@ class TestUnoMimeMapper(HandlerTestCase):
                              stdout=PIPE,
                              stderr=PIPE).communicate()
     self.assertEqual(stdout, '')
-    self.assertTrue(stderr.endswith(error_msg), stderr)
+    self.assertIn(error_msg, stderr)
     openoffice.start()
 
 

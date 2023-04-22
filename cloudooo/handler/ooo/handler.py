@@ -165,7 +165,7 @@ class Handler(object):
       filter_list.append((destination_extension,
                           service_type,
                           mimemapper.getFilterName(destination_extension, service_type)))
-    logger.debug("Filter List: %r" % filter_list)
+    logger.debug("Filter List: %r", filter_list)
     return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                             filter_list=filter_list,
                             mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
@@ -177,7 +177,7 @@ class Handler(object):
     """
     if not self.enable_scripting and kw.get('script'):
       raise Exception("ooo: scripting is disabled")
-    logger.debug("OooConvert: %s > %s" % (self.source_format, destination_format))
+    logger.debug("OooConvert: %s > %s", self.source_format, destination_format)
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format

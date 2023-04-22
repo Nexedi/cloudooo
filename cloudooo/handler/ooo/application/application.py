@@ -44,15 +44,17 @@ class Application(object):
 
   def start(self, init=True):
     """Start Application"""
-    logger.debug("Process Started %s, Port %s. Pid %s" % (self.name,
-                                                    self.getAddress()[-1],
-                                                    self.pid()))
+    logger.debug(
+      "Process Started %s, Port %s. Pid %s",
+      self.name,
+      self.getAddress()[-1],
+      self.pid())
 
   def stop(self):
     """Stop the process"""
     if hasattr(self, 'process') and self.status():
       process_pid = self.process.pid
-      logger.debug("Stop Pid - %s" % process_pid)
+      logger.debug("Stop Pid - %s", process_pid)
       try:
         self.process.terminate()
         waitStopDaemon(self, self.timeout)

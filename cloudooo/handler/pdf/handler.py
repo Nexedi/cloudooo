@@ -52,7 +52,7 @@ class Handler(object):
   def convert(self, destination_format=None, **kw):
     """ Convert a pdf document """
     # TODO: use pyPdf
-    logger.debug("PDFConvert: %s > %s" % (self.document.source_format, destination_format))
+    logger.debug("PDFConvert: %s > %s", self.document.source_format, destination_format)
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.document.directory_name)
     command = ["pdftotext", self.document.getUrl(), output_url]
@@ -78,7 +78,7 @@ class Handler(object):
                            stderr=PIPE,
                            close_fds=True,
                            env=self.environment).communicate()
-    info_list = filter(None, stdout.split("\n"))
+    info_list = [_f for _f in stdout.split("\n") if _f]
     metadata = {}
     for info in iter(info_list):
       info = info.split(":")

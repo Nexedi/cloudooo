@@ -55,8 +55,8 @@ class MonitorRequest(Monitor, Thread):
     while self.status_flag:
       if self.openoffice.request > self.request_limit:
         self.openoffice.acquire()
-        logger.debug("Openoffice: %s, %s will be restarted" % \
-          self.openoffice.getAddress())
+        logger.debug("Openoffice: %s, %s will be restarted",
+          *self.openoffice.getAddress())
         self.openoffice.restart()
         self.openoffice.release()
       sleep(self.interval)

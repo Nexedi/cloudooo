@@ -33,7 +33,7 @@ class CloudoooTestCase(unittest.TestCase):
                           'application/vnd.oasis.opendocument.text')
     res = proxy.run_setmetadata("t.odt", odt_data, {"Title": "test"})
     self.assertEqual(res[0], 200)
-    response_code, response_dict, response_message = \
+    response_code, response_dict, _ = \
                     proxy.run_convert("t.odt", res[1]['data'])
     self.assertEqual(response_code, 200)
     self.assertEqual(response_dict['meta']['Title'], "test")

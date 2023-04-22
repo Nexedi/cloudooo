@@ -250,9 +250,9 @@ class OOGranulator(object):
 
     text = ''.join(paragraph.itertext())
 
-    if TEXT_ATTRIB_STYLENAME not in paragraph.attrib.keys():
-      logger.error("Unable to find %s attribute at paragraph %s " % \
-                              (TEXT_ATTRIB_STYLENAME, paragraph_id))
+    if TEXT_ATTRIB_STYLENAME not in paragraph.attrib:
+      logger.error("Unable to find %s attribute at paragraph %s ",
+                              TEXT_ATTRIB_STYLENAME, paragraph_id)
       return None
 
     p_class = paragraph.attrib[TEXT_ATTRIB_STYLENAME]
