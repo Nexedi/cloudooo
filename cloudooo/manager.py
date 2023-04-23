@@ -109,6 +109,10 @@ class Manager(object):
     self.mimetype_registry = kw.pop("mimetype_registry")
     self.handler_dict = kw.pop("handler_dict")
 
+  def _check_file_type(self, file):
+    if isinstance(file, xmlrpc.client.Binary):
+      raise TypeError('`file` must be provided as a string with the file content encoded as base64')
+
   def convertFile(self, file:str, source_format:str, destination_format:str, zip=False,
                   refresh=False, conversion_kw={}) -> str:
     """Returns the converted file in the given format.
@@ -119,6 +123,8 @@ class Manager(object):
       zip -- Boolean Attribute. If true, returns the file in the form of a
       zip archive
     """
+    self._check_file_type(file)
+
     kw = self.kw.copy()
     kw.update(zip=zip, refresh=refresh)
     # XXX Force the use of wkhtmltopdf handler if converting from html to pdf
@@ -153,6 +159,7 @@ class Manager(object):
       {"title":"abc","description":...})
     return encodebytes(document_with_metadata)
     """
+    self._check_file_type(file)
     handler_class = getHandlerClass(source_format,
                                None,
                                self.mimetype_registry,
@@ -180,6 +187,7 @@ class Manager(object):
 
     Note that all keys of the dictionary have the first word in uppercase.
     """
+    self._check_file_type(file)
     handler_class = getHandlerClass(source_format,
                                     None,
                                     self.mimetype_registry,
