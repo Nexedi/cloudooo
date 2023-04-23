@@ -85,6 +85,7 @@ class MimeMapper:
     alternative_extension_dict = {
       'Microsoft Excel 2007 XML':'ms.xlsx',
       'Microsoft Excel 2007-2013 XML':'ms.xlsx',
+      'Excel 2007–365':'ms.xlsx',
       'Microsoft Excel 5.0':'5.xls',
       'Microsoft Excel 95':'95.xls',
       'Microsoft PowerPoint 2007 XML AutoPlay':'ms.ppsx',
@@ -93,8 +94,10 @@ class MimeMapper:
       'Microsoft PowerPoint 2007-2013 XML':'ms.pptx',
       'Microsoft Word 2007 XML':'ms.docx',
       'Microsoft Word 2007-2013 XML':'ms.docx',
+      'Word 2007–365':'ms.docx',
       'Microsoft Word 6.0':'6.doc',
       'Microsoft Word 95':'95.doc',
+      'TIFF - Tagged Image File Format': 'tiff',
       }
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
@@ -115,14 +118,15 @@ class MimeMapper:
     filter_dict, type_dict = json.loads(stdout)
 
     ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
-      # 'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-      # 'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-      # 'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
-      # 'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
+      # https://bugs.documentfoundation.org/show_bug.cgi?id=117252
+       'writer_web_jpg_Export',
+       'writer_web_png_Export',
+       'writer_web_webp_Export',
     ]
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
         'Text', # Use 'Text - Choose Encoding' instead
         'Text (StarWriter/Web)', # Use 'Text - Choose Encoding (Writer/Web)' instead
+        'ODF Drawing (Impress)', # broken for presentation
     ]
     for filter_name, value in filter_dict.items():
       if filter_name in ooo_disable_filter_list:
@@ -130,6 +134,8 @@ class MimeMapper:
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
+      if not filter_type_dict:
+        continue
       if not ui_name:
         ui_name = filter_type_dict.get("UIName")
       if ui_name in ooo_disable_filter_name_list or 'Template' in ui_name:

@@ -49,9 +49,14 @@ class TestAllowedExtensions(TestCase):
     ui_name. The request is by document type as text"""
     text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
+    # XXX slightly different allowed formats with document_type !?
+    _text_expected_tuple = text_expected_tuple + (
+      ('docm', 'Word 2007–365 VBA'),
+      ('webp', 'WEBP - WebP Image'),
+    )
     self.assertEqual(
-        sorted([tuple(x) for x in text_allowed_list]),
-        sorted(text_expected_tuple))
+      sorted([tuple(x) for x in text_allowed_list]),
+      sorted(_text_expected_tuple))
 
   def testGetAllowedPresentationExtensionListByType(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
@@ -59,14 +64,17 @@ class TestAllowedExtensions(TestCase):
     request_dict = {'document_type': "presentation"}
     presentation_allowed_list = self.proxy.getAllowedExtensionList(request_dict)
     self.assertTrue(presentation_allowed_list)
-    for arg in presentation_allowed_list:
-      self.assertIn(tuple(arg), presentation_expected_tuple)
+    self.assertEqual(
+        sorted([tuple(x) for x in presentation_allowed_list]),
+        sorted(presentation_expected_tuple))
 
   def testGetAllowedExtensionListByExtension(self):
     """Verify if getAllowedExtensionList returns is a list with extension and
     ui_name. The request is by extension"""
     doc_allowed_list = self.proxy.getAllowedExtensionList({'extension': "doc"})
-    self.assertEqual(sorted([tuple(x) for x in doc_allowed_list]), sorted(text_expected_tuple))
+    self.assertEqual(
+      sorted([tuple(x) for x in doc_allowed_list]),
+      sorted(text_expected_tuple))
 
   def testGetAllowedExtensionListByMimetype(self):
     """Verify if getAllowedExtensionList returns is a list with extension and

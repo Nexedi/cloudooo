@@ -32,18 +32,25 @@ from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import MimeMapper
 
+# XXX depending on wether allowed targets are evaluated by mime or by
+# extension/document_type, the returned mime types are different for text
 text_expected_tuple = (
-    ('doc', 'Microsoft Word 97-2003'),
-    ('ms.docx', 'Microsoft Word 2007-2013 XML'),
-    ('docx', 'Office Open XML Text'),
+    ('doc', 'Word 97–2003'),
+    ('docx', 'Office Open XML Text (Transitional)'),
+    ('epub', 'EPUB Document'),
     ('fodt', 'Flat XML ODF Text Document'),
     ('html', 'HTML Document (Writer)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
+    ('ms.docx', 'Word 2007–365'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('png', 'PNG - Portable Network Graphic'),
+    ('png', 'PNG - Portable Network Graphics'),
     ('rtf', 'Rich Text'),
     ('txt', 'Text - Choose Encoding'),
+    )
+extra_text_expected_tuple = (
+    ('docm', 'Word 2007–365 VBA'),
+    ('webp', 'WEBP - WebP Image'),
     )
 
 global_expected_tuple = (
@@ -52,33 +59,27 @@ global_expected_tuple = (
 drawing_expected_tuple = (
     ('bmp', 'BMP - Windows Bitmap'),
     ('emf', 'EMF - Enhanced Metafile'),
+    ('emz', 'EMZ - Compressed Enhanced Metafile'),
     ('eps', 'EPS - Encapsulated PostScript'),
     ('fodg', 'Flat XML ODF Drawing'),
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Draw)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
-    ('met', 'MET - OS/2 Metafile'),
     ('odg', 'ODF Drawing'),
-    ('pbm', 'PBM - Portable Bitmap'),
-    ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('pgm', 'PGM - Portable Graymap'),
-    ('png', 'PNG - Portable Network Graphic'),
-    ('ppm', 'PPM - Portable Pixelmap'),
-    ('ras', 'RAS - Sun Raster Image'),
+    ('png', 'PNG - Portable Network Graphics'),
     ('svg', 'SVG - Scalable Vector Graphics'),
-    ('svm', 'SVM - StarView Metafile'),
-    ('tif', 'TIFF - Tagged Image File Format'),
+    ('svgz', 'SVGZ - Compressed Scalable Vector Graphics'),
+    ('tiff', 'TIFF - Tagged Image File Format'),
+    ('webp', 'WEBP - WebP Image'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xpm', 'XPM - X PixMap'),
+    ('wmz', 'WMZ - Compressed Windows Metafile'),
     )
 
 web_expected_tuple = (
     ('html', 'HTML Document'),
-    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('odt', 'Text (Writer/Web)'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('png', 'PNG - Portable Network Graphic'),
     ('sxw', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
     ('txt', 'Text (Writer/Web)'),
     ('txt', 'Text - Choose Encoding (Writer/Web)'),
@@ -92,40 +93,35 @@ presentation_expected_tuple = (
     ('gif', 'GIF - Graphics Interchange Format'),
     ('html', 'HTML Document (Impress)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
-    ('met', 'MET - OS/2 Metafile'),
-    ('odg', 'ODF Drawing (Impress)'),
     ('odp', 'ODF Presentation'),
-    ('pbm', 'PBM - Portable Bitmap'),
-    ('pct', 'PCT - Mac Pict'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('pgm', 'PGM - Portable Graymap'),
-    ('png', 'PNG - Portable Network Graphic'),
-    ('ppm', 'PPM - Portable Pixelmap'),
-    ('pps', 'Microsoft PowerPoint 97-2003 AutoPlay'),
-    ('ms.ppsx', 'Microsoft PowerPoint 2007-2013 XML AutoPlay'),
+    ('png', 'PNG - Portable Network Graphics'),
+    ('pps', 'PowerPoint 97–2003 AutoPlay'),
     ('ppsx', 'Office Open XML Presentation AutoPlay'),
-    ('ppt', 'Microsoft PowerPoint 97-2003'),
-    ('ms.pptx', 'Microsoft PowerPoint 2007-2013 XML'),
+    ('ppsx', 'PowerPoint 2007–365 AutoPlay'),
+    ('ppt', 'PowerPoint 97–2003'),
+    ('pptm', 'PowerPoint 2007–365 VBA'),
     ('pptx', 'Office Open XML Presentation'),
-    ('ras', 'RAS - Sun Raster Image'),
+    ('pptx', 'PowerPoint 2007–365'),
     ('svg', 'SVG - Scalable Vector Graphics'),
-    ('svm', 'SVM - StarView Metafile'),
-    ('tif', 'TIFF - Tagged Image File Format'),
+    ('tiff', 'TIFF - Tagged Image File Format'),
+    ('webp', 'WEBP - WebP Image'),
     ('wmf', 'WMF - Windows Metafile'),
-    ('xpm', 'XPM - X PixMap'),
     )
 
 spreadsheet_expected_tuple = (
     ('csv', 'Text CSV'),
     ('fods', 'Flat XML ODF Spreadsheet'),
     ('html', 'HTML Document (Calc)'),
+    ('jpg', 'JPEG - Joint Photographic Experts Group'),
     ('ods', 'ODF Spreadsheet'),
     ('pdf', 'PDF - Portable Document Format'),
-    ('png', 'PNG - Portable Network Graphic'),
+    ('png', 'PNG - Portable Network Graphics'),
     ('slk', 'SYLK'),
-    ('xls', 'Microsoft Excel 97-2003'),
-    ('xlsm', 'Microsoft Excel 2007-2016 XML (macro enabled)'),
-    ('ms.xlsx', 'Microsoft Excel 2007-2013 XML'),
+    ('webp', 'WEBP - WebP Image'),
+    ('xls', 'Excel 97–2003'),
+    ('ms.xlsx', 'Excel 2007–365'),
+    ('xlsm', 'Excel 2007–365 (macro-enabled)'),
     ('xlsx', 'Office Open XML Spreadsheet'),
     )
 
@@ -138,9 +134,6 @@ math_expected_tuple = (
     ('smf', 'StarMath 5.0'),
     )
 
-chart_expected_tuple = (
-    ('odc', 'ODF Chart'),
-    )
 
 OPENOFFICE = True
 
@@ -195,8 +188,6 @@ class TestMimeMapper(HandlerTestCase):
     document_type_dict = self.mimemapper._document_type_dict
     type = document_type_dict.get("text")
     self.assertEqual(type, 'com.sun.star.text.TextDocument')
-    type = document_type_dict.get("chart")
-    self.assertEqual(type, 'com.sun.star.chart2.ChartDocument')
     type = document_type_dict.get("drawing")
     self.assertEqual(type, 'com.sun.star.drawing.DrawingDocument')
     type = document_type_dict.get("presentation")
@@ -210,87 +201,68 @@ class TestMimeMapper(HandlerTestCase):
     """Test if function getAllowedExtensionList returns correctly a list with
     extensions that can generate with extension passed."""
     doc_got_list = list(self.mimemapper.getAllowedExtensionList('doc'))
+    _text_expected_tuple = text_expected_tuple + extra_text_expected_tuple
     for arg in doc_got_list:
-      self.assertTrue(arg in text_expected_tuple,
-              "%s not in %s" % (arg, text_expected_tuple))
+      self.assertIn(arg, _text_expected_tuple)
     jpeg_got_list = list(self.mimemapper.getAllowedExtensionList('jpeg'))
     jpeg_expected_list = list(set(presentation_expected_tuple +
         drawing_expected_tuple))
     for arg in jpeg_got_list:
-      self.assertTrue(arg in jpeg_expected_list,
-              "%s not in %s" % (arg, jpeg_expected_list))
+      self.assertIn(arg, jpeg_expected_list)
     pdf_got_list = list(self.mimemapper.getAllowedExtensionList('pdf'))
     pdf_expected_list = list(set(presentation_expected_tuple +
       drawing_expected_tuple + web_expected_tuple + global_expected_tuple +
-      math_expected_tuple + text_expected_tuple + spreadsheet_expected_tuple))
+      math_expected_tuple + _text_expected_tuple + spreadsheet_expected_tuple))
     for arg in pdf_got_list:
-      self.assertTrue(arg in pdf_expected_list,
-              "%s not in %s" % (arg, pdf_expected_list))
+      self.assertIn(arg, pdf_expected_list)
 
   def testGetAllowedExtensionListForText(self):
     """Passing document_type equal to 'text', the return must be equal
     to text_expected_tuple."""
-    got_list = list(self.mimemapper.getAllowedExtensionList(document_type='text'))
-    text_expected_list = list(text_expected_tuple)
-    for arg in got_list:
-      self.assertTrue(arg in text_expected_list,
-              "%s not in %s" % (arg, text_expected_list))
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='text')),
+      sorted(text_expected_tuple + extra_text_expected_tuple)
+    )
 
   def testGetAllowedExtensionListForGlobal(self):
     """Passing document_type equal to 'global', the return must be equal
     to global_expected_tuple."""
-    got_list = list(self.mimemapper.getAllowedExtensionList(document_type='global'))
-    got_list.sort()
-    global_expected_list = list(global_expected_tuple)
-    global_expected_list.sort()
-    self.assertEqual(got_list, global_expected_list)
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='global')),
+      sorted(global_expected_tuple)
+    )
 
   def testGetAllAllowedExtensionListForDrawing(self):
     """Passing document_type equal to 'drawing', the return must be equal
     to drawing_expected_tuple."""
-    got_list = list(self.mimemapper.getAllowedExtensionList(document_type='drawing'))
-    drawing_expected_list = list(drawing_expected_tuple)
-    drawing_expected_list.sort()
-    for arg in got_list:
-      self.assertTrue(arg in drawing_expected_list,
-          "%s not in %s" % (arg, drawing_expected_list))
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='drawing')),
+      sorted(drawing_expected_tuple)
+    )
 
   def testGetAllAllowedExtensionListForWeb(self):
     """Passing document_type equal to 'web', the return must be equal
     to web_expected_tuple."""
-    got_tuple = list(self.mimemapper.getAllowedExtensionList(document_type='web'))
-    got_tuple.sort()
-    web_expected_list = list(web_expected_tuple)
-    web_expected_list.sort()
-    self.assertEqual(got_tuple, web_expected_list)
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='web')),
+      sorted(web_expected_tuple)
+    )
 
   def testGetAllAllowedExtensionListForPresentation(self):
     """Passing document_type equal to 'presentation', the return must be equal
     to presentation_expected_tuple."""
-    got_list = \
-        list(self.mimemapper.getAllowedExtensionList(document_type='presentation'))
-    presentation_expected_list = list(presentation_expected_tuple)
-    presentation_expected_list.sort()
-    for arg in got_list:
-      self.assertTrue(arg in presentation_expected_list,
-          "%s not in %s" % (arg, presentation_expected_list))
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='presentation')),
+      sorted(presentation_expected_tuple)
+    )
 
   def testGetAllAllowedExtensionListForSpreadsheet(self):
     """Passing document_type equal to 'spreadsheet', the return must be equal
     to spreadsheet_expected_tuple."""
-    got_list = self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')
-    for arg in got_list:
-      self.assertTrue(arg in spreadsheet_expected_tuple,
-          "%s not in %s" % (arg, spreadsheet_expected_tuple))
-
-  def testGetAllAllowedExtensionListForChart(self):
-    """Passing document_type equal to 'chart', the return must be equal
-    to chart_expected_tuple."""
-    got_list = list(self.mimemapper.getAllowedExtensionList(document_type='chart'))
-    got_list.sort()
-    chart_expected_list = list(chart_expected_tuple)
-    chart_expected_list.sort()
-    self.assertEqual(got_list, chart_expected_list)
+    self.assertEqual(
+      sorted(self.mimemapper.getAllowedExtensionList(document_type='spreadsheet')),
+      sorted(spreadsheet_expected_tuple)
+    )
 
   def testGetFilterName(self):
     """Test if passing extension and document_type, the filter is correct."""

@@ -99,7 +99,7 @@ class TestUnoMimeMapper(HandlerTestCase):
 
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
-    error_msg = "couldn\'t connect to socket (Success)\n"
+    error_msg = "couldn\'t connect to socket"
     hostname, host = openoffice.getAddress()
     openoffice.stop()
     python = path.join(self.office_binary_path, "python")

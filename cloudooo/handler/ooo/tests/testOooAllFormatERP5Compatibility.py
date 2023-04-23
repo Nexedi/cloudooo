@@ -72,4 +72,9 @@ class TestAllFormatsERP5Compatibility(TestCase):
         data_output = data_output['data']
         file_type = self._getFileType(data_output)
         self.assertNotIn(": empty", file_type)
+        if source_format != extension:
+          # when no filter exist for destination format, the document is not converted
+          # but silently returned in source format, the assertion below should detect
+          # this.
+          self.assertNotEqual(source_mimetype, file_type)
 
