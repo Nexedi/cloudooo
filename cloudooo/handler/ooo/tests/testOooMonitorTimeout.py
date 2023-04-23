@@ -61,13 +61,15 @@ class TestMonitorTimeout(unittest.TestCase):
     try:
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
-      sleep(2)
+      sleep(5)
       self.assertEqual(openoffice.status(), False)
       openoffice.restart()
       self.assertTrue(openoffice.status())
     finally:
-      monitor_timeout.terminate()
-      openoffice.release()
+      try:
+        monitor_timeout.terminate()
+      finally:
+        openoffice.release()
 
   def testStopOpenOfficeTwice(self):
     """Test the cases that is necessary start the monitors twice"""
@@ -75,20 +77,22 @@ class TestMonitorTimeout(unittest.TestCase):
     try:
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
-      sleep(2)
+      sleep(5)
       self.assertEqual(openoffice.status(), False)
       monitor_timeout.terminate()
       openoffice.restart()
       self.assertTrue(openoffice.status())
       monitor_timeout = self._createMonitor(1)
       monitor_timeout.start()
-      sleep(2)
+      sleep(5)
       self.assertEqual(openoffice.status(), False)
       monitor_timeout.terminate()
       sleep(1)
       self.assertEqual(monitor_timeout.is_alive(), False)
     finally:
-      monitor_timeout.terminate()
-      openoffice.release()
+      try:
+        monitor_timeout.terminate()
+      finally:
+        openoffice.release()
 
 
