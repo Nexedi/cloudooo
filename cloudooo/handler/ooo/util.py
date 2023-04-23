@@ -28,6 +28,7 @@
 #
 ##############################################################################
 
+import contextlib
 from socket import socket, error
 from errno import EADDRINUSE
 from time import sleep
@@ -47,7 +48,8 @@ def removeDirectory(path):
 def socketStatus(hostname, port):
   """Verify if the address is busy."""
   try:
-    socket().bind((hostname, port),)
+    with contextlib.closing(socket()) as sock:
+      sock.bind((hostname, port))
     # False if the is free
     return False
   except error as err:
