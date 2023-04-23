@@ -36,7 +36,7 @@ from StringIO import StringIO
 from lxml import etree
 from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase
-from cloudooo.tests.backportUnittest import expectedFailure
+from unittest import expectedFailure
 import magic
 from cloudooo.handler.ooo.tests.testOooMimemapper import text_expected_tuple, presentation_expected_tuple
 

@@ -30,22 +30,21 @@
 
 import unittest
 from os import environ, path
-from ConfigParser import ConfigParser
-from xmlrpclib import ServerProxy, Fault
+from configparser import ConfigParser
+from xmlrpc.client import ServerProxy, Fault
 from magic import Magic
-from base64 import encodestring, decodestring
-from cloudooo.tests import backportUnittest
+from base64 import encodebytes, decodebytes
 
 config = ConfigParser()
 
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(test_case))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(test_case))
   return suite
 
 
-class TestCase(backportUnittest.TestCase):
+class TestCase(unittest.TestCase):
 
   def setUp(self):
     server_cloudooo_conf = environ.get("server_cloudooo_conf", None)

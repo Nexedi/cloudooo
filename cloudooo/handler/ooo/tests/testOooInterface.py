@@ -46,7 +46,7 @@ from cloudooo.interfaces.monitor import IMonitor
 from cloudooo.interfaces.granulate import ITableGranulator, \
                                           IImageGranulator, \
                                           ITextGranulator
-from cloudooo.tests.backportUnittest import TestCase, expectedFailure
+from unittest import TestCase, expectedFailure
 
 import zope.interface.verify
 
