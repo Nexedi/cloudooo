@@ -36,11 +36,13 @@ from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
-from pyPdf import PdfFileWriter, PdfFileReader
-from pyPdf.generic import NameObject, createStringObject
+
+from pypdf import PdfWriter, PdfReader
+from pypdf.generic import NameObject, createStringObject
+
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """PDF Handler is used to handler inputed pdf document."""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -94,8 +96,8 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     # TODO: date as "D:20090401124817-04'00'" ASN.1 for ModDate and CreationDate
-    input_pdf = PdfFileReader(open(self.document.getUrl(), "rb"))
-    output_pdf = PdfFileWriter()
+    input_pdf = PdfReader(self.document.getUrl())
+    output_pdf = PdfWriter()
 
     modification_date = metadata.pop("ModificationDate", None)
     if modification_date:
@@ -103,13 +105,13 @@ class Handler(object):
     if type(metadata.get('Keywords', None)) is list:
       metadata['Keywords'] = metadata['Keywords'].join(' ')
     args = {}
-    for key, value in list(metadata.items()):
+    for key, value in metadata.items():
       args[NameObject('/' + key.capitalize())] = createStringObject(value)
 
-    output_pdf._info.getObject().update(args)
+    output_pdf._info.get_object().update(args)
 
-    for page_num in range(input_pdf.getNumPages()):
-      output_pdf.addPage(input_pdf.getPage(page_num))
+    for page in input_pdf.pages:
+      output_pdf.add_page(page)
 
     output_stream = io.BytesIO()
     output_pdf.write(output_stream)

@@ -12,7 +12,7 @@ install_requires = [
           'zope.interface',
           'PasteDeploy',
           'PasteScript[WSGIUtils]',
-          'pyPdf',
+          'pyPdf>=3.6.0',
           'psutil>=3.0.0',
           'lxml',
           'python-magic',
