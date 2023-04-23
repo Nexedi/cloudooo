@@ -248,7 +248,7 @@ class Handler:
     # XXX please never guess extension from mimetype
     output_set = set()
     if "/" in source_mimetype:
-      parsed_mimetype_type = parseContentType(source_mimetype).gettype()
+      parsed_mimetype_type = parseContentType(source_mimetype).get_content_type()
       # here `guess_all_extensions` never handles mimetype parameters
       #   (even for `text/plain;charset=UTF-8` which is standard)
       extension_list = mimetypes.guess_all_extensions(parsed_mimetype_type)  # XXX never guess

@@ -109,7 +109,7 @@ class Handler:
      ...
     ]
     """
-    source_mimetype = parseContentType(source_mimetype).gettype()
+    source_mimetype = parseContentType(source_mimetype).get_content_type()
     if source_mimetype in ("text/html", "htm", "html"):
       return [("application/pdf", "PDF - Portable Document Format")]
     return []

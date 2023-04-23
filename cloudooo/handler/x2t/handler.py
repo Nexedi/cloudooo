@@ -338,7 +338,7 @@ class Handler:
      ...
     ]
     """
-    source_mimetype = parseContentType(source_mimetype).gettype()
+    source_mimetype = parseContentType(source_mimetype).get_content_type()
     if source_mimetype in ("docy", "application/x-asc-text"):
       return [
         ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Word 2007 Document"),

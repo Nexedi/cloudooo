@@ -93,7 +93,7 @@ def BBB_guess_extension(mimetype, title=None):
     "text/html": ".html",
     "text/plain": ".txt",
     "image/jpeg": ".jpg",
-  }.get(parseContentType(mimetype).gettype(), None) or guess_extension(mimetype)
+  }.get(parseContentType(mimetype).get_content_type(), None) or guess_extension(mimetype)
 
 @implementer(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
              ITextGranulator)
