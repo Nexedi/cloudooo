@@ -141,7 +141,7 @@ class TestConversion(TestCase):
     # Test run_convert method with invalid file
     with open(join('data', 'test.doc'), 'rb') as f:
       scenario_list.append(
-        ('test.doc', f.read()[:300], 200, '',
+        ('test.doc', f.read()[:-300], 402, '',
         ['data', 'meta', 'mime'], '', 'application/vnd.oasis.opendocument.text'
       ))
     return scenario_list
