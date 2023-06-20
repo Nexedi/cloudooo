@@ -12,16 +12,30 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+import logging
+from xmlrpc.server import SimpleXMLRPCDispatcher
+
+logger = logging.getLogger(__name__)
+
+class ErrorLoggingXMLRPCDispatcher(SimpleXMLRPCDispatcher):
+    """A XMLRPC Dispatcher which logs errors
+    """
+    def _dispatch(self, method, params):
+        try:
+            return super()._dispatch(method, params)
+        except:
+            logger.exception("Error calling %s", method)
+            raise
 
 
-class WSGIXMLRPCApplication(object):
+class WSGIXMLRPCApplication:
     """Application to handle requests to the XMLRPC service"""
 
     def __init__(self, instance=None, methods=[]):
         """Create windmill xmlrpc dispatcher"""
-        self.dispatcher = SimpleXMLRPCDispatcher(allow_none=True,
-                                                 encoding=None)
+        self.dispatcher = ErrorLoggingXMLRPCDispatcher(
+          allow_none=True,
+          encoding=None)
         if instance is not None:
             self.dispatcher.register_instance(instance)
         for method in methods:
@@ -34,7 +48,7 @@ class WSGIXMLRPCApplication(object):
             return self.handle_POST(environ, start_response)
         else:
             start_response("400 Bad request", [('Content-Type', 'text/plain')])
-            return ['']
+            return [b'']
 
     def handle_POST(self, environ, start_response):
         """Handles the HTTP POST request.
@@ -60,9 +74,10 @@ class WSGIXMLRPCApplication(object):
             response = self.dispatcher._marshaled_dispatch(
                     data, getattr(self.dispatcher, '_dispatch', None)
                 )
-            response += '\n'
+            response += b'\n'
         except:  # This should only happen if the module is buggy
             # internal error, report as HTTP server error
+            logger.exception("Error serving request")
             start_response("500 Server error", [('Content-Type',
                                                  'text/plain')])
             return []

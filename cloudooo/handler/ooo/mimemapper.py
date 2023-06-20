@@ -33,15 +33,14 @@ from re import findall
 from subprocess import Popen, PIPE
 from subprocess import STDOUT
 from zope.interface import implementer
-from filter import Filter
+from .filter import Filter
 from os import environ, path
 from cloudooo.interfaces.mimemapper import IMimemapper
-from types import InstanceType
 import json
 
 
 @implementer(IMimemapper)
-class MimeMapper(object):
+class MimeMapper:
   """Load all filters from OOo. You can get the filter you want or all
   filters of the specific extension.
   """
@@ -64,26 +63,9 @@ class MimeMapper(object):
 
   def _typeToDocumentService(self, document_type):
     """Returns the document service according to document type."""
-    for k, v in self._document_type_dict.iteritems():
+    for k, v in self._document_type_dict.items():
       if k.startswith(document_type):
         return v
-
-  def _getElementNameByService(self, uno_service, ignore_name_list=[]):
-    """Returns an dict with elements."""
-    name_list = uno_service.getElementNames()
-    service_dict = {}
-    for name in iter(name_list):
-        element_dict = {}
-        element_list = uno_service.getByName(name)
-        for obj in iter(element_list):
-            if obj.Name in ignore_name_list:
-              continue
-            elif type(obj.Value) == InstanceType:
-              continue
-            element_dict[obj.Name] = obj.Value
-            service_dict[name] = element_dict
-
-    return service_dict
 
   def isLoaded(self):
     """Verify if filters were loaded"""
@@ -103,6 +85,7 @@ class MimeMapper(object):
     alternative_extension_dict = {
       'Microsoft Excel 2007 XML':'ms.xlsx',
       'Microsoft Excel 2007-2013 XML':'ms.xlsx',
+      'Excel 2007–365':'ms.xlsx',
       'Microsoft Excel 5.0':'5.xls',
       'Microsoft Excel 95':'95.xls',
       'Microsoft PowerPoint 2007 XML AutoPlay':'ms.ppsx',
@@ -111,8 +94,10 @@ class MimeMapper(object):
       'Microsoft PowerPoint 2007-2013 XML':'ms.pptx',
       'Microsoft Word 2007 XML':'ms.docx',
       'Microsoft Word 2007-2013 XML':'ms.docx',
+      'Word 2007–365':'ms.docx',
       'Microsoft Word 6.0':'6.doc',
       'Microsoft Word 95':'95.doc',
+      'TIFF - Tagged Image File Format': 'tiff',
       }
     uno_path = kw.get("uno_path", environ.get('uno_path'))
     office_binary_path = kw.get("office_binary_path",
@@ -133,21 +118,24 @@ class MimeMapper(object):
     filter_dict, type_dict = json.loads(stdout)
 
     ooo_disable_filter_list = kw.get("ooo_disable_filter_list") or [] + [
-      # 'writer_jpg_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-      # 'writer_png_Export', # Seems not working from cloudooo in Libre Office 4.3.3.2
-      # 'draw_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
-      # 'impress_eps_Export', #  Seems not working from cloudooo in Libre Office 5.0.0.5
+      # https://bugs.documentfoundation.org/show_bug.cgi?id=117252
+       'writer_web_jpg_Export',
+       'writer_web_png_Export',
+       'writer_web_webp_Export',
     ]
     ooo_disable_filter_name_list = kw.get("ooo_disable_filter_name_list") or [] + [
         'Text', # Use 'Text - Choose Encoding' instead
         'Text (StarWriter/Web)', # Use 'Text - Choose Encoding (Writer/Web)' instead
+        'ODF Drawing (Impress)', # broken for presentation
     ]
-    for filter_name, value in filter_dict.iteritems():
+    for filter_name, value in filter_dict.items():
       if filter_name in ooo_disable_filter_list:
         continue
       ui_name = value.get('UIName')
       filter_type = value.get('Type')
       filter_type_dict = type_dict.get(filter_type)
+      if not filter_type_dict:
+        continue
       if not ui_name:
         ui_name = filter_type_dict.get("UIName")
       if ui_name in ooo_disable_filter_name_list or 'Template' in ui_name:
@@ -229,7 +217,7 @@ class MimeMapper(object):
       'pdf': ['com.sun.star.drawing.DrawingDocument'],
       'xls': ['com.sun.star.sheet.SpreadsheetDocument'],
       })
-    self.document_service_list = self._extension_list_by_type.keys()
+    self.document_service_list = list(self._extension_list_by_type.keys())
     self._loaded = True
 
   def getFilterName(self, extension, document_service):
@@ -244,11 +232,11 @@ class MimeMapper(object):
     filter_list = [filter for filter in self.getFilterList(extension) \
         if filter.getDocumentService() == document_service]
     if len(filter_list) > 1:
-      for filter in iter(filter_list):
+      for filter in filter_list:
         if filter.isPreferred():
           return filter.getName()
       else:
-        for filter in iter(filter_list):
+        for filter in filter_list:
           if filter.getName().endswith("Export"):
             return filter.getName()
         filter_list.sort(key=lambda x: x.getSortIndex())
@@ -290,10 +278,10 @@ class MimeMapper(object):
       allowed_extension_list.extend(self._extension_list_by_type.get(document_type, []))
     # gets list of extensions of each document type if document_type_list isn't
     # empty.
-    for type in iter(document_type_list):
+    for type in document_type_list:
       # gets list of extensions with key document type
       extension_list = self._extension_list_by_type.get(type)
-      for ext in iter(extension_list):
+      for ext in extension_list:
         if not ext in allowed_extension_list:
           allowed_extension_list.append(ext)
     return tuple(allowed_extension_list)

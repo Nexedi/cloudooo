@@ -39,12 +39,12 @@ from cloudooo.interfaces.file import IFile
 
 
 @implementer(IFile)
-class File(object):
+class File:
   """File is used to manipulate one temporary file
   stored into the filesystem.
   """
 
-  def __init__(self, base_folder_url, data, source_format):
+  def __init__(self, base_folder_url:str, data:bytes, source_format:str):
     """Create an file into file system and store the URL.
     Keyword arguments:
     base_folder_url -- Full path to create a temporary folder
@@ -60,7 +60,7 @@ class File(object):
   def _createDirectory(self):
      return tempfile.mkdtemp(dir=self.base_folder_url)
 
-  def load(self):
+  def load(self) -> str:
     """Creates one Temporary Document and write data into it.
     Return the url for the document.
     """
@@ -68,7 +68,8 @@ class File(object):
     file_path = tempfile.mktemp(suffix=".%s" % self.source_format,
                                 dir=self.directory_name)
     # stores the data in temporary file
-    open(file_path, 'wb').write(self.original_data)
+    with open(file_path, 'wb') as f:
+      f.write(self.original_data)
     # If is a zipfile is need extract all files from whitin the compressed file
     if is_zipfile(file_path):
       zipfile = ZipFile(file_path)
@@ -91,7 +92,7 @@ class File(object):
           remove(zipfile_path)
     return file_path
 
-  def getContent(self, zip=False):
+  def getContent(self, zip=False) -> bytes:
     """Open the file and returns the content.
     Keyword Arguments:
     zip -- Boolean attribute. If True"""
@@ -106,14 +107,16 @@ class File(object):
           zipfile.write(file)
       finally:
         zipfile.close()
-      opened_zip = open(zip_path, 'r').read()
+      with open(zip_path, 'rb') as f:
+        opened_zip = f.read()
       remove(zip_path)
       chdir(current_dir_url)
       return opened_zip
     else:
-      return open(self.url, 'r').read()
+      with open(self.url, 'rb') as f:
+        return f.read()
 
-  def getUrl(self):
+  def getUrl(self) -> str:
     """Returns full path."""
     return self.url
 

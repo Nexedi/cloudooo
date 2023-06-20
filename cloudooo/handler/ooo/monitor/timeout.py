@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from monitor import Monitor
+from .monitor import Monitor
 from multiprocessing import Process
 from time import sleep
 from cloudooo.util import logger
@@ -47,11 +47,11 @@ class MonitorTimeout(Monitor, Process):
     """Start the process"""
     port = self.openoffice.getAddress()[-1]
     pid = self.openoffice.pid()
-    logger.debug("Monitoring OpenOffice: Port %s, Pid: %s" % (port, pid))
+    logger.debug("Monitoring OpenOffice: port %s pid %s timeout: %s", port, pid, self.interval)
     self.status_flag = True
     sleep(self.interval)
     if self.openoffice.isLocked():
-      logger.debug("Stop OpenOffice - Port %s - Pid %s" % (port, pid))
+      logger.debug("Stoping OpenOffice: port %s pid %s", port, pid)
       self.openoffice.stop()
 
   def terminate(self):

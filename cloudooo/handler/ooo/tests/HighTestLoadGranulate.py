@@ -31,10 +31,10 @@
 import sys
 from multiprocessing import Process
 from os import listdir
-from xmlrpclib import ServerProxy
+from xmlrpc.client import ServerProxy
 from os.path import join
 from getopt import getopt, GetoptError
-from base64 import encodestring
+from base64 import encodebytes
 
 """
   XXX - This file is duplicated and should be refactored to be used for all
@@ -58,7 +58,7 @@ Options:
 """
 
 
-class Log(object):
+class Log:
   """Object to manipulate the log file"""
 
   def __init__(self, log_path, mode='a'):
@@ -114,13 +114,13 @@ class Client(Process):
       folder_list = listdir(self.folder)[:self.number_of_request]
       for filename in folder_list:
         file_path = join(self.folder, filename)
-        data = encodestring(open(file_path).read())
+        data = encodebytes(open(file_path).read())
         try:
           proxy.getTableItemList(data, 'odt')
           proxy.getChapterItemList(data, 'odt')
           proxy.getImageItemList(data, 'odt')
           self.log.msg("Success\n")
-        except Exception, err:
+        except Exception as err:
           self.log.msg("Error - %s\n"%str(err))
         self.number_of_request -= 1
     self.log.close()
@@ -131,15 +131,15 @@ def main():
   help_msg = "\nUse --help or -h"
   try:
     opt_list, arg_list = getopt(sys.argv[1:], "hc:n:f:s:l:", ["help"])
-  except GetoptError, msg:
+  except GetoptError as msg:
     msg = msg.msg + help_msg
-    print >> sys.stderr, msg
+    print(msg, file=sys.stderr)
     sys.exit(2)
 
   kw = {}
   for opt, arg in opt_list:
     if opt in ('-h', '--help'):
-      print >> sys.stdout, __doc__
+      print(__doc__, file=sys.stdout)
       sys.exit(2)
     elif opt == '-c':
       number_client = int(arg)

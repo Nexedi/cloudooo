@@ -62,5 +62,5 @@ class TestAllFormats(TestCase):
     request = {'document_type': document_type}
     extension_list = self.proxy.getAllowedExtensionList(request)
     for extension in extension_list:
+      with self.subTest(extension):
         self._testConvertFile(input_url, source_format, extension[0], None)
-

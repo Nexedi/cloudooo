@@ -32,7 +32,7 @@
 import unittest
 import sys
 from os import environ, path, mkdir, putenv
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.mimemapper import mimemapper
 
@@ -42,7 +42,7 @@ config = ConfigParser()
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(test_case))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(test_case))
   return suite
 
 
@@ -84,8 +84,8 @@ def startFakeEnvironment(start_openoffice=True, conf_path=None):
 
   if start_openoffice:
     default_language = config.get('app:main',
-                                  'openoffice_user_interface_language', False,
-                                  {'openoffice_user_interface_language': 'en'})
+                                  'openoffice_user_interface_language', raw=False,
+                                  vars={'openoffice_user_interface_language': 'en'})
     openoffice.loadSettings(hostname,
                             openoffice_port,
                             working_path,
@@ -110,27 +110,6 @@ def stopFakeEnvironment(stop_openoffice=True):
     openoffice.stop()
   return True
 
-if 1:
-  from cloudooo.handler.ooo.application.openoffice import OpenOffice
-  from cloudooo.handler.ooo.util import waitStartDaemon, waitStopDaemon
-  from subprocess import Popen, PIPE
-
-  # patch OpenOffice._startProcess not to put bogus output to stderr,
-  # that prevents detecting the end of unit test.
-  def _startProcess(self, command, env):
-    """Start OpenOffice.org process"""
-    for i in range(5):
-      self.stop()
-      waitStopDaemon(self, self.timeout)
-      self.process = Popen(command, stderr=PIPE,
-                           close_fds=True,
-                           env=env)
-      if not waitStartDaemon(self, self.timeout):
-        continue
-      if self._testOpenOffice(self.hostname, self.port):
-        return
-
-  OpenOffice._startProcess = _startProcess
 
 class HandlerTestCase(unittest.TestCase):
   """Test Case to load cloudooo conf."""

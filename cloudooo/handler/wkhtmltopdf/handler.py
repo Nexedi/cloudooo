@@ -40,7 +40,7 @@ def keyNameToOption(key_name, prefix=""):
   return "--" + prefix + key_name.replace("_", "-")
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """ImageMagic Handler is used to handler images."""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -66,7 +66,7 @@ class Handler(object):
 
   def convert(self, destination_format=None, **kw):
     """Convert a image"""
-    logger.debug("wkhtmltopdf convert: %s > %s" % (self.file.source_format, destination_format))
+    logger.debug("wkhtmltopdf convert: %s > %s", self.file.source_format, destination_format)
     output_path = self.makeTempFile(destination_format)
     command = self.makeWkhtmltopdfCommandList(
       self.convertPathToUrl(self.file.getUrl()),
@@ -109,7 +109,7 @@ class Handler(object):
      ...
     ]
     """
-    source_mimetype = parseContentType(source_mimetype).gettype()
+    source_mimetype = parseContentType(source_mimetype).get_content_type()
     if source_mimetype in ("text/html", "htm", "html"):
       return [("application/pdf", "PDF - Portable Document Format")]
     return []
@@ -272,10 +272,12 @@ class Handler(object):
     return option_list
 
   def makeDataPathArgumentOptionList(self, *args, **kw):
-    return self.makeDataUrlArgumentOptionList(*args, url_type="path", **kw)
+    kw['url_type'] = "path"
+    return self.makeDataUrlArgumentOptionList(*args, **kw)
 
   def makeDataFileArgumentOptionList(self, *args, **kw):
-    return self.makeDataUrlArgumentOptionList(*args, url_type="file", **kw)
+    kw['url_type'] = "file"
+    return self.makeDataUrlArgumentOptionList(*args, **kw)
 
   def makeRepeatableDataUrlArgumentOptionList(self, allowed_option_list,
                                               option_dict, **kw):

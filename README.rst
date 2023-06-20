@@ -1,13 +1,11 @@
+.. warning:: this documentation is outdated. See https://lab.nexedi.com/nexedi/cloudooo ,  https://lab.nexedi.com/nexedi/slapos/tree/master/software/cloudooo or https://cloudooo.nexedi.com/ for more up to date information.
+
 Install Cloudooo
 ================
 
 ::
   
-  $ python2.6 setup.py install
-
-
-Warnings:
- - you must have installed setuptools>=0.6c11 in this python.
+  $ python setup.py install
 
 Install LibreOffice / OpenOffice.org
 ====================================

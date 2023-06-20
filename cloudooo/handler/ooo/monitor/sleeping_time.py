@@ -28,7 +28,7 @@
 #
 ##############################################################################
 
-from monitor import Monitor
+from .monitor import Monitor
 from threading import Thread
 from cloudooo.util import logger
 from time import sleep, time
@@ -66,8 +66,8 @@ class MonitorSpleepingTime(Monitor, Thread):
       current_time = time()
       if self.openoffice.status() and\
         (self._touched_at + self.sleeping_time) <= current_time:
-        logger.debug("Stopping OpenOffice after sleeping time of %is" %\
-                                                            self.sleeping_time)
+        logger.debug("Stopping OpenOffice after sleeping time of %is",
+                      self.sleeping_time)
         self.openoffice.acquire()
         self.openoffice.stop()
         self.openoffice.release()

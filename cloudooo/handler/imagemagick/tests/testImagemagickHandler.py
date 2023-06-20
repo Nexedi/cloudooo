@@ -41,7 +41,8 @@ class TestHandler(HandlerTestCase):
 
   def testConvertPNGtoJPG(self):
     """Test conversion of png to jpg"""
-    png_file = open("data/test.png").read()
+    with open("data/test.png", "rb") as f:
+      png_file = f.read()
     handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     jpg_file = handler.convert("jpg")
     mime = magic.Magic(mime=True)
@@ -50,7 +51,8 @@ class TestHandler(HandlerTestCase):
 
   def testgetMetadataFromImage(self):
     """Test if metadata is extracted from image correctly"""
-    png_file = open("data/test.png").read()
+    with open("data/test.png", "rb") as f:
+      png_file = f.read()
     handler = Handler(self.tmp_url, png_file, "png", **self.kw)
     metadata = handler.getMetadata()
     self.assertEqual(metadata.get("Compression"), "Zip")
@@ -59,7 +61,7 @@ class TestHandler(HandlerTestCase):
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
-    handler = Handler(self.tmp_url, "", "png", **self.kw)
+    handler = Handler(self.tmp_url, b"", "png", **self.kw)
     self.assertRaises(NotImplementedError, handler.setMetadata)
 
 

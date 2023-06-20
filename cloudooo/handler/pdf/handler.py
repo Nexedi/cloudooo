@@ -36,11 +36,13 @@ from cloudooo.util import logger, parseContentType
 from subprocess import Popen, PIPE
 from tempfile import mktemp
 
-from pyPdf import PdfFileWriter, PdfFileReader
-from pyPdf.generic import NameObject, createStringObject
+
+from pypdf import PdfWriter, PdfReader
+from pypdf.generic import NameObject, createStringObject
+
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """PDF Handler is used to handler inputed pdf document."""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -52,7 +54,7 @@ class Handler(object):
   def convert(self, destination_format=None, **kw):
     """ Convert a pdf document """
     # TODO: use pyPdf
-    logger.debug("PDFConvert: %s > %s" % (self.document.source_format, destination_format))
+    logger.debug("PDFConvert: %s > %s", self.document.source_format, destination_format)
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.document.directory_name)
     command = ["pdftotext", self.document.getUrl(), output_url]
@@ -77,8 +79,9 @@ class Handler(object):
                            stdout=PIPE,
                            stderr=PIPE,
                            close_fds=True,
+                           text=True,
                            env=self.environment).communicate()
-    info_list = filter(None, stdout.split("\n"))
+    info_list = [_f for _f in stdout.split("\n") if _f]
     metadata = {}
     for info in iter(info_list):
       info = info.split(":")
@@ -94,8 +97,8 @@ class Handler(object):
     metadata -- expected an dictionary with metadata.
     """
     # TODO: date as "D:20090401124817-04'00'" ASN.1 for ModDate and CreationDate
-    input_pdf = PdfFileReader(open(self.document.getUrl(), "rb"))
-    output_pdf = PdfFileWriter()
+    input_pdf = PdfReader(self.document.getUrl())
+    output_pdf = PdfWriter()
 
     modification_date = metadata.pop("ModificationDate", None)
     if modification_date:
@@ -103,13 +106,13 @@ class Handler(object):
     if type(metadata.get('Keywords', None)) is list:
       metadata['Keywords'] = metadata['Keywords'].join(' ')
     args = {}
-    for key, value in list(metadata.items()):
+    for key, value in metadata.items():
       args[NameObject('/' + key.capitalize())] = createStringObject(value)
 
-    output_pdf._info.getObject().update(args)
+    output_pdf._info.get_object().update(args)
 
-    for page_num in range(input_pdf.getNumPages()):
-      output_pdf.addPage(input_pdf.getPage(page_num))
+    for page in input_pdf.pages:
+      output_pdf.add_page(page)
 
     output_stream = io.BytesIO()
     output_pdf.write(output_stream)
@@ -124,7 +127,7 @@ class Handler(object):
      ...
     ]
     """
-    source_mimetype = parseContentType(source_mimetype).gettype()
+    source_mimetype = parseContentType(source_mimetype).get_content_type()
     if source_mimetype in ("application/pdf", "pdf"):
       return [("text/plain", "Plain Text")]
     return []

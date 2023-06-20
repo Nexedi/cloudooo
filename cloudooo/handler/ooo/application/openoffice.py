@@ -35,7 +35,7 @@ from psutil import AccessDenied, NoSuchProcess
 from os.path import exists, join
 from threading import Lock
 from zope.interface import implementer
-from application import Application
+from .application import Application
 from cloudooo.interfaces.lockable import ILockable
 from cloudooo.util import logger
 from cloudooo.handler.ooo.util import waitStartDaemon, \
@@ -60,8 +60,10 @@ class OpenOffice(Application):
 
   def _testOpenOffice(self, host, port):
     """Test if OpenOffice was started correctly"""
-    logger.debug("Test OpenOffice %s - Pid %s" % (self.getAddress()[-1],
-                                                  self.pid()))
+    logger.debug(
+      "Test OpenOffice %s - Pid %s",
+      self.getAddress()[-1],
+      self.pid())
     python = join(self.office_binary_path, "python")
     args = [exists(python) and python or "python3",
             pkg_resources.resource_filename("cloudooo",
@@ -70,14 +72,14 @@ class OpenOffice(Application):
             "--hostname=%s" % host,
             "--port=%s" % port,
             "--uno_path=%s" % self.uno_path]
-    logger.debug("Testing Openoffice Instance %s" % port)
+    logger.debug("Testing Openoffice Instance %s", port)
     try:
       subprocess.check_output(args, stderr=subprocess.STDOUT, close_fds=True)
     except subprocess.CalledProcessError as e:
       logger.warning(e.output)
       return False
     else:
-      logger.debug("Instance %s works" % port)
+      logger.debug("Instance %s works", port)
       return True
 
   def _cleanRequest(self):
@@ -153,12 +155,12 @@ class OpenOffice(Application):
     env["TMPDIR"] = self.path_user_installation
     self._startProcess(self.command, env)
     self._cleanRequest()
-    Application.start(self)
+    super().start()
 
   def stop(self):
     """Stop the instance by pid. By the default
     the signal is 15."""
-    Application.stop(self)
+    super().stop()
     if socketStatus(self.hostname, self.port):
       self._releaseOpenOfficePort()
     self._cleanRequest()
@@ -174,7 +176,7 @@ class OpenOffice(Application):
 
   def release(self):
     """Unlock Instance."""
-    logger.debug("OpenOffice %s, %s unlocked" % self.getAddress())
+    logger.debug("OpenOffice %s, %s unlocked", *self.getAddress())
     self._lock.release()
 
 openoffice = OpenOffice()

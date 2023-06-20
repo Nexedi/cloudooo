@@ -36,7 +36,7 @@ from subprocess import Popen, PIPE
 from tempfile import mktemp
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """FFMPEG Handler is used to handler inputed audio and video files"""
 
   def __init__(self, base_folder_url, data, source_format, **kw):
@@ -56,7 +56,7 @@ class Handler(object):
     # XXX This implementation could use ffmpeg -i pipe:0, but
     # XXX seems super unreliable currently and it generates currupted files in
     # the end
-    logger.debug("FfmpegConvert: %s > %s" % (self.input.source_format, destination_format))
+    logger.debug("FfmpegConvert: %s > %s", self.input.source_format, destination_format)
     output_url = mktemp(suffix=".%s" % destination_format,
                         dir=self.input.directory_name)
     command = ["ffmpeg",

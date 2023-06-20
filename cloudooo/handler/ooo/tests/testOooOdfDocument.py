@@ -37,17 +37,18 @@ from cloudooo.handler.ooo.document import OdfDocument
 class TestOdfDocument(HandlerTestCase):
 
   def setUp(self):
-    data = open('./data/granulate_test.odt').read()
+    with open('./data/granulate_test.odt', 'rb') as f:
+      data = f.read()
     self.oodocument = OdfDocument(data, 'odt')
 
   def testReceivedGoodFile(self):
     """Test if received path is from a good document returing an ZipFile"""
-    self.assertTrue(isinstance(self.oodocument._zipfile, ZipFile))
+    self.assertIsInstance(self.oodocument._zipfile, ZipFile)
 
   def testGetContentXml(self):
     """Test if the getContentXml method returns the content.xml file"""
     content_xml = self.oodocument.getContentXml()
-    self.assertTrue('The content of this file is just' in content_xml)
+    self.assertIn(b'The content of this file is just', content_xml)
 
   def testGetExistentFile(self):
     """Test if the getFile method returns the requested file"""
@@ -57,12 +58,12 @@ class TestOdfDocument(HandlerTestCase):
   def testGetNotPresentFile(self):
     """Test if the getFile method returns None for not present file request"""
     requested_file = self.oodocument.getFile('not_present.xml')
-    self.assertEqual(requested_file, '')
+    self.assertEqual(requested_file, b'')
 
   def testParseContent(self):
     """Test if the _parsed_content attribute is the parsed content.xml"""
     # XXX not sure it is good to store parsed document everytime
-    self.assertTrue(isinstance(self.oodocument.parsed_content, etree._Element))
+    self.assertIsInstance(self.oodocument.parsed_content, etree._Element)
     self.assertTrue(self.oodocument.parsed_content.tag.endswith(
                     'document-content'))
 

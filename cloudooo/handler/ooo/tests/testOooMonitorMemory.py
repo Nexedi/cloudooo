@@ -33,7 +33,6 @@ from time import sleep
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from cloudooo.handler.ooo.monitor.memory import MonitorMemory
 from psutil import Process
-from types import IntType
 
 OPENOFFICE = True
 
@@ -69,11 +68,14 @@ class TestMonitorMemory(unittest.TestCase):
 
   def testMonitorWithLittleMemoryLimit(self):
     """Test the monitor with limit of 10Mb. In This case the openoffice will be
-    stopped"""
+    stopped after some time"""
     try:
-      self.monitor = MonitorMemory(openoffice, 2, 10)
+      self.monitor = MonitorMemory(openoffice, 1, 10)
       self.monitor.start()
-      sleep(self.interval)
+      for _ in range(30):
+        sleep(1)
+        if not openoffice.status():
+          break
       self.assertEqual(openoffice.status(), False)
     finally:
       self.monitor.terminate()
@@ -94,17 +96,15 @@ class TestMonitorMemory(unittest.TestCase):
     self.monitor = MonitorMemory(openoffice, 2, 400)
     self.monitor.create_process()
     self.assertTrue(hasattr(self.monitor, 'process'))
-    self.assertEqual(type(self.monitor.process), Process)
+    self.assertIsInstance(self.monitor.process, Process)
 
   def testGetMemoryUsage(self):
     """Test memory usage"""
     self.monitor = MonitorMemory(openoffice, 2, 400)
     openoffice.stop()
-    memory_usage_int = self.monitor.get_memory_usage()
-    self.assertEqual(memory_usage_int, 0)
+    memory_usage = self.monitor.get_memory_usage()
+    self.assertEqual(memory_usage, 0)
     if not openoffice.status():
       openoffice.start()
-    memory_usage_int = self.monitor.get_memory_usage()
-    self.assertEqual(type(memory_usage_int), IntType)
-
-
+    memory_usage = self.monitor.get_memory_usage()
+    self.assertIsInstance(memory_usage, int)

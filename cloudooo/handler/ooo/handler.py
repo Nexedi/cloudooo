@@ -31,7 +31,7 @@
 import json
 import pkg_resources
 import mimetypes
-from base64 import decodestring, encodestring
+from base64 import decodebytes, encodebytes
 from os import environ, path
 from subprocess import Popen, PIPE
 from cloudooo.handler.ooo.application.openoffice import openoffice
@@ -46,7 +46,7 @@ from psutil import pid_exists
 
 
 @implementer(IHandler)
-class Handler(object):
+class Handler:
   """OOO Handler is used to access the one Document and OpenOffice.
   For each Document inputed is created on instance of this class to manipulate
   the document. This Document must be able to create and remove a temporary
@@ -76,9 +76,9 @@ class Handler(object):
       # backward compatibility.
       # The heuristic is "if it's not utf-8", let's assume it's iso-8859-15.
       try:
-        unicode(data, 'utf-8')
+        data.decode('utf-8')
       except UnicodeDecodeError:
-        data = unicode(data, 'iso-8859-15').encode('utf-8')
+        data = data.decode('iso-8859-15').encode('utf-8')
         logger.warn("csv data is not utf-8, assuming iso-8859-15")
     self.document = FileSystemDocument(
          base_folder_url,
@@ -99,7 +99,7 @@ class Handler(object):
                     '--document_url=%s' % self.document.getUrl()]
     for arg in args:
       command_list.insert(3, "--%s" % arg)
-    for k, v in kw.iteritems():
+    for k, v in kw.items():
       command_list.append("--%s=%s" % (k, v))
 
     return command_list
@@ -138,16 +138,16 @@ class Handler(object):
     stdout, stderr = self._subprocess(command_list)
     if not stdout and stderr:
       first_error = stderr
-      logger.error(stderr)
+      logger.error(stderr.decode())
       self.document.restoreOriginal()
       openoffice.restart()
       kw['document_url'] = self.document.getUrl()
       command = self._getCommand(*feature_list, **kw)
       stdout, stderr = self._subprocess(command)
       if not stdout and stderr:
-        second_error = "\nerror of the second run: " + stderr
-        logger.error(second_error)
-        raise Exception(first_error + second_error)
+        second_error = b"\nerror of the second run: " + stderr
+        logger.error(second_error.decode())
+        raise Exception((first_error + second_error).decode(errors='replace'))
 
     return stdout, stderr
 
@@ -165,7 +165,7 @@ class Handler(object):
       filter_list.append((destination_extension,
                           service_type,
                           mimemapper.getFilterName(destination_extension, service_type)))
-    logger.debug("Filter List: %r" % filter_list)
+    logger.debug("Filter List: %r", filter_list)
     return json.dumps(dict(doc_type_list_by_extension=mimemapper._doc_type_list_by_extension,
                             filter_list=filter_list,
                             mimetype_by_filter_type=mimemapper._mimetype_by_filter_type))
@@ -177,7 +177,7 @@ class Handler(object):
     """
     if not self.enable_scripting and kw.get('script'):
       raise Exception("ooo: scripting is disabled")
-    logger.debug("OooConvert: %s > %s" % (self.source_format, destination_format))
+    logger.debug("OooConvert: %s > %s", self.source_format, destination_format)
     kw['source_format'] = self.source_format
     if destination_format:
       kw['destination_format'] = destination_format
@@ -186,10 +186,10 @@ class Handler(object):
     kw['refresh'] = json.dumps(self.refresh)
     openoffice.acquire()
     try:
-      stdout, stderr = self._callUnoConverter(*['convert'], **kw)
+      stdout, _ = self._callUnoConverter(*['convert'], **kw)
     finally:
       openoffice.release()
-    url = stdout.replace('\n', '')
+    url = stdout.replace(b'\n', b'')
     self.document.reload(url)
     content = self.document.getContent(self.zip)
     self.document.trash()
@@ -198,8 +198,8 @@ class Handler(object):
   def getMetadata(self, base_document=False):
     """Returns a dictionary with all metadata of document.
     Keywords Arguments:
-    base_document -- Boolean variable. if true, the document is also returned
-    along with the metadata."""
+    base_document -- Boolean variable. if true, the document content (as bytes)
+    is also returned along with the metadata."""
     logger.debug("getMetadata")
     kw = dict(mimemapper=self._serializeMimemapper())
     if base_document:
@@ -208,10 +208,10 @@ class Handler(object):
       feature_list = ['getmetadata']
     openoffice.acquire()
     try:
-      stdout, stderr = self._callUnoConverter(*feature_list, **kw)
+      stdout, _ = self._callUnoConverter(*feature_list, **kw)
     finally:
       openoffice.release()
-    metadata = json.loads(decodestring(stdout))
+    metadata = json.loads(decodebytes(stdout))
     if 'document_url' in metadata:
       self.document.reload(metadata['document_url'])
       metadata['Data'] = self.document.getContent()
@@ -224,12 +224,11 @@ class Handler(object):
     Keyword arguments:
     metadata -- expected an dictionary with metadata.
     """
-    metadata_pickled = json.dumps(metadata)
-    logger.debug("setMetadata")
-    kw = dict(metadata=encodestring(metadata_pickled))
+    metadata_pickled = json.dumps(metadata).encode()
+    kw = dict(metadata=encodebytes(metadata_pickled).decode())
     openoffice.acquire()
     try:
-      stdout, stderr = self._callUnoConverter(*['setmetadata'], **kw)
+      self._callUnoConverter(*['setmetadata'], **kw)
     finally:
       openoffice.release()
     doc_loaded = self.document.getContent()
@@ -249,7 +248,7 @@ class Handler(object):
     # XXX please never guess extension from mimetype
     output_set = set()
     if "/" in source_mimetype:
-      parsed_mimetype_type = parseContentType(source_mimetype).gettype()
+      parsed_mimetype_type = parseContentType(source_mimetype).get_content_type()
       # here `guess_all_extensions` never handles mimetype parameters
       #   (even for `text/plain;charset=UTF-8` which is standard)
       extension_list = mimetypes.guess_all_extensions(parsed_mimetype_type)  # XXX never guess

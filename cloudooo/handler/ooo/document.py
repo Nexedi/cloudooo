@@ -30,7 +30,7 @@
 
 from zope.interface import implementer
 from zipfile import ZipFile
-from StringIO import StringIO
+from io import BytesIO
 from lxml import etree
 from cloudooo.interfaces.file import IOdfDocument
 from cloudooo.file import File
@@ -41,8 +41,9 @@ class FileSystemDocument(File):
 
 
 @implementer(IOdfDocument)
-class OdfDocument(object):
+class OdfDocument:
   """Manipulates odf documents in memory"""
+
 
   def __init__(self, data, source_format):
     """Open the the file in memory.
@@ -51,22 +52,22 @@ class OdfDocument(object):
     data -- Content of the document
     source_format -- Document Extension
     """
-    self._zipfile = ZipFile(StringIO(data))
+    self._zipfile = ZipFile(BytesIO(data))
 
     self.source_format = source_format
     # XXX - Maybe parsed_content should not be here, but on OOGranulate
     self.parsed_content = etree.fromstring(self.getContentXml())
 
-  def getContentXml(self):
-    """Returns the content.xml file as string"""
+  def getContentXml(self) -> bytes:
+    """Returns the content.xml file as bytes"""
     return self._zipfile.read('content.xml')
 
-  def getFile(self, path):
-    """If exists, returns file as string, else return an empty string"""
+  def getFile(self, path:str) -> bytes:
+    """If exists, returns file as bytes, otherwise b''"""
     try:
       return self._zipfile.read(path)
     except KeyError:
-      return ''
+      return b''
 
   def trash(self):
     """Remove the file in memory."""

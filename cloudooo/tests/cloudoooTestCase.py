@@ -30,23 +30,21 @@
 
 import unittest
 from os import environ, path
-from ConfigParser import ConfigParser
-from xmlrpclib import ServerProxy, Fault
+from configparser import ConfigParser
+from xmlrpc.client import ServerProxy, Fault
 from magic import Magic
-from types import DictType
-from base64 import encodestring, decodestring
-from cloudooo.tests import backportUnittest
+from base64 import encodebytes, decodebytes
 
 config = ConfigParser()
 
 def make_suite(test_case):
   """Function is used to run all tests together"""
   suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(test_case))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(test_case))
   return suite
 
 
-class TestCase(backportUnittest.TestCase):
+class TestCase(unittest.TestCase):
 
   def setUp(self):
     server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
@@ -58,16 +56,20 @@ class TestCase(backportUnittest.TestCase):
     #create temporary path for some files
     self.working_path = config.get("app:main", "working_path")
     self.tmp_url = path.join(self.working_path, "tmp")
-    self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
+    self.proxy = ServerProxy(("http://{}:{}/RPC2".format(self.hostname, self.port)),\
                 allow_none=True)
+    self.addCleanup(self.proxy('close'))
     self.afterSetUp()
 
   def afterSetUp(self):
     """Must be overwrite into subclass in case of need """
 
-  def _getFileType(self, output_data):
+  def _getFileType(self, output_data:str) -> str:
+    """get file type of `output_data`
+    output_data is base64
+    """
     mime = Magic(mime=True)
-    mimetype = mime.from_buffer(decodestring(output_data))
+    mimetype = mime.from_buffer(decodebytes(output_data.encode()))
     return mimetype
 
   def _testConvertFile(self, input_url, source_format, destination_format,
@@ -75,10 +77,13 @@ class TestCase(backportUnittest.TestCase):
     """ Generic test for converting file """
     fault_list = []
     try:
-      output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
-                                                        source_format,
-                                                        destination_format,
-                                                        zip)
+      with open(input_url, 'rb') as f:
+        data = f.read()
+      output_data = self.proxy.convertFile(
+        encodebytes(data).decode(),
+        source_format,
+        destination_format,
+        zip)
       file_type = self._getFileType(output_data)
       if destination_mimetype != None:
         self.assertEqual(file_type, destination_mimetype)
@@ -92,47 +97,51 @@ class TestCase(backportUnittest.TestCase):
       message = '\n'.join([template_message % fault for fault in fault_list])
       self.fail('Failed Conversions:\n' + message)
 
-  def _testFaultConversion(self, data, source_format, destination_format):
+  def _testFaultConversion(self, data:bytes, source_format:str, destination_format:str):
     """ Generic test for fail converting"""
-    self.assertRaises(Fault, self.proxy.convertFile, (data, 
+    self.assertRaises(Fault, self.proxy.convertFile, (data,
                                                       source_format,
                                                       destination_format))
 
-  def _testGetMetadata(self, input_url, source_format, expected_metadata,
+  def _testGetMetadata(self, input_url:str, source_format:str, expected_metadata:dict,
                       base_document=False):
     """ Generic tes for getting metadata file"""
+    with open(input_url, 'rb') as f:
+      input_data = f.read()
     metadata_dict = self.proxy.getFileMetadataItemList(
-                            encodestring(open(input_url).read()),
+                            encodebytes(input_data).decode(),
                             source_format,
                             base_document)
-    for key,value in expected_metadata.iteritems():
+    for key,value in expected_metadata.items():
       self.assertEqual(metadata_dict[key], value)
 
-  def _testFaultGetMetadata(self, data, source_format):
+  def _testFaultGetMetadata(self, data:bytes, source_format:str):
     """ Generic test for fail converting"""
-    self.assertRaises(Fault, self.proxy.getFileMetadataItemList, (data, 
+    self.assertRaises(Fault, self.proxy.getFileMetadataItemList, (data,
                                                                   source_format))
 
-  def _testUpdateMetadata(self, input_url, source_format, metadata_dict):
+  def _testUpdateMetadata(self, input_url:str, source_format:str, metadata_dict:dict):
     """ Generic test for setting metadata for file """
-    output_data = self.proxy.updateFileMetadata(encodestring(open(input_url).read()),
+    with open(input_url, 'rb') as f:
+      input_data = f.read()
+    output_data = self.proxy.updateFileMetadata(encodebytes(input_data).decode(),
                                             source_format,
                                             metadata_dict)
     new_metadata_dict = self.proxy.getFileMetadataItemList(
                             output_data,
                             source_format,
                             False)
-    for key,value in metadata_dict.iteritems():
+    for key, value in metadata_dict.items():
       self.assertEqual(new_metadata_dict[key], value)
 
-  def _testRunConvert(self, filename, data, expected_response_code,
-                      response_dict_data,response_dict_keys,
+  def _testRunConvert(self, filename:str, data:bytes, expected_response_code:int,
+                      response_dict_data, response_dict_keys:list[str],
                       expected_response_message, response_dict_meta=None):
     """Generic test for run_convert"""
     response_code, response_dict, response_message = \
-              self.proxy.run_convert(filename, encodestring(data))
+              self.proxy.run_convert(filename, encodebytes(data).decode())
     self.assertEqual(response_code, expected_response_code)
-    self.assertEqual(type(response_dict), DictType)
+    self.assertIsInstance(response_dict, dict)
     if expected_response_code == 402:
       self.assertEqual(response_dict, {})
       self.assertTrue(response_message.endswith(expected_response_message),
@@ -152,7 +161,8 @@ class TestCase(backportUnittest.TestCase):
 
   def runConversionList(self, scenarios):
     for scenario in scenarios:
-      self._testConvertFile(*scenario)
+      with self.subTest(scenario):
+        self._testConvertFile(*scenario)
 
   def GetMetadataScenarioList(self):
     """
@@ -163,7 +173,8 @@ class TestCase(backportUnittest.TestCase):
 
   def runGetMetadataList(self, scenarios):
     for scenario in scenarios:
-      self._testGetMetadata(*scenario)
+      with self.subTest(scenario):
+        self._testGetMetadata(*scenario)
 
   def UpdateMetadataScenarioList(self):
     """
@@ -174,7 +185,8 @@ class TestCase(backportUnittest.TestCase):
 
   def runUpdateMetadataList(self, scenarios):
     for scenario in scenarios:
-      self._testUpdateMetadata(*scenario)
+      with self.subTest(scenario):
+        self._testUpdateMetadata(*scenario)
 
   def FaultConversionScenarioList(self):
     """
@@ -185,7 +197,8 @@ class TestCase(backportUnittest.TestCase):
 
   def runFaultConversionList(self, scenarios):
     for scenario in scenarios:
-      self._testFaultConversion(*scenario)
+      with self.subTest(scenario):
+        self._testFaultConversion(*scenario)
 
   def FaultGetMetadataScenarioList(self):
     """
@@ -196,7 +209,8 @@ class TestCase(backportUnittest.TestCase):
 
   def runFaultGetMetadataList(self, scenarios):
     for scenario in scenarios:
-      self._testFaultGetMetadata(*scenario)
+      with self.subTest(scenario):
+        self._testFaultGetMetadata(*scenario)
 
   def ConvertScenarioList(self):
     """
@@ -207,5 +221,6 @@ class TestCase(backportUnittest.TestCase):
 
   def runConvertScenarioList(self, scenarios):
     for scenario in scenarios:
-      self._testRunConvert(*scenario)
+      with self.subTest(scenario):
+        self._testRunConvert(*scenario)
 

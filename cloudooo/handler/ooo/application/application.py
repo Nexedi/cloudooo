@@ -36,7 +36,7 @@ from psutil import pid_exists, Process, AccessDenied
 
 
 @implementer(IApplication)
-class Application(object):
+class Application:
   """Base object to create an object that is possible manipulation a
   process"""
 
@@ -44,15 +44,17 @@ class Application(object):
 
   def start(self, init=True):
     """Start Application"""
-    logger.debug("Process Started %s, Port %s. Pid %s" % (self.name,
-                                                    self.getAddress()[-1],
-                                                    self.pid()))
+    logger.debug(
+      "Process Started %s, Port %s. Pid %s",
+      self.name,
+      self.getAddress()[-1],
+      self.pid())
 
   def stop(self):
     """Stop the process"""
     if hasattr(self, 'process') and self.status():
       process_pid = self.process.pid
-      logger.debug("Stop Pid - %s" % process_pid)
+      logger.debug("Stop Pid - %s", process_pid)
       try:
         self.process.terminate()
         waitStopDaemon(self, self.timeout)
@@ -104,3 +106,9 @@ class Application(object):
     if not hasattr(self, 'process'):
       return None
     return self.process.pid
+
+  def hasExited(self):
+    """Check if process has exited running"""
+    if not hasattr(self, 'process'):
+      return True
+    return self.process.poll() is not None

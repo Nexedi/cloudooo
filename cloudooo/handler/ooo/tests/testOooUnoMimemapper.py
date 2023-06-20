@@ -67,11 +67,10 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           text=True).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertTrue('filter_dict' in locals())
-    self.assertTrue('type_dict' in locals())
     self.assertNotEqual(filter_dict.get('writer8'), None)
     self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -88,11 +87,10 @@ class TestUnoMimeMapper(HandlerTestCase):
             "--port=%s" % self.openoffice_port]
     stdout, stderr = Popen(command,
                            stdout=PIPE,
-                           stderr=PIPE).communicate()
+                           stderr=PIPE,
+                           text=True).communicate()
     self.assertEqual(stderr, '')
     filter_dict, type_dict = json.loads(stdout)
-    self.assertTrue('filter_dict' in locals())
-    self.assertTrue('type_dict' in locals())
     self.assertNotEqual(filter_dict.get('writer8'), None)
     self.assertEqual(type_dict.get('writer8').get('Name'), 'writer8')
     self.assertNotEqual(filter_dict.get('writer8'), None)
@@ -101,7 +99,7 @@ class TestUnoMimeMapper(HandlerTestCase):
 
   def testWithoutOpenOffice(self):
     """Test when the openoffice is stopped"""
-    error_msg = "couldn\'t connect to socket (Success)\n"
+    error_msg = "couldn\'t connect to socket"
     hostname, host = openoffice.getAddress()
     openoffice.stop()
     python = path.join(self.office_binary_path, "python")
@@ -117,9 +115,10 @@ class TestUnoMimeMapper(HandlerTestCase):
     for i in range(10):
       stdout, stderr = Popen(command,
                              stdout=PIPE,
-                             stderr=PIPE).communicate()
+                             stderr=PIPE,
+                             text=True).communicate()
     self.assertEqual(stdout, '')
-    self.assertTrue(stderr.endswith(error_msg), stderr)
+    self.assertIn(error_msg, stderr)
     openoffice.start()
 
 

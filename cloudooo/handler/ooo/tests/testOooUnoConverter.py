@@ -50,7 +50,8 @@ class TestUnoConverter(HandlerTestCase):
     """ """
     openoffice.acquire()
     self.hostname, self.port = openoffice.getAddress()
-    data = open("data/test.odt", 'r').read()
+    with open("data/test.odt", "rb") as f:
+      data = f.read()
     self.document = FileSystemDocument(self.tmp_url, data, 'odt')
 
   def tearDown(self):
@@ -78,6 +79,7 @@ class TestUnoConverter(HandlerTestCase):
           "--source_format=%s" % "odt",
           "--mimemapper=%s" % mimemapper_pickled]
     stdout, stderr = Popen(command,
+                           text=True,
                            stdout=PIPE,
                            stderr=PIPE).communicate()
     self.assertEqual(stderr, '')

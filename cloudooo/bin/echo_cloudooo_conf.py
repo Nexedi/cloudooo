@@ -6,4 +6,4 @@ def main():
   cloudooo_conf_path = pkg_resources.resource_filename("cloudooo",
                                     path.join("sample", "cloudooo.conf.in"))
 
-  print open(cloudooo_conf_path).read()
+  print(open(cloudooo_conf_path).read())

@@ -28,12 +28,12 @@
 #
 ##############################################################################
 
+import email
+import email.message
 import logging
 import mimetypes
 import pkg_resources
 import os
-import mimetools
-import cStringIO
 from zipfile import ZipFile, ZIP_DEFLATED
 
 logger = logging.getLogger('Cloudooo')
@@ -96,7 +96,7 @@ convertStringToBool = ('false', 'true').index
 
 def zipTree(destination, *tree_path_list):
   """
-    destination may be a path or a StringIO
+    destination may be a path or a file-like
 
     tree_path_list is a list that may contain a path or a couple(path, archive_root)
   """
@@ -126,17 +126,13 @@ def unzip(source, destination):
   with ZipFile(source) as zipfile:
     zipfile.extractall(destination)
 
-def parseContentType(content_type):
-  """Parses `text/plain;charset="utf-8"` to a mimetools.Message object.
+def parseContentType(content_type:str) -> email.message.EmailMessage:
+  """Parses `text/plain;charset="utf-8"` to an email object.
 
   Note: Content type or MIME type are built like `maintype/subtype[;params]`.
 
       parsed_content_type = parseContentType('text/plain;charset="utf-8"')
-      parsed_content_type.gettype()  -> 'text/plain'
-      parsed_content_type.getmaintype()  -> 'text'
-      parsed_content_type.getsubtype()  -> 'plain'
-      parsed_content_type.getplist()  -> 'charset="utf-8"'
-      parsed_content_type.getparam('charset')  -> 'utf-8'
-      parsed_content_type.typeheader  -> 'text/plain;charset="utf-8"'
+      parsed_content_type.get_content_type()  -> 'text/plain'
+      parsed_content_type.get_charset()  -> 'utf-8'
   """
-  return mimetools.Message(cStringIO.StringIO("Content-Type:" + content_type.replace("\r\n", "\r\n\t")))
+  return email.message_from_string("Content-Type:" + content_type.replace("\r\n", "\r\n\t"))

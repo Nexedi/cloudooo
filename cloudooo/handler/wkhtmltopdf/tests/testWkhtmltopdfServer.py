@@ -44,10 +44,11 @@ class TestServer(TestCase):
     self.runConversionList(self.ConversionScenarioList())
 
   def FaultConversionScenarioList(self):
-    return [
-      # Test to verify if server fail when a empty string is sent
-      ('', '', ''),
-      # Try convert one html for a invalid format
-      (open(join('data', 'test_with_png_dataurl.html')).read(), 'html', 'xyz'),
+    scenario_list = [
+      # Test to verify if server fail when a empty file is sent
+      (b'', '', ''),
     ]
-
+      # Try convert one html for a invalid format
+    with open(join('data', 'test_with_png_dataurl.html'), 'rb') as f:
+      scenario_list.append((f.read(), 'html', 'xyz'))
+    return scenario_list

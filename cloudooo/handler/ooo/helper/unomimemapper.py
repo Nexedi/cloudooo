@@ -30,23 +30,10 @@
 ##############################################################################
 
 import sys
-try:
-  import json
-except ImportError:
-  import simplejson as json
+import json
 import helper_util
 from getopt import getopt, GetoptError
 
-# python3 support
-try:
-  basestring
-except NameError:
-  basestring = str
-
-try:
-  long
-except NameError:
-  long = int
 
 __doc__ = """
 
@@ -65,7 +52,7 @@ Options:
 """
 
 
-class UnoMimemapper(object):
+class UnoMimemapper:
   """ """
 
   def __init__(self, hostname, port, uno_path=None, office_binary_path=None):
@@ -74,7 +61,7 @@ class UnoMimemapper(object):
                                                          uno_path,
                                                          office_binary_path)
 
-  def _getElementNameByService(self, uno_service, ignore_name_list=[]):
+  def _getElementNameByService(self, uno_service, ignore_name_list):
     """Returns an dict with elements."""
     name_list = uno_service.getElementNames()
     service_dict = {}
@@ -84,7 +71,7 @@ class UnoMimemapper(object):
         for obj in iter(element_list):
             if obj.Name in ignore_name_list:
               continue
-            if not isinstance(obj.Value, (bool, int, long, basestring, tuple)):
+            if not isinstance(obj.Value, (bool, int, str, tuple)):
               continue
             element_dict[obj.Name] = obj.Value
             service_dict[name] = element_dict
