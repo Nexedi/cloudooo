@@ -57,7 +57,7 @@ class TestHandler(HandlerTestCase):
     metadata = handler.getMetadata()
     self.assertEqual(metadata.get("Compression"), "Zip")
     self.assertEqual(metadata.get("Colorspace"), "sRGB")
-    self.assertEqual(metadata.get("Alpha color"), "grey74")
+    self.assertEqual(metadata.get("Matte  color"), "grey74")
 
   def testsetMetadata(self):
     """ Test if metadata are inserted correclty """
