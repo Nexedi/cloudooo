@@ -211,8 +211,10 @@ class TestHandler(HandlerTestCase):
       ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007–365'),
       ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
       ('image/png', 'PNG - Portable Network Graphics'),
+      ('image/webp', 'WEBP - WebP Image'),
       ('text/html', 'HTML Document (Writer)'),
-      ('text/plain', 'Text - Choose Encoding')]
+      ('text/plain', 'Text - Choose Encoding'),
+    ]
     self.assertEqual(get("text/plain;ignored=param"), text_plain_output_list)
     self.assertEqual(get("text/plain;charset=UTF-8;ignored=param"), text_plain_output_list)
     self.assertEqual(get("text/plain;charset=US-ASCII;ignored=param"), text_plain_output_list)
@@ -232,6 +234,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007–365'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
         ('text/plain', 'Text - Choose Encoding') ])
 
@@ -251,6 +254,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -280,6 +284,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007–365'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
         ('text/plain', 'Text - Choose Encoding'),
         ])
@@ -299,6 +304,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007–365'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
         ('text/plain', 'Text - Choose Encoding') ])
 
@@ -318,6 +324,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -338,6 +345,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -365,6 +373,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.sun.xml.writer', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document'),
         ('text/html', 'HTML Document (Calc)'),
@@ -389,6 +398,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -409,6 +419,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -429,6 +440,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -458,6 +470,7 @@ class TestHandler(HandlerTestCase):
        ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
        ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
        ('image/tiff', 'TIFF - Tagged Image File Format'),
+       ('image/webp', 'WEBP - WebP Image'),
        ('image/wmf', 'WMF - Windows Metafile'),
        ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
        ('text/html', 'HTML Document (Draw)'),
@@ -479,6 +492,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)')])
@@ -499,6 +513,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -519,6 +534,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -539,6 +555,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -559,6 +576,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -579,6 +597,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -599,6 +618,7 @@ class TestHandler(HandlerTestCase):
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/svg+xml', 'SVGZ - Compressed Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Draw)') ])
@@ -616,6 +636,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document (Calc)') ])
 
@@ -638,6 +659,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document (Calc)') ])
 
@@ -654,6 +676,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document (Calc)') ])
 
@@ -672,6 +695,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007–365'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
         ('text/plain', 'Text - Choose Encoding') ])
 
@@ -698,6 +722,7 @@ class TestHandler(HandlerTestCase):
         ('application/vnd.sun.xml.writer', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('text/csv', 'Text CSV'),
         ('text/html', 'HTML Document'),
         ('text/html', 'HTML Document (Calc)'),
@@ -727,6 +752,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Impress)') ])
@@ -752,6 +778,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Impress)') ])
@@ -777,6 +804,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Impress)') ])
@@ -802,6 +830,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/svg+xml', 'SVG - Scalable Vector Graphics'),
         ('image/tiff', 'TIFF - Tagged Image File Format'),
+        ('image/webp', 'WEBP - WebP Image'),
         ('image/wmf', 'WMF - Windows Metafile'),
         ('image/x-ms-bmp', 'BMP - Windows Bitmap'),
         ('text/html', 'HTML Document (Impress)') ])
