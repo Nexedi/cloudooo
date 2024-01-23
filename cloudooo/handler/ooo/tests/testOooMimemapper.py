@@ -47,10 +47,10 @@ text_expected_tuple = (
     ('png', 'PNG - Portable Network Graphics'),
     ('rtf', 'Rich Text'),
     ('txt', 'Text - Choose Encoding'),
+    ('webp', 'WEBP - WebP Image'),
     )
 extra_text_expected_tuple = (
     ('docm', 'Word 2007–365 VBA'),
-    ('webp', 'WEBP - WebP Image'),
     )
 
 global_expected_tuple = (

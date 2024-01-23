@@ -641,6 +641,7 @@ image/vnd.svf
 image/vnd.wap.wbmp				wbmp
 image/vnd.xiff
 image/wmf                                       wmf
+image/webp					webp
 image/x-canon-cr2				cr2
 image/x-canon-crw				crw
 image/x-cmu-raster				ras

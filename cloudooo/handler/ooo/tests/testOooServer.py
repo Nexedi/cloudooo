@@ -52,7 +52,6 @@ class TestAllowedExtensions(TestCase):
     # XXX slightly different allowed formats with document_type !?
     _text_expected_tuple = text_expected_tuple + (
       ('docm', 'Word 2007–365 VBA'),
-      ('webp', 'WEBP - WebP Image'),
     )
     self.assertEqual(
       sorted([tuple(x) for x in text_allowed_list]),
@@ -350,7 +349,8 @@ class TestGenerate(TestCase):
   @expectedFailure
   def testRunGenerateMethodFailResponse(self):
     """Test run_generate method with invalid document"""
-    data = open(join('data', 'test.odt')).read()[:100]
+    with open(join('data', 'test.odt')) as f:
+      data = f.read()[:100]
     generate_result = self.proxy.run_generate('test.odt',
                                       encodebytes(data).decode(),
                                       None, 'pdf', 'application/vnd.oasis.opendocument.text')
