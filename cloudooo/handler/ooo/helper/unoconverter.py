@@ -143,9 +143,11 @@ class UnoDocument:
   def _getPropertyToImport(self, infilter,
       _ods="com.sun.star.sheet.SpreadsheetDocument"):
     """Create the property for import filter, according to the extension of the file."""
+    from com.sun.star.document.UpdateDocMode import NO_UPDATE
+    args = [self._createProperty('UpdateDocMode', NO_UPDATE)]
     if infilter:
       infilter = infilter.split(':', 1)
-      args = [self._createProperty("FilterName", infilter.pop(0))]
+      args.append(self._createProperty("FilterName", infilter.pop(0)))
       if infilter:
         args.append(self._createProperty("FilterOptions", *infilter))
       return args
@@ -162,17 +164,19 @@ class UnoDocument:
           except csv.Error:
             delimiter = ord(',')
 
-        return (
+        args.extend((
           self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
           self._createProperty("FilterOptions", "%s,34,UTF-8" % delimiter))
+        )
 
     elif self.source_format == 'html':
       if next(candidates, None) == _ods:
-        return (
+        args.extend((
           self._createProperty("FilterName", "calc_HTML_WebQuery"),
           )
+        )
 
-    return ()
+    return args
 
   def _load(self, infilter, refresh):
     """Create one document with basic properties
