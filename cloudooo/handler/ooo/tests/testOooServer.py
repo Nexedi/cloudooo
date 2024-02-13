@@ -37,6 +37,7 @@ from zipfile import ZipFile, is_zipfile
 from cloudooo.tests.cloudoooTestCase import TestCase
 from unittest import expectedFailure
 import magic
+import xmlrpc.client
 from cloudooo.handler.ooo.tests.testOooMimemapper import text_expected_tuple, presentation_expected_tuple
 
 
@@ -686,3 +687,15 @@ class TestCSVEncoding(TestCase):
     self.assertEqual(
         [],
         [x.text for x in tree.getroot().findall('.//td')])
+
+class TestInvalidFile(TestCase):
+  """cloudoo should refuse potentially unsafe files."""
+  def test_with_link(self):
+    for ext in ('odt', 'ods', 'odp', 'odg', 'html'):
+      with open('./data/with_link.%s' % ext, 'rb') as f:
+        data = encodebytes(f.read()).decode()
+      self.assertRaisesRegex(
+        xmlrpc.client.Fault,
+        'This document contains unsafe links .*',
+        self.proxy.convertFile, data, ext, 'pdf'
+      )

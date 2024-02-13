@@ -1,0 +1,1315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head>
+
+
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>File input (or "upload") in HTML forms</title>
+ <link rel="stylesheet" title="Yucca's style" href="test_arquivos/basic.css">
+<style type="text/css">
+body { font-family: Cambria; font-size-adjust: 0.465; }
+h1, h2, h3, h4 { font-family: Candara, sans-serif; }
+* { line-height: 1.2; }
+</style>
+</head><body>
+<h1>
+<a name="start">File input (or &#8220;upload&#8221;) in HTML forms</a>
+</h1>
+
+<p class="summary">A
+form
+in an HTML document (Web page) can contain an <code>input</code> element
+with <code>type="file"</code>. This may let the user include one or
+more files into the form submission.
+The form is often processed so that such files are stored onto
+the disk of the Web server; this is why file input (or file submission)
+is often called &#8220;file upload.&#8221;
+File input opens interesting possibilities, but browser support is
+still limited and generally of poor quality even in newest versions.
+Moreover, users are often puzzled with it, since most people
+use file input rather
+rarely.</p>
+<p>This document presents
+</p><ul>
+  <li> <a href="#basics">the basics</a>, including
+references to <a href="#server">server-side techniques needed</a>,
+       a simple
+       <a href="#example">example</a> to test and
+       <a href="#how">notes on how it was intended to work</a>
+  </li><li> <a href="#support">notes on browser support</a>:
+<a href="#ie">IE</a>, <a href="#netscape">Netscape</a>,
+<a href="#moz">Mozilla</a>,
+<a href="#opera">Opera</a>,
+<a href="#safari">Safari</a>;
+ <a href="#warn">users&#8217; problems with file input</a>;
+<a href="#present">appearance of the Browse button and the filename box</a>
+</li><li><a href="#acc">accessibility problems: file input is a challenge to many users</a>
+  </li><li> <a href="#alt">suggestions for allowing
+       alternative file submission methods</a>
+  </li><li> <a href="#ref">some references</a>
+  </li><li> <a href="#js">notes on client-side scripting issues</a>
+  </li><li> <a href="#tech">some technical notes</a> on the
+specifications and implementations:
+<a href="#enctype">The <code>enctype</code> attribute</a>;&nbsp;
+<a href="#multi">Submitting several files?</a>;&nbsp;
+<a href="#value">Setting the default filename</a>;&nbsp;
+<a href="#name">Getting the original name</a>;&nbsp;
+<a href="#size">The <code>size</code> attribute</a>;&nbsp;
+<a href="#restr">Setting restrictions on the file size</a>;&nbsp;
+<a href="#filter">Filtering (through a file type filter)</a>;&nbsp;
+<a href="#rfc">The status of RFC 1867</a>.
+</li></ul>
+
+<h2><a name="basics">The basics</a></h2>
+
+<p>The idea behind file input in HTML
+forms is to let users include entire files from their system
+into a form submission. The files could be text files, image files,
+or other data. For text files, file input would
+allow more convenient mechanisms than typing (or cutting&nbsp;&amp; pasting)
+large pieces of text. For binary data, such as images, file input
+would be not just more convenient but usually the only practical way.
+For more information on the design principles of file input,
+see
+<a href="http://www.faqs.org/rfcs/rfc1867.html">RFC 1867</a>,
+<cite>Form-based File Upload in HTML</cite>.</p>
+
+<p>Writing an HTML form with a file input field is rather simple.
+The difficult thing is actually to find or write a server-side script
+which can <em>do</em> something useful when it receives data in such a format.
+And the <em>really</em> difficult thing is to make such processing
+robust and controlled so that
+all data is processed properly and so that
+someone won&#8217;t e.g. fill your server&#8217;s
+disk space with gigabytes of junk, by ignorance or by malevolence.</p>
+
+<p>You need to know the general basics of
+writing HTML forms; if you need
+links to tutorials and references on forms, consult
+<cite><a href="http://www.cs.tut.fi/%7Ejkorpela/forms/index.html">How to write HTML forms</a></cite>.
+Then, what
+you need to do <strong>in HTML</strong> is to
+write a form so that
+</p><ul>
+  <li> the <code>action</code> attribute refers to a server-side
+       script which is capable of handling submissions containing forms or,
+       technically speaking, being in <code>multipart/form-data</code>
+       format; as explained below,
+don&#8217;t even dream about using
+<code>mailto:</code> URLs in <code>action</code> attributes,
+in this context or otherwise!
+  </li><li> it has the attribute
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/methods.html" title="Methods GET and POST in HTML forms&#8212;what&#8217;s the difference?">
+<code>method="post"</code></a>
+  </li><li> it has the attribute
+<code><a href="#enctype">enctype</a>="multipart/form-data"</code>
+  </li><li> it contains a field
+<br>
+<code>&lt;input type="file" name="<var>somename</var>" size="<var>chars</var>"&gt;</code>
+<br>
+where
+<ul class="emb">
+       <li> <var>somename</var> is a name you assign to the field as you like; the
+       form data set will contain the content of the file &#8220;under that
+       name&#8221;, and that name has nothing to do with the filename
+       </li><li> <var>chars</var> is an integer specifying the desired width,
+as a number of characters,
+ of the filename box to be displayed; the <code>size</code> attribute
+  is optional, but setting
+it to some relatively
+large value (say <code>40</code>) probably helps the user,
+since the default width of the
+box in current browsers is rather narrow for typical filenames.
+(See <a href="#size">notes on the <code>size</code> attribute</a>.)
+</li></ul>
+</li></ul>
+
+<p><small>Minimally, the form needs to contain a
+<a title="Description of INPUT TYPE=SUBMIT in WDG&#8217;s HTML 4.0 reference" href="http://www.htmlhelp.com/reference/html40/forms/input.html#submit">
+a submit element</a> too. It may also contain any other fields you like,
+       and explanatory texts, images, etc.</small></p>
+
+<p class="warning"><a name="goofs">A common problem with file input
+in forms</a> is that form data gets sent but only the <em>name</em>
+of the file is included. The reason is typically that the <code>form</code>
+element does not contain the attributes mentioned above.</p>
+
+<p>Since <a href="#support">browser support</a> to file input
+is still problematic, consider
+<a href="#alt"><strong>providing alternative methods</strong></a>
+of submitting data, too.</p>
+
+<p><small>It is hopefully evident that what happens in file
+input is the submission of <em>a copy of the file content</em>.
+The file on the user&#8217;s disk remains intact, and the server-side
+script cannot change <em>it</em>, only the copy of the data.
+</small></p>
+
+<h2><a name="server">Setting up a server-side script</a></h2>
+
+<p>As mentioned above, the server-side script
+(form handler) is the difficult part in creating a possibility
+for submitting files.
+There are useful brief notes on
+that in the <a href="#faq" title="&quot;How can I allow file uploads to my web site?&quot; in Web Authoring FAQ by WDG">FAQ entry</a>, but it <em>is</em> a difficult programming issue,
+and outside the scope of this document of mine.
+I&nbsp;just wish to emphasize&#8212;in addition to
+<a href="#restr">security issues</a> discussed below&nbsp;-
+that
+<strong>what happens to the data after submission is at the hands
+of the server-side script</strong>. It could &#8220;upload&#8221; it, i.e.
+save onto the server&#8217;s disk under some name, but it might just as
+well process the data only by extracting some information from it,
+or send the data by E-mail somewhere, or even send it to a printer.
+For example, the
+<a href="http://www.htmlhelp.org/tools/validator/">WDG HTML Validator</a>
+provides, as one alternative,
+<a href="http://www.htmlhelp.org/tools/validator/upload.html">a page containing a form for submitting a file</a> to validation.
+</p>
+
+<p>There are <strong>different server-side techniques</strong> for
+processing forms, so you need to consult documentation applicable to
+the technique you use, which is usually dictated by the characteristics
+of the server software. In particular, if you use
+<strong><a href="http://www.webthing.com/tutorials/cgifaq.html" title="CGI Programming FAQ">CGI</a></strong>, it can be useful
+to check section
+<a href="http://cgi.resourceindex.com/Programs_and_Scripts/Perl/File_Uploading/"><cite>Programs and Scripts: Perl: File Uploading</cite></a> in
+<a href="http://www.cgi-resources.com/"><cite>CGI Resource Index</cite></a>.
+(See also the links under &#8220;Related Categories&#8221;
+ for scripts in other languages.)
+You might find a script suitable for your purposes, or at least ideas for
+writing your own script.
+In your own coding using Perl with CGI,
+you&#8217;ll probably benefit from using the
+<code><a href="http://theoryx5.uwinnipeg.ca/CPAN/data/CGI.pm/CGI.html">CGI.pm</a></code> module; see especially
+section
+<cite><a href="http://theoryx5.uwinnipeg.ca/CPAN/data/CGI.pm/CGI.html#CREATING_A_FILE_UPLOAD_FIELD">Creating a file upload field</a></cite>
+in its documentation, and my
+<cite><a href="http://www.cs.tut.fi/%7Ejkorpela/perl/cgi.html">Fool&#8217;s Guide to CGI.pm</a></cite>.
+As an another example, if
+<a href="http://www.php.net/">PHP</a> is what you use, see
+section
+<cite><a href="http://www.php.net/manual/features.file-upload.php3">Handling file uploads</a></cite>
+in
+<cite><a href="http://www.php.net/manual/">PHP Manual</a></cite>. For
+ASP, see e.g. <cite><a href="http://www.asp101.com/articles/jacob/scriptupload.asp">Pure ASP File Upload</a></cite>
+by Jacob Gilley.</p>
+
+<h2><a name="example">Example</a></h2>
+
+<p>The example below uses
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/sendback.pl" type="text/plain" title="A Perl script for echoing back form data, formatted as a table">my simple sendback script</a> discussed in
+my
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/testing.html" title="How to test HTML forms using simple remotely-accessible scripts">document on testing HTML forms</a>.
+It simply echoes back the data it gets, but presented so that your
+browser will display it nicely; for a file field, only
+40 first octets (byes) are shown.</p>
+
+<p>The HTML markup is:
+</p><pre><code class="html">&lt;form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi"
+enctype="multipart/form-data" method="post"&gt;
+&lt;p&gt;
+Type some text (if you like):&lt;br&gt;
+&lt;input type="text" name="textline" size="30"&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Please specify a file, or a set of files:&lt;br&gt;
+&lt;input type="file" name="datafile" size="40"&gt;
+&lt;/p&gt;
+&lt;div&gt;
+&lt;input type="submit" value="Send"&gt;
+&lt;/div&gt;
+&lt;/form&gt;</code></pre>
+
+<p>And on your browser, with its current settings, and
+as possibly affected by
+<a href="http://www.cs.tut.fi/%7Ejkorpela/basic.css" type="text/css">my stylesheet</a>,
+this is what the form looks like
+</p><form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi" enctype="multipart/form-data" method="post">
+<p>
+Type some text (optionally):<br>
+<input id="txt" name="textline" size="30" type="text">
+</p>
+<p>
+Please specify a file, or a set of files:<br>
+<input name="datafile" size="40" type="file">
+</p>
+<div><input value="Send" type="submit"></div>
+</form>
+
+<h2><a name="how">How it was intended to work</a></h2>
+
+<p><a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC 1867</a> describes, in section
+<cite>3&nbsp;Suggested implementation</cite>, how
+file input was intended to take place in a typical situation:
+
+</p><blockquote>
+<h3>3.1 Display of <code>FILE</code> widget</h3>
+<p>   When a[n] <code>INPUT</code>
+tag of type <code>FILE</code> is encountered, the browser might show
+   a display of (previously selected) file names, and a &#8220;Browse&#8221; button
+   or selection method. Selecting the &#8220;Browse&#8221; button would cause the
+   browser to enter into a file selection mode appropriate for the
+   platform. Window-based browsers might pop up a file selection window,
+   for example. In such a file selection dialog, the user would have the
+   option of replacing a current selection, adding a new file selection,
+   etc. Browser implementors might choose let the list of file names be
+   manually edited.</p>
+<p>   If an <code>ACCEPT</code> attribute is present, the browser might constrain the
+   file patterns prompted for to match those with the corresponding
+   appropriate file extensions for the platform.</p>
+</blockquote>
+
+
+<p>Upon form submit, the contents of the files would then
+be included into the data set sent, as defined by the specification
+of the
+<a href="#enctype"><code>multipart/form-data</code></a>
+data type (data format, data encoding).</p>
+
+
+<h2><a name="support">Browser support to file input</a></h2>
+
+<p class="important">Although most browsers have
+supported file input for a long time, the <em>quality</em>
+of implementations is poor. Therefore users easily get confused with
+file input.</p>
+
+<p>The following notes on browser support are mostly
+historical and based on fairly old
+observations of mine (on Win95, Win98, and WinNT).
+These notes are followed by more interesting notes
+<a href="#warn">users&#8217; problems</a>
+especially caused by the poor quality of support on modern browsers.</p>
+
+<h3><a name="ie">Internet Explorer</a></h3>
+
+<p><strong>IE 3.0</strong>
+displays an input box and
+lets the user type a filename there&#8212;and it sends the
+<em>name</em> as part of the form data!
+Generally, any browser without any code which tries to support
+<code>input type="file"</code> can be <em>expected</em> to
+behave that way. (A browser which does not recognize <code>"file"</code>
+as a possible value for the <code>type</code> attribute can be expected
+to ignore that attribute, which means that the default value will be
+used, as if
+<a title="Description of INPUT TYPE=TEXT in WDG&#8217;s HTML 4.0 reference" href="http://www.htmlhelp.com/reference/html40/forms/input.html#text"><code>type="text"</code></a> had been specified.)
+</p>
+<!--
+<p><small>It has been reported that IE 3.0 from minor
+version 3.02 onwards supports file input, if an add-on
+is installed.</small></p>
+-->
+<p><strong>IE 4</strong> has an input box
+and a &#8220;Browse&#8221; capability,
+and it actually sends the file content,
+but it still allows <em>one</em>  file
+only to be selected.
+The &#8220;Browse&#8221; function display is <a href="#filter" title="Filtering (through a file type filter)">unfiltered</a>, i.e. all files
+which are normally visible are selectable.
+There does not seem to be any improvement in this respect in IE 5,
+or IE&nbsp;6, or IE&nbsp;7.</p>
+
+<h3><a name="netscape">Netscape</a></h3>
+
+<p>According to
+<a href="http://devedge.netscape.com/library/manuals/1998/htmlguide/tags10.html#1312487">Netscape&#8217;s documentation on file input</a>,
+support to it exists already in
+<strong>Netscape&nbsp;2</strong>. <!--I haven&#8217;t tested that, so I will
+mainly comment on version&nbsp;4 only.--></p>
+
+<p><strong>Netscape 4</strong> support to file input has
+a &#8220;Browse&#8221; capability, too, but the browsing has by default
+a
+<a href="#filter" title="Filtering (through a file type filter)">filter</a>
+which limits selectability to &#8220;HTML files&#8221;.
+The user can manually change this, though it is questionable
+how familiar users are with such things.
+Only one file can be specified.
+There does not seem to be any improvement in this respect in Netscape 4.5.
+Here is an example of the user interface:
+</p><blockquote><p>
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/file.gif">
+<img src="http://example.com/file.gif" title="Screen shot of Netscape 4&#8217;s user interface for file input" alt="(A popup window, titled &quot;File Upload&quot;, with a typical
+Windows-style set of directory and file icons, and basic
+functionality for navigation in the directory hierarchy.
+There is a field (initially empty) for File name, and a pulldown
+menu named Files of type, initially set to HTML Files.)" border="1" height="332" width="551"></a></p></blockquote>
+
+<h3 id="moz">Mozilla</h3>
+
+<p>The above-mentioned
+strange feature of Netscape has been fixed in
+<a href="http://www.mozilla.org/">Mozilla</a>, which
+uses no filter (i.e. displays all files);
+on the other hand it (at least in several versions) gives
+no user option to switch to a filtered view!</p>
+<p>Otherwise, Mozilla browsers follow the IE and Netscape tradition
+in implementing file input.</p>
+
+<h3><a name="opera">Opera</a></h3>
+
+<p><a href="http://www.operasoftware.com/" title="Opera software home page"><strong>Opera</strong></a>
+supports file input rather well.
+<!--(This applies to 3.60 official release;
+there were serious problems in beta releases.)-->
+It provides a &#8220;Browse&#8221; menu,
+though the button for activating it carries the label &#8220;...&#8221;,
+which might be somewhat confusing.
+It lets the user specify several files from the menu:
+</p><ul class="emb">
+  <li> Normally when you click on a file, the selection is changed, but...
+  </li><li> if you keep the Ctrl key pressed down while clicking on a
+file, Opera <em>adds</em> it to the selection, and
+  </li><li> if you keep the Shift key pressed down while clicking on a
+file, Opera discards the current selection and replaces it with a <em>range</em>
+       of files, from the file you clicked on to the file you last clicked before that,
+       inclusively.
+</li></ul>
+<p>It isn&#8217;t perfect though. The Browse window is rather small, and it is
+impossible to pick up several ranges, i.e. you must click on the files individually
+unless you want to select just one contiguous range.
+And the box for file names is quite small too, and its size is not
+affected by the <code>size</code> attribute.
+See also <a href="#value">notes on setting the default filename</a>.
+</p><p>When several files are specified (for one file input field),
+Opera puts them into a <code>multipart</code> message inside
+a <code>multipart</code> message.
+</p>
+
+<h3 id="safari">Safari</h3>
+<p>The Safari browser is popular in the Mac environment and is now
+available for Windows as well, as a beta version.</p>
+<p>I have been told that on Safari, the file input widget has just a
+browse button, labeled
+&#8220;Choose file&#8230;,&#8221;
+with no filename field.</p>
+
+<h3><a name="warn">Users&#8217; problems with file input</a></h3>
+
+<p>On the browsers discussed above,
+if the user <strong class="warning">types a filename directly</strong> into
+the input box, it must be the <em>full pathname</em> and it must
+be typed exactly. If the input is not a name
+of an existing file
+(e.g. due to a typo),
+then the form will be sent
+as if an empty file had been specified
+(though with the name given by the user),
+and <em>no
+warning</em> is given. People who encounter file input for the
+first time might be expected to get very confused, since
+the filename box appears first and looks like an area
+where the user should type something. </p>
+
+<p>The user probably often wishes to <strong>view</strong> the
+contents of files in the dialog, since it is difficult to
+select the file on the basis of its <em>name</em> only.
+On Windows systems, the browsers discussed here seem to use
+widgets where normal clicking on a file icon selects it, and to
+open it (in some program) one needs to use <em>right click</em> and
+select a suitable action. I guess most users won&#8217;t find that out
+without being helped. The following screen capture presents
+the dialogue on IE&nbsp;4 (on WinNT) in a situation where the user
+has right clicked on an icon and an action menu has popped up and
+the user is about to select the <u>O</u>pen action (which would,
+in this case, probably open the <code>.jpg</code> file in a graphics
+program or in a new browser window.</p>
+
+<img alt="(A Choose file dialog, with a popup menu on top of it,
+with Select as the first and hightlighted alternative.
+The Open alternative has been focused on. There are
+other alternatives below it, e.g. Add to Zip, Send To,
+and Properties." src="test_arquivos/select.gif" height="358" width="436">
+
+<p><small>There&#8217;s little you can do as the author of a form
+to help users in getting acquainted with such issues.
+If you think it&#8217;s useful to refer to instructions for some
+particular browsing environments, make it clear what situations
+(browsers, operating systems)
+the instructions apply to.</small></p>
+
+<p>The technical problems discussed here are one reason why
+authors should consider providing <em>alternatives</em> to file input.
+There&#8217;s a section on <a href="#acc" title="File input is a challenge to many users">accessibility problems</a> below,
+discussing some additional reasons.</p>
+
+<h3><a name="present">The appearance of the Browse button and the filename box</a></h3>
+
+<table align="right" border="0" cellpadding="8" cellspacing="0" width="40%">
+<tbody><tr><td>
+<form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi" enctype="multipart/form-data" method="post">
+<div><input name="datafile" type="file">
+<input type="submit"></div>
+</form>
+</td></tr></tbody></table>
+<p>All the browsers mentioned above use essentially
+similar appearance for the
+<a href="http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=widget" title="Definition of &quot;widget&quot;">widget</a> used to implement a file input element:
+a text input box for the filename looks similar to
+normal text input elements (<code>&lt;input type="text"&gt;</code>), and
+the Browse button
+resembles submit buttons
+(thus, is often grey), and it has
+the text &#8220;Browse&#8221; or
+its equivalent in another language.
+</p>
+<p><small>That text is under the control of the browser, not the author.
+It has however
+<a href="http://www.deja.com/msgid.xp?MID=%3C38119FEE.DFF60EBA@sector27.de%3E">been reported</a> that on Netscape, the text could be changed using a
+<!--"http://developer.netscape.com/docs/manuals/communicator/jsguide/scripts.htm"-->
+signed script.</small></p>
+<p>This is somewhat problematic, since it does not make
+the essential difference between submit and browse buttons
+visually obvious. Cf. to similar
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/imagereset.html#why">problems with reset buttons</a>.</p>
+
+<p>There is no way to <em>guarantee</em> that Browse buttons
+&#8220;look different&#8221;
+ or otherwise force any particular <em>appearance</em>
+such as font face or size. See
+the document
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/present.html" title="The visual appearance of input fields in forms on Web
+pages, such as the width of a text input field or the color of a
+submit button, can be affected using presentational markup
+or style sheets or both. This document discusses both ways
+and their practical effect on present-day browsers."><cite>Affecting the presentation
+of form fields on Web pages</cite></a>
+for an overview and examples. The Browse button is particularly
+&#8220;immune&#8221; to any presentational suggestions; it&#8217;s typically a
+&#8220;hard-wired&#8221; part of the browser&#8217;s user interface.
+In particular, on IE, declaring a background color and a text color
+for <code>input</code> elements in a style sheet affects
+submit buttons (<code>input type="submit"</code>) but not
+Browse buttons (<code>input type="file"</code>).
+</p>
+<p>If you think that &#8220;looking different&#8221; is important, you might thus try
+suggesting presentational features for <em>submit</em>
+buttons rather than Browse buttons (i.e., for <code>input type="file"</code>
+elements). However, this would mean that
+Browse buttons look like (the default appearance of) submit buttons
+whereas real submit buttons don&#8217;t!
+So it seems that it&#8217;s
+<strong>best to let browsers present Browse and submit
+buttons their way</strong>.
+</p>
+<p>The <strong>input box</strong> for the filename, on the other hand,
+seems to be affected by similar factors as normal text input boxes.
+You can apply various CSS properties to the <code>input</code>
+element, though it is far from obvious what they should mean for
+a file input widget or what they actually cause in each browser.</p>
+
+<p><small>Historical note:
+Since <code>input</code> elements are inline (text-level) elements,
+you can put text level markup
+ like <code>font</code> around them in HTML.
+However, such markup is often ignored when rendering form fields
+For example,
+<code>&lt;font size="4" face="Courier"&gt;&lt;input type="file" ...&gt;&lt;/font&gt;</code>
+<em>might</em>
+increase the font size and set the font to Courier. Specifically,
+this happened on Netscape&nbsp;4 but not on most other browsers.
+(As a side effect, on Netscape&nbsp;4, such
+a font size change affected the dimensions of the Browse
+button but not the font size of the the text &#8220;Browse&#8221;.
+Note that
+if you included a <code>color</code> attribute there,
+Netscape&nbsp; ignored it.)</small></p>
+
+<p>You could suggest presentational properties
+in a style sheet too, e.g.<br>
+<code>&lt;input type="file" ... style="color:#f00; background:#ccc"&gt;</code><br>
+and these in turn would be ignored e.g. by Netscape&nbsp;4
+but applied, to some extent at least, by most other graphic browsers.
+It is difficult to say how CSS rules <em>should</em>
+affect the widget, since it is an open question whether e.g.
+the text of the Browse button (which is not part of the
+textual content of the HTML document)
+should be formatted according to the font properties of the
+<code>input</code> element. (For example, IE&nbsp;4 and Mozilla seem to
+apply the font-size property but not the font-family property when
+rendering the button text. IE&nbsp;6 applies font-family too.</p>
+<p>The following example demonstrates how your browser treats a file
+input element where we suggest presentational properties both in HTML
+and in CSS:</p>
+
+<form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi" enctype="multipart/form-data" method="post">
+<div>
+<b><tt><big><input name="foo" style="background: rgb(255, 255, 204) none repeat scroll 0% 0%; color: rgb(102, 51, 0); -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; font-size: 160%; font-family: Courier,monospace; font-weight: bold;" type="file"></big></tt></b>
+</div>
+</form>
+
+<p>The example has the HTML markup<br>
+<code>&lt;b&gt;&lt;tt&gt;&lt;big&gt;&lt;input type="file" ...&gt;&lt;/big&gt;&lt;/tt&gt;&lt;/b&gt;</code><br>
+and the following CSS declarations applied to that <code>input</code> element:<br>
+<code>color:#630; background:#ffc none; font-size:160%; font-family:Courier,monospace; font-weight:bold</code><br>
+Such suggestions might help in making it clearer to users that
+there is a <em>special</em> input box. But try to avoid making it look
+<em>too</em> special, since there is then the risk of not getting
+intuitively recognized as an input box at all.</p>
+
+<p>At Quirksmode.org, there is a longish article that discusses
+fairly complex CSS techniques for changing the appearance of
+file input elements, in a sense:
+<cite><a href="http://www.quirksmode.org/dom/inputfile.html">
+Styling an input type="file"</a></cite>. I&nbsp;would however advice
+against any substantial changes in the appearance. Any esthetic
+improvement over browser defaults (in addition to being a matter
+of taste) has a price: it makes even the experienced user uncertain
+of what the widget is.</p>
+
+<h2><a name="acc">File input is a challenge to many users</a></h2>
+
+<p>This section discusses some specific <em>accessibility</em>
+problems in file input. For an overview of what accessibility is and
+why it is important, please refer to the
+<cite><a href="http://web.archive.org/web/20030605114512/http://www.diffuse.org/accessibility.html">Guide to Web Accessibility and Design for All</a></cite>.</p>
+
+<p>It has been reported that some
+special-purpose browsing software,
+such as some versions of the
+<a href="http://www.freedomscientific.com/fs_products/software_jaws.asp">JAWS</a> screen reader, have serious difficulties in file input.
+This is understandable, since the common implementation in browsers
+is oriented towards visual interaction.</p>
+
+<p>Even the &#8220;normal&#8221; browsers have serious difficulties in file
+input without using a mouse. (There are different reasons, including
+physiological and neurological problems, why the user may need to work
+without a mouse or other pointing devide.)
+In Internet Explorer&nbsp;6, you can select the
+Browse button by tabbing, but if you try to use
+the keyboard to activate it, hitting the Enter key, the browser
+<em>submits the form</em> instead!
+You would need to know that hitting the <em>space bar</em>
+(when focused on the Browse button)
+activates
+the file selection dialogue.
+Netscape&nbsp;7 skips over the browse button
+entirely when tabbing&#8212;it cannot be selected without a mouse.</p>
+<p><small>Not surprisingly, on Opera things work reasonably.
+The user can
+select the Browse button using the tab key and activate it
+by pressing the enter key, then select a file for upload from the
+file system; you would use the arrow keys move around in the file
+selection.</small></p>
+
+<p>On the <a href="http://lynx.browser.org/">Lynx</a>
+text browser, at least on Lynx&nbsp;2.8.4 on Unix,
+there is no Browse button, and there is no dialogue
+for accessing the computer&#8217;s
+file system. Thus,  the user needs to know the exact path name and syntax to
+type in the file name for upload, as is apparently also the case for
+IE and Netscape.</p>
+
+<p>There is also the
+<em>usability problem</em>
+that the browsing
+may start from a part of the file system in a manner which is
+not so natural to the user. The initial selection might be
+e.g. that of the directory where the Web browser itself resides!
+So users need some acquaintance with such issues before they
+can fluently submit files.</p>
+
+<p>More generally, since file input is relatively rare,
+users are often <strong>not familiar</strong> with it.
+They might not recognize the Browse button, and might have difficulties
+in understanding what&#8217;s going on when they click on it (or fail to
+click on it).</p>
+
+<p class="important">Thus, authors should normally
+include some short explanation about the presence of a file
+input field before the field itself. This can usually me done
+in a natural way, explaining simultaneously what kind and type of file
+should be submitted.</p>
+
+<p>For example, the explanation could say: &#8220;Please specify, if possible,
+an image
+file containing your photo in JPEG format.&#8221;
+Such a note may not help much when a user
+encounters such a field for the first time in his life,
+but it helps him to associate the eventual problems with a concept
+of file input and to explain his problems when seeking for help.
+And if he has tried to use file input before,
+it tells him to stay tuned to something special, and
+perhaps at this point, before entering the file input field, to access the
+file system outside the browser and find the exact path name of the file
+he wants to submit.</p>
+
+<h2><a name="alt">How to provide alternatives</a></h2>
+
+<p>There are several possible ways to let people submit their
+files even when their browsers do not
+<a href="#support" title="Browser support to file input">support</a> file fields in forms
+(or the support is of so poor quality that they don&#8217;t want to use it).</p>
+
+<p>You could include a
+<strong><a title="Description of TEXTAREA in WDG&#8217;s HTML 4.0 reference" href="http://www.htmlhelp.com/reference/html40/forms/textarea.html"><code>TEXTAREA</code></a></strong> element into the form.
+This would work especially for <em>text</em> files in the sense that a user
+could open his file in an editor and cut &amp; paste the data
+into the textarea. Naturally, this becomes awkward for large files,
+but it might still be a good idea to have a textarea along with
+a file input field. Your server side script would need some more
+code to handle both.</p>
+
+<p>You could simply include an <strong>E-mail address</strong>
+and encourage people to send their files to that address as
+attachments. You would need to have some processing for such
+submissions, but it <em>could</em> be automated using some
+software like <a href="http://www.iki.fi/era/procmail/mini-faq.html" title="Procmail FAQ">Procmail</a>. On the other hand, you might decide that such
+submissions will be rare, and process them &#8220;by hand.&#8221;
+Make sure the address is <strong>visible</strong> on the page
+itself. You could make it a <code>mailto:</code> link too,
+but don&#8217;t risk the functionality
+by some misguided attempt to
+<a href="http://www.htmlhelp.com/faq/html/links.html#mailto-subject">include a fixed <code>Subject</code> header</a>!
+Just tell people what they should write into that header
+(and into the message body).
+</p>
+<p>Sometimes you might consider setting up an
+<strong>FTP server</strong>, or
+using one, so that it has a free upload area.
+You would then just specify the server and the area, and
+people could
+use their favorite FTP clients. Note that for the submission of
+a large number of files, FTP would be more comfortable than
+using a form with a file input field.
+</p>
+<p>Especially for local users, you could just give a
+<strong>physical address</strong> to which people can bring or
+send their files e.g. on diskettes or CD roms. Make it clear to them
+<em>in advance</em> which media and formats you can handle that way.
+</p>
+
+<h2><a name="ref">References</a></h2>
+
+<ul>
+  <li> <a href="http://www.htmlhelp.org/reference/html40/forms/input.html#file">The part which describes <code>input type="file"</code></a> in
+<a href="http://www.htmlhelp.org/reference/html40/forms/input.html">the description of the <code>input</code> element</a> in
+       <a href="http://www.htmlhelp.org/reference/html40/"><cite>HTML
+       4.0 Reference</cite></a> by
+       <a href="http://www.htmlhelp.org/" title="Web Design Group">WDG</a>.
+That document is also available e.g. as
+       <a href="http://htmlhelp.inet.tele.dk/reference/html40/forms/input.html">a mirror copy in Denmark</a>. Note that the document contains,
+under <cite>More information</cite>,
+       references to the definition of the <code>input</code>
+       element in HTML specifications.
+</li><li> <a href="http://www.htmlhelp.com/faq/html/forms.html#file-upload" name="faq">Answer to the question
+<cite>How can I allow file uploads to my web site?</cite></a>
+       in <a href="http://www.htmlhelp.com/" title="Web Design Group">WDG</a>&#8217;s
+<a href="http://www.htmlhelp.com/faq/html/" title="Web Authoring FAQ (index page)"><cite>Web Authoring FAQ</cite></a>.
+That document too has
+<a href="http://htmlhelp.inet.tele.dk/faq/html/forms.html#file-upload">a mirror copy in Denmark</a>.
+</li></ul>
+
+<p>See also <a href="#rfc">notes on RFC 1867</a>.</p>
+
+<h2><a name="js">Notes on client-side scripting issues</a></h2>
+
+<p>In <a href="http://www.cs.tut.fi/%7Ejkorpela/forms/javascript.html#scripting-gen">client-side
+scripting</a>, there are some special problems when handling
+file input fields. The <a href="http://www.irt.org/script/form.htm"><cite>JavaScript Form FAQ</cite></a> contains answers to
+such questions:
+</p><ul>
+  <li><a href="http://www.irt.org/script/1154.htm">FAQ 1154</a> How can I set the value of a fileupload form field?</li><!--JavaScript Form-->
+<li><a href="http://www.irt.org/script/561.htm">FAQ 561</a> How can I extract just the file name from a forms file upload field?</li><!--JavaScript Form-->
+<li><a href="http://www.irt.org/script/780.htm">FAQ 780</a> Can you simulate a click on an &lt;input type="file"&gt; button?</li><!--JavaScript Form-->
+</ul>
+
+<p>See also
+<a href="#filter">notes on filtering</a> above as regards to support
+to event attributes for file input.</p>
+
+<h2><a name="tech">Technical notes</a></h2>
+
+<p>
+The <cite><a href="http://www.w3.org/TR/html4/">HTML 4.01 specification</a></cite> discusses, in
+<a href="http://www.w3.org/TR/html4/interact/forms.html">section <cite>Forms</cite></a>,
+issues related to file input fields along with other types of fields.
+The notes below hopefully help in locating
+and interpreting
+the relevant portions.</p>
+
+<h3><a name="enctype">The <code>enctype</code> attribute</a></h3>
+
+<p>
+The HTML 4.01 specification
+<a href="http://www.w3.org/TR/html4/interact/forms.html">defines an <code>enctype</code> attribute</a> for the
+<code>form</code> element.
+Its value is generically defined <!--(though only in
+<a href="http://www.w3.org/TR/REC-html40/sgml/dtd.html#ContentType"
+>a DTD comment</a>!)--> as being a &#8220;media type&#8221;, referring to
+<a href="http://www.faqs.org/rfcs/rfc2045.html" title="Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies">RFC 2045</a>. (That
+<a href="http://www.cs.tut.fi/%7Ejkorpela/rfc.var" title="What RFCs are&#8212;General info on RFCs">RFC</a> is actually just one part of a large set of documents which
+what media types are. In particular, the general description of
+the media type concept is in
+<a href="http://www.faqs.org/rfcs/rfc2046.html" title="Multipurpose Internet Mail Extensions (MIME) Part Two: Media Types">RFC&nbsp;2046</a>.)
+</p><p>
+<a name="mediatype">A <dfn>media type</dfn></a>,
+also known as <dfn>content type</dfn>, <dfn>Internet media type</dfn>, or
+<dfn>MIME type</dfn>, defines a <em>data format</em> such as
+plain text (<code>text/plain</code>), GIF image (<code>image/gif</code>)
+or binary data with unspecified internal structure
+(<code>application/octet-stream</code>).
+</p><p>
+But in the context of form submission, the use of a media
+type as the value of the <code>enctype</code> attribute is meaningful
+only if there is a definition of the <strong>conversion</strong> to be
+done. This means the exact way of <em>encoding</em> the form data,
+which is essentially a set of <var>name</var>/<var>value</var> pairs,
+into a particular data format. The definition must be rigorous, since
+otherwise it is impossible to process the data in a useful, robust way
+by computer programs.
+</p><p>The HTML specification
+<a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">defines two possible values for <code>enctype</code></a>:
+</p><dl>
+  <dt> <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1"><code>enctype="application/x-www-form-urlencoded"</code></a>
+       (the default)
+  </dt><dd> This implies a simple encoding which presents the fields as
+<var>name</var><code>=</code><var>value</var> strings separated by
+       ampersands (<code>&amp;</code>) and uses some special
+<a href="http://www.cs.tut.fi/%7Ejkorpela/chars.html#esc">&#8220;escape&#8221; mechanisms
+for characters</a>, such as <code>%28</code> for the &#8220;(&#8221; character.
+It&#8217;s confusing if people try to read it&#8212;it was meant to be
+       processed by programs, not directly read by humans!
+  </dd><dt> <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2"><code>enctype="multipart/form-data"</code></a>
+  </dt><dd> This implies that the form data set is encoded so that
+       each form field (more exactly, each &#8220;control&#8221;) is presented
+       in a format suitable for that field, and the data set as a whole
+       is a <code>multipart</code> message containing those
+       presentations as its components. This is wasteful for &#8220;normal&#8221;
+       forms but appropriate, even the only feasible way, for forms
+       containing file fields. The <code>multipart</code> structure
+means that each file comes in a nice &#8220;package&#8221; inside a larger
+       package, with a suitable &#8220;label&#8221; (content type information)
+       on the inner &#8220;package.&#8221;
+This type was originally defined in
+       <a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC&nbsp;1867</a> but it is also discussed in
+       <a href="http://www.faqs.org/rfcs/rfc2388.html" title="Returning Values from Forms: multipart/form-data">RFC&nbsp;2388</a>
+       (see <a href="#rfc">notes on the RFCs</a> later).
+</dd></dl>
+
+<p><small>Browsers
+may support other values too, but are not required to, and it is
+generally unsafe to use them.
+Sometimes people use <code>enctype="text/plain"</code>,
+and <code>text/plain</code> is <i>per se</i> a well-defined media type;
+but there is no specification of the exact method of encoding
+a form data set into such a format, and browsers are not required to
+support such an attribute&#8212;so <em>anything</em> may happen if
+you use it.</small></p>
+
+<p class="important">Normally you should not try
+to re-invent the wheel by
+writing code which interprets (decodes) the encoded form data.
+Instead, call a suitable routine in a subroutine <strong>library</strong>
+for the programming language you use. It typically decodes the data
+into a convenient format for you to process in your own code.
+</p>
+
+<p>It seems that the HTML 4.01 specification contains no explicit
+requirement that <code>enctype="multipart/form-data"</code> be
+used if the form contains a file input field
+(although it explicitly
+<a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2">recommends</a> that).
+But e.g. IE 4 and Netscape 4 handle form submissions incorrectly
+if the <code>enctype</code> is defaulted in such a case:
+they send the <em>name</em> of the file instead of its content!</p>
+
+<h3><a name="multi">Submitting several files?</a></h3>
+
+<p>
+The HTML 4.01 specification uses the term
+<dfn>file select</dfn> for the &#8220;control&#8221; (i.e. form field)
+created by an <code>input type="file"</code> element. It
+<a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.2.1">specifies file select</a> so
+ that this control type allows the user to select files
+so that their contents may be submitted with a form. Note the
+plural &#8220;files&#8221;&#8212;the idea is clearly that one such field
+should allow the inclusion of several files.
+</p><p>
+Note that there is nothing an author needs to do, and nothing he
+<em>can</em> do, to make a browser allow the selection of several
+files per input field. It depends on the browser whether that is
+possible.
+</p><p>
+However, as described above,
+the <a href="#support">current browser support</a> is
+poor: only some versions of Opera support multi-selection,
+and these do not include the newest versions.
+And in fact, even if a browser allows users to pick up several files
+for one
+<code>input type="file"</code> field, users might not know how
+they can do that, or <em>how</em> they can
+do that!</p>
+<p>Thus,
+an author might,
+as a <strong>workaround</strong>,
+include several
+<code>input type="file"</code> fields if it is desirable that users
+can include several files into one form submission.
+<a href="http://lists.w3.org/Archives/Public/www-html/2000Jul/0077.html" title="Re: Form-based Multiple File Upload in HTML 
+(a message in the www-html list, 2000-07-21)">Andrew Clover has suggested some interesting techniques</a>
+for making the appearance of the fields dynamic
+(in JavaScript or in a server-based way)
+so that
+&#8220;the user isn&#8217;t immediately confronted with two dozen empty file upload boxes.&#8221;
+</p><p>Alternatively, or additionally, an author might encourage users
+to use suitable software like
+<a href="http://www.winzip.com/">WinZip</a>
+or <a href="ftp://ftp.freesoftware.com/pub/infozip/WiZ.html">WiZ</a>
+to &#8220;zip&#8221; several files together. Naturally the server-side script
+must then be somehow prepared to handle zipped files.
+</p><p>
+
+</p><h3><a name="value">Setting the default filename</a></h3>
+
+<p>The HTML 4.01 specification
+<a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.4.1">describes
+the <code>value</code> attribute</a>
+for a file input field by saying that browsers (user agents)
+&#8220;may use the value of the <code>value</code>
+attribute as the initial file name.&#8221; This however is
+<strong>usually not supported by browsers</strong>. The usual
+explanation is &#8220;security reasons.&#8221;
+And indeed it would be a security risk if files from the
+user&#8217;s disk were submitted without the user&#8217;s content.
+It might be all too
+easy to lure some users into submitting some password files! But in fact
+<a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC&nbsp;1867</a> duly notifies this problem; in section
+<cite>8&nbsp;Security Considerations</cite> it says:</p>
+<blockquote>
+   It is important that a user agent not send any file that the user has
+   not explicitly asked to be sent. Thus, HTML interpreting agents are
+   expected to confirm any default file names that might be suggested
+   with <code>&lt;INPUT TYPE=file VALUE="yyyy"&gt;</code>.
+</blockquote>
+<p><small>It also mentions (in section 3.4) that the use of <code>value</code>
+&#8220;is probably platform dependent&#8221; but then goes on:
+&#8220;It might
+   be useful, however, in sequences of more than one transaction, e.g.,
+   to avoid having the user prompted for the same file name over and
+   over again.&#8221; This isn&#8217;t particularly logical, since how would the
+name be passed from one submission to another? (The mechanism for
+<a href="#name">getting the original file name</a> would be quite unreliable for such
+purposes.)
+A more useful application could be this: Assume that your form is for
+reporting a problem with a particular program, say Emacs, and
+that program uses a configuration file with some specific name, say
+<code>.emacs</code>, so that you would very much like to get the user&#8217;s
+config file for problem analysis. Setting the default name, if supported
+by the browser, might be an extra convenience to the user.</small></p>
+
+<p>Thus, they <em>just failed to implement it</em>, for no good
+reason. This isn&#8217;t a very important flaw, however. The situations
+where it would make sense to suggest a default file name are rare.</p>
+
+<p><small>
+Netscape&#8217;s old <!--a href=
+"http://developer.netscape.com/docs/manuals/htmlguid/index.htm"-->
+<cite>HTML Tag Reference</cite> says, in
+<a href="http://devedge.netscape.com/library/manuals/1998/htmlguide/tags10.html#1312487">the description of <code>input type="file"</code></a>,
+that &#8220;<code>VALUE=</code><var>filename</var>
+specifies the initial value of the input element,&#8221; but
+no actual support to this in Netscape browsers has been reported.
+Similar considerations apply to the
+<a href="http://msdn.microsoft.com/workshop/author/dhtml/reference/objects/INPUT_file.asp" title="input type=file in Microsoft&#8217;s HTML reference">corresponding item</a>
+in Microsoft&#8217;s
+<a href="http://msdn.microsoft.com/workshop/author/html/reference/elements.asp"><cite>HTML Elements</cite></a> reference.
+It additionally messes things up by describing the <em>intended</em>
+meaning wrong: &#8220;Sets or retrieves the value of the
+<code>&lt;INPUT type=file&gt;</code>.&#8221; The description links to
+<a href="http://msdn.microsoft.com/workshop/author/dhtml/reference/properties/value_1.asp">a description of the <code>value</code> attribute</a> which says:
+&#8220;The value, a file name, typed by the user into the control.
+Unlike other controls, this value is read-only.&#8221; This probably
+relates to using the <code>value</code>  <em>property</em> in
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/javascript.html#scripting-gen">client-side scripting</a>.
+And in fact, one can read the value in JavaScript
+(and get the filename entered by the user)
+but setting it is unsuccessful (without an error message); the same applies
+to Netscape (but on Opera, even an attempt to read the value seems
+to confuse the browser).
+Note that the <em>examples</em> in the above-mentioned documentation
+do not contain an <code>input type="file"</code> element with
+a <code>value</code> attribute.</small></p>
+<p>
+However,
+<a href="#opera">support to file input in several versions of Opera</a>
+handles the <code>value</code>
+attribute in the following way:
+</p><ul class="emb">
+  <li> the value is displayed in the box for file name input
+  </li><li> that value can be edited by the user (as an <em>alternative</em>
+       to using the Browse menu, which changes the content of that box)
+  </li><li> however if the user submits the form so that the initial value
+       has not been changed by the user, there will be a security alert and
+       the user is requested to confirm the submission.
+  </li><li> there does not seem to be any working
+       way to specify a <em>set</em>  of files
+in the <code>value</code> attribute.
+</li></ul>
+<p>Such support, however, is absent in Opera 7.54, for some reason.</p><p>
+</p><p>The following form contains a file input field with
+<code>value="C:\.emacs"</code>. Your browser probably just ignores
+that attribute, but some browsers may use it to set the initial
+file name:</p>
+<form action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi" enctype="multipart/form-data" method="post">
+<div><input name="datafile" value="C:\.emacs" type="file"></div>
+<div><input value="Send" type="submit"></div>
+</form>
+<p>An example of Opera&#8217;s security alert in the situation discussed above:
+<br>
+<img src="test_arquivos/opalert.gif" title="Screenshot" alt="! The files listed below have been selected, without your
+intervention, to be sent to another computer. Do you want to
+send these files?
+Destination&nbsp;&nbsp;http://yucca.hut.fi/cgi-bin/sendback.pl
+Form URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://www.hut.fi/u/jkorpela/forms/filedemo.html
+C:\emacs
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;&nbsp;Help" height="263" width="391">
+
+</p><p><small>There was a short-time bug in Opera 6 that created
+a security hole, which would have let authors grab users&#8217; files
+without their knowing, i.e. bypassing the dialogue
+described above.</small></p>
+
+<h3><a name="name">Getting the original name</a></h3>
+
+<p>
+<a href="#rfc" title="The status of RFC 1867">RFC 1867</a> says:
+</p><blockquote cite="http://www.faqs.org/rfcs/rfc1867.html">
+<p>The original local file name may be supplied as well, either as a
+   &#8216;filename&#8217; parameter either of the &#8216;content-disposition: form-data&#8217;
+   header or in the case of multiple files in a &#8216;content-disposition:
+   file&#8217; header of the subpart. The client application should make best
+   effort to supply the file name; if the file name of the client&#8217;s
+   operating system is not in US-ASCII, the file name might be
+   approximated or encoded using the method of
+<a href="http://www.faqs.org/rfcs/rfc1522.html" title="MIME (Multipurpose Internet Mail Extensions) Part Two: Message Header Extensions for Non-ASCII Text">RFC&nbsp;1522</a>.  This is a
+   convenience for those cases where, for example, the uploaded files
+   might contain references to each other, e.g., a TeX file and its .sty
+   auxiliary style description.</p>
+</blockquote>
+
+<p>But note that this appears in
+subsection 3.3 of section <cite>3.&nbsp;Suggested
+Implementatation</cite>.
+Thus, it is <strong>only a recommendation</strong> related
+to one <strong>possible</strong> implementation.
+You shouldn&#8217;t count on having a
+<code>filename</code>
+included.</p>
+
+<p>It seems that Netscape, IE, and Opera actually
+include the <code>filename</code> parameter.
+However, only Opera uses the format which
+seems to be the <em>intended</em> one,
+as deduced from the examples in
+<a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC&nbsp;1867</a>
+(section&nbsp;6),
+namely a <em>relative</em> name like
+<code>foo.txt</code>, not a full pathname like
+<code>C:\mydocs\foo.txt</code>.
+Internet Explorer&nbsp;7 beta preview behaves similarly,
+and this has been explained as a security improvement.</p>
+
+<p><small>Is the Netscape and IE behavior really incorrect? Well,
+since most computers have some sort of path name system for file names,
+one would expect to see path names in examples if the intent had been
+that path names are sent.
+This is consistent with the fact that in order to actually
+<em>use</em> the file names for some meaningful purpose
+(like the one mentioned in
+<a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC&nbsp;1867</a>:
+&#8220;the
+uploaded file might contain references to each other, e.g.,
+a TeX file and its .sty auxiliary style description,&#8221;
+which clearly calls for <em>relative</em> file names).
+When path names are sent, things get much more complicated,
+since their specific syntax (and interpretation)
+is strongly system-specific, and there is even no provision for
+telling the server what the browser&#8217;s file system is.
+Sending relative names only is also consistent with elementary
+security considerations: avoid sending information about the
+user&#8217;s file system structure.
+Note that the security section of
+<a href="http://www.faqs.org/rfcs/rfc1867.html" title="Form-based File Upload in HTML">RFC&nbsp;1867</a>
+does not mention any problems that might arise from that;
+this more or less proves that browsers were
+<em>not</em> expected to send path names.</small></p>
+<p>
+The idea of including a <code>filename</code> attribute
+makes sense of course, and would apply e.g. to a file
+submission containing a set of HTML documents referring to each other
+with relative URLs.
+However, it&#8217;s clear that the processing script
+would need to strip off the path part of the names (which is in
+principle risky since
+<code>C:\mydocs\foo.txt</code>
+could be a relative filename
+on many systems!). Moreover, since the <a href="#multi">submission of several files</a> is
+currently clumsy at best, the idea would be of limited usefulness even
+when it works. (Collections of files that refer to each other by names
+would be best handled as packaged into formats such as
+<code>application/zip</code>, leaving the file name issue to be handled
+by zipping and unzipping programs, which can preserve relative names as
+well as relative directory structures.)</p>
+
+<h3><a name="size">The <code>size</code> attribute</a></h3>
+
+<p>Although the user is not expected to type the filename(s) into
+a filename box but use the Browse function,
+the size of the box matters. When the user selects a file by
+clicking on it, the browser puts the filename into the filename box,
+and the name is a full pathname which can be quite long.
+It may confuse users if they see the name badly truncated.</p>
+
+<p><a href="http://www.w3.org/TR/REC-html32#input">Definition of
+<code>input type="file"</code> in the HTML 3.2 specification</a>
+said:</p>
+<blockquote>
+<div>Just like [for] <code>type=text</code> you can use the
+<code>size</code> attribute to set the visible width of this field
+in average character widths.</div>
+</blockquote>
+<p>
+And most browsers seem to treat the <code>size</code> attribute
+that way. <!--Opera 3.60 ignores the attribute.-->
+</p><p>
+But the HTML 4.01 specification
+<a href="http://www.w3.org/html4/interact/forms.html#adef-size-INPUT">defines the <code>size</code> attribute for an <code>input</code>
+element</a> as follows:
+</p><blockquote>
+This attribute tells the user agent the initial width of the control. The width is given in pixels except when
+<code>type</code> attribute has the value
+<code>"text"</code>
+or
+<code>"password"</code>.
+In that case, its value refers to the (integer) number of characters.
+</blockquote>
+<p>This logically implies that for <code>input type="file"</code>,
+the <code>size</code> attribute specifies the width in pixels,
+not characters.
+This is probably an oversight, and
+the risk of a browser acting literally according it
+is ignorable.</p>
+
+<p>On the other hand, you could
+<a href="http://www.cs.tut.fi/%7Ejkorpela/styles/howto.html" title="How to use style sheets (suggested material and procedures)">use style sheets</a> in addition to the <code>size</code> attribute.
+Using e.g. the attribute
+<code>style="<a href="http://www.htmlhelp.org/reference/css/box/width.html" title="Description of the width property in CSS1">width</a>:25em"</code>
+could override the <code>size</code> attribute; this currently seems to happen
+on IE 4 and newer only, but it should do no harm on browsers which don&#8217;t
+support it.
+However note that although it might seem attractive to use
+<code>style="width:100%"</code>, asking the browser use as wide a box as
+possible, there&#8217;s the problem that at least IE 4 puts the Browse button
+on the same line as the box. Thus you would in effect force horizontal
+scrolling! Something like <code>style="width:80%"</code>
+would be better, though it is just a guess that the box and the button
+will then usually fit.
+</p>
+
+<h3><a name="restr">Setting restrictions on the file size</a></h3>
+
+<p>Especially if &#8220;file upload&#8221; means storing the file on the server&#8217;s
+disk, it is necessary to consider imposing various restrictions.
+It would be nasty if some user filled the disk with gigabytes of junk,
+by ignorance, or by misclicking, or by malevolence.
+See section
+<cite><a href="http://cpan.uwinnipeg.ca/htdocs/CGI.pm/CGI.html#avoiding_denial_of_service_attacks">Avoiding Denial of Service Attacks</a></cite> in the
+<a href="http://theoryx5.uwinnipeg.ca/CPAN/data/CGI.pm/CGI.html">documentation of CGI.pm</a>; even if it isn&#8217;t directly applicable
+to you since you use other techniques than CGI and Perl, it
+gives some food for thought in general.</p>
+<p>The server-side form handler can be coded to do whatever the
+programmer wants, and imposing <em>some</em> upper limit is clearly a must.
+(That is, the code should check for the input size, and discard, or
+otherwise process in a special way, submissions exceeding a reasonable limit.)
+</p><p>
+Any client-side restrictions, i.e.
+checks done by a browser prior to form submission,
+are unreliable and should be considered
+as extra comfort to <em>users</em> only&#8212;so that they get a rejection
+message earlier.
+</p><p>
+<a name="maxlength" href="#rfc" title="The status of RFC 1867">RFC 1867</a> says:
+</p><blockquote>
+If the <code>INPUT</code> tag includes the attribute <code>MAXLENGTH</code>, the
+user agent should consider its value to represent the maximum
+<code>Content-Length</code> (in bytes) which the server will accept for transferred
+files.
+</blockquote>
+<p>It appears that no browser has even tried to implement
+that, and there&#8217;s no statement about such a feature in HTML
+specifications. On the contrary, the
+<a href="http://www.w3.org/TR/REC-html32#input">HTML 3.2 specification says</a> something quite different:
+</p><blockquote>
+You can set an upper limit to the length of file names using the
+<code>maxlength</code> attribute.
+</blockquote>
+
+<p>Thus, it is better not to use the <code>maxlength</code> attribute,
+because it currently does nothing and, worse still,
+in the future it might be interpreted in two incompatible ways.
+The HTML&nbsp;4 specification takes no position on this: it describes
+<code>maxlength</code> as defined for <code>input type="text"</code>
+and <code>input type="password"</code> only.</p>
+
+<h3><a name="filter">Filtering (through a file type filter)</a></h3>
+
+<p><a href="http://www.w3.org/TR/html4/interact/forms.html#adef-accept">The HTML 4.01 specification defines an <code>accept</code> attribute</a>
+for use with <code>input type="file"</code> as follows:
+
+</p><blockquote>
+<div>This attribute specifies a comma-separated list of content types
+that a server processing this form will handle correctly. User agents
+may use this information to filter out non-conforming files when
+prompting a user to select files to be sent to the server.
+</div>
+</blockquote>
+
+<p>Thus you could specify, for example,
+<code>accept="image/gif,image/jpeg"</code>, if you are willing to get
+image files in GIF or JPEG format only.
+Browsers <em>might</em> use this information to set up the Browse menu
+so that only such files are selectable, at least initially.
+And
+<a href="http://www.w3.org/TR/REC-html32#input">the HTML 3.2 specification even claims</a>:
+&#8220;Some user agents support the ability to restrict the kinds of files
+to those matching a comma separated list of MIME content types given
+with the <code>ACCEPT</code> attribute[;]
+e.g. <code>accept="image/*"</code> restricts files to images.&#8221;
+(Note that <code>"image/*"</code> is not a MIME content type. Obviously
+the intent is that some
+<a href="http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=wildcard" title="A generic loose definition of &quot;wild card&quot;">&#8220;wildcarding&#8221;</a> could be applied, but there doesn&#8217;t seem
+to be any definition about that.)
+</p><p>
+But it seems that browser support is currently nonexistent.
+No filtering is applied, except <a href="#netscape">on Netscape&nbsp;4</a>
+which initially
+sets
+a filter which restricts selectability to HTML documents, no matter
+what there is in an <code>accept</code> attribute!
+And even if there were support, you of course couldn&#8217;t <em>rely</em> on
+such filtering, for many reasons.
+If it worked, it would be basically for user comfort, not for setting
+effective restrictions (which must be imposed by the form handler).</p>
+
+<p>Using
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/javascript.html#scripting-gen">client-side scripting</a>,
+you might help some users so that they won&#8217;t submit data of
+wrong type.
+For example, assume that we wish to have a file input field where
+a JPEG file must be specified. And we might take the simplistic
+view that this means a file name which ends with <code>jpg</code>,
+and check, in a client-side script, that the value of the field
+matches that.
+Note that the value is the filename, not the file content.
+However one must be <strong class="warning">extra careful</strong> here.
+Although the
+<a href="http://www.irt.org/articles/js058/" title="Events and Event Handlers">event attributes</a>
+<code>onfocus</code>, <code>onchange</code> and <code>onblur</code>
+for <code>input type="file"</code>
+are supported even in earliest JavaScript implementations
+(from version 1.0), there are limitations and problems.
+In particular, <code>onblur</code> seems to be treated strangely,
+and the obvious idea&#8212;associate checking code with
+<code>onblur</code>&#8212;seems to make Netscape run in an eternal
+loop. Thus, it is probably best to
+<strong>associate the checks with file submission only</strong>.
+This means using the <code>onsubmit</code> attribute in the
+<code>form</code> tag.
+<a href="http://www.cs.tut.fi/%7Ejkorpela/forms/filecheck.html" title="The example as a separate document">Example</a>:
+
+</p><pre><code class="html">&lt;script type="text/javascript" language="JavaScript"&gt;
+function check() {
+  var ext = document.f.pic.value;
+  ext = ext.substring(ext.length-3,ext.length);
+  ext = ext.toLowerCase();
+  if(ext != 'jpg') {
+    alert('You selected a .'+ext+
+          ' file; please select a .jpg file instead!');
+    return false; }
+  else
+    return true; }
+&lt;/script&gt;
+
+&lt;form method="post" name=f
+enctype="multipart/form-data"
+onsubmit="return check();"
+action="http://www.cs.tut.fi/cgi-bin/run/~jkorpela/echo.cgi"&gt;
+&lt;p&gt;
+Please select a JPEG (.jpg) file to be sent:
+&lt;br&gt;
+&lt;input type="file" name="pic" size="40"
+accept="image/jpeg"&gt;
+&lt;p&gt;
+Please include a short explanation:&lt;br&gt;
+&lt;textarea name="expl" rows="3" cols="40"
+onfocus="check();"&gt;
+&lt;/textarea&gt;
+&lt;p&gt;
+&lt;input type="submit" value="Send"&gt;
+&lt;/form&gt;</code></pre>
+
+<h3><a name="rfc">The status of RFC 1867</a></h3>
+
+<p>
+The status of the original description of
+<code>input type="file"</code>, namely
+<a href="http://www.faqs.org/rfcs/rfc1867.html">RFC 1867</a>,
+<cite>Form-based File Upload in HTML</cite>, is vague.
+The <a href="http://www.w3.org/TR/html4">HTML 4.01 specification</a>
+makes only an
+<a href="http://www.w3.org/TR/html4/references.html#h-1.2"><em>informative</em> reference</a>
+to it, and mentions a &#8220;work in progress&#8221; in this area:<br>
+<small><code>ftp://ftp.ietf.org/internet-drafts/draft-masinter-form-data-01.txt</code></small>
+<br>
+This is however outdated information; the URL does not work, and
+the draft has expired.
+There does not seem to be anything else even at the level of
+<a href="http://sunsite.cnlab-switch.ch/cgi-bin/search/standard/nph-findstd" title="Internet Standards Archive [incl. Internet-Drafts]">Internet-Drafts</a> to replace RFC 1867.
+There is however
+       <a href="http://www.faqs.org/rfcs/rfc2388.html">RFC&nbsp;2388</a>,
+<cite>Returning Values from Forms: multipart/form-data</cite>
+which might be related to the process. However it is not
+specified to obsolete RFC 1867.
+</p>
+<p>
+In the
+<a href="http://www.w3.org/TR/html401/">
+<cite>HTML 4.01 Specification</cite></a>,
+the <a href="http://www.w3.org/TR/html40/references.html#h-1.2">informative references</a> have been updated so that a reference
+is made to RFC&nbsp;2388, with a note &#8220;Refer also to RFC&nbsp;1867.&#8221;
+</p>
+
+<p>In June 2000, <a href="ftp://ftp.isi.edu/in-notes/rfc2854.txt">RFC 2854</a>, <cite>The 'text/html' Media Type</cite>, was issued.
+It&#8217;s basic purpose was to &#8220;to remove HTML from IETF Standards Track&#8221;
+officially, i.e. to make it explicit that work on HTML specifications
+has been moved from IETF to W3C. It explicitly obsoletes RFC 1867,
+together with some other HTML related RFCs. But note that there is
+very little in HTML specifications by the W3C that defines
+what file input really is; they refer to RFC 1867 instead.</p>
+
+<p>RFC 1867 contains much more <strong>detailed</strong> information about
+&#8220;file upload&#8221; than HTML specifications. It explains the original
+idea and how it might be implemented. However, its normative
+status is vague,
+and the implementations are still wanting,
+so you should generally <em>not</em> expect browsers to support
+the idea very well.</p>
+
+<hr title="Information about this document">
+<div class="footer">
+<div><a title="ISO 8601, the date and time representation standard" href="http://www.cs.tut.fi/%7Ejkorpela/iso8601.html">
+Date</a> of creation: 1999 (?). Last revision: 2004-11-13.
+Last modification: 2008-03-21.</div>
+<div>This page belongs to division
+<cite><a href="http://www.cs.tut.fi/%7Ejkorpela/www.html">Web authoring and surfing</a></cite>,
+subdivision
+<cite><a href="http://www.cs.tut.fi/%7Ejkorpela/forms/index.html" title="How to write HTML forms; links to tutorials and references and documents on special topics related to forms">Forms</a></cite> in
+the free information site
+<cite><a href="http://www.cs.tut.fi/%7Ejkorpela/indexen.html">IT and communication</a></cite>
+by
+<a href="http://www.cs.tut.fi/%7Ejkorpela/personal.html" title="Jukka K. Korpela, an IT generalist and specialist (personal home page)"><span lang="fi">Jukka</span> &#8220;Yucca&#8221; <span lang="fi">Korpela</span></a>.
+</div></div>
+
+</body></html>

@@ -39,6 +39,12 @@ from tempfile import mktemp
 from base64 import b64encode, b64decode
 from functools import partial
 from getopt import getopt, GetoptError
+from html.parser import HTMLParser
+import os.path
+from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
+import tempfile
+from zipfile import BadZipFile, ZipFile
 
 __doc__ = """
 
@@ -195,6 +201,36 @@ class UnoDocument:
         self._getPropertyToImport(infilter))
     if not uno_document:
       raise AttributeError("This document can not be loaded or is empty")
+    def isSafeUrl(url):
+      parsed_url = urlparse(url)
+      if parsed_url.scheme == 'data':
+        return True
+      elif parsed_url.scheme == '':
+        norm_path = os.path.normpath(parsed_url.path)
+        if norm_path[0] not in ('/', '.') or \
+            os.path.dirname(os.path.normpath(parsed_url.path)) == os.path.dirname(self.document_url):
+          return True
+      return False
+    with tempfile.NamedTemporaryFile() as temp_file:
+      uno_document.storeToURL(systemPathToFileUrl(temp_file.name), ())
+      try:
+        with ZipFile(temp_file.name, 'r') as zip_file:
+          content = ET.fromstring(zip_file.read('content.xml'))
+          for e in content.findall('.//*[@{http://www.w3.org/1999/xlink}actuate="onLoad"]'):
+            href = e.attrib.get('{http://www.w3.org/1999/xlink}href')
+            if href:
+              if not isSafeUrl(href):
+                raise RuntimeError('This document contains unsafe links %s' % href)
+      except BadZipFile: # HTML input case
+        class CustomHTMLParser(HTMLParser):
+          def handle_starttag(self, tag, attrs):
+            for attr in attrs:
+              if attr[0] == 'src':
+                if not isSafeUrl(attr[1]):
+                  raise RuntimeError('This document contains unsafe links %s' % attr[1])
+        parser = CustomHTMLParser()
+        with open(temp_file.name, 'r') as f:
+          parser.feed(f.read())
     if refresh:
       # Before converting to expected format, refresh dynamic
       # value inside document.
