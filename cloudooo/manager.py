@@ -84,7 +84,7 @@ def BBB_guess_extension(mimetype, title=None):
     "Microsoft PowerPoint 2007-2013 XML": ".ms.pptx",
     "Microsoft PowerPoint 2007-2013 XML AutoPlay": ".ms.ppsx",
     "Microsoft Word 2007-2013 XML": ".ms.docx",
-    "Word 2007–365": ".ms.docx",
+    "Word 2007": ".ms.docx",
   }.get(title, None) or {
     # mediatype : extension
     "application/msword": ".doc",
