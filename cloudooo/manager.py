@@ -122,11 +122,12 @@ class Manager(object):
       destination_format -- Target format as string
       zip -- Boolean Attribute. If true, returns the file in the form of a
       zip archive
+      refresh -- Obsolete and ignored
     """
     self._check_file_type(file)
 
     kw = self.kw.copy()
-    kw.update(zip=zip, refresh=refresh)
+    kw.update(zip=zip)
     # XXX Force the use of wkhtmltopdf handler if converting from html to pdf
     #     with conversion parameters.
     #     This is a hack that quickly enables the use of wkhtmltopdf without
