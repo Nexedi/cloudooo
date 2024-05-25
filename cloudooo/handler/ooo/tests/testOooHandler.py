@@ -167,26 +167,13 @@ class TestHandler(HandlerTestCase):
 
   def testRefreshOdt(self):
     """Test refresh argument"""
-    # Check when refreshing is disabled
     with open("data/test_fields.odt", "rb") as f:
       data = f.read()
+    # refresh parameter is now ignored.
     handler = Handler(self.tmp_url,
                         data,
                         'odt',
                         refresh=False)
-    doc_exported = handler.convert("odt")
-    document_output_url = path.join(self.tmp_url, "testExport.odt")
-    self._save_document(document_output_url, doc_exported)
-    zip_handler = ZipFile(document_output_url)
-    content_tree = etree.fromstring(zip_handler.read('content.xml'))
-    self.assertFalse(content_tree.xpath('//text:variable-get[text() = "DISPLAY ME"]',
-                                       namespaces=content_tree.nsmap))
-
-    # Check when refreshing is enabled
-    handler = Handler(self.tmp_url,
-                        data,
-                        'odt',
-                        refresh=True)
     doc_exported = handler.convert("odt")
     document_output_url = path.join(self.tmp_url, "testExport.odt")
     self._save_document(document_output_url, doc_exported)
