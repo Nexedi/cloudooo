@@ -39,8 +39,8 @@ mime_decoder = magic.Magic(mime=True)
 def basicTestToGenerate(id, proxy, data, source_format, destination_format,
                         result_list):
   """Test to use method generate of server"""
-  document = proxy.convertFile(encodebytes(data), source_format, destination_format)
-  mimetype = mime_decoder.from_buffer(decodebytes(document))
+  document = proxy.convertFile(encodebytes(data).decode(), source_format, destination_format)
+  mimetype = mime_decoder.from_buffer(decodebytes(document.encode()))
   assert mimetype == 'application/pdf'
   result_list[id] = True
 
@@ -51,7 +51,7 @@ class TestHighLoad(TestCase):
   def testGenerateHighLoad(self):
     """Sends many request to Server. Calling generate method"""
     process_list = []
-    data = open("data/test.doc", 'r').read()
+    data = open("data/test.doc", 'rb').read()
     LOOP = 100
     result_list = Array('i', [False] * LOOP)
     for id in range(LOOP):
