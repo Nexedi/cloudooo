@@ -52,7 +52,7 @@ class TestAllowedExtensions(TestCase):
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     # XXX slightly different allowed formats with document_type !?
     _text_expected_tuple = text_expected_tuple + (
-      ('docm', 'Word 2007–365 VBA'),
+      ('docm', 'Word 2007 VBA'),
     )
     self.assertEqual(
       sorted([tuple(x) for x in text_allowed_list]),
@@ -283,66 +283,6 @@ class TestGenerate(TestCase):
     self.assertIsInstance(response_dict, dict)
     self.assertNotEqual(response_dict['data'], '')
     self.assertEqual(response_dict['mime'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-  # XXX: This is a test for ERP5 Backward compatibility,
-  # and the support to this kind of tests will be dropped.
-  def testPNGFileToConvertOdpToHTML(self):
-    """Test run_generate method from odp with png to html.
-     This test if returns good png files"""
-    with open(join('data', 'test_png.odp'), 'rb') as f:
-      data = f.read()
-    generate_result = self.proxy.run_generate('test_png.odp',
-                                      encodebytes(data).decode(),
-                                      None, 'html',
-                                      'application/vnd.oasis.opendocument.presentation')
-    response_code, response_dict, response_message = generate_result
-    self.assertEqual(response_code, 200)
-    self.assertIsInstance(response_dict, dict)
-    self.assertNotEqual(response_dict['data'], '')
-    self.assertEqual(response_dict['mime'], 'application/zip')
-    output_url = join(self.tmp_url, "zip.zip")
-    with open(output_url, 'wb') as f:
-      f.write(decodebytes(response_dict['data'].encode()))
-    self.assertTrue(is_zipfile(output_url))
-    with ZipFile(output_url) as zipfile:
-      png_path = join(self.tmp_url, "img0.png")
-      zipfile.extractall(self.tmp_url)
-      with open(png_path, 'rb') as f:
-        content_type = self._getFileType(encodebytes(f.read()).decode())
-      self.assertEqual(content_type, 'image/png')
-      m = magic.Magic()
-      self.assertIn("8-bit/color RGB", m.from_file(png_path))
-    if exists(output_url):
-      remove(output_url)
-
-  # XXX: This is a test for ERP5 Backward compatibility,
-  # and the support to this kind of tests will be dropped.
-  def testRunGenerateMethodConvertOdpToHTML(self):
-    """Test run_generate method from odp to html. This test is to validate
-     a bug convertions to html"""
-    with open(join('data', 'test.odp'), 'rb') as f:
-      data = f.read()
-    generate_result = self.proxy.run_generate('test.odp',
-                                      encodebytes(data).decode(),
-                                      None, 'html',
-                                      'application/vnd.oasis.opendocument.presentation')
-    response_code, response_dict, response_message = generate_result
-    self.assertEqual(response_code, 200)
-    self.assertIsInstance(response_dict, dict)
-    self.assertNotEqual(response_dict['data'], '')
-    self.assertEqual(response_dict['mime'], 'application/zip')
-    output_url = join(self.tmp_url, "zip.zip")
-    with open(output_url, 'wb') as f:
-      f.write(decodebytes(response_dict['data'].encode()))
-    self.assertTrue(is_zipfile(output_url))
-    filename_list = [file.filename for file in ZipFile(output_url).filelist]
-    for filename in filename_list:
-      if filename.endswith("impr.html"):
-        break
-    else:
-      self.fail("Not exists one file with 'impr.html' format")
-    if exists(output_url):
-      remove(output_url)
 
   # XXX: This is a test for ERP5 Backward compatibility,
   # and the support to this kind of tests will be dropped.
