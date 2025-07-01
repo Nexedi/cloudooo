@@ -213,12 +213,14 @@ class UnoDocument:
       uno_document.storeToURL(systemPathToFileUrl(temp_file.name), ())
       try:
         with ZipFile(temp_file.name, 'r') as zip_file:
-          content = ET.fromstring(zip_file.read('content.xml'))
-          for e in content.findall('.//*[@{http://www.w3.org/1999/xlink}actuate="onLoad"]'):
-            href = e.attrib.get('{http://www.w3.org/1999/xlink}href')
-            if href:
-              if not isSafeUrl(href):
-                raise RuntimeError('This document contains unsafe links %s' % href)
+          with zip_file.open('content.xml') as f:
+            for _, e in ET.iterparse(f, events=("end",)):
+              href = e.attrib.get('{http://www.w3.org/1999/xlink}href')
+              actuate = e.attrib.get('{http://www.w3.org/1999/xlink}actuate')
+              if actuate == "onLoad" and href:
+                if not isSafeUrl(href):
+                  raise RuntimeError(f'This document contains unsafe links {href}')
+              e.clear()
       except BadZipFile: # HTML input case
         class CustomHTMLParser(HTMLParser):
           def handle_starttag(self, tag, attrs):
