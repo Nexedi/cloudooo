@@ -67,3 +67,23 @@ class TestLegacyInterface(TestCase):
     self.assertEqual(self._getFileType(response_dict['data']),
                       'application/vnd.oasis.opendocument.text')
 
+  def testGetMetadataWithoutTitle(self):
+    """
+    Ensures that Cloudooo does not fail when getting metadata of a document
+    that does not have a title.
+    """
+    filename = resource_filename('cloudooo.handler.ooo.tests.data',
+                                 'without_title.ppt')
+    with open(filename, 'rb') as f:
+      data = f.read()
+    status, response_dict, message = self.proxy.run_getmetadata(
+      filename,
+      encodebytes(data).decode(),
+      None,
+      'ppt',
+      None,
+    )
+    self.assertEqual(status, 200)
+    self.assertNotIn('Title', response_dict['meta'])
+    self.assertNotIn('title', response_dict['meta'])
+

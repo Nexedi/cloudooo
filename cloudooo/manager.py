@@ -319,7 +319,9 @@ class Manager(object):
       response_dict['meta'] = self.getFileMetadataItemList(data, extension)
       # XXX - Backward compatibility: Previous API expects 'title' now
       # we use 'Title'"
-      response_dict['meta']['title'] = response_dict['meta']['Title']
+      if 'Title' in response_dict['meta']:
+        response_dict['meta']['title'] = response_dict['meta']['Title']
+
       return (200, response_dict, '')
     except Exception as e:
       logger.error('Error getting metadata', exc_info=True)
