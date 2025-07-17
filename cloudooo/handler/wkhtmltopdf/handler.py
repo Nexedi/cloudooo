@@ -26,12 +26,12 @@
 # See https://www.nexedi.com/licensing for rationale and options.
 #
 ##############################################################################
-
+from __future__ import annotations
 from zope.interface import implementer
 from cloudooo.interfaces.handler import IHandler
 from cloudooo.file import File
 from cloudooo.util import logger, parseContentType
-from subprocess import Popen, PIPE
+from subprocess import run
 from tempfile import mktemp, mkdtemp
 from os.path import basename
 from base64 import b64decode
@@ -64,8 +64,22 @@ class Handler:
       return "file://" + path
     raise ValueError("path %r is not absolute" % path)
 
-  def convert(self, destination_format=None, **kw):
-    """Convert a image"""
+  def convert(
+    self,
+    destination_format: str,
+    **kw,
+  ) -> bytes:
+    """
+    Convert HTML to PDF using wkhtmltopdf.
+    
+    Args:
+      destination_format: Format (and file extension) of the output file.
+      kw: Additional arguments of the conversion.
+
+    Returns:
+      Contents of the converted file.
+
+    """
     logger.debug("wkhtmltopdf convert: %s > %s", self.file.source_format, destination_format)
     output_path = self.makeTempFile(destination_format)
     command = self.makeWkhtmltopdfCommandList(
@@ -73,14 +87,19 @@ class Handler:
       output_path,
       conversion_kw=kw,
     )
-    stdout, stderr = Popen(
+    process = run(
       command,
-      stdout=PIPE,
-      stderr=PIPE,
+      capture_output=True,
       close_fds=True,
       env=self.environment,
       cwd=self.file.directory_name,
-    ).communicate()
+      check=True,
+      text=True,
+    )
+    if process.stdout:
+      logger.debug(process.stdout)
+    if process.stderr:
+      logger.debug(process.stderr)
     self.file.reload(output_path)
     try:
       return self.file.getContent()
