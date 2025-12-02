@@ -606,6 +606,22 @@ class TestCSVEncoding(TestCase):
         ['b b', '2;x'],
         [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
 
+  def test_separator_semicolon_quoted(self):
+    with open("./data/csv_semicolon_quoted.csv", "rb") as f:
+      data = encodebytes(f.read()).decode()
+    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    parser = etree.HTMLParser()
+    tree = etree.parse(BytesIO(converted), parser)
+    self.assertEqual(
+        ['a a', '1'],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['b b', '2;x'],
+        [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['c"c', '3'],
+        [x.text for x in tree.getroot().find('.//tr[3]').iterdescendants() if x.text])
+
   def test_separator_tab(self):
     with open("./data/tsv.tsv", "rb") as f:
       data = encodebytes(f.read()).decode()
