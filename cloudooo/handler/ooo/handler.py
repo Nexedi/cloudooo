@@ -199,7 +199,10 @@ class Handler:
     base_document -- Boolean variable. if true, the document content (as bytes)
     is also returned along with the metadata."""
     logger.debug("getMetadata")
-    kw = dict(mimemapper=self._serializeMimemapper())
+    kw = dict(
+      mimemapper=self._serializeMimemapper(),
+      source_format=self.source_format,
+    )
     if base_document:
       feature_list = ['getmetadata', 'convert']
     else:

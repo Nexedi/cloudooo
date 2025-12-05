@@ -159,25 +159,24 @@ class UnoDocument:
       if infilter:
         args.append(self._createProperty("FilterOptions", *infilter))
       return args
-    candidates = (x[0] for x in self.filter_list)
-    if self.source_format == 'csv':
-      if _ods in candidates:
-        # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
+    if self.source_format == 'csv' and self.document_url.endswith('.csv'):
+      # https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options
 
-        # Try to sniff the csv delimiter
-        with codecs.open(self.document_url, 'rb', 'utf-8', errors="ignore") as csvfile:
-          try:
-            dialect = csv.Sniffer().sniff(csvfile.read(1024))
-            delimiter = ord(dialect.delimiter)
-          except csv.Error:
-            delimiter = ord(',')
+      # Try to sniff the csv delimiter
+      with codecs.open(self.document_url, 'rb', 'utf-8', errors="ignore") as csvfile:
+        try:
+          dialect = csv.Sniffer().sniff(csvfile.read(1024))
+          delimiter = ord(dialect.delimiter)
+        except csv.Error:
+          delimiter = ord(',')
 
-        args.extend((
-          self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
-          self._createProperty("FilterOptions", "%s,34,UTF-8" % delimiter))
-        )
+      args.extend((
+        self._createProperty("FilterName", "Text - txt - csv (StarCalc)"),
+        self._createProperty("FilterOptions", "%s,34,UTF-8" % delimiter))
+      )
 
     elif self.source_format == 'html':
+      candidates = (x[0] for x in self.filter_list)
       if next(candidates, None) == _ods:
         args.extend((
           self._createProperty("FilterName", "calc_HTML_WebQuery"),

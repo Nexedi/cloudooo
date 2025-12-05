@@ -560,10 +560,13 @@ class TestCSVEncoding(TestCase):
    * the supported encoding is UTF-8, but also accepts latin9, for compatibility.
    * the fields delimiter is guessed by python csv module.
   """
+  def _convert_to_html(self, data:bytes) -> bytes:
+    return decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+
   def test_decode_ascii(self):
     with open("./data/csv_ascii.csv", "rb") as f:
       data = encodebytes(f.read()).decode()
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
@@ -573,7 +576,7 @@ class TestCSVEncoding(TestCase):
   def test_decode_utf8(self):
     with open("./data/csv_utf8.csv", "rb") as f:
       data = encodebytes(f.read()).decode()
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
@@ -586,7 +589,7 @@ class TestCSVEncoding(TestCase):
   def test_decode_latin9(self):
     with open("./data/csv_latin9.csv", "rb") as f:
       data = encodebytes(f.read()).decode()
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
@@ -596,7 +599,7 @@ class TestCSVEncoding(TestCase):
   def test_separator_semicolon(self):
     with open("./data/csv_semicolon.csv", "rb") as f:
       data = encodebytes(f.read()).decode()
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
@@ -606,10 +609,26 @@ class TestCSVEncoding(TestCase):
         ['b b', '2;x'],
         [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
 
+  def test_separator_semicolon_quoted(self):
+    with open("./data/csv_semicolon_quoted.csv", "rb") as f:
+      data = encodebytes(f.read()).decode()
+    converted = self._convert_to_html(data)
+    parser = etree.HTMLParser()
+    tree = etree.parse(BytesIO(converted), parser)
+    self.assertEqual(
+        ['a a', '1'],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['b b', '2;x'],
+        [x.text for x in tree.getroot().find('.//tr[2]').iterdescendants() if x.text])
+    self.assertEqual(
+        ['c"c', '3'],
+        [x.text for x in tree.getroot().find('.//tr[3]').iterdescendants() if x.text])
+
   def test_separator_tab(self):
     with open("./data/tsv.tsv", "rb") as f:
       data = encodebytes(f.read()).decode()
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
@@ -621,12 +640,24 @@ class TestCSVEncoding(TestCase):
 
   def test_empty_csv(self):
     data = ''
-    converted = decodebytes(self.proxy.convertFile(data, "csv", "html").encode())
+    converted = self._convert_to_html(data)
     parser = etree.HTMLParser()
     tree = etree.parse(BytesIO(converted), parser)
     self.assertEqual(
         [],
         [x.text for x in tree.getroot().findall('.//td')])
+
+
+class TestCSVEncodingLegacyERP5API(TestCSVEncoding):
+  def _convert_to_html(self, data:bytes) -> bytes:
+    response_code, response_dict, response_message = self.proxy.run_convert(
+      'test.csv', data, None, None, "text/csv")
+    self.assertFalse(response_message)
+    self.assertEqual(response_code, 200)
+    self.assertEqual(response_dict['meta']['MIMEType'], 'application/vnd.oasis.opendocument.spreadsheet')
+    base_data = response_dict['data']
+    return decodebytes(self.proxy.convertFile(base_data, "ods", "html").encode())
+
 
 class TestInvalidFile(TestCase):
   """cloudoo should refuse potentially unsafe files."""
