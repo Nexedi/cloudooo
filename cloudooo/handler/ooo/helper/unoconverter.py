@@ -165,7 +165,7 @@ class UnoDocument:
       # Try to sniff the csv delimiter
       with codecs.open(self.document_url, 'rb', 'utf-8', errors="ignore") as csvfile:
         try:
-          dialect = csv.Sniffer().sniff(csvfile.read(1024))
+          dialect = csv.Sniffer().sniff(csvfile.read())
           delimiter = ord(dialect.delimiter)
         except csv.Error:
           delimiter = ord(',')
