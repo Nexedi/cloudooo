@@ -647,6 +647,16 @@ class TestCSVEncoding(TestCase):
         [],
         [x.text for x in tree.getroot().findall('.//td')])
 
+  def test_too_small_sniff_regression(self):
+    with open("./data/csv_sniff.csv", "rb") as f:
+      data = encodebytes(f.read()).decode()
+    converted = self._convert_to_html(data)
+    parser = etree.HTMLParser()
+    tree = etree.parse(BytesIO(converted), parser)
+    self.assertEqual(
+        ["Header_Col_A", "Header_Col_B", "Header_Col_C"],
+        [x.text for x in tree.getroot().find('.//tr[1]').iterdescendants() if x.text])
+
 
 class TestCSVEncodingLegacyERP5API(TestCSVEncoding):
   def _convert_to_html(self, data:bytes) -> bytes:
