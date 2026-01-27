@@ -73,7 +73,7 @@ class TestCase(unittest.TestCase):
     return mimetype
 
   def _testConvertFile(self, input_url, source_format, destination_format,
-                      destination_mimetype, zip=False):
+                      destination_mimetype, zip=False, refresh=False, conversion_kw=None):
     """ Generic test for converting file """
     fault_list = []
     try:
@@ -83,7 +83,10 @@ class TestCase(unittest.TestCase):
         encodebytes(data).decode(),
         source_format,
         destination_format,
-        zip)
+        zip,
+        refresh,
+        conversion_kw or {},
+      )
       file_type = self._getFileType(output_data)
       if destination_mimetype != None:
         self.assertEqual(file_type, destination_mimetype)

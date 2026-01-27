@@ -93,7 +93,7 @@ class Handler:
       close_fds=True,
       env=self.environment,
       cwd=self.file.directory_name,
-      check=True,
+      check=False,  # XXX wkhtmltopdf exit with an error status when a local file access has been rejected
       text=True,
     )
     if process.stdout:
