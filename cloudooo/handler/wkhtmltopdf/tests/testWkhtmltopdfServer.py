@@ -33,10 +33,18 @@ from cloudooo.tests.cloudoooTestCase import TestCase
 class TestServer(TestCase):
   """Test XmlRpc Server. Needs cloudooo server started"""
 
+  # wkhtmltopdf is only selected if conversion_kw is passed
+  def _testConvertFile(
+      self, input_url, source_format, destination_format,
+      destination_mimetype, zip=False, refresh=False, conversion_kw=None):
+    return super()._testConvertFile(input_url, source_format, destination_format,
+      destination_mimetype, zip=zip, refresh=refresh, conversion_kw={'encoding': 'utf-8'})
+
   def ConversionScenarioList(self):
     return [
       (join('data', 'test_with_png_dataurl.html'), "html", "pdf", "application/pdf"),
       (join('data', 'test_with_script.html'), "html", "pdf", "application/pdf"),
+      (join('data', 'test_with_img_relative_url.html'), "html", "pdf", "application/pdf"),
     ]
 
   def testConvertHtmltoPdf(self):
