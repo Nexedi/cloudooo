@@ -86,6 +86,7 @@ class MimeMapper:
       'Microsoft Excel 2007 XML':'ms.xlsx',
       'Microsoft Excel 2007-2013 XML':'ms.xlsx',
       'Excel 2007–365':'ms.xlsx',
+      'Excel 2007':'ms.xlsx',
       'Microsoft Excel 5.0':'5.xls',
       'Microsoft Excel 95':'95.xls',
       'Microsoft PowerPoint 2007 XML AutoPlay':'ms.ppsx',

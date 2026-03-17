@@ -41,6 +41,7 @@ text_expected_tuple = (
     ('fodt', 'Flat XML ODF Text Document'),
     ('html', 'HTML Document (Writer)'),
     ('jpg', 'JPEG - Joint Photographic Experts Group'),
+    ('md', 'Markdown Document'),
     ('ms.docx', 'Word 2007'),
     ('odt', 'ODF Text Document'),
     ('pdf', 'PDF - Portable Document Format'),
@@ -121,9 +122,9 @@ spreadsheet_expected_tuple = (
     ('slk', 'SYLK'),
     ('webp', 'WEBP - WebP Image'),
     ('xls', 'Excel 97–2003'),
-    ('ms.xlsx', 'Excel 2007–365'),
-    ('xlsm', 'Excel 2007–365 (macro-enabled)'),
-    ('xlsx', 'Office Open XML Spreadsheet'),
+    ('ms.xlsx', 'Excel 2007'),
+    ('xlsm', 'Excel 2007 (macro-enabled)'),
+    ('xlsx', 'Excel 2010–365 Spreadsheet'),
     )
 
 math_expected_tuple = (

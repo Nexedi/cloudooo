@@ -81,6 +81,7 @@ def BBB_guess_extension(mimetype, title=None):
     "MET - OS/2 Metafile": ".met",
     "Microsoft Excel 2007-2013 XML": ".ms.xlsx",
     "Excel 2007–365": ".ms.xlsx",
+    "Excel 2007": ".ms.xlsx",
     "Microsoft PowerPoint 2007-2013 XML": ".ms.pptx",
     "Microsoft PowerPoint 2007-2013 XML AutoPlay": ".ms.ppsx",
     "Microsoft Word 2007-2013 XML": ".ms.docx",
