@@ -200,6 +200,7 @@ class TestHandler(HandlerTestCase):
       ('image/png', 'PNG - Portable Network Graphics'),
       ('image/webp', 'WEBP - WebP Image'),
       ('text/html', 'HTML Document (Writer)'),
+      ('text/markdown', 'Markdown Document'),
       ('text/plain', 'Text - Choose Encoding'),
     ]
     self.assertEqual(get("text/plain;ignored=param"), text_plain_output_list)
@@ -223,6 +224,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text - Choose Encoding') ])
 
   def testGetAllowedConversionFormatList_ApplicationPdf(self):
@@ -274,6 +276,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text - Choose Encoding'),
         ])
 
@@ -294,6 +297,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text - Choose Encoding') ])
 
   def testGetAllowedConversionFormatList_ImageJpeg(self):
@@ -349,15 +353,15 @@ class TestHandler(HandlerTestCase):
         ('application/pdf', 'PDF - Portable Document Format'),
         ('application/rtf', 'Rich Text'),
         ('application/vnd.ms-excel', 'Excel 97–2003'),
-        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007–365 (macro-enabled)'),
+        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007 (macro-enabled)'),
         ('application/vnd.ms-word.document.macroEnabled.12', 'Word 2007 VBA'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', 'Flat XML ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text', 'Text (Writer/Web)'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007–365'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2010–365 Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2010–365 Document'),
         ('application/vnd.sun.xml.writer', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
@@ -368,6 +372,7 @@ class TestHandler(HandlerTestCase):
         ('text/html', 'HTML Document'),
         ('text/html', 'HTML Document (Calc)'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text (Writer/Web)'),
         ('text/plain', 'Text - Choose Encoding'),
         ('text/plain', 'Text - Choose Encoding (Writer/Web)') ])
@@ -630,11 +635,11 @@ class TestHandler(HandlerTestCase):
       sorted(Handler.getAllowedConversionFormatList("application/vnd.ms-excel;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Excel 97–2003'),
-        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007–365 (macro-enabled)'),
+        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007 (macro-enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', 'Flat XML ODF Spreadsheet'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007–365'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2010–365 Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
@@ -653,11 +658,11 @@ class TestHandler(HandlerTestCase):
       sorted(Handler.getAllowedConversionFormatList("application/vnd.oasis.opendocument.spreadsheet;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Excel 97–2003'),
-        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007–365 (macro-enabled)'),
+        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007 (macro-enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', 'Flat XML ODF Spreadsheet'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007–365'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2010–365 Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
@@ -670,11 +675,11 @@ class TestHandler(HandlerTestCase):
       sorted(Handler.getAllowedConversionFormatList("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;ignored=param")),
       [ ('application/pdf', 'PDF - Portable Document Format'),
         ('application/vnd.ms-excel', 'Excel 97–2003'),
-        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007–365 (macro-enabled)'),
+        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007 (macro-enabled)'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', 'Flat XML ODF Spreadsheet'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007–365'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2010–365 Spreadsheet'),
         ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
@@ -698,6 +703,7 @@ class TestHandler(HandlerTestCase):
         ('image/png', 'PNG - Portable Network Graphics'),
         ('image/webp', 'WEBP - WebP Image'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text - Choose Encoding') ])
 
   def testGetAllowedConversionFormatList_TextCsv(self):
@@ -709,15 +715,15 @@ class TestHandler(HandlerTestCase):
         ('application/pdf', 'PDF - Portable Document Format'),
         ('application/rtf', 'Rich Text'),
         ('application/vnd.ms-excel', 'Excel 97–2003'),
-        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007–365 (macro-enabled)'),
+        ('application/vnd.ms-excel.sheet.macroEnabled.12', 'Excel 2007 (macro-enabled)'),
         ('application/vnd.ms-word.document.macroEnabled.12', 'Word 2007 VBA'),
         ('application/vnd.oasis.opendocument.spreadsheet', 'ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.spreadsheet-flat-xml', 'Flat XML ODF Spreadsheet'),
         ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
         ('application/vnd.oasis.opendocument.text', 'Text (Writer/Web)'),
         ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007–365'),
-        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Office Open XML Spreadsheet'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2007'),
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel 2010–365 Spreadsheet'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007'),
         ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2010–365 Document'),
         ('application/vnd.sun.xml.writer', 'OpenOffice.org 1.0 Text Document (Writer/Web)'),
@@ -728,6 +734,7 @@ class TestHandler(HandlerTestCase):
         ('text/html', 'HTML Document'),
         ('text/html', 'HTML Document (Calc)'),
         ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
         ('text/plain', 'Text (Writer/Web)'),
         ('text/plain', 'Text - Choose Encoding'),
         ('text/plain', 'Text - Choose Encoding (Writer/Web)') ])
