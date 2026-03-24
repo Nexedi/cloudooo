@@ -253,7 +253,22 @@ class TestHandler(HandlerTestCase):
     """Test allowed conversion format for text/rtf"""
     self.assertEqual(
       sorted(Handler.getAllowedConversionFormatList("text/rtf;ignored=param")),
-      [])
+      [ ('application/epub+zip', 'EPUB Document'),
+        ('application/msword', 'Word 97–2003'),
+        ('application/pdf', 'PDF - Portable Document Format'),
+        ('application/rtf', 'Rich Text'),
+        ('application/vnd.ms-word.document.macroEnabled.12', 'Word 2007 VBA'),
+        ('application/vnd.oasis.opendocument.text', 'ODF Text Document'),
+        ('application/vnd.oasis.opendocument.text-flat-xml', 'Flat XML ODF Text Document'),
+        ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2007'),
+        ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word 2010–365 Document'),
+        ('image/jpeg', 'JPEG - Joint Photographic Experts Group'),
+        ('image/png', 'PNG - Portable Network Graphics'),
+        ('image/webp', 'WEBP - WebP Image'),
+        ('text/html', 'HTML Document (Writer)'),
+        ('text/markdown', 'Markdown Document'),
+        ('text/plain', 'Text - Choose Encoding'),
+      ])
 
   def testGetAllowedConversionFormatList_ApplicationVndOasisOpendocumentText(self):
     """Test allowed conversion format for application/vnd.oasis.opendocument.text"""

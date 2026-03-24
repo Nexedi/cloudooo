@@ -728,7 +728,7 @@ text/plain					asc txt text pot brf srt
 text/prs.lines.tag
 text/rfc822-headers
 text/richtext					rtx
-text/rtf
+text/rtf					rtf
 text/scriptlet					sct wsc
 text/t140
 text/texmacs					tm

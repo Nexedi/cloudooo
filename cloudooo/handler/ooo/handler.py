@@ -264,6 +264,9 @@ class Handler:
         if ext:
           mimetype, _ = mimetypes.guess_type("a." + ext)  # XXX never guess
           if mimetype:
+            # Python 3.13 returns text/rtf for .rtf, normalize to application/rtf
+            if mimetype == 'text/rtf':
+              mimetype = 'application/rtf'
             output_set.add((mimetype, title))
     return list(output_set)
 
