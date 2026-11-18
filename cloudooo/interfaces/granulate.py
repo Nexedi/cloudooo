@@ -98,9 +98,10 @@ class IDocumentGranulator(Interface):
     """Returns the list of grains of a document.
 
     file -- document encoded in base64
-    source_format -- extension ("pdf") or mimetype ("application/pdf") of
-      the document. PDF is read directly, any other format that can be
-      converted to ODT is converted first.
+    source_format -- extension ("pdf", "html") or mimetype ("application/pdf",
+      "text/html") of the document. PDF is read directly (with page
+      information), HTML is parsed directly (without page information), any
+      other format that can be converted to ODT is converted first.
     granulate_kw -- options:
       strategy -- "structure" (default: grains follow headings, tables are
         kept apart), "page" (grains do not cross pages), "fixed" (structure
@@ -111,7 +112,8 @@ class IDocumentGranulator(Interface):
       include_tables -- False to leave tables out, True by default
       page_range -- [first, last] pages to process (starts at 1), to granulate
         a large document in several calls. PDF is read directly; other
-        formats are rendered as PDF to obtain page numbers.
+        non-HTML formats are rendered as PDF to obtain page numbers. It is an
+        error for HTML documents, which have no pages.
 
     Each grain is a dict with: index, text, context (titles of the enclosing
     sections joined with " > "), type ("text" or "table"), block_ids,

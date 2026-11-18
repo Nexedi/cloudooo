@@ -46,6 +46,7 @@ from fnmatch import fnmatch
 #XXX Must be removed
 from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.handler.pdf.granulator import PdfGranulator
+from cloudooo.handler.html.granulator import HtmlGranulator
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.wkhtmltopdf.handler import Handler as WkhtmltopdfHandler
 
@@ -423,9 +424,10 @@ class Manager(object):
     document, see IDocumentGranulator.granulateFile for the options and the
     format of a grain.
 
-    PDF is read directly (page aware), any other source format is converted
-    to ODT first. With ``page_range``, non-HTML documents are rendered as
-    PDF first so that page numbers are meaningful.
+    PDF is read directly (page aware), HTML is parsed directly (without
+    layers or pages), any other source format is converted to ODT first.
+    With ``page_range``, non-HTML documents are rendered as PDF first so that
+    page numbers are meaningful.
     """
     self._check_file_type(file)
     options = parseGranulateKw(granulate_kw)
@@ -439,21 +441,26 @@ class Manager(object):
                                  env=self.kw.get('env'))
       block_list = granulator.getBlockList(first_page, last_page)
       initial_heading_list = granulator.getOutlineContext(first_page)
+    elif page_range and source_format in ('html', 'htm', 'xhtml'):
+      raise GranulateError('page_range is not supported for HTML documents')
+    elif page_range:
+      # ODF has no page information, so render the document to get real
+      # pagination before extracting the requested pages.
+      try:
+        pdf_file = self.convertFile(file, source_format, 'pdf', zip=False)
+      except Exception as e:
+        raise GranulateError(
+          'Unable to render the document as PDF for page_range: %s' % e) from e
+      first_page, last_page = page_range
+      granulator = PdfGranulator(a2b_base64(pdf_file),
+                                 base_folder_url=self._path_tmp_dir,
+                                 env=self.kw.get('env'))
+      block_list = granulator.getBlockList(first_page, last_page)
+      initial_heading_list = granulator.getOutlineContext(first_page)
     else:
-      if page_range:
-        # ODF has no page information, so render the document to get real
-        # pagination before extracting the requested pages.
-        try:
-          pdf_file = self.convertFile(file, source_format, 'pdf', zip=False)
-        except Exception as e:
-          raise GranulateError(
-            'Unable to render the document as PDF for page_range: %s' % e) from e
-        first_page, last_page = page_range
-        granulator = PdfGranulator(a2b_base64(pdf_file),
-                                   base_folder_url=self._path_tmp_dir,
-                                   env=self.kw.get('env'))
-        block_list = granulator.getBlockList(first_page, last_page)
-        initial_heading_list = granulator.getOutlineContext(first_page)
+      if source_format in ('html', 'htm', 'xhtml'):
+        block_list = HtmlGranulator(a2b_base64(file)).getBlockList()
+        initial_heading_list = ()
       else:
         granulator = self._getOOGranulator(file, source_format)
         try:
