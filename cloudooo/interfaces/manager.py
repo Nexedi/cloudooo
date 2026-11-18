@@ -108,8 +108,11 @@ class IManager(Interface):
     (see IMimemapper.getAllowedExtensionInfoList)
     """
 
-  def granulateFile(content, source_mimetype):
-    """Returns a zip file with parts of an document splited by grains.
+  def granulateFile(content, source_mimetype, granulate_kw):
+    """Returns the list of grains (chunks of text with their location) of a
+    document.
+
+    (see IDocumentGranulator.granulateFile)
     """
 
 
