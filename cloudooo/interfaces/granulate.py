@@ -88,3 +88,33 @@ class ITextGranulator(Interface):
   def getChapterItem(content, source_mimetype, chapter_id):
     """Return the chapter in the form of (title, level).
     """
+
+
+class IDocumentGranulator(Interface):
+  """Provides a method to granulate a document into grains (chunks of text
+  with their location), for indexing and retrieval."""
+
+  def granulateFile(file, source_format, granulate_kw):
+    """Returns the list of grains of a document.
+
+    file -- document encoded in base64
+    source_format -- extension ("pdf") or mimetype ("application/pdf") of
+      the document. PDF is read directly, any other format that can be
+      converted to ODT is converted first.
+    granulate_kw -- options:
+      strategy -- "structure" (default: grains follow headings, tables are
+        kept apart), "page" (grains do not cross pages), "fixed" (structure
+        is ignored) or "blocks" (no packing, returns the text blocks)
+      max_chars -- maximum size of a grain, 1500 by default
+      overlap_chars -- text repeated at the start of a grain when a section is
+        split because of max_chars, 200 by default
+      include_tables -- False to leave tables out, True by default
+      page_range -- [first, last] pages to process (starts at 1), to granulate
+        a large document in several calls. PDF is read directly; other
+        formats are rendered as PDF to obtain page numbers.
+
+    Each grain is a dict with: index, text, context (titles of the enclosing
+    sections joined with " > "), type ("text" or "table"), block_ids,
+    char_count, content_hash (sha256 of text) and, for formats with pages,
+    page_start and page_end.
+    """

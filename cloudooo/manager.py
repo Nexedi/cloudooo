@@ -29,7 +29,7 @@
 ##############################################################################
 
 import mimetypes
-import xmlrpc
+import xmlrpc.client
 from mimetypes import guess_type, guess_extension
 from binascii import a2b_base64
 from base64 import encodebytes
@@ -39,10 +39,13 @@ from cloudooo.util import logger, parseContentType
 from cloudooo.interfaces.granulate import ITableGranulator
 from cloudooo.interfaces.granulate import IImageGranulator
 from cloudooo.interfaces.granulate import ITextGranulator
+from cloudooo.interfaces.granulate import IDocumentGranulator
+from cloudooo.grain import GranulateError, parseGranulateKw, granulateBlockList
 from fnmatch import fnmatch
 
 #XXX Must be removed
 from cloudooo.handler.ooo.granulator import OOGranulator
+from cloudooo.handler.pdf.granulator import PdfGranulator
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.wkhtmltopdf.handler import Handler as WkhtmltopdfHandler
 
@@ -98,8 +101,24 @@ def BBB_guess_extension(mimetype, title=None):
     "image/jpeg": ".jpg",
   }.get(parseContentType(mimetype).get_content_type(), None) or guess_extension(mimetype)
 
+def _getSourceExtension(source_format):
+  """Accepts an extension ("pdf", ".pdf") or a mimetype ("application/pdf")
+  and returns the extension without dot."""
+  source_format = source_format.strip()
+  if '/' in source_format:
+    mimetype = parseContentType(source_format).get_content_type()
+    extension = {
+      'application/pdf': '.pdf',
+      'application/vnd.oasis.opendocument.text': '.odt',
+    }.get(mimetype) or BBB_guess_extension(mimetype)
+    if not extension:
+      raise GranulateError('Unknown source format %r' % source_format)
+    source_format = extension
+  return source_format.lstrip('.').lower()
+
+
 @implementer(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
-             ITextGranulator)
+             ITextGranulator, IDocumentGranulator)
 class Manager(object):
   """Manipulates requisitons of client and temporary files in file system."""
 
@@ -398,6 +417,52 @@ class Manager(object):
       data = self.convertFile(data, source_format,
                     GRANULATABLE_FORMAT_LIST[0], zip=False)
     return OOGranulator(a2b_base64(data), GRANULATABLE_FORMAT_LIST[0])
+
+  def granulateFile(self, file:str, source_format:str, granulate_kw={}) -> list:
+    """Returns the list of grains (chunks of text with their location) of a
+    document, see IDocumentGranulator.granulateFile for the options and the
+    format of a grain.
+
+    PDF is read directly (page aware), any other source format is converted
+    to ODT first. With ``page_range``, non-HTML documents are rendered as
+    PDF first so that page numbers are meaningful.
+    """
+    self._check_file_type(file)
+    options = parseGranulateKw(granulate_kw)
+    page_range = options.pop('page_range')
+    source_format = _getSourceExtension(source_format)
+
+    if source_format == 'pdf':
+      first_page, last_page = page_range or (None, None)
+      granulator = PdfGranulator(a2b_base64(file),
+                                 base_folder_url=self._path_tmp_dir,
+                                 env=self.kw.get('env'))
+      block_list = granulator.getBlockList(first_page, last_page)
+      initial_heading_list = granulator.getOutlineContext(first_page)
+    else:
+      if page_range:
+        # ODF has no page information, so render the document to get real
+        # pagination before extracting the requested pages.
+        try:
+          pdf_file = self.convertFile(file, source_format, 'pdf', zip=False)
+        except Exception as e:
+          raise GranulateError(
+            'Unable to render the document as PDF for page_range: %s' % e) from e
+        first_page, last_page = page_range
+        granulator = PdfGranulator(a2b_base64(pdf_file),
+                                   base_folder_url=self._path_tmp_dir,
+                                   env=self.kw.get('env'))
+        block_list = granulator.getBlockList(first_page, last_page)
+        initial_heading_list = granulator.getOutlineContext(first_page)
+      else:
+        granulator = self._getOOGranulator(file, source_format)
+        try:
+          block_list = granulator.getBlockList()
+        finally:
+          granulator.trash()
+        initial_heading_list = ()
+    return granulateBlockList(
+      block_list, initial_heading_list=initial_heading_list, **options)
 
   def getTableItemList(self, data, source_format="odt"):
     """Returns the list of table IDs in the form of (id, title)."""

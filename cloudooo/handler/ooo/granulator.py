@@ -33,12 +33,14 @@ from io import BytesIO
 from lxml import etree
 from os import path
 from cloudooo.util import logger
+from cloudooo.grain import GranulateError, TABLE_CELL_SEPARATOR
 from cloudooo.handler.ooo.document import OdfDocument
 
 # URI Definitions.
 TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
 TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:table:1.0'
 DRAWING_URI = 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0'
+OFFICE_URI = 'urn:oasis:names:tc:opendocument:xmlns:office:1.0'
 
 # Odf Namespaces
 TABLE_ATTRIB_NAME = '{%s}name' % TABLE_URI
@@ -53,6 +55,68 @@ TABLE_XPATH_QUERY = './/table:table'
 IMAGE_TITLE_XPATH_QUERY = '//draw:text-box/text:p/draw:frame[@draw:style-name="%s"][@draw:name="%s"]/draw:image[@xlink:href="Pictures/%s"]/ancestor::draw:frame/following-sibling::text()'
 IMAGE_DRAW_NAME_AND_STYLENAME_XPATH_QUERY = '//draw:text-box/text:p/draw:frame'
 CHAPTER_XPATH_QUERY = '//text:p[@text:style-name="Title"]/text:span/text() | //text:h/text:span/text()'
+
+def _text(name):
+  return '{%s}%s' % (TEXT_URI, name)
+
+
+def _table(name):
+  return '{%s}%s' % (TABLE_URI, name)
+
+
+def _draw(name):
+  return '{%s}%s' % (DRAWING_URI, name)
+
+
+def _office(name):
+  return '{%s}%s' % (OFFICE_URI, name)
+
+
+# Elements of the text body that are walked through to find blocks
+BLOCK_CONTAINER_TAG_SET = frozenset(_text(name) for name in (
+  'section', 'list', 'list-item', 'list-header'))
+# Elements whose content is not part of the document text (generated
+# indexes duplicate the headings, tracked changes hold deleted text, ...)
+BLOCK_SKIPPED_TAG_SET = frozenset(
+  [_text(name) for name in (
+    'tracked-changes', 'sequence-decls', 'variable-decls',
+    'user-field-decls', 'dde-connection-decls', 'table-of-content',
+    'illustration-index', 'table-index', 'object-index', 'user-index',
+    'alphabetical-index', 'bibliography')] + [_office('forms')])
+# Elements ignored inside of a paragraph (their text is returned apart or not
+# at all)
+INLINE_SKIPPED_TAG_SET = frozenset(
+  [_text('note'), _draw('frame'), _office('annotation')])
+TABLE_ROW_CONTAINER_TAG_SET = frozenset(_table(name) for name in (
+  'table-header-rows', 'table-rows', 'table-row-group'))
+
+
+def _getElementText(element) -> str:
+  """Text of a paragraph or heading, without footnotes, frames and
+  annotations. Whitespace is normalised, line breaks are kept."""
+  part_list = []
+
+  def visit(parent):
+    if parent.text:
+      part_list.append(parent.text)
+    for child in parent:
+      tag = child.tag
+      if tag == _text('s'):
+        part_list.append(' ' * int(child.get(_text('c'), 1)))
+      elif tag == _text('tab'):
+        part_list.append(' ')
+      elif tag == _text('line-break'):
+        part_list.append('\n')
+      elif isinstance(tag, str) and tag not in INLINE_SKIPPED_TAG_SET:
+        visit(child)
+      if child.tail:
+        part_list.append(child.tail)
+
+  visit(element)
+  return '\n'.join(
+    ' '.join(line.split()) for line in ''.join(part_list).split('\n')
+  ).strip()
+
 
 def getTemplatePath(format):
   """ Get the path of template file. This should goes to
@@ -278,6 +342,84 @@ class OOGranulator:
       msg = "Unable to find chapter %s at chapter list." % chapter_id
       logger.error(msg)
       return None
+
+  def getBlockList(self):
+    """Returns the text of the document in reading order, in one pass, as a
+    list of blocks (see cloudooo.grain): headings (with their outline
+    level), paragraphs, list items, footnotes and tables (one row per line,
+    cells separated by ' | '). Generated indexes, headers/footers and tracked
+    deletions are left out. ODF has no page information."""
+    body = self.document.parsed_content.find(
+      '%s/%s' % (_office('body'), _office('text')))
+    if body is None:
+      raise GranulateError('The document has no text body')
+    block_list = []
+    self._walkBlockList(body, block_list, in_list=False)
+    return block_list
+
+  def _walkBlockList(self, parent, block_list, in_list):
+    for child in parent:
+      tag = child.tag
+      if not isinstance(tag, str) or tag in BLOCK_SKIPPED_TAG_SET:
+        continue
+      if tag == _text('h') or tag == _text('p'):
+        text = _getElementText(child)
+        if tag == _text('h'):
+          block = {'type': 'heading', 'text': text, 'level': int(
+            child.get(_text('outline-level'), 1))}
+        else:
+          block = {'type': 'list_item' if in_list else 'paragraph',
+                   'text': text}
+        if text:
+          block_list.append(block)
+        self._appendFootnoteAndFrameBlockList(child, block_list)
+      elif tag == _table('table'):
+        text = self._getTableText(child)
+        if text:
+          block_list.append({'type': 'table', 'text': text})
+      elif tag == _draw('frame'):
+        self._appendFrameBlockList(child, block_list)
+      elif tag in BLOCK_CONTAINER_TAG_SET:
+        self._walkBlockList(child, block_list,
+                            in_list or tag != _text('section'))
+
+  def _appendFootnoteAndFrameBlockList(self, element, block_list):
+    for note in element.iter(_text('note')):
+      for paragraph in note.iterfind(
+          '%s//%s' % (_text('note-body'), _text('p'))):
+        text = _getElementText(paragraph)
+        if text:
+          block_list.append({'type': 'footnote', 'text': text})
+    for frame in element.iter(_draw('frame')):
+      self._appendFrameBlockList(frame, block_list)
+
+  def _appendFrameBlockList(self, frame, block_list):
+    for paragraph in frame.iterfind(
+        '%s/%s' % (_draw('text-box'), _text('p'))):
+      text = _getElementText(paragraph)
+      if text:
+        block_list.append({'type': 'paragraph', 'text': text})
+
+  def _getTableText(self, table):
+    def rows(parent):
+      for child in parent:
+        if child.tag == _table('table-row'):
+          yield child
+        elif child.tag in TABLE_ROW_CONTAINER_TAG_SET:
+          yield from rows(child)
+
+    line_list = []
+    for row in rows(table):
+      cell_list = [
+        ' '.join(_getElementText(paragraph)
+                 for paragraph in cell.iter(_text('p'), _text('h')))
+        for cell in row if cell.tag == _table('table-cell')]
+      cell_list = [' '.join(cell.split()) for cell in cell_list]
+      while cell_list and not cell_list[-1]:
+        cell_list.pop()
+      if cell_list:
+        line_list.append(TABLE_CELL_SEPARATOR.join(cell_list))
+    return '\n'.join(line_list)
 
   def trash(self):
     """Remove the file in memory."""
