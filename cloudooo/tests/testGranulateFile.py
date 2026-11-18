@@ -27,10 +27,22 @@ OOO_DATA = path.join(path.dirname(__file__), '..', 'handler', 'ooo', 'tests',
 PDF_DATA = path.join(path.dirname(__file__), '..', 'handler', 'pdf', 'tests',
                      'data')
 
+HTML_DOCUMENT = b"""<!DOCTYPE html>
+<html><head><title>Not readable</title></head><body>
+<h1>Introduction</h1><p>Hello <b>world</b>.</p>
+<h2>Details</h2><p>More text.</p>
+<table><tr><th>Name</th><th>Value</th></tr><tr><td>One</td><td>Two</td></tr></table>
+<script>hiddenText()</script>
+</body></html>"""
+
 
 def b64(directory, name):
   with open(path.join(directory, name), 'rb') as f:
     return encodebytes(f.read()).decode()
+
+
+def b64html():
+  return encodebytes(HTML_DOCUMENT).decode()
 
 
 class TestGranulateFile(unittest.TestCase):
@@ -74,6 +86,30 @@ class TestGranulateFile(unittest.TestCase):
     self.assertEqual('Title 1 > Title 2', grain_list[2]['context'])
     self.assertNotIn('page_start', grain_list[0])
 
+  def testHtml(self):
+    grain_list = self.manager.granulateFile(b64html(), 'html')
+    self.assertEqual(3, len(grain_list))
+    self.assertEqual(['Introduction', 'Introduction > Details',
+                      'Introduction > Details'],
+                     [g['context'] for g in grain_list])
+    self.assertEqual('table', grain_list[2]['type'])
+    self.assertEqual('Name | Value\nOne | Two', grain_list[2]['text'])
+    self.assertTrue(all('page_start' not in g for g in grain_list))
+    self.assertNotIn('hiddenText', str(grain_list))
+
+  def testHtmlSourceFormats(self):
+    expected = self.manager.granulateFile(b64html(), 'html')
+    for source_format in ('htm', 'xhtml', 'text/html',
+                          'application/xhtml+xml'):
+      self.assertEqual(
+        expected, self.manager.granulateFile(b64html(), source_format))
+
+  def testHtmlTablesCanBeExcluded(self):
+    grain_list = self.manager.granulateFile(
+      b64html(), 'html', {'include_tables': False})
+    self.assertEqual(2, len(grain_list))
+    self.assertTrue(all(g['type'] == 'text' for g in grain_list))
+
   def testOdtTables(self):
     document = b64(OOO_DATA, 'granulate_table_test.odt')
     grain_list = self.manager.granulateFile(document, 'odt')
@@ -88,6 +124,8 @@ class TestGranulateFile(unittest.TestCase):
                                  ('granulate_test.odt', OOO_DATA, 'odt')):
       grain_list = self.manager.granulateFile(b64(directory, name), fmt)
       dumps((grain_list,), allow_none=False)
+    dumps((self.manager.granulateFile(b64html(), 'html'),),
+          allow_none=False)
 
   def testErrors(self):
     pdf = b64(PDF_DATA, 'test.pdf')
@@ -95,6 +133,7 @@ class TestGranulateFile(unittest.TestCase):
     for args in ((pdf, 'pdf', {'strategy': 'unknown'}),
                  (pdf, 'pdf', {'page_range': [9, 10]}),
                  (odt, 'odt', {'page_range': [1, 2]}),
+                 (b64html(), 'html', {'page_range': [1, 2]}),
                  (encodebytes(b'not a pdf').decode(), 'pdf', {}),
                  (pdf, 'foo/bar-unknown', {})):
       with self.assertRaises(GranulateError, msg=args[1:]):

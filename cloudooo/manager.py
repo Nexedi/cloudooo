@@ -46,6 +46,7 @@ from fnmatch import fnmatch
 #XXX Must be removed
 from cloudooo.handler.ooo.granulator import OOGranulator
 from cloudooo.handler.pdf.granulator import PdfGranulator
+from cloudooo.handler.html.granulator import HtmlGranulator
 from cloudooo.handler.ooo.mimemapper import mimemapper
 from cloudooo.handler.wkhtmltopdf.handler import Handler as WkhtmltopdfHandler
 
@@ -423,8 +424,8 @@ class Manager(object):
     document, see IDocumentGranulator.granulateFile for the options and the
     format of a grain.
 
-    PDF is read directly (page aware), any other source format is converted
-    to ODT first.
+    PDF is read directly (page aware), HTML is parsed directly (without
+    layers or pages), any other source format is converted to ODT first.
     """
     self._check_file_type(file)
     options = parseGranulateKw(granulate_kw)
@@ -441,12 +442,16 @@ class Manager(object):
     else:
       if page_range:
         raise GranulateError('page_range is only supported for PDF documents')
-      granulator = self._getOOGranulator(file, source_format)
-      try:
-        block_list = granulator.getBlockList()
-      finally:
-        granulator.trash()
-      initial_heading_list = ()
+      if source_format in ('html', 'htm', 'xhtml'):
+        block_list = HtmlGranulator(a2b_base64(file)).getBlockList()
+        initial_heading_list = ()
+      else:
+        granulator = self._getOOGranulator(file, source_format)
+        try:
+          block_list = granulator.getBlockList()
+        finally:
+          granulator.trash()
+        initial_heading_list = ()
     return granulateBlockList(
       block_list, initial_heading_list=initial_heading_list, **options)
 
