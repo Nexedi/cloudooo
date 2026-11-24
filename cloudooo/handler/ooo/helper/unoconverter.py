@@ -152,6 +152,7 @@ class UnoDocument:
     from com.sun.star.document.MacroExecMode import NEVER_EXECUTE
     args = [
       self._createProperty('MacroExecMode', NEVER_EXECUTE),
+      self._createProperty('Hidden', True),
     ]
     if infilter:
       infilter = infilter.split(':', 1)
