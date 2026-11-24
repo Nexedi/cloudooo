@@ -44,7 +44,7 @@ import os.path
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 import tempfile
-from zipfile import BadZipFile, ZipFile
+from zipfile import ZipFile, is_zipfile
 
 __doc__ = """
 
@@ -209,28 +209,51 @@ class UnoDocument:
             os.path.dirname(os.path.normpath(parsed_url.path)) == os.path.dirname(self.document_url):
           return True
       return False
+
+    def check_odf_links(path):
+      with ZipFile(path, 'r') as zip_file:
+        try:
+          content = zip_file.open('content.xml')
+        except KeyError:
+          return  # Not an ODF file (e.g. OOXML), nothing to check.
+        with content as f:
+          for _, e in ET.iterparse(f, events=("end",)):
+            href = e.attrib.get('{http://www.w3.org/1999/xlink}href')
+            actuate = e.attrib.get('{http://www.w3.org/1999/xlink}actuate')
+            if actuate == "onLoad" and href:
+              if not isSafeUrl(href):
+                raise RuntimeError(f'This document contains unsafe links {href}')
+            e.clear()
+
+    def check_html_links(path):
+      class CustomHTMLParser(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+          for name, value in attrs:
+            if name == 'src':
+              if not isSafeUrl(value):
+                raise RuntimeError('This document contains unsafe links %s' % value)
+      with open(path, 'rb') as f:
+        data = f.read()
+      CustomHTMLParser().feed(data.decode('utf-8', errors='replace'))
+
+    def is_html_source():
+      source_format = (self.source_format or '').split(';', 1)[0].strip().lower().lstrip('.')
+      return source_format in (
+        'html', 'htm', 'xhtml', 'text/html', 'application/xhtml+xml')
+
+    def check_reexported_links(path):
+      if is_zipfile(path):
+        check_odf_links(path)
+      else:
+        check_html_links(path)
+
+    if is_zipfile(self.document_url):
+      check_odf_links(self.document_url)
+    elif is_html_source():
+      check_html_links(self.document_url)
     with tempfile.NamedTemporaryFile() as temp_file:
       uno_document.storeToURL(systemPathToFileUrl(temp_file.name), ())
-      try:
-        with ZipFile(temp_file.name, 'r') as zip_file:
-          with zip_file.open('content.xml') as f:
-            for _, e in ET.iterparse(f, events=("end",)):
-              href = e.attrib.get('{http://www.w3.org/1999/xlink}href')
-              actuate = e.attrib.get('{http://www.w3.org/1999/xlink}actuate')
-              if actuate == "onLoad" and href:
-                if not isSafeUrl(href):
-                  raise RuntimeError(f'This document contains unsafe links {href}')
-              e.clear()
-      except BadZipFile: # HTML input case
-        class CustomHTMLParser(HTMLParser):
-          def handle_starttag(self, tag, attrs):
-            for attr in attrs:
-              if attr[0] == 'src':
-                if not isSafeUrl(attr[1]):
-                  raise RuntimeError('This document contains unsafe links %s' % attr[1])
-        parser = CustomHTMLParser()
-        with open(temp_file.name, 'r') as f:
-          parser.feed(f.read())
+      check_reexported_links(temp_file.name)
     module_manager = createInstance("com.sun.star.frame.ModuleManager")
     self.document_type = module_manager.identify(uno_document)
 
