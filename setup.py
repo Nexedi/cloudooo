@@ -17,7 +17,6 @@ install_requires = [
           'psutil>=3.0.0',
           'lxml',
           'python-magic',
-          'argparse',
           'erp5.util'
           ]
 
