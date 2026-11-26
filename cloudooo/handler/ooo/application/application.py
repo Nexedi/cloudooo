@@ -88,7 +88,7 @@ class Application:
 
     process = Process(pid)
     try:
-      for connection in process.connections():
+      for connection in process.net_connections():
         if connection.status == 'LISTEN' and \
             connection.laddr[1] == self.port:
           return True

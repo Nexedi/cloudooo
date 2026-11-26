@@ -119,7 +119,7 @@ class OpenOffice(Application):
     for process in psutil.process_iter():
       try:
         if process.exe() == openoffice_exe:
-          for connection in process.connections():
+          for connection in process.net_connections():
             if connection.status == "LISTEN" and \
                 connection.laddr[1] == self.port:
               process.terminate()
