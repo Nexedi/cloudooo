@@ -30,15 +30,17 @@
 
 from base64 import encodebytes
 from cloudooo.tests.cloudoooTestCase import TestCase
-from pkg_resources import resource_filename
+import importlib.resources
+from os import fspath
 
 
 class TestLegacyInterface(TestCase):
 
   def testHtmlToBaseFormatConversion(self):
     """Check implicit base conversion of HTML documents."""
-    filename = resource_filename('cloudooo.handler.ooo.tests.data',
-                                 'test_failure_conversion.html')
+    filename = fspath(
+      importlib.resources.files('cloudooo.handler.ooo.tests.data').joinpath(
+        'test_failure_conversion.html'))
     with open(filename, 'rb') as f:
       data = f.read()
     status, response_dict, message = self.proxy.run_convert(
@@ -54,8 +56,9 @@ class TestLegacyInterface(TestCase):
 
   def testHtmlToOdt(self):
     """Check conversion of HTML to odt"""
-    filename = resource_filename('cloudooo.handler.ooo.tests.data',
-                                 'test_failure_conversion.html')
+    filename = fspath(
+      importlib.resources.files('cloudooo.handler.ooo.tests.data').joinpath(
+        'test_failure_conversion.html'))
     with open(filename, 'rb') as f:
       data = f.read()
     status, response_dict, message = self.proxy.run_generate(filename,
@@ -72,8 +75,9 @@ class TestLegacyInterface(TestCase):
     Ensures that Cloudooo does not fail when getting metadata of a document
     that does not have a title.
     """
-    filename = resource_filename('cloudooo.handler.ooo.tests.data',
-                                 'without_title.ppt')
+    filename = fspath(
+      importlib.resources.files('cloudooo.handler.ooo.tests.data').joinpath(
+        'without_title.ppt'))
     with open(filename, 'rb') as f:
       data = f.read()
     status, response_dict, message = self.proxy.run_getmetadata(

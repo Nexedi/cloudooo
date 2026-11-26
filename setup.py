@@ -11,12 +11,12 @@ install_requires = [
           # -*- Extra requirements: -*-
           'zope.interface',
           'PasteDeploy',
-          'PasteScript[WSGIUtils]',
+          'paste',
+          'waitress',
           'pyPdf>=3.6.0',
           'psutil>=3.0.0',
           'lxml',
           'python-magic',
-          'argparse',
           'erp5.util'
           ]
 
@@ -30,8 +30,8 @@ setup(name='cloudooo',
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Programming Language :: Python :: 3",
         "Natural Language :: English",
-        "Framework :: Paste"],
-      keywords='xmlrpc openoffice wsgi paste python',
+      ],
+      keywords='xmlrpc openoffice wsgi waitress python',
       author='Gabriel M. Monnerat',
       author_email='gabriel@nexedi.com',
       url='https://lab.nexedi.com/nexedi/cloudooo.git',
@@ -43,8 +43,9 @@ setup(name='cloudooo',
       python_requires='>=3.8',
       entry_points="""
       [paste.app_factory]
-      main = cloudooo.paster_application:application
+      main = cloudooo.application:application
       [console_scripts]
+      cloudooo-server = cloudooo.server:main
       cloudooo_tester = cloudooo.bin.cloudooo_tester:main
       echo_cloudooo_conf = cloudooo.bin.echo_cloudooo_conf:main
       runCloudoooUnitTest = cloudooo.tests.runHandlerUnitTest:run

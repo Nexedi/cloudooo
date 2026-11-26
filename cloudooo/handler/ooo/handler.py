@@ -29,10 +29,10 @@
 ##############################################################################
 
 import json
-import pkg_resources
+import importlib.resources
 import mimetypes
 from base64 import decodebytes, encodebytes
-from os import environ, path
+from os import environ, fspath, path
 from subprocess import Popen, PIPE
 from cloudooo.handler.ooo.application.openoffice import openoffice
 from zope.interface import implementer
@@ -91,8 +91,8 @@ class Handler:
     kw['port'] = port
     python = path.join(self.office_binary_path, "python")
     command_list = [path.exists(python) and python or "python3",
-                    pkg_resources.resource_filename(__name__,
-                                 path.join("helper", "unoconverter.py")),
+                    fspath(importlib.resources.files(__name__).joinpath(
+                      "helper", "unoconverter.py")),
                     "--uno_path=%s" % self.uno_path,
                     "--office_binary_path=%s" % self.office_binary_path,
                     '--document_url=%s' % self.document.getUrl()]

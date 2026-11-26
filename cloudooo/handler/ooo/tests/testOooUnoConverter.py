@@ -30,8 +30,9 @@
 
 import json
 import magic
-import pkg_resources
+import importlib.resources
 from subprocess import Popen, PIPE
+from os import fspath
 from os.path import exists, join
 from cloudooo.tests.handlerTestCase import HandlerTestCase
 from cloudooo.handler.ooo.application.openoffice import openoffice
@@ -67,8 +68,8 @@ class TestUnoConverter(HandlerTestCase):
     mimemapper_pickled = json.dumps(mimemapper)
     python = join(self.office_binary_path, "python")
     command = [exists(python) and python or "python",
-          pkg_resources.resource_filename("cloudooo.handler.ooo",
-                                          "/helper/unoconverter.py"),
+          fspath(importlib.resources.files("cloudooo.handler.ooo").joinpath(
+            "helper", "unoconverter.py")),
           "--convert",
           "--uno_path=%s" % self.uno_path,
           "--office_binary_path=%s" % self.office_binary_path,

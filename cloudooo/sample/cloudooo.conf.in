@@ -13,6 +13,7 @@ application_hostname = @APPLICATION_HOSTNAME@
 openoffice_port = @OPENOFFICE_PORT@
 
 [server:main]
-use = egg:PasteScript#wsgiutils
+use = waitress
 host = @SERVER_HOST@
 port = @SERVER_PORT@
+threads = 10

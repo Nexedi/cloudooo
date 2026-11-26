@@ -279,7 +279,8 @@ class Handler:
       if value is not None:
         # creates a tmp file in the directory which will be trashed
         path = self.makeTempFile(destination_format=destination_format)
-        open(path, "wb").write(b64decode(value))
+        with open(path, "wb") as f:
+          f.write(b64decode(value))
         if url_type == "url":
           path = self.convertPathToUrl(path)
         elif url_type == "file":

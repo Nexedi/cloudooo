@@ -30,9 +30,10 @@
 
 import email
 import email.message
+import importlib.resources
 import logging
 import mimetypes
-import pkg_resources
+from os import fspath
 import os
 from zipfile import ZipFile, ZIP_DEFLATED
 
@@ -55,8 +56,8 @@ PYTHON_ENVIRONMENT = [
 
 
 def loadMimetypeList():
-  mime_types_url = pkg_resources.resource_filename(__name__,
-                                                   "mime.types")
+  mime_types_url = fspath(
+    importlib.resources.files(__name__).joinpath("mime.types"))
   mimetypes.init(files=[mime_types_url, ])
 
 

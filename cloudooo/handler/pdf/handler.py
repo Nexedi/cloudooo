@@ -38,7 +38,7 @@ from tempfile import mktemp
 
 
 from pypdf import PdfWriter, PdfReader
-from pypdf.generic import NameObject, createStringObject
+from pypdf.generic import NameObject, create_string_object
 
 
 @implementer(IHandler)
@@ -107,7 +107,7 @@ class Handler:
       metadata['Keywords'] = metadata['Keywords'].join(' ')
     args = {}
     for key, value in metadata.items():
-      args[NameObject('/' + key.capitalize())] = createStringObject(value)
+      args[NameObject('/' + key.capitalize())] = create_string_object(value)
 
     output_pdf._info.get_object().update(args)
 

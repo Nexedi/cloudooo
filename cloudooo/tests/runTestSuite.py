@@ -47,6 +47,16 @@ class TestSuite(BaseTestSuite):
   def run(self, test):
     return self.runUnitTest(test)
 
+  def spawn(self, *args, **kw):
+    try:
+      return super(TestSuite, self).spawn(*args, **kw)
+    finally:
+      for stream in (sys.stdout, sys.stderr):
+        stream.flush()
+        buffer = getattr(stream, 'buffer', None)
+        if buffer is not None:
+          buffer.flush()
+
   def runUnitTest(self, *args, **kw):
     try:
       runUnitTest = os.environ.get('RUN_UNIT_TEST',

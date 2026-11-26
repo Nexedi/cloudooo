@@ -38,7 +38,8 @@ from cloudooo.tests.cloudoooTestCase import TestCase
 from unittest import expectedFailure
 import magic
 import xmlrpc.client
-from cloudooo.handler.ooo.tests.testOooMimemapper import text_expected_tuple, presentation_expected_tuple
+from cloudooo.handler.ooo.tests.testOooMimemapper import (
+  extra_text_expected_tuple, presentation_expected_tuple, text_expected_tuple)
 
 
 """Tests for XmlRpc Server. Needs cloudooo server started"""
@@ -51,9 +52,7 @@ class TestAllowedExtensions(TestCase):
     text_request = {'document_type': "text"}
     text_allowed_list = self.proxy.getAllowedExtensionList(text_request)
     # XXX slightly different allowed formats with document_type !?
-    _text_expected_tuple = text_expected_tuple + (
-      ('docm', 'Word 2007 VBA'),
-    )
+    _text_expected_tuple = text_expected_tuple + extra_text_expected_tuple
     self.assertEqual(
       sorted([tuple(x) for x in text_allowed_list]),
       sorted(_text_expected_tuple))

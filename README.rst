@@ -17,7 +17,7 @@ Install LibreOffice or OpenOffice.org.
 Create Configuration File
 =========================
 
-The configuration file is used to start the application using paster.
+The configuration file is used to start the application with `cloudooo-server`.
 
 ::
   
@@ -33,29 +33,20 @@ Run Application
 
 ::
   
-  $ paster serve ./cloudooo.conf
-
-
-or run as a daemon:
-
-::
-  
-  $ paster serve ./cloudoo.conf --daemon
+  $ cloudooo-server serve ./cloudooo.conf
 
 
 Stop Application
 ================
 
 ::
-  
-  $ kill -1 PASTER_PID
 
-Warning: always use SIGHUP because only with this signal all processes are stopped correctly.
+  $ kill -TERM CLOUDOOO_SERVER_PID
 
 Cloudooo Description
 ====================
 
-- XMLRPC + WSGI will be one bridge for easy access to LibreOffice / OpenOffice.org. This will implement one XMLRPC server into WSGI (Paster).
+- XMLRPC + WSGI will be one bridge for easy access to LibreOffice / OpenOffice.org. This implements one XMLRPC server into a WSGI application served by Waitress.
 - PyUno is used to connect to LibreOffice / OpenOffice.org stated with open socket. The features will be handled all by pyuno.
 - Only a process will have access to LibreOffice / OpenOffice.org by time.
 - All clients receive the same object(proxy) when connects with XMLRPC Server.

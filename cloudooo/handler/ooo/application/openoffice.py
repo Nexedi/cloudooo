@@ -28,10 +28,11 @@
 #
 ##############################################################################
 
-import pkg_resources
+import importlib.resources
 import psutil
 import subprocess
 from psutil import AccessDenied, NoSuchProcess
+from os import fspath
 from os.path import exists, join
 from threading import Lock
 from zope.interface import implementer
@@ -66,9 +67,8 @@ class OpenOffice(Application):
       self.pid())
     python = join(self.office_binary_path, "python")
     args = [exists(python) and python or "python3",
-            pkg_resources.resource_filename("cloudooo",
-                                      join('handler', 'ooo',
-                                           "helper", "openoffice_tester.py")),
+            fspath(importlib.resources.files("cloudooo").joinpath(
+              'handler', 'ooo', 'helper', 'openoffice_tester.py')),
             "--hostname=%s" % host,
             "--port=%s" % port,
             "--uno_path=%s" % self.uno_path]
@@ -119,7 +119,7 @@ class OpenOffice(Application):
     for process in psutil.process_iter():
       try:
         if process.exe() == openoffice_exe:
-          for connection in process.connections():
+          for connection in process.net_connections():
             if connection.status == "LISTEN" and \
                 connection.laddr[1] == self.port:
               process.terminate()

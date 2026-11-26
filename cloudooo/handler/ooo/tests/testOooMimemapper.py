@@ -52,6 +52,7 @@ text_expected_tuple = (
     )
 extra_text_expected_tuple = (
     ('docm', 'Word 2007 VBA'),
+    ('docm', 'Word 2010–365 (macro-enabled)'),
     )
 
 global_expected_tuple = (
@@ -124,6 +125,7 @@ spreadsheet_expected_tuple = (
     ('xls', 'Excel 97–2003'),
     ('ms.xlsx', 'Excel 2007'),
     ('xlsm', 'Excel 2007 (macro-enabled)'),
+    ('xlsm', 'Excel 2010–365 (macro-enabled)'),
     ('xlsx', 'Excel 2010–365 Spreadsheet'),
     )
 

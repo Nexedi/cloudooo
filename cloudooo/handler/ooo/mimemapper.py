@@ -28,13 +28,13 @@
 #
 ##############################################################################
 
-import pkg_resources
+import importlib.resources
 from re import findall
 from subprocess import Popen, PIPE
 from subprocess import STDOUT
 from zope.interface import implementer
 from .filter import Filter
-from os import environ, path
+from os import environ, fspath, path
 from cloudooo.interfaces.mimemapper import IMimemapper
 import json
 
@@ -105,8 +105,8 @@ class MimeMapper:
                                 environ.get('office_binary_path'))
     python = path.join(office_binary_path, "python")
     command = [path.exists(python) and python or "python3",
-            pkg_resources.resource_filename(__name__,
-                             path.join("helper", "unomimemapper.py")),
+            fspath(importlib.resources.files(__name__).joinpath("helper",
+                                            "unomimemapper.py")),
             "--uno_path=%s" % uno_path,
             "--office_binary_path=%s" % office_binary_path,
             "--hostname=%s" % hostname,

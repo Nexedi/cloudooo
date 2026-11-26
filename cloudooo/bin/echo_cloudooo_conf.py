@@ -1,9 +1,10 @@
-from os import path
-import pkg_resources
+import importlib.resources
+from os import fspath
 
 
 def main():
-  cloudooo_conf_path = pkg_resources.resource_filename("cloudooo",
-                                    path.join("sample", "cloudooo.conf.in"))
+  cloudooo_conf_path = fspath(
+    importlib.resources.files("cloudooo").joinpath(
+      "sample", "cloudooo.conf.in"))
 
   print(open(cloudooo_conf_path).read())

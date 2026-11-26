@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import sys
-from pkg_resources import resource_filename
+import importlib.resources
 import logging
 import unittest
 from time import sleep
 from subprocess import Popen
 from configparser import ConfigParser
 from argparse import ArgumentParser
-from os import chdir, path, environ, curdir, remove
+from os import chdir, fspath, path, environ, curdir, remove
 from glob import glob
 import psutil
 from signal import SIGQUIT
@@ -17,7 +17,7 @@ from signal import SIGQUIT
 def wait_use_port(pid, timeout_limit=30):
   process = psutil.Process(pid)
   for n in range(timeout_limit):
-    if len(process.connections()) > 0:
+    if len(process.net_connections()) > 0:
       return True
     sleep(1)
   return False
@@ -33,9 +33,9 @@ def run():
   parser.add_argument('--timeout_limit', dest='timeout_limit',
                       type=int, default=30,
                       help="Timeout to waiting for the cloudooo stop")
-  parser.add_argument('--paster_path', dest='paster_path',
-                      default='paster',
-                      help="Path to Paster script")
+  parser.add_argument('--server_path', dest='server_path',
+                      default='cloudooo-server',
+                      help="Path to cloudooo-server script")
   parser.add_argument('-v', '--verbose', action='store_true', help='Enable logging')
   parser.add_argument(
     '-D', '--debug', action='store_true',
@@ -43,7 +43,9 @@ def run():
   namespace = parser.parse_args()
   if namespace.verbose:
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s',)
-  environment_path = glob(path.join(resource_filename("cloudooo", "handler"), '*', 'tests'))
+  environment_path = glob(path.join(
+    fspath(importlib.resources.files("cloudooo").joinpath("handler")),
+    '*', 'tests'))
   sys.path.extend(environment_path)
   server_cloudooo_conf = namespace.server_cloudooo_conf
   test_name = namespace.test_name
@@ -51,7 +53,7 @@ def run():
     server_cloudooo_conf = path.join(path.abspath(curdir),
                                      server_cloudooo_conf)
   environ['server_cloudooo_conf'] = server_cloudooo_conf
-  paster_path = namespace.paster_path
+  server_path = namespace.server_path
 
   from cloudooo.tests.handlerTestCase import startFakeEnvironment
   from cloudooo.tests.handlerTestCase import stopFakeEnvironment
@@ -91,7 +93,7 @@ def run():
                                                    'working_path')
     if path.exists(log_file):
       remove(log_file)
-    command = [paster_path, 'serve', '--log-file', log_file,
+    command = [server_path, 'serve', '--log-file', log_file,
                server_cloudooo_conf]
     process = Popen(command)
     logger.debug("Started daemon %s", command)
